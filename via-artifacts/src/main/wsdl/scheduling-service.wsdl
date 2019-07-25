@@ -1,0 +1,1653 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://service.via.med.va.gov/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="SchedulingServiceImplService" targetNamespace="http://service.via.med.va.gov/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://service.via.med.va.gov/" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://service.via.med.va.gov/">
+  <xs:element name="AbstractArrayTO" type="tns:abstractArrayTO"/>
+  <xs:element name="AbstractTO" type="tns:abstractTO"/>
+  <xs:element name="AbstractTaggedArrayTO" type="tns:abstractTaggedArrayTO"/>
+  <xs:element name="Appointment" type="tns:appointment"/>
+  <xs:element name="AppointmentTO" type="tns:appointmentTO"/>
+  <xs:element name="AppointmentTypesArray" type="tns:appointmentTypesArray"/>
+  <xs:element name="AppointmentTypesTO" type="tns:appointmentTypesTO"/>
+  <xs:element name="BoolTO" type="tns:boolTO"/>
+  <xs:element name="CancelAppointmentTO" type="tns:cancelAppointmentTO"/>
+  <xs:element name="CancellationReasonsTO" type="tns:cancellationReasonsTO"/>
+  <xs:element name="ConsultDetailTO" type="tns:consultDetailTO"/>
+  <xs:element name="ConsultStatusTO" type="tns:consultStatusTO"/>
+  <xs:element name="ConsultingServiceTO" type="tns:consultingServiceTO"/>
+  <xs:element name="DataSourceArray" type="tns:dataSourceArray"/>
+  <xs:element name="DataSourceTO" type="tns:dataSourceTO"/>
+  <xs:element name="Division" type="tns:division"/>
+  <xs:element name="EwlByFacilityTO" type="tns:ewlByFacilityTO"/>
+  <xs:element name="EwlStatusTO" type="tns:ewlStatusTO"/>
+  <xs:element name="HospitalLocationTO" type="tns:hospitalLocationTO"/>
+  <xs:element name="Patient" type="tns:patient"/>
+  <xs:element name="Provider" type="tns:provider"/>
+  <xs:element name="ProviderTO" type="tns:providerTO"/>
+  <xs:element name="QueryBean" type="tns:queryBean"/>
+  <xs:element name="SiteArray" type="tns:siteArray"/>
+  <xs:element name="SiteTO" type="tns:siteTO"/>
+  <xs:element name="TaggedAppointmentArray" type="tns:taggedAppointmentArray"/>
+  <xs:element name="TaggedAppointmentArrays" type="tns:taggedAppointmentArrays"/>
+  <xs:element name="TaggedCancellationReasonsArray" type="tns:taggedCancellationReasonsArray"/>
+  <xs:element name="TaggedConsultArray" type="tns:taggedConsultDetailArray"/>
+  <xs:element name="TaggedConsultStatusesArray" type="tns:taggedConsultStatusesArray"/>
+  <xs:element name="TaggedConsultingServicesArray" type="tns:taggedConsultingServicesArray"/>
+  <xs:element name="TaggedEwlByFacilityArray" type="tns:taggedEwlByFacilityArray"/>
+  <xs:element name="TaggedEwlByFacilityArrays" type="tns:taggedEwlByFacilityArrays"/>
+  <xs:element name="TaggedEwlStatusArray" type="tns:taggedEwlStatusArray"/>
+  <xs:element name="TaggedEwlStatusArrays" type="tns:taggedEwlStatusArrays"/>
+  <xs:element name="TaggedHospitalLocationArray" type="tns:taggedHospitalLocationArray"/>
+  <xs:element name="TaggedProviderArray" type="tns:taggedProviderArray"/>
+  <xs:element name="TaggedProviderArrays" type="tns:taggedProviderArrays"/>
+  <xs:element name="TaggedText" type="tns:taggedText"/>
+  <xs:element name="TaggedTextArray" type="tns:taggedTextArray"/>
+  <xs:element name="TextTO" type="tns:textTO"/>
+  <xs:element name="TimeSlotArray" type="tns:timeSlotArray"/>
+  <xs:element name="TimeSlotTO" type="tns:timeSlotTO"/>
+  <xs:element name="UserTO" type="tns:userTO"/>
+  <xs:element name="cancelAppointment" type="tns:cancelAppointment"/>
+  <xs:element name="cancelAppointmentResponse" type="tns:cancelAppointmentResponse"/>
+  <xs:element name="getAppointmentTypes" type="tns:getAppointmentTypes"/>
+  <xs:element name="getAppointmentTypesResponse" type="tns:getAppointmentTypesResponse"/>
+  <xs:element name="getAppointmentsBookingNotes" type="tns:getAppointmentsBookingNotes"/>
+  <xs:element name="getAppointmentsBookingNotesResponse" type="tns:getAppointmentsBookingNotesResponse"/>
+  <xs:element name="getCancellationReasons" type="tns:getCancellationReasons"/>
+  <xs:element name="getCancellationReasonsResponse" type="tns:getCancellationReasonsResponse"/>
+  <xs:element name="getClinicSchedulingDetailsByDateRange" type="tns:getClinicSchedulingDetailsByDateRange"/>
+  <xs:element name="getClinicSchedulingDetailsByDateRangeResponse" type="tns:getClinicSchedulingDetailsByDateRangeResponse"/>
+  <xs:element name="getClinics" type="tns:getClinics"/>
+  <xs:element name="getClinicsResponse" type="tns:getClinicsResponse"/>
+  <xs:element name="getClinicsWithSpecialties" type="tns:getClinicsWithSpecialties"/>
+  <xs:element name="getClinicsWithSpecialtiesResponse" type="tns:getClinicsWithSpecialtiesResponse"/>
+  <xs:element name="getConsultDetails" type="tns:getConsultDetails"/>
+  <xs:element name="getConsultDetailsResponse" type="tns:getConsultDetailsResponse"/>
+  <xs:element name="getConsultStatuses" type="tns:getConsultStatuses"/>
+  <xs:element name="getConsultStatusesResponse" type="tns:getConsultStatusesResponse"/>
+  <xs:element name="getConsultingServices" type="tns:getConsultingServices"/>
+  <xs:element name="getConsultingServicesResponse" type="tns:getConsultingServicesResponse"/>
+  <xs:element name="getEwlByFacility" type="tns:getEwlByFacility"/>
+  <xs:element name="getEwlByFacilityResponse" type="tns:getEwlByFacilityResponse"/>
+  <xs:element name="getEwlByPatient" type="tns:getEwlByPatient"/>
+  <xs:element name="getEwlByPatientResponse" type="tns:getEwlByPatientResponse"/>
+  <xs:element name="getProvidersForClinic" type="tns:getProvidersForClinic"/>
+  <xs:element name="getProvidersForClinicResponse" type="tns:getProvidersForClinicResponse"/>
+  <xs:element name="getSite" type="tns:getSite"/>
+  <xs:element name="getSiteResponse" type="tns:getSiteResponse"/>
+  <xs:element name="getVersion" type="tns:getVersion"/>
+  <xs:element name="getVersionResponse" type="tns:getVersionResponse"/>
+  <xs:element name="hasClinicAccess" type="tns:hasClinicAccess"/>
+  <xs:element name="hasClinicAccessResponse" type="tns:hasClinicAccessResponse"/>
+  <xs:element name="loginVIA" type="tns:loginVIA"/>
+  <xs:element name="loginVIAResponse" type="tns:loginVIAResponse"/>
+  <xs:element name="makeAppointment" type="tns:makeAppointment"/>
+  <xs:element name="makeAppointmentResponse" type="tns:makeAppointmentResponse"/>
+  <xs:element name="publicFacingAppLogin" type="tns:publicFacingAppLogin"/>
+  <xs:element name="publicFacingAppLoginResponse" type="tns:publicFacingAppLoginResponse"/>
+  <xs:element name="removePatientFromEwl" type="tns:removePatientFromEwl"/>
+  <xs:element name="removePatientFromEwlResponse" type="tns:removePatientFromEwlResponse"/>
+  <xs:complexType name="getEwlByPatient">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="queryBean">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="provider" type="tns:provider"/>
+      <xs:element form="unqualified" minOccurs="0" name="patient" type="tns:patient"/>
+      <xs:element form="unqualified" minOccurs="0" name="recordSiteCode" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="requestingApp" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="active" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="endDate" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="startDate" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="maxRecords" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="status" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="supplementalParameters">
+        <xs:simpleType>
+          <xs:list itemType="xs:string"/>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element form="unqualified" minOccurs="0" name="itemId" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="target" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="criteria" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="direction" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+      <xs:element form="unqualified" name="multiSiteQuery" type="xs:boolean"/>
+      <xs:element form="unqualified" minOccurs="0" name="consumingAppToken" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="consumingAppPassword" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="provider">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="userId" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="loginSiteCode" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="contextMenu" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="vistaLocations">
+        <xs:simpleType>
+          <xs:list itemType="xs:string"/>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="patient">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="localPid" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="localSiteId" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="mpiPid" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="vistaLocations">
+        <xs:simpleType>
+          <xs:list itemType="xs:string"/>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element form="unqualified" minOccurs="0" name="ssn" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="inPatient" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="age" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="gender" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="scPercentage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEwlByPatientResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedEwlStatusArrays"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedEwlStatusArrays">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="arrays">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="taggedEwlStatusArray" type="tns:taggedEwlStatusArray"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="abstractArrayTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="count" type="xs:int"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType abstract="true" name="abstractTO">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="fault" type="tns:faultTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedEwlStatusArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="statuses">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="ewlStatusTO" type="tns:ewlStatusTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="abstractTaggedArrayTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="tag" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ewlStatusTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="dfn" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="stopCode" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="dateLastUpdated" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="patientName" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="patientSsn" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicName" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="originatingDate" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="desiredApptDate" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="daysOnEwl" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="dateRemovedFromEwl" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="patientZip" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="svcConnectedPct" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="enrolleeStatus" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="priority" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="message" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicId" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="ewlien" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="faultTO">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="innerMessage" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="innerStackTrace" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="innerType" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="message" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="stackTrace" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="suggestion" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getProvidersForClinic">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getProvidersForClinicResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedProviderArrays"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedProviderArrays">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="arrays">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="taggedProviderArray" type="tns:taggedProviderArray"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedProviderArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="providers">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="providerTO" type="tns:providerTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="providerTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="duz" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="providername" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="loginSiteCode" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="hasClinicAccess">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="clinicId" type="xs:string"/>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="hasClinicAccessResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:BoolTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="boolTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="trueOrFalse" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getCancellationReasons">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getCancellationReasonsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedCancellationReasonsArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedCancellationReasonsArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="reasons">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="cancellationReasonTO" type="tns:cancellationReasonsTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="cancellationReasonsTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="publicFacingAppLogin">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="siteCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="veteranId" type="xs:string"/>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="publicFacingAppLoginResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:UserTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="userTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="SSN" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="DUZ" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="siteId" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="office" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="phone" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="pager" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="service" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="title" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="orderRole" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="userClass" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="greeting" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="siteMessage" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="ids" type="tns:taggedTextArray"/>
+          <xs:element form="unqualified" minOccurs="0" name="emailAddress" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="username" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="vistaDUZ" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="divisions">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="division" type="tns:division"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="taggedTextArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="results">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="taggedText" type="tns:taggedText"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element form="unqualified" minOccurs="0" name="textOnly" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedText">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="tag" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="textArray">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="textArray" type="xs:string"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element form="unqualified" minOccurs="0" name="taggedResults">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="taggedText" type="tns:taggedText"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="division">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="siteId" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="makeAppointment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+      <xs:element minOccurs="0" name="appointment" type="tns:appointment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="appointment">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="timestamp" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="title" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="status" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="facility" type="tns:siteId"/>
+      <xs:element form="unqualified" minOccurs="0" name="clinic" type="tns:hospitalLocation"/>
+      <xs:element form="unqualified" minOccurs="0" name="labDateTime" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="xrayDateTime" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="ekgDateTime" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="purpose" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="currentStatus" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="clinicId" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="appointmentTimestamp" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="purposeSubcategory" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="appointmentLength" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="appointmentType" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="bookNotes" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="consultIen" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="lvl" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="desiredDateTime" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="visitId" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="providerName" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="message" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="cancelCode" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="cancelReason" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="remarks" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="siteId">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="lastEvent" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="lastSeenDate" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="hospitalLocation">
+    <xs:complexContent>
+      <xs:extension base="tns:baseDataBean">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="abbr" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentLength" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentTimestamp" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="askForCheckIn" type="xs:boolean"/>
+          <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="availability" nillable="true" type="tns:timeSlot"/>
+          <xs:element form="unqualified" minOccurs="0" name="bed" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="building" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicDisplayStartTime" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="creditStopCode" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="department" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="displayIncrements" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="dispositionAction" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="division" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="facility" type="tns:siteId"/>
+          <xs:element form="unqualified" minOccurs="0" name="floor" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="institution" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="maxOverbooksPerDay" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="module" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="phone" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="physicalLocation" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="principalClinic" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="prohibitAccessToClinic" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="room" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="service" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="specialty" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="status" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="stopCode" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="typeExtension" type="tns:keyValuePair"/>
+          <xs:element form="unqualified" minOccurs="0" name="visitLocation" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="wardLocation" type="tns:keyValuePair"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="baseDataBean">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="fault" type="tns:fault"/>
+      <xs:element form="unqualified" minOccurs="0" name="siteId" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="timeSlot">
+    <xs:sequence>
+      <xs:element form="unqualified" name="available" type="xs:boolean"/>
+      <xs:element form="unqualified" minOccurs="0" name="end" type="xs:anySimpleType"/>
+      <xs:element form="unqualified" minOccurs="0" name="start" type="xs:anySimpleType"/>
+      <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="keyValuePair">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="key" type="xs:anyType"/>
+      <xs:element form="unqualified" minOccurs="0" name="value" type="xs:anyType"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="fault">
+    <xs:sequence>
+      <xs:element form="unqualified" minOccurs="0" name="innerMessage" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="innerStackTrace" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="innerType" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="message" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="stackTrace" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="suggestion" type="xs:string"/>
+      <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="makeAppointmentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:AppointmentTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="appointmentTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="timestamp" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="title" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="status" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="facility" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinic" type="tns:hospitalLocationTO"/>
+          <xs:element form="unqualified" minOccurs="0" name="labDateTime" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="xrayDateTime" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="ekgDateTime" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="purpose" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="currentStatus" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicId" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="purposeSubcategory" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentLength" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentType" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="bookNotes" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="consultIen" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="lvl" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="desiredDateTime" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="visitId" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="providerName" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="hospitalLocationTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="department" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="service" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="specialty" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="stopCode" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="creditStopCode" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="facility" type="tns:siteTO"/>
+          <xs:element form="unqualified" minOccurs="0" name="building" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="floor" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="room" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="bed" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="status" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="phone" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentTimestamp" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="type" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="physicalLocation" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="askForCheckIn" type="xs:boolean"/>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentLength" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicDisplayStartTime" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="displayIncrements" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="availability" type="tns:timeSlotArray"/>
+          <xs:element form="unqualified" minOccurs="0" name="maxOverbooksPerDay" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="prohibitAccessToClinic" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="siteTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="sitecode" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="displayName" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="moniker" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="regionID" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="lastEventTimestamp" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="lastEventReason" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="uid" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="pid" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="dataSources" type="tns:dataSourceArray"/>
+          <xs:element form="unqualified" minOccurs="0" name="parentSiteId" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="childSites" type="tns:siteArray"/>
+          <xs:element form="unqualified" minOccurs="0" name="address" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="city" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="state" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="systemName" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="siteType" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="dataSourceArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="items">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="dataSourceTO" type="tns:dataSourceTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="dataSourceTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="protocol" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="modality" type="xs:string"/>
+          <xs:element form="unqualified" name="timeout" type="xs:int"/>
+          <xs:element form="unqualified" name="port" type="xs:int"/>
+          <xs:element form="unqualified" minOccurs="0" name="provider" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="status" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="description" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="context" type="xs:string"/>
+          <xs:element form="unqualified" name="testSource" type="xs:boolean"/>
+          <xs:element form="unqualified" minOccurs="0" name="vendor" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="version" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="siteId" type="tns:taggedText"/>
+          <xs:element form="unqualified" minOccurs="0" name="welcomeMessage" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="siteArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="sites">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="siteTO" type="tns:siteTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="timeSlotArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="slots">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="timeSlotTO" type="tns:timeSlotTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="timeSlotTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="start" type="xs:anySimpleType"/>
+          <xs:element form="unqualified" minOccurs="0" name="end" type="xs:anySimpleType"/>
+          <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+          <xs:element form="unqualified" name="available" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getConsultStatuses">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getConsultStatusesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedConsultStatusesArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedConsultStatusesArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="statuses">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="consultStatusTO" type="tns:consultStatusTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="consultStatusTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="code" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="description" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="comment" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getClinics">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getClinicsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedHospitalLocationArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedHospitalLocationArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="locations">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="hospitalLocationTO" type="tns:hospitalLocationTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="cancelAppointment">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+      <xs:element minOccurs="0" name="appointment" type="tns:appointment"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelAppointmentResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:CancelAppointmentTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cancelAppointmentTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="timestamp" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="purpose" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="reason" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="remarks" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinic" type="tns:hospitalLocationTO"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="loginVIA">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="siteCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="accessCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="verifyCode" type="xs:string"/>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="loginVIAResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:UserTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="removePatientFromEwl">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="removePatientFromEwlResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TextTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="textTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getVersion">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getVersionResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="return" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getSite">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="vistaServer" type="xs:string"/>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getSiteResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TextTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEwlByFacility">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getEwlByFacilityResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedEwlByFacilityArrays"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedEwlByFacilityArrays">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="arrays">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="taggedEwlByFacilityArray" type="tns:taggedEwlByFacilityArray"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedEwlByFacilityArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="statuses">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="ewlByFacilityTO" type="tns:ewlByFacilityTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ewlByFacilityTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="dfn" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="dssstopcode" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="lastupdatedate" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="patientname" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="patientssn" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicname" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="originatingdate" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="desireddateofappt" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="daysonewl" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="dateremovedfromewl" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="patientzipcode" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="serviceconnectedpercentage" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="message" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="enrolleestatus" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="priority" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="clinicId" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="ewlien" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getAppointmentTypes">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getAppointmentTypesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:AppointmentTypesArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="appointmentTypesArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="appointmentTypes">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="appointmentTypesTO" type="tns:appointmentTypesTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="appointmentTypesTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="id" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="name" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getConsultDetails">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getConsultDetailsResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="TaggedConsultDetailArray" type="tns:taggedConsultDetailArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="taggedConsultDetailArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="lines">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="consultDetailTO" type="tns:consultDetailTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="consultDetailTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="text" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getConsultingServices">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getConsultingServicesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedConsultingServicesArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedConsultingServicesArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="services">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="consultingServiceTO" type="tns:consultingServiceTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="consultingServiceTO">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="serviceIen" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="serviceName" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="hasChildren" type="xs:boolean"/>
+          <xs:element form="unqualified" minOccurs="0" name="parent" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="serviceUsage" type="xs:string"/>
+          <xs:element form="unqualified" minOccurs="0" name="orderableItem" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getAppointmentsBookingNotes">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getAppointmentsBookingNotesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedAppointmentArrays"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedAppointmentArrays">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="arrays">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="taggedAppointmentArray" type="tns:taggedAppointmentArray"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType final="extension restriction" name="taggedAppointmentArray">
+    <xs:complexContent>
+      <xs:extension base="tns:abstractTaggedArrayTO">
+        <xs:sequence>
+          <xs:element form="unqualified" minOccurs="0" name="appts">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element form="unqualified" maxOccurs="unbounded" minOccurs="0" name="appointmentTO" type="tns:appointmentTO"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="getClinicsWithSpecialties">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getClinicsWithSpecialtiesResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:TaggedHospitalLocationArray"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getClinicSchedulingDetailsByDateRange">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="queryBean" type="tns:queryBean"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="getClinicSchedulingDetailsByDateRangeResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" ref="tns:HospitalLocationTO"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="errorCodeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="COULD_NOT_CREATE_A_URL"/>
+      <xs:enumeration value="CONFIDENTIALITY_SENSITIVE_RECORD_ACCESS_EXCEPTION"/>
+      <xs:enumeration value="VIA_OPERATION_FAILED"/>
+      <xs:enumeration value="VIA_CONSTRAINT_VIOLATED"/>
+      <xs:enumeration value="ROOT_CAUSE_MSG"/>
+      <xs:enumeration value="METHOD_NOT_IMPLEMENTED"/>
+      <xs:enumeration value="MISSING_DUZ_EXCEPTION"/>
+      <xs:enumeration value="VIA_AUDIT_LOG_ERROR"/>
+      <xs:enumeration value="TRANSACTION_WORK_EXCEPTION"/>
+      <xs:enumeration value="MULTIPLE_USER_EXCEPTION"/>
+      <xs:enumeration value="MULTIPLE_PATIENT_EXCEPTION"/>
+      <xs:enumeration value="NOTE_IEN_EXCEPTION"/>
+      <xs:enumeration value="NOTE_NOT_SAVED_EXCEPTION"/>
+      <xs:enumeration value="NOTE_INVALID_SIGNATURE_PERMISSION_EXCEPTION"/>
+      <xs:enumeration value="NOTE_USER_NOT_AUTHORIZED_EXCEPTION"/>
+      <xs:enumeration value="NOTE_INVALID_SIGNATURE_EXCEPTION"/>
+      <xs:enumeration value="NOTE_CANNOT_UNLOCK_CONSULT"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_CREATE_NOTE"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_LOCK_NOTE"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_LOCK_ORDER"/>
+      <xs:enumeration value="NOTE_ERROR_UPDATING_NOTE"/>
+      <xs:enumeration value="NOTE_ERROR_CLOSING_NOTE"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_SET_NOTE_TEXT"/>
+      <xs:enumeration value="NOTE_INDEX_OUT_OF_BOUNDS"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_LINK_PRF_NOTE"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_LINK_PRF_NOTE_REASON"/>
+      <xs:enumeration value="NOTE_UNABLE_TO_UNLOCK_NOTE"/>
+      <xs:enumeration value="NOTE_CANNOT_CREATE_SURGERY_NOTE"/>
+      <xs:enumeration value="NOTE_ONE_PER_VISIT"/>
+      <xs:enumeration value="NOTE_MISSING_CONSULT_IEN"/>
+      <xs:enumeration value="NOTE_MISSING_PRF_IEN"/>
+      <xs:enumeration value="NOTE_MISSING_COSIGNER"/>
+      <xs:enumeration value="INVALID_CANCEL_REASON"/>
+      <xs:enumeration value="INACTIVE_CANCEL_REASON"/>
+      <xs:enumeration value="INVALID_CODE_FOR_CANCEL_REASON"/>
+      <xs:enumeration value="MISSING_ADT_PATIENT"/>
+      <xs:enumeration value="WORK_EXCEPTION"/>
+      <xs:enumeration value="WORK_EXCEPTION_WITH_CLIENT_MESSAGES"/>
+      <xs:enumeration value="READ_WORK_EXCEPTION_WITH_CLIENT_MESSAGES"/>
+      <xs:enumeration value="READ_WORK_EXCEPTION_WITH_CLIENT_MESSAGES_FOR_DUZEXCEPTION"/>
+      <xs:enumeration value="READ_WORK_EXCEPTION_WITH_CLIENT_MESSAGES_FOR_EXCEPTION"/>
+      <xs:enumeration value="LOGIN_UNABLE_TO_DETERMINE_PROVIDER_DUZ"/>
+      <xs:enumeration value="LOGIN_UNABLE_TO_GET_USER_INFO"/>
+      <xs:enumeration value="LOGIN_NO_USER_ID_FOR_SITE"/>
+      <xs:enumeration value="LOGIN_UNABLE_TO_GET_USER_SSN"/>
+      <xs:enumeration value="DAO_EXCEPTION_MISSING_ICN"/>
+      <xs:enumeration value="DAO_EXCEPTION_UNFOUND_DFN"/>
+      <xs:enumeration value="DAO_EXCEPTION_MISSING_DFN"/>
+      <xs:enumeration value="DAO_EXCEPTION_MISSING_PATIENT"/>
+      <xs:enumeration value="DAO_EXCEPTION_UNFOUND_LRDFN"/>
+      <xs:enumeration value="VALIDATION_EXCEPTION"/>
+      <xs:enumeration value="SECURITY_EXCEPTION"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ValidationException" type="tns:ValidationException"/>
+  <xs:complexType name="ValidationException">
+    <xs:sequence>
+      <xs:element name="errorDescription" nillable="true" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="customMsgValues" type="xs:string"/>
+      <xs:element name="errorCode" nillable="true" type="tns:errorCodeEnum"/>
+      <xs:element name="logged" nillable="true" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="publicFacingAppLoginResponse">
+    <wsdl:part element="tns:publicFacingAppLoginResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="hasClinicAccessResponse">
+    <wsdl:part element="tns:hasClinicAccessResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelAppointmentResponse">
+    <wsdl:part element="tns:cancelAppointmentResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAppointmentsBookingNotes">
+    <wsdl:part element="tns:getAppointmentsBookingNotes" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="makeAppointment">
+    <wsdl:part element="tns:makeAppointment" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getClinicsResponse">
+    <wsdl:part element="tns:getClinicsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removePatientFromEwl">
+    <wsdl:part element="tns:removePatientFromEwl" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getProvidersForClinicResponse">
+    <wsdl:part element="tns:getProvidersForClinicResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getEwlByFacilityResponse">
+    <wsdl:part element="tns:getEwlByFacilityResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConsultStatuses">
+    <wsdl:part element="tns:getConsultStatuses" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getClinicsWithSpecialties">
+    <wsdl:part element="tns:getClinicsWithSpecialties" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVersion">
+    <wsdl:part element="tns:getVersion" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getVersionResponse">
+    <wsdl:part element="tns:getVersionResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConsultDetails">
+    <wsdl:part element="tns:getConsultDetails" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getProvidersForClinic">
+    <wsdl:part element="tns:getProvidersForClinic" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getClinics">
+    <wsdl:part element="tns:getClinics" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="removePatientFromEwlResponse">
+    <wsdl:part element="tns:removePatientFromEwlResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCancellationReasonsResponse">
+    <wsdl:part element="tns:getCancellationReasonsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAppointmentsBookingNotesResponse">
+    <wsdl:part element="tns:getAppointmentsBookingNotesResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getCancellationReasons">
+    <wsdl:part element="tns:getCancellationReasons" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getClinicSchedulingDetailsByDateRangeResponse">
+    <wsdl:part element="tns:getClinicSchedulingDetailsByDateRangeResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="loginVIA">
+    <wsdl:part element="tns:loginVIA" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="makeAppointmentResponse">
+    <wsdl:part element="tns:makeAppointmentResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cancelAppointment">
+    <wsdl:part element="tns:cancelAppointment" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getClinicSchedulingDetailsByDateRange">
+    <wsdl:part element="tns:getClinicSchedulingDetailsByDateRange" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getClinicsWithSpecialtiesResponse">
+    <wsdl:part element="tns:getClinicsWithSpecialtiesResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getEwlByPatient">
+    <wsdl:part element="tns:getEwlByPatient" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getSite">
+    <wsdl:part element="tns:getSite" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAppointmentTypes">
+    <wsdl:part element="tns:getAppointmentTypes" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConsultStatusesResponse">
+    <wsdl:part element="tns:getConsultStatusesResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="publicFacingAppLogin">
+    <wsdl:part element="tns:publicFacingAppLogin" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getSiteResponse">
+    <wsdl:part element="tns:getSiteResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getEwlByFacility">
+    <wsdl:part element="tns:getEwlByFacility" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ValidationException">
+    <wsdl:part element="tns:ValidationException" name="ValidationException">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="loginVIAResponse">
+    <wsdl:part element="tns:loginVIAResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConsultingServicesResponse">
+    <wsdl:part element="tns:getConsultingServicesResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConsultingServices">
+    <wsdl:part element="tns:getConsultingServices" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getAppointmentTypesResponse">
+    <wsdl:part element="tns:getAppointmentTypesResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getConsultDetailsResponse">
+    <wsdl:part element="tns:getConsultDetailsResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="hasClinicAccess">
+    <wsdl:part element="tns:hasClinicAccess" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="getEwlByPatientResponse">
+    <wsdl:part element="tns:getEwlByPatientResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="SchedulingServiceInterface">
+    <wsdl:operation name="getEwlByPatient">
+      <wsdl:input message="tns:getEwlByPatient" name="getEwlByPatient">
+    </wsdl:input>
+      <wsdl:output message="tns:getEwlByPatientResponse" name="getEwlByPatientResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProvidersForClinic">
+      <wsdl:input message="tns:getProvidersForClinic" name="getProvidersForClinic">
+    </wsdl:input>
+      <wsdl:output message="tns:getProvidersForClinicResponse" name="getProvidersForClinicResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="hasClinicAccess">
+      <wsdl:input message="tns:hasClinicAccess" name="hasClinicAccess">
+    </wsdl:input>
+      <wsdl:output message="tns:hasClinicAccessResponse" name="hasClinicAccessResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCancellationReasons">
+      <wsdl:input message="tns:getCancellationReasons" name="getCancellationReasons">
+    </wsdl:input>
+      <wsdl:output message="tns:getCancellationReasonsResponse" name="getCancellationReasonsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="publicFacingAppLogin">
+      <wsdl:input message="tns:publicFacingAppLogin" name="publicFacingAppLogin">
+    </wsdl:input>
+      <wsdl:output message="tns:publicFacingAppLoginResponse" name="publicFacingAppLoginResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ValidationException" name="ValidationException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="makeAppointment">
+      <wsdl:input message="tns:makeAppointment" name="makeAppointment">
+    </wsdl:input>
+      <wsdl:output message="tns:makeAppointmentResponse" name="makeAppointmentResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getConsultStatuses">
+      <wsdl:input message="tns:getConsultStatuses" name="getConsultStatuses">
+    </wsdl:input>
+      <wsdl:output message="tns:getConsultStatusesResponse" name="getConsultStatusesResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getClinics">
+      <wsdl:input message="tns:getClinics" name="getClinics">
+    </wsdl:input>
+      <wsdl:output message="tns:getClinicsResponse" name="getClinicsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelAppointment">
+      <wsdl:input message="tns:cancelAppointment" name="cancelAppointment">
+    </wsdl:input>
+      <wsdl:output message="tns:cancelAppointmentResponse" name="cancelAppointmentResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="loginVIA">
+      <wsdl:input message="tns:loginVIA" name="loginVIA">
+    </wsdl:input>
+      <wsdl:output message="tns:loginVIAResponse" name="loginVIAResponse">
+    </wsdl:output>
+      <wsdl:fault message="tns:ValidationException" name="ValidationException">
+    </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="removePatientFromEwl">
+      <wsdl:input message="tns:removePatientFromEwl" name="removePatientFromEwl">
+    </wsdl:input>
+      <wsdl:output message="tns:removePatientFromEwlResponse" name="removePatientFromEwlResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersion">
+      <wsdl:input message="tns:getVersion" name="getVersion">
+    </wsdl:input>
+      <wsdl:output message="tns:getVersionResponse" name="getVersionResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSite">
+      <wsdl:input message="tns:getSite" name="getSite">
+    </wsdl:input>
+      <wsdl:output message="tns:getSiteResponse" name="getSiteResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEwlByFacility">
+      <wsdl:input message="tns:getEwlByFacility" name="getEwlByFacility">
+    </wsdl:input>
+      <wsdl:output message="tns:getEwlByFacilityResponse" name="getEwlByFacilityResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAppointmentTypes">
+      <wsdl:input message="tns:getAppointmentTypes" name="getAppointmentTypes">
+    </wsdl:input>
+      <wsdl:output message="tns:getAppointmentTypesResponse" name="getAppointmentTypesResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getConsultDetails">
+      <wsdl:input message="tns:getConsultDetails" name="getConsultDetails">
+    </wsdl:input>
+      <wsdl:output message="tns:getConsultDetailsResponse" name="getConsultDetailsResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getConsultingServices">
+      <wsdl:input message="tns:getConsultingServices" name="getConsultingServices">
+    </wsdl:input>
+      <wsdl:output message="tns:getConsultingServicesResponse" name="getConsultingServicesResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAppointmentsBookingNotes">
+      <wsdl:input message="tns:getAppointmentsBookingNotes" name="getAppointmentsBookingNotes">
+    </wsdl:input>
+      <wsdl:output message="tns:getAppointmentsBookingNotesResponse" name="getAppointmentsBookingNotesResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getClinicsWithSpecialties">
+      <wsdl:input message="tns:getClinicsWithSpecialties" name="getClinicsWithSpecialties">
+    </wsdl:input>
+      <wsdl:output message="tns:getClinicsWithSpecialtiesResponse" name="getClinicsWithSpecialtiesResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getClinicSchedulingDetailsByDateRange">
+      <wsdl:input message="tns:getClinicSchedulingDetailsByDateRange" name="getClinicSchedulingDetailsByDateRange">
+    </wsdl:input>
+      <wsdl:output message="tns:getClinicSchedulingDetailsByDateRangeResponse" name="getClinicSchedulingDetailsByDateRangeResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SchedulingServiceImplServiceSoapBinding" type="tns:SchedulingServiceInterface">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="getEwlByPatient">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getEwlByPatient">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getEwlByPatientResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getProvidersForClinic">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getProvidersForClinic">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getProvidersForClinicResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="hasClinicAccess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="hasClinicAccess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="hasClinicAccessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getCancellationReasons">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getCancellationReasons">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getCancellationReasonsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getConsultStatuses">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getConsultStatuses">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getConsultStatusesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="publicFacingAppLogin">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="publicFacingAppLogin">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="publicFacingAppLoginResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ValidationException">
+        <soap:fault name="ValidationException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="makeAppointment">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="makeAppointment">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="makeAppointmentResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getClinics">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getClinics">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getClinicsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="cancelAppointment">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="cancelAppointment">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="cancelAppointmentResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="loginVIA">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="loginVIA">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="loginVIAResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ValidationException">
+        <soap:fault name="ValidationException" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="removePatientFromEwl">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="removePatientFromEwl">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="removePatientFromEwlResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getEwlByFacility">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getEwlByFacility">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getEwlByFacilityResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getSite">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getSite">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getSiteResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersion">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getVersion">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getVersionResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAppointmentTypes">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getAppointmentTypes">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getAppointmentTypesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getConsultDetails">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getConsultDetails">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getConsultDetailsResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getConsultingServices">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getConsultingServices">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getConsultingServicesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getAppointmentsBookingNotes">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getAppointmentsBookingNotes">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getAppointmentsBookingNotesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getClinicSchedulingDetailsByDateRange">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getClinicSchedulingDetailsByDateRange">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getClinicSchedulingDetailsByDateRangeResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getClinicsWithSpecialties">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="getClinicsWithSpecialties">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="getClinicsWithSpecialtiesResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SchedulingServiceImplService">
+    <wsdl:port binding="tns:SchedulingServiceImplServiceSoapBinding" name="SchedulingServiceImplPort">
+      <soap:address location="https://vaww.viapreprod.va.gov:443/via-webservices/services/SchedulingService"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
