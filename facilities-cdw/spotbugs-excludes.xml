@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+ <!-- False positive -->
+  <Match>
+    <Class name="gov.va.api.lighthouse.facilitiescdw.Controller"/>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
+  </Match>
+</FindBugsFilter>
