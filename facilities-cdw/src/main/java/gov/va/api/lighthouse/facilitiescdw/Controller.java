@@ -98,7 +98,7 @@ public class Controller {
       },
       method = RequestMethod.GET)
   public ResponseEntity<String> stopCodes() {
-    return ResponseEntity.ok().body(stopCodeWaitTimes() + "\n\n" + mentalHealthContactInfo());
+    return ResponseEntity.ok().body(stopCodeWaitTimes());
   }
 }
 // "{? = call getDob(?)}"
