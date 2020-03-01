@@ -24,12 +24,11 @@ public class Controller {
   //  }
 
   @RequestMapping(
-    value = "/mental-health-contact",
-    produces = {
-      "text/plain" // "application/json",
-    },
-    method = RequestMethod.GET
-  )
+      value = "/mental-health-contact",
+      produces = {
+        "text/plain" // "application/json",
+      },
+      method = RequestMethod.GET)
   public ResponseEntity<String> mentalHealth() {
     return ResponseEntity.ok().body(mentalHealthContactInfo());
   }
@@ -88,12 +87,11 @@ public class Controller {
   }
 
   @RequestMapping(
-    value = "/stop-code",
-    produces = {
-      "text/plain" // "application/json",
-    },
-    method = RequestMethod.GET
-  )
+      value = "/stop-code",
+      produces = {
+        "text/plain" // "application/json",
+      },
+      method = RequestMethod.GET)
   public ResponseEntity<String> stopCodes() {
     return ResponseEntity.ok().body(stopCodeWaitTimes());
   }
