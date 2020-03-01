@@ -6,7 +6,6 @@
     <artifactId>health-apis-parent</artifactId>
     <version>6.0.2</version>
   </parent>
-  <groupId>gov.va.api.lighthouse</groupId>
   <artifactId>facilities-cdw-modules</artifactId>
   <version>0.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
