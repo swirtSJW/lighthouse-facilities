@@ -1,25 +1,25 @@
 package gov.va.api.lighthouse.facilitiescdw;
 
+import gov.va.api.lighthouse.facilitiescdw.StopCodeResponse.StopCode;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @Validated
 @RestController
 @RequestMapping(value = "/")
 @AllArgsConstructor(onConstructor = @__({@Autowired}))
 public class Controller {
-  private final EntityManager entityManager;
-
   private final MentalHealthContactRepository mentalHealthContactRepository;
+
+  private final JdbcTemplate jdbc;
 
   /** Retrieve mental-health contacts. */
   @RequestMapping(
@@ -60,31 +60,22 @@ public class Controller {
       },
       method = RequestMethod.GET)
   public StopCodeResponse stopCodes() {
-    List<StopCodeEntity> entities =
-        entityManager.createNamedQuery("allStopCodes", StopCodeEntity.class).getResultList();
-
-    for (StopCodeEntity e : entities) {
-      log.info(e.toString());
-    }
-
-    List<StopCodeResponse.StopCode> stopCodes = new ArrayList<>();
-    for (StopCodeEntity entity : entities) {
-      StopCodeEntity.StopCodeRow row = entity.row();
-      if (row == null) {
-        continue;
-      }
-      stopCodes.add(
-          StopCodeResponse.StopCode.builder()
-              .divisionFcdmd(row.divisionFcdmd())
-              .cocClassification(row.cocClassification())
-              .sta6a(row.sta6a())
-              .primaryStopCode(row.primaryStopCode())
-              .primaryStopCodeName(row.primaryStopCodeName())
-              .numberOfAppointmentsLinkedToConsult(row.numberOfAppointmentsLinkedToConsult())
-              .numberOfLocations(row.numberOfLocations())
-              .avgWaitTimeNew(row.avgWaitTimeNew())
-              .build());
-    }
+    List<StopCode> stopCodes =
+        jdbc.query(
+            "SELECT * FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 100)",
+            (RowMapper<StopCodeResponse.StopCode>)
+                (resultSet, rowNum) ->
+                    StopCodeResponse.StopCode.builder()
+                        .divisionFcdmd(resultSet.getString("DIVISION_FCDMD"))
+                        .cocClassification(resultSet.getString("CocClassification"))
+                        .sta6a(resultSet.getString("Sta6a"))
+                        .primaryStopCode(resultSet.getString("PrimaryStopCode"))
+                        .primaryStopCodeName(resultSet.getString("PrimaryStopCodeName"))
+                        .numberOfAppointmentsLinkedToConsult(
+                            resultSet.getString("NumberOfAppointmentsLinkedToConsult"))
+                        .numberOfLocations(resultSet.getString("NumberOfLocations"))
+                        .avgWaitTimeNew(resultSet.getString("AvgWaitTimeNew"))
+                        .build());
     return StopCodeResponse.builder().stopCodes(stopCodes).build();
   }
 }
