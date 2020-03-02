@@ -43,7 +43,7 @@
                 <configuration>
                   <images>
                     <image>
-                      <name>${docker.organization}/lighthouse-facilities-cdw-tests</name>
+                      <name>${docker.organization}/health-apis-facilities-cdw-tests</name>
                       <build>
                         <dockerFile>Dockerfile</dockerFile>
                         <tags>
@@ -64,7 +64,7 @@
                 <configuration>
                   <images>
                     <image>
-                      <name>${docker.organization}/lighthouse-facilities-cdw-tests</name>
+                      <name>${docker.organization}/health-apis-facilities-cdw-tests</name>
                       <build>
                         <dockerFile>Dockerfile</dockerFile>
                         <tags>
