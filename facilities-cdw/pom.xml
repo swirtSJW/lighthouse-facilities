@@ -23,10 +23,10 @@
       <groupId>gov.va.api.health</groupId>
       <artifactId>service-auto-config</artifactId>
     </dependency>
-    <!-- <dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
-    </dependency> -->
+    </dependency>
   </dependencies>
   <profiles>
     <profile>
