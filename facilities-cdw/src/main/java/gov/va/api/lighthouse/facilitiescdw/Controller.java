@@ -62,7 +62,9 @@ public class Controller {
   public StopCodeResponse stopCodes() {
     List<StopCode> stopCodes =
         jdbc.query(
-            "SELECT * FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 100)",
+            "SELECT DIVISION_FCDMD, CocClassification, Sta6a, PrimaryStopCode, PrimaryStopCodeName,"
+                + " NumberOfAppointmentsLinkedToConsult, NumberOfLocations, AvgWaitTimeNew"
+                + " FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 99999)",
             (RowMapper<StopCodeResponse.StopCode>)
                 (resultSet, rowNum) ->
                     StopCodeResponse.StopCode.builder()
