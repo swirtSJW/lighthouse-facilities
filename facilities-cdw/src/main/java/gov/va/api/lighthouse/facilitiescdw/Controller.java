@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
   private final JdbcTemplate jdbc;
 
+  private final MentalHealthContactRepository mentalHealthContactRepository;
+
   private static <T> T checkNotNull(T maybe) {
     if (maybe == null) {
       throw new IllegalStateException("Expected non-null value");
@@ -31,38 +33,35 @@ public class Controller {
     return maybe;
   }
 
+  /** Retrieve mental-health contacts. */
   @RequestMapping(
       value = "/mental-health-contact",
       produces = {
-        "text/plain" // "application/json",
+        "application/json",
       },
       method = RequestMethod.GET)
-  public ResponseEntity<String> mentalHealth() {
-    return ResponseEntity.ok().body(mentalHealthContactInfo());
-  }
-
-  @SneakyThrows
-  private String mentalHealthContactInfo() {
-    List<String> results = new ArrayList<>();
-    try (Connection connection = checkNotNull(jdbc.getDataSource()).getConnection()) {
-      try (PreparedStatement statement =
-          connection.prepareStatement("SELECT * FROM App.VHA_Mental_Health_Contact_Info")) {
-        // statement.setString(1, icn);
-        try (ResultSet resultSet = statement.executeQuery()) {
-          ResultSetMetaData rsmd = resultSet.getMetaData();
-          int columnCount = rsmd.getColumnCount();
-          while (resultSet.next()) {
-            List<String> values = new ArrayList<>(columnCount);
-            for (int i = 1; i <= columnCount; i++) {
-              values.add(rsmd.getColumnName(i) + ":" + resultSet.getString(i));
-            }
-            results.add(values.stream().collect(Collectors.joining(" ")));
-          }
-        }
-      }
-      return "SELECT * FROM App.VHA_Mental_Health_Contact_Info\n"
-          + results.stream().collect(Collectors.joining("\n"));
+  public MentalHealthContactResponse mentalHealth() {
+    List<MentalHealthContactResponse.Contact> contacts = new ArrayList<>();
+    for (MentalHealthContactEntity entity : mentalHealthContactRepository.findAll()) {
+      contacts.add(
+          MentalHealthContactResponse.Contact.builder()
+              .id(entity.id())
+              .region(entity.region())
+              .visn(entity.visn())
+              .adminParent(entity.adminParent())
+              .stationNumber(entity.stationNumber())
+              .mhClinicPhone(entity.mhClinicPhone())
+              .mhPhone(entity.mhPhone())
+              .extension(entity.extension())
+              .officialStationName(entity.officialStationName())
+              .email(entity.email())
+              .status(entity.status())
+              .modified(entity.modified())
+              .created(entity.created())
+              .addedToOutbox(entity.addedToOutbox())
+              .build());
     }
+    return MentalHealthContactResponse.builder().contacts(contacts).build();
   }
 
   /** Query stop code wait times. */
@@ -101,31 +100,3 @@ public class Controller {
     return ResponseEntity.ok().body(stopCodeWaitTimes());
   }
 }
-
-// "{? = call getDob(?)}"
-// SELECT * FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 100)
-// OIT_Lighthouse2.App.VHA_Mental_Health_Contact_Info
-// return "{call [" + schema + "].[" + storedProcedure + "](?,?,?,?,?,?,?)}";
-// private final String schema;
-// private final String storedProcedure;
-// public SqlResourceRepository(
-// JdbcTemplate jdbc
-// //  @Value("${cdw.schema:App}") String schema,
-// //  @Value("${cdw.stored-procedure:prc_Entity_Return}") String storedProcedure
-// ) {
-// this.jdbc = jdbc;
-// // this.schema = Checks.argumentMatches(schema, "[A-Za-z0-9_]+");
-// //  this.storedProcedure = storedProcedure;
-// }
-// try (CallableStatement cs =
-// connection.prepareCall("{call [app].[VHA_Stop_Code_Wait_Times_Paginated](?,?)}"))
-// {
-// cs.closeOnCompletion();
-// cs.setObject(1, 1, Types.TINYINT);
-// cs.setObject(2, 100, Types.TINYINT);
-// // cs.registerOutParameter(Index.RESPONSE_XML, Types.);
-// int result = cs.executeUpdate();
-// System.out.println("result: " + result);
-// // Clob clob = (Clob) cs.getObject(Index.RESPONSE_XML);
-// // return clob.getSubString(1, (int) clob.length());
-// }
