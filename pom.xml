@@ -7,7 +7,7 @@
     <version>6.0.2</version>
   </parent>
   <artifactId>facilities-cdw-modules</artifactId>
-  <version>0.0.6-SNAPSHOT</version>
+  <version>0.0.6</version>
   <packaging>pom</packaging>
   <modules>
     <module>facilities-cdw</module>
