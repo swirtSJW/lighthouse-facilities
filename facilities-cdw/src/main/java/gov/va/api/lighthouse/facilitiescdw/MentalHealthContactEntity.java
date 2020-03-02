@@ -48,8 +48,8 @@ public class MentalHealthContactEntity {
   @Column(name = "OfficialStationName", nullable = true)
   private String officialStationName;
 
-  @Column(name = "Email", nullable = true)
-  private String email;
+  @Column(name = "POC Email", nullable = true)
+  private String pocEmail;
 
   @Column(name = "Status", nullable = true)
   private String status;

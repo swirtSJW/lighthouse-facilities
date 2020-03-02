@@ -54,7 +54,7 @@ public class Controller {
               .mhPhone(entity.mhPhone())
               .extension(entity.extension())
               .officialStationName(entity.officialStationName())
-              .email(entity.email())
+              .pocEmail(entity.pocEmail())
               .status(entity.status())
               .modified(entity.modified())
               .created(entity.created())
@@ -79,7 +79,7 @@ public class Controller {
           while (resultSet.next()) {
             List<String> values = new ArrayList<>(columnCount);
             for (int i = 1; i <= columnCount; i++) {
-              values.add(rsmd.getColumnName(i) + ":" + resultSet.getString(i));
+              values.add("'" + rsmd.getColumnName(i) + "'" + ":" + resultSet.getString(i));
             }
             results.add(values.stream().collect(Collectors.joining(" ")));
           }

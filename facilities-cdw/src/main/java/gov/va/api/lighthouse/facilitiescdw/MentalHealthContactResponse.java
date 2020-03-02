@@ -51,7 +51,7 @@ public final class MentalHealthContactResponse {
 
     String officialStationName;
 
-    String email;
+    String pocEmail;
 
     String status;
 
