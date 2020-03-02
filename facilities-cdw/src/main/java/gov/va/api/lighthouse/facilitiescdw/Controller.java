@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @Validated
 @RestController
-@RequestMapping(value = {"/", "/api"})
+@RequestMapping(value = "/")
 @AllArgsConstructor(onConstructor = @__({@Autowired}))
 public class Controller {
   private final EntityManager entityManager;
@@ -61,9 +63,16 @@ public class Controller {
     List<StopCodeEntity> entities =
         entityManager.createNamedQuery("allStopCodes", StopCodeEntity.class).getResultList();
 
+    for (StopCodeEntity e : entities) {
+      log.info(e.toString());
+    }
+
     List<StopCodeResponse.StopCode> stopCodes = new ArrayList<>();
     for (StopCodeEntity entity : entities) {
       StopCodeEntity.StopCodeRow row = entity.row();
+      if (row == null) {
+        continue;
+      }
       stopCodes.add(
           StopCodeResponse.StopCode.builder()
               .divisionFcdmd(row.divisionFcdmd())
