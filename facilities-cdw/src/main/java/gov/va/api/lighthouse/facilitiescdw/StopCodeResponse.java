@@ -15,40 +15,28 @@ import lombok.Value;
     fieldVisibility = JsonAutoDetect.Visibility.ANY,
     isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 // @Schema(example = "SWAGGER_EXAMPLE_COMMUNITY_CARE_ELIGIBILITY_RESPONSE")
-public final class MentalHealthContactResponse {
-  @Builder.Default List<Contact> contacts = new ArrayList<>();
+public final class StopCodeResponse {
+  @Builder.Default List<StopCode> stopCodes = new ArrayList<>();
 
   @Value
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  public static final class Contact {
-    String id;
+  public static final class StopCode {
+    String divisionFcdmd;
 
-    String region;
+    String cocClassification;
 
-    String visn;
+    String sta6a;
 
-    String adminParent;
+    String primaryStopCode;
 
-    String stationNumber;
+    String primaryStopCodeName;
 
-    String mhClinicPhone;
+    String numberOfAppointmentsLinkedToConsult;
 
-    String mhPhone;
+    String numberOfLocations;
 
-    String extension;
-
-    String officialStationName;
-
-    String pocEmail;
-
-    String status;
-
-    String modified;
-
-    String created;
-
-    String addedToOutbox;
+    String avgWaitTimeNew;
   }
 }

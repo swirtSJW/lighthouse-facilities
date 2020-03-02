@@ -62,8 +62,8 @@ smokeTest() {
   path="/mental-health-contact"
   doCurl 200
 
-  #path="/stop-code"
-  #doCurl 200
+  path="/stop-code"
+  doCurl 200
 
   printResults
 }
@@ -81,8 +81,8 @@ regressionTest() {
   path="/mental-health-contact"
   doCurl 200
 
-  #path="/stop-code"
-  #doCurl 200
+  path="/stop-code"
+  doCurl 200
 
   printResults
 }
