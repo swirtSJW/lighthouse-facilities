@@ -15,23 +15,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @RequestMapping(produces = {"application/json", "application/xml"})
 public final class WebExceptionHandler {
-  //  @ExceptionHandler({
-  //    MissingSearchParameters.class,
-  //    javax.validation.ConstraintViolationException.class
-  //  })
-  //  @ResponseStatus(HttpStatus.BAD_REQUEST)
-  //  public ErrorResponse handleBadRequest(Exception e) {
-  //    return responseFor(e);
-  //  }
-  //
-  //  @ExceptionHandler({UnknownResource.class, UnknownIdentityInSearchParameter.class})
-  //  @ResponseStatus(HttpStatus.NOT_FOUND)
-  //  public ErrorResponse handleNotFound(Exception e) {
-  //    return responseFor(e);
-  //  }
-
-  // SQLException
-
   @ExceptionHandler({Exception.class})
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponse handleSnafu(Exception e) {

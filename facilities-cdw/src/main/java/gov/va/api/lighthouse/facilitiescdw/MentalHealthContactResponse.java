@@ -14,7 +14,6 @@ import lombok.Value;
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.ANY,
     isGetterVisibility = JsonAutoDetect.Visibility.NONE)
-// @Schema(example = "SWAGGER_EXAMPLE_COMMUNITY_CARE_ELIGIBILITY_RESPONSE")
 public final class MentalHealthContactResponse {
   @Builder.Default List<Contact> contacts = new ArrayList<>();
 
