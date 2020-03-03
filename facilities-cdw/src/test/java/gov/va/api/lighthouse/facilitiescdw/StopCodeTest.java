@@ -1,54 +1,69 @@
 package gov.va.api.lighthouse.facilitiescdw;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import javax.sql.DataSource;
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(PowerMockRunner.class)
-public final class StopCodeTest {
-  @Test
+@DataJpaTest
+@RunWith(SpringRunner.class)
+public class StopCodeTest {
+  @Autowired private JdbcTemplate template;
+
   @SneakyThrows
-  @PrepareForTest(DataSourceUtils.class)
+  @SuppressWarnings("unused")
+  public static ResultSet stopCodeWaitTimesPaginated(Connection conn, int page, int count) {
+    return conn.prepareStatement("SELECT * FROM APP.VHA_Stop_Code_Wait_Times").executeQuery();
+  }
+
+  @Test
   public void stopCodes() {
-    AtomicInteger resultSetTimes = new AtomicInteger(0);
-    ResultSet resultSet = mock(ResultSet.class);
-    when(resultSet.getString("DIVISION_FCDMD")).thenReturn("(503GA) Melbourne, FL");
-    when(resultSet.getString("CocClassification")).thenReturn("Primary Care CBOC");
-    when(resultSet.getString("Sta6a")).thenReturn("402GA");
-    when(resultSet.getString("PrimaryStopCode")).thenReturn("123");
-    when(resultSet.getString("PrimaryStopCodeName")).thenReturn("PRIMARY CARE/MEDICINE");
-    when(resultSet.getString("NumberOfAppointmentsLinkedToConsult")).thenReturn("99");
-    when(resultSet.getString("NumberOfLocations")).thenReturn("3");
-    when(resultSet.getString("AvgWaitTimeNew")).thenReturn("14.15");
-    when(resultSet.next()).thenAnswer((inv) -> resultSetTimes.incrementAndGet() == 1);
+    template.execute(
+        "CREATE TABLE App.VHA_Stop_Code_Wait_Times ("
+            + "DIVISION_FCDMD VARCHAR,"
+            + "CocClassification VARCHAR,"
+            + "Sta6a VARCHAR,"
+            + "PrimaryStopCode VARCHAR,"
+            + "PrimaryStopCodeName VARCHAR,"
+            + "NumberOfAppointmentsLinkedToConsult VARCHAR,"
+            + "NumberOfLocations VARCHAR,"
+            + "AvgWaitTimeNew VARCHAR"
+            + ")");
 
-    Statement statement = mock(Statement.class);
-    when(statement.executeQuery(any(String.class))).thenReturn(resultSet);
+    template.execute(
+        "INSERT INTO App.VHA_Stop_Code_Wait_Times ("
+            + "DIVISION_FCDMD,"
+            + "CocClassification,"
+            + "Sta6a,"
+            + "PrimaryStopCode,"
+            + "PrimaryStopCodeName,"
+            + "NumberOfAppointmentsLinkedToConsult,"
+            + "NumberOfLocations,"
+            + "AvgWaitTimeNew"
+            + ") VALUES ("
+            + "'(503GA) Melbourne, FL',"
+            + "'Primary Care CBOC',"
+            + "'402GA',"
+            + "'123',"
+            + "'PRIMARY CARE/MEDICINE',"
+            + "'99',"
+            + "'3',"
+            + "'14.15'"
+            + ")");
 
-    Connection connection = mock(Connection.class);
-    when(connection.createStatement()).thenReturn(statement);
+    template.execute(
+        "CREATE ALIAS App.VHA_Stop_Code_Wait_Times_Paginated FOR"
+            + " \"gov.va.api.lighthouse.facilitiescdw.StopCodeTest.stopCodeWaitTimesPaginated\"");
 
-    DataSource dataSource = mock(DataSource.class);
-    mockStatic(DataSourceUtils.class);
-    when(DataSourceUtils.getConnection(dataSource)).thenReturn(connection);
-
-    assertThat(new Controller(null, new JdbcTemplate(dataSource)).stopCodes())
+    assertThat(new Controller(null, template).stopCodes())
         .isEqualTo(
             StopCodeResponse.builder()
                 .stopCodes(
