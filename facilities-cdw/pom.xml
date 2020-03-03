@@ -8,12 +8,10 @@
     <relativePath/>
   </parent>
   <artifactId>facilities-cdw</artifactId>
-  <version>0.0.16-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
-    <powermock-api-mockito2.version>2.0.5</powermock-api-mockito2.version>
-    <powermock-module-junit4.version>2.0.2</powermock-module-junit4.version>
   </properties>
   <dependencies>
     <dependency>
