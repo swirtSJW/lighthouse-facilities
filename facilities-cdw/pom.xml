@@ -7,10 +7,12 @@
     <version>6.0.3</version>
     <relativePath/>
   </parent>
+  <groupId>gov.va.api.lighthouse</groupId>
   <artifactId>facilities-cdw</artifactId>
   <version>1.0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
+    <docker.imageName>lighthouse-facilities-cdw</docker.imageName>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
   </properties>
   <dependencies>
@@ -43,7 +45,7 @@
                 <configuration>
                   <images>
                     <image>
-                      <name>${docker.organization}/health-apis-facilities-cdw-tests</name>
+                      <name>${docker.organization}/lighthouse-facilities-cdw-tests</name>
                       <build>
                         <dockerFile>Dockerfile</dockerFile>
                         <tags>
@@ -64,7 +66,7 @@
                 <configuration>
                   <images>
                     <image>
-                      <name>${docker.organization}/health-apis-facilities-cdw-tests</name>
+                      <name>${docker.organization}/lighthouse-facilities-cdw-tests</name>
                       <build>
                         <dockerFile>Dockerfile</dockerFile>
                         <tags>
