@@ -1,0 +1,10 @@
+{
+  "DIVISION_FCDMD" : "(5V21) (358) Manila, PH",
+  "CocClassification" : "Other Outpatient Services (OOS)",
+  "Sta6a" : "358",
+  "PrimaryStopCode" : "303",
+  "PrimaryStopCodeName" : "CARDIOLOGY",
+  "NumberOfAppointmentsLinkedToConsult" : "109",
+  "NumberOfLocations" : "1",
+  "AvgWaitTimeNew" : "15.600000"
+}

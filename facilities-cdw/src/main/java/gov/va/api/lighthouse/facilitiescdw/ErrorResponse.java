@@ -2,9 +2,6 @@ package gov.va.api.lighthouse.facilitiescdw;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.Instant;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,8 +13,6 @@ import lombok.NonNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@XmlRootElement(name = "error")
-@XmlAccessorType(XmlAccessType.FIELD)
 @JsonDeserialize(builder = ErrorResponse.ErrorResponseBuilder.class)
 public final class ErrorResponse {
   long timestamp;

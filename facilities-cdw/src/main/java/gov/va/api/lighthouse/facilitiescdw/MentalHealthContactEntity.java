@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Builder
-@Table(name = "VHA_Mental_Health_Contact_Info", schema = "App")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Table(name = "VHA_Mental_Health_Contact_Info", schema = "App")
 public class MentalHealthContactEntity {
   @Id
   @Column(name = "ID")
@@ -25,25 +25,25 @@ public class MentalHealthContactEntity {
   private String id;
 
   @Column(name = "Region", nullable = true)
-  private String region;
+  private Double region;
 
   @Column(name = "VISN", nullable = true)
   private String visn;
 
   @Column(name = "AdminParent", nullable = true)
-  private String adminParent;
+  private Double adminParent;
 
   @Column(name = "StationNumber", nullable = true)
   private String stationNumber;
 
   @Column(name = "MHClinicPhone", nullable = true)
-  private String mhClinicPhone;
+  private Double mhClinicPhone;
 
   @Column(name = "MHPhone", nullable = true)
   private String mhPhone;
 
   @Column(name = "Extension", nullable = true)
-  private String extension;
+  private Double extension;
 
   @Column(name = "OfficialStationName", nullable = true)
   private String officialStationName;

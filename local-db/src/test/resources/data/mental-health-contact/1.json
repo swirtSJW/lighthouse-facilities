@@ -1,0 +1,16 @@
+{
+  "ID" : "29",
+  "Region" : "1",
+  "VISN" : "V04",
+  "AdminParent" : "529",
+  "StationNumber" : "529",
+  "MHClinicPhone" : "8003628262",
+  "MHPhone" : "800-362-8262",
+  "Extension" : null,
+  "OfficialStationName" : "Butler VA Medical Center",
+  "POC Email" : "bob.nelson@va.gov",
+  "Status" : "UPDATED",
+  "Modified" : "2019-08-27 00:30:47.0",
+  "Created" : "2016-10-13 15:23:40.0",
+  "AddedToOutbox" : "2019-09-06 13:00:27.543"
+}

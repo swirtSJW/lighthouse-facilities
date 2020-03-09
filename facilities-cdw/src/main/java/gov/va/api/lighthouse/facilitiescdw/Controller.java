@@ -1,6 +1,6 @@
 package gov.va.api.lighthouse.facilitiescdw;
 
-import gov.va.api.lighthouse.facilitiescdw.StopCodeResponse.StopCode;
+import gov.va.api.health.autoconfig.logging.Loggable;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+@Loggable
 @Validated
 @RestController
 @RequestMapping(value = "/")
@@ -20,6 +21,10 @@ public class Controller {
   private final MentalHealthContactRepository mentalHealthContactRepository;
 
   private final JdbcTemplate jdbc;
+
+  private static String toLongAsString(Double num) {
+    return num == null ? null : Long.toString(num.longValue());
+  }
 
   /** Retrieve mental-health contacts. */
   @RequestMapping(
@@ -34,13 +39,12 @@ public class Controller {
       contacts.add(
           MentalHealthContactResponse.Contact.builder()
               .id(entity.id())
-              .region(entity.region())
+              .region(toLongAsString(entity.region()))
               .visn(entity.visn())
-              .adminParent(entity.adminParent())
+              .adminParent(toLongAsString(entity.adminParent()))
               .stationNumber(entity.stationNumber())
-              .mhClinicPhone(entity.mhClinicPhone())
               .mhPhone(entity.mhPhone())
-              .extension(entity.extension())
+              .extension(toLongAsString(entity.extension()))
               .officialStationName(entity.officialStationName())
               .pocEmail(entity.pocEmail())
               .status(entity.status())
@@ -60,7 +64,7 @@ public class Controller {
       },
       method = RequestMethod.GET)
   public StopCodeResponse stopCodes() {
-    List<StopCode> stopCodes =
+    List<StopCodeResponse.StopCode> stopCodes =
         jdbc.query(
             "SELECT DIVISION_FCDMD, CocClassification, Sta6a, PrimaryStopCode, PrimaryStopCodeName,"
                 + " NumberOfAppointmentsLinkedToConsult, NumberOfLocations, AvgWaitTimeNew"

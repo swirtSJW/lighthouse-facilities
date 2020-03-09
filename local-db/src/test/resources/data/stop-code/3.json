@@ -1,0 +1,10 @@
+{
+  "DIVISION_FCDMD" : "(5V21) (358) Manila, PH",
+  "CocClassification" : "Other Outpatient Services (OOS)",
+  "Sta6a" : "753",
+  "PrimaryStopCode" : "304",
+  "PrimaryStopCodeName" : "DERMATOLOGY",
+  "NumberOfAppointmentsLinkedToConsult" : "73",
+  "NumberOfLocations" : "1",
+  "AvgWaitTimeNew" : "41.700000"
+}

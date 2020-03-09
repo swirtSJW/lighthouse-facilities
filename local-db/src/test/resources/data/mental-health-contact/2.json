@@ -1,0 +1,16 @@
+{
+  "ID" : "33",
+  "Region" : "4",
+  "VISN" : "V19",
+  "AdminParent" : "660",
+  "StationNumber" : "660",
+  "MHClinicPhone" : "8015841217",
+  "MHPhone" : "801-584-1217",
+  "Extension" : 2321,
+  "OfficialStationName" : "George E. Wahlen Department of Veterans Affairs Medical Center",
+  "POC Email" : "bob.nelson@va.gov",
+  "Status" : "UPDATED",
+  "Modified" : "2019-08-31 20:00:23.0",
+  "Created" : "2016-10-13 18:01:57.0",
+  "AddedToOutbox" : "2019-09-06 13:00:27.543"
+}
