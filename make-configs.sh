@@ -34,9 +34,9 @@ checkForUnsetValues() {
   [ $? == 0 ] && rm -v $target.$MARKER
 }
 
-makeConfig facilities-cdw $PROFILE
-configValue facilities-cdw $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
-configValue facilities-cdw $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
-configValue facilities-cdw $PROFILE spring.datasource.username 'SA'
+makeConfig facilities-collector $PROFILE
+configValue facilities-collector $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
+configValue facilities-collector $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
+configValue facilities-collector $PROFILE spring.datasource.username 'SA'
 
-checkForUnsetValues facilities-cdw $PROFILE
+checkForUnsetValues facilities-collector $PROFILE

@@ -41,7 +41,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>gov.va.api.lighthouse.facilitiescdw.Populaterator</mainClass>
+                  <mainClass>gov.va.api.lighthouse.facilitiescollector.Populaterator</mainClass>
                   <classpathScope>test</classpathScope>
                 </configuration>
               </execution>

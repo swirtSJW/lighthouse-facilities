@@ -7,10 +7,10 @@
     <version>6.0.3</version>
   </parent>
   <groupId>gov.va.api.lighthouse</groupId>
-  <artifactId>facilities-cdw-modules</artifactId>
+  <artifactId>facilities-parent</artifactId>
   <version>1.0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>facilities-cdw</module>
+    <module>facilities-collector</module>
   </modules>
 </project>
