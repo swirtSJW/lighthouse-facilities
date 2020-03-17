@@ -237,7 +237,7 @@ public class Facility {
     HealthService service;
 
     /**
-     * The average number of days a Veteran who hasn’t been to this location has to wait for a
+     * The average number of days a Veteran who hasn???t been to this location has to wait for a
      * non-urgent appointment.
      */
     @JsonProperty("new")
