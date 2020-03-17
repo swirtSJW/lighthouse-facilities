@@ -1,0 +1,1193 @@
+{
+    "facilities" : [
+        {
+            "id" : "vc_0101V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Boston Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 42.3445959000001,
+                "long" : -71.0361051099999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "02210",
+                        "city" : "Boston",
+                        "state" : "MA",
+                        "address_1" : "7 Drydock Avenue",
+                        "address_2" : "Suite 2070",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "857-203-6461"
+                },
+                "hours" : {
+                    "monday" : "830AM-700PM",
+                    "tuesday" : "830AM-700PM",
+                    "wednesday" : "830AM-600PM",
+                    "thursday" : "830AM-600PM",
+                    "friday" : "830AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0102V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Secaucus Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.78920056,
+                "long" : -74.07387396,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "07094",
+                        "city" : "Secaucus",
+                        "state" : "NJ",
+                        "address_1" : "110A Meadowlands Parkway",
+                        "address_2" : "Suite 102",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "201-223-7787"
+                },
+                "hours" : {
+                    "monday" : "700AM-830PM",
+                    "tuesday" : "700AM-830PM",
+                    "wednesday" : "700AM-800PM",
+                    "thursday" : "700AM-530PM",
+                    "friday" : "700AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0103V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Springfield Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 42.1390340900001,
+                "long" : -72.62448048,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "01089",
+                        "city" : "West Springfield",
+                        "state" : "MA",
+                        "address_1" : "95A Ashley Avenue",
+                        "address_2" : "Suite A",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "413-737-5167"
+                },
+                "hours" : {
+                    "monday" : "700AM-530PM",
+                    "tuesday" : "700AM-830PM",
+                    "wednesday" : "700AM-600PM",
+                    "thursday" : "800AM-830PM",
+                    "friday" : "700AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0104V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Brockton Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 42.0530425100001,
+                "long" : -71.06686558,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "02301",
+                        "city" : "Brockton",
+                        "state" : "MA",
+                        "address_1" : "1041L Pearl Street",
+                        "address_2" : "Suite L",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "508-580-2730"
+                },
+                "hours" : {
+                    "monday" : "800AM-800PM",
+                    "tuesday" : "800AM-800PM",
+                    "wednesday" : "800AM-800PM",
+                    "thursday" : "800AM-800PM",
+                    "friday" : "800AM-530PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0105V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Brooklyn Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.6972586000001,
+                "long" : -73.98586968,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "11201",
+                        "city" : "Brooklyn",
+                        "state" : "NY",
+                        "address_1" : "25 Chapel Street",
+                        "address_2" : "Suite 604",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "718-630-2830"
+                },
+                "hours" : {
+                    "monday" : "830AM-700PM",
+                    "tuesday" : "830AM-500PM",
+                    "wednesday" : "830AM-700PM",
+                    "thursday" : "830AM-800PM",
+                    "friday" : "830AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0106V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Manhattan Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.70596048,
+                "long" : -74.0131361799999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "10004",
+                        "city" : "New York",
+                        "state" : "NY",
+                        "address_1" : "32 Broadway",
+                        "address_2" : "2nd Floor, Suite 200",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "212-951-6866"
+                },
+                "hours" : {
+                    "monday" : "900AM-500PM",
+                    "tuesday" : "800AM-400PM",
+                    "wednesday" : "800AM-400PM",
+                    "thursday" : "800AM-400PM",
+                    "friday" : "800AM-400PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0107V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Buffalo Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 43.0233490000001,
+                "long" : -78.79903,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "14228",
+                        "city" : "Amherst",
+                        "state" : "NY",
+                        "address_1" : "2372 Sweet Home Road",
+                        "address_2" : "Suite 1",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "716-862-7350"
+                },
+                "hours" : {
+                    "monday" : "800AM-830PM",
+                    "tuesday" : "800AM-730PM",
+                    "wednesday" : "800AM-900PM",
+                    "thursday" : "800AM-900PM",
+                    "friday" : "700AM-630PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0108V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Manchester Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 43.0703178900001,
+                "long" : -71.4502126099999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "03106",
+                        "city" : "Hooksett",
+                        "state" : "NH",
+                        "address_1" : "1461 Hooksett Road",
+                        "address_2" : "Suite B7",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "603-668-7060"
+                },
+                "hours" : {
+                    "monday" : "800AM-830PM",
+                    "tuesday" : "800AM-730PM",
+                    "wednesday" : "800AM-730PM",
+                    "thursday" : "800AM-730PM",
+                    "friday" : "800AM-530PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0109V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Queens Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.6859086800001,
+                "long" : -73.86505061,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "11421",
+                        "city" : "Woodhaven",
+                        "state" : "NY",
+                        "address_1" : "75-10B 91 Avenue",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "718-296-2871"
+                },
+                "hours" : {
+                    "monday" : "800AM-730PM",
+                    "tuesday" : "800AM-500PM",
+                    "wednesday" : "800AM-500PM",
+                    "thursday" : "800AM-730PM",
+                    "friday" : "800AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0110V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Bronx Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.8626606600001,
+                "long" : -73.89974606,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "10468",
+                        "city" : "Bronx",
+                        "state" : "NY",
+                        "address_1" : "2471 Morris Avenue",
+                        "address_2" : "Suite 1A",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "718-367-3500"
+                },
+                "hours" : {
+                    "monday" : "800AM-430PM",
+                    "tuesday" : "800AM-430PM",
+                    "wednesday" : "800AM-430PM",
+                    "thursday" : "800AM-430PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "800AM-430PM",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0111V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Albany Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 42.72148414,
+                "long" : -73.80649521,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "12205",
+                        "city" : "Albany",
+                        "state" : "NY",
+                        "address_1" : "17 Computer Drive West",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "518-626-5130"
+                },
+                "hours" : {
+                    "monday" : "830AM-730PM",
+                    "tuesday" : "830AM-830PM",
+                    "wednesday" : "830AM-830PM",
+                    "thursday" : "800AM-500PM",
+                    "friday" : "830AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0112V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Bloomfield Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.7938440500001,
+                "long" : -74.19762152,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "07003",
+                        "city" : "Bloomfield",
+                        "state" : "NJ",
+                        "address_1" : "2 Broad Street",
+                        "address_2" : "Suite 703",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "973-748-0980"
+                },
+                "hours" : {
+                    "monday" : "730AM-830PM",
+                    "tuesday" : "700AM-430PM",
+                    "wednesday" : "700AM-430PM",
+                    "thursday" : "700AM-830PM",
+                    "friday" : "700AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0113V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Providence Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 41.7209475400001,
+                "long" : -71.4038295299999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "02889",
+                        "city" : "Warwick",
+                        "state" : "RI",
+                        "address_1" : "2038 Warwick Avenue",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "401-739-0167"
+                },
+                "hours" : {
+                    "monday" : "800AM-830PM",
+                    "tuesday" : "700AM-830PM",
+                    "wednesday" : "700AM-830PM",
+                    "thursday" : "700AM-830PM",
+                    "friday" : "700AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0114V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Trenton Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.2552181900001,
+                "long" : -74.7923927099999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "08618",
+                        "city" : "Ewing",
+                        "state" : "NJ",
+                        "address_1" : "934 Parkway Avenue",
+                        "address_2" : "Suite 201",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "609-882-5744"
+                },
+                "hours" : {
+                    "monday" : "800AM-830PM",
+                    "tuesday" : "800AM-700PM",
+                    "wednesday" : "800AM-830PM",
+                    "thursday" : "800AM-700PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0115V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Portland Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 43.6748895600001,
+                "long" : -70.29503582,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "04103",
+                        "city" : "Portland",
+                        "state" : "ME",
+                        "address_1" : "475 Stevens Avenue",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "207-780-3584"
+                },
+                "hours" : {
+                    "monday" : "800AM-500PM",
+                    "tuesday" : "800AM-430PM",
+                    "wednesday" : "800AM-630PM",
+                    "thursday" : "800AM-630PM",
+                    "friday" : "800AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0116V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "New Haven Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 41.2621764800001,
+                "long" : -73.0056406699999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "06477",
+                        "city" : "Orange",
+                        "state" : "CT",
+                        "address_1" : "291 South Lambert Road",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "203-795-0148"
+                },
+                "hours" : {
+                    "monday" : "800AM-600PM",
+                    "tuesday" : "800AM-630PM",
+                    "wednesday" : "800AM-630PM",
+                    "thursday" : "800AM-530PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0117V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Hartford Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 41.6648122600001,
+                "long" : -72.64049506,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "06067",
+                        "city" : "Rocky Hill",
+                        "state" : "CT",
+                        "address_1" : "25 Elm Street",
+                        "address_2" : "Suite A",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "860-563-8800"
+                },
+                "hours" : {
+                    "monday" : "800AM-630PM",
+                    "tuesday" : "730AM-630PM",
+                    "wednesday" : "800AM-630PM",
+                    "thursday" : "730AM-630PM",
+                    "friday" : "730AM-530PM",
+                    "saturday" : "700AM-330PM",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0118V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "South Burlington Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 44.4547703200001,
+                "long" : -73.1404463,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "05403",
+                        "city" : "South Burlington",
+                        "state" : "VT",
+                        "address_1" : "19 Gregory Dr.",
+                        "address_2" : "Suite 201",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "802-862-1806"
+                },
+                "hours" : {
+                    "monday" : "800AM-700PM",
+                    "tuesday" : "800AM-700PM",
+                    "wednesday" : "800AM-700PM",
+                    "thursday" : "800AM-700PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0119V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Northern Maine Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 46.84455152,
+                "long" : -68.04996378,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "04736",
+                        "city" : "Caribou",
+                        "state" : "ME",
+                        "address_1" : "456 York Street",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "207-496-3900"
+                },
+                "hours" : {
+                    "monday" : "830AM-600PM",
+                    "tuesday" : "830AM-600PM",
+                    "wednesday" : "830AM-600PM",
+                    "thursday" : "830AM-600PM",
+                    "friday" : "830AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0120V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Babylon Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 40.6960441100001,
+                "long" : -73.32491182,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "11702",
+                        "city" : "Babylon",
+                        "state" : "NY",
+                        "address_1" : "100 West Main Street",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "631-661-3930"
+                },
+                "hours" : {
+                    "monday" : "830AM-800PM",
+                    "tuesday" : "830AM-730PM",
+                    "wednesday" : "830AM-730PM",
+                    "thursday" : "830AM-730PM",
+                    "friday" : "830AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0121V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Bangor Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 44.8035110000001,
+                "long" : -68.7722219999999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "04401",
+                        "city" : "Bangor",
+                        "state" : "ME",
+                        "address_1" : "615 Oldin Road",
+                        "address_2" : "Suite 3",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "207-947-3391"
+                },
+                "hours" : {
+                    "monday" : "800AM-700PM",
+                    "tuesday" : "800AM-700PM",
+                    "wednesday" : "800AM-700PM",
+                    "thursday" : "800AM-700PM",
+                    "friday" : "800AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0122V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "White River Junction Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 43.6515751200001,
+                "long" : -72.3151712499999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "05001",
+                        "city" : "White River Junction",
+                        "state" : "VT",
+                        "address_1" : "118 Prospect Street, Suite 100",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "802-295-2908"
+                },
+                "hours" : {
+                    "monday" : "800AM-530PM",
+                    "tuesday" : "800AM-530PM",
+                    "wednesday" : "800AM-430PM",
+                    "thursday" : "800AM-500PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0123V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "White Plains Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 41.033937,
+                "long" : -73.76802094,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "10601",
+                        "city" : "White Plains",
+                        "state" : "NY",
+                        "address_1" : "300 Hamilton Avenue",
+                        "address_2" : "1st Floor, Suite C",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "914-682-6250"
+                },
+                "hours" : {
+                    "monday" : "800AM-800PM",
+                    "tuesday" : "800AM-800PM",
+                    "wednesday" : "800AM-800PM",
+                    "thursday" : "800AM-430PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0124V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Rochester Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 43.1062617900001,
+                "long" : -77.57662149,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "14618",
+                        "city" : "Rochester",
+                        "state" : "NY",
+                        "address_1" : "2000 South Winton Road",
+                        "address_2" : "Building 5, Suite 201",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "585-393-7608"
+                },
+                "hours" : {
+                    "monday" : "800AM-830PM",
+                    "tuesday" : "800AM-500PM",
+                    "wednesday" : "800AM-830PM",
+                    "thursday" : "800AM-500PM",
+                    "friday" : "730AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0125V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Lowell Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 42.6422872900001,
+                "long" : -71.30618294,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "01852",
+                        "city" : "Lowell",
+                        "state" : "MA",
+                        "address_1" : "10 George Street",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "978-453-1151"
+                },
+                "hours" : {
+                    "monday" : "800AM-600PM",
+                    "tuesday" : "800AM-730PM",
+                    "wednesday" : "730AM-500PM",
+                    "thursday" : "800AM-500PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0126V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Worcester Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 42.265253,
+                "long" : -71.8187809999999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "01609",
+                        "city" : "Worcester",
+                        "state" : "MA",
+                        "address_1" : "255 Park Ave, Suite 900",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "508-753-7902"
+                },
+                "hours" : {
+                    "monday" : "800AM-630PM",
+                    "tuesday" : "800AM-630PM",
+                    "wednesday" : "800AM-630PM",
+                    "thursday" : "800AM-830PM",
+                    "friday" : "800AM-430PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0127V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Norwich Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 41.52468731,
+                "long" : -72.0732276799999,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "06360",
+                        "city" : "Norwich",
+                        "state" : "CT",
+                        "address_1" : "2 Cliff Street",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "860-887-1755"
+                },
+                "hours" : {
+                    "monday" : "800AM-430PM",
+                    "tuesday" : "800AM-430PM",
+                    "wednesday" : "800AM-430PM",
+                    "thursday" : "830AM-430PM",
+                    "friday" : "730AM-500PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0128V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "New Bedford Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 41.6441933500001,
+                "long" : -70.89927454,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "02719",
+                        "city" : "Fairhaven",
+                        "state" : "MA",
+                        "address_1" : "73 Huttleston Avenue",
+                        "address_2" : "Unit 2",
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "508-999-6920"
+                },
+                "hours" : {
+                    "monday" : "730AM-730PM",
+                    "tuesday" : "730AM-730PM",
+                    "wednesday" : "730AM-500PM",
+                    "thursday" : "730AM-900PM",
+                    "friday" : "730AM-500PM",
+                    "saturday" : "730AM-400PM",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        },
+        {
+            "id" : "vc_0129V",
+            "type" : "va_facilities",
+            "attributes" : {
+                "name" : "Lewiston Vet Center",
+                "facility_type" : "vet_center",
+                "classification" : null,
+                "website" : null,
+                "lat" : 44.0756979600001,
+                "long" : -70.17479703,
+                "address" : {
+                    "mailing" : { },
+                    "physical" : {
+                        "zip" : "04240",
+                        "city" : "Lewiston",
+                        "state" : "ME",
+                        "address_1" : "35 Westminster Street",
+                        "address_2" : null,
+                        "address_3" : null
+                    }
+                },
+                "phone" : {
+                    "main" : "207-783-0068"
+                },
+                "hours" : {
+                    "monday" : "730AM-630PM",
+                    "tuesday" : "730AM-830PM",
+                    "wednesday" : "730AM-830PM",
+                    "thursday" : "730AM-630PM",
+                    "friday" : "730AM-630PM",
+                    "saturday" : "Closed",
+                    "sunday" : "Closed"
+                },
+                "services" : { },
+                "satisfaction" : { },
+                "wait_times" : { },
+                "mobile" : null,
+                "active_status" : null,
+                "visn" : null
+            }
+        }
+    ]
+}
