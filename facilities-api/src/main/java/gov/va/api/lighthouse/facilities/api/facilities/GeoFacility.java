@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +16,11 @@ import lombok.Value;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeoFacility {
-  Type type;
+  @NotNull Type type;
 
-  Geometry geometry;
+  @Valid @NotNull Geometry geometry;
 
-  Properties properties;
+  @Valid @NotNull Properties properties;
 
   public enum GeometryType {
     Point
@@ -31,8 +34,9 @@ public class GeoFacility {
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   public static class Geometry {
-    GeometryType type;
+    @NotNull GeometryType type;
 
+    @Size(min = 2, max = 2)
     List<BigDecimal> coordinates;
   }
 
@@ -56,27 +60,29 @@ public class GeoFacility {
     "visn"
   })
   public static class Properties {
-    String id;
+    @NotNull String id;
 
     String name;
 
     @JsonProperty("facility_type")
+    @NotNull
     Facility.FacilityType facilityType;
 
     String classification;
 
     String website;
 
-    Facility.Addresses address;
+    @Valid Facility.Addresses address;
 
-    Facility.Phone phone;
+    @Valid Facility.Phone phone;
 
-    Facility.Hours hours;
+    @Valid Facility.Hours hours;
 
-    Facility.Services services;
+    @Valid Facility.Services services;
 
-    Facility.Satisfaction satisfaction;
+    @Valid Facility.Satisfaction satisfaction;
 
+    @Valid
     @JsonProperty("wait_times")
     Facility.WaitTimes waitTimes;
 

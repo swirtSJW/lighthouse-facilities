@@ -10,8 +10,9 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
-public class ReadByIdGeoJsonTest {
-  public void assertReadable(String json) throws java.io.IOException {
+public class ReadHealthByIdGeoJsonTest {
+  @SneakyThrows
+  private void assertReadable(String json) {
     GeoFacility f =
         createMapper().readValue(getClass().getResourceAsStream(json), GeoFacility.class);
     assertThat(f).isEqualTo(sample());
@@ -32,7 +33,7 @@ public class ReadByIdGeoJsonTest {
     return waitTime.build();
   }
 
-  public GeoFacility sample() {
+  private GeoFacility sample() {
     return GeoFacility.builder()
         .type(GeoFacility.Type.Feature)
         .geometry(
@@ -124,6 +125,6 @@ public class ReadByIdGeoJsonTest {
   @Test
   @SneakyThrows
   public void unmarshallSample() {
-    assertReadable("/read-facility-by-id-geojson.json");
+    assertReadable("/read-health-geojson.json");
   }
 }

@@ -10,8 +10,9 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
-public class ReadByIdJsonTest {
-  public void assertReadable(String json) throws java.io.IOException {
+public class ReadHealthByIdJsonTest {
+  @SneakyThrows
+  private void assertReadable(String json) {
     FacilitiesReadResponse f =
         createMapper()
             .readValue(getClass().getResourceAsStream(json), FacilitiesReadResponse.class);
@@ -34,7 +35,7 @@ public class ReadByIdJsonTest {
     return wait.build();
   }
 
-  public FacilitiesReadResponse sample() {
+  private FacilitiesReadResponse sample() {
     return FacilitiesReadResponse.builder()
         .data(
             Facility.builder()
@@ -130,6 +131,6 @@ public class ReadByIdJsonTest {
   @Test
   @SneakyThrows
   public void unmarshallSample() {
-    assertReadable("/read-facility-by-id.json");
+    assertReadable("/read-health.json");
   }
 }

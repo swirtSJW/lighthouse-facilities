@@ -11,7 +11,8 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class SearchByZipJsonTest {
-  public void assertReadable(String json) throws java.io.IOException {
+  @SneakyThrows
+  private void assertReadable(String json) {
     FacilitiesSearchResponse f =
         createMapper()
             .readValue(getClass().getResourceAsStream(json), FacilitiesSearchResponse.class);
@@ -185,6 +186,6 @@ public class SearchByZipJsonTest {
   @Test
   @SneakyThrows
   public void unmarshallSample() {
-    assertReadable("/search-facility-by-zip.json");
+    assertReadable("/search-zip.json");
   }
 }

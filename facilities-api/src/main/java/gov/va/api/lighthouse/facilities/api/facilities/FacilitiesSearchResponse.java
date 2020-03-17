@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.facilities;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
@@ -11,26 +12,26 @@ import lombok.Value;
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class FacilitiesSearchResponse {
-  List<Facility> data;
+  @Valid List<Facility> data;
 
-  PageLinks links;
+  @Valid @NotNull PageLinks links;
 
-  Metadata meta;
+  @Valid @NotNull Metadata meta;
 
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  public static class Items {
-    String id;
+  public static class Distance {
+    @NotNull String id;
 
-    BigDecimal distance;
+    @NotNull BigDecimal distance;
   }
 
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Metadata {
-    @NotNull List<Items> distances;
+    @NotNull List<Distance> distances;
 
     @NotNull Pagination pagination;
   }

@@ -8,7 +8,8 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class NearbyFacilityTest {
-  public void assertReadable(String json) throws java.io.IOException {
+  @SneakyThrows
+  private void assertReadable(String json) {
     NearbyFacility f =
         createMapper().readValue(getClass().getResourceAsStream(json), NearbyFacility.class);
     assertThat(f).isEqualTo(sample());
@@ -30,7 +31,7 @@ public class NearbyFacilityTest {
         .build();
   }
 
-  public NearbyFacility sample() {
+  private NearbyFacility sample() {
     return NearbyFacility.builder()
         .links(
             PageLinks.builder()
@@ -92,6 +93,6 @@ public class NearbyFacilityTest {
   @Test
   @SneakyThrows
   public void unmarshallSample() {
-    assertReadable("/search-facility-nearby.json");
+    assertReadable("/nearby.json");
   }
 }

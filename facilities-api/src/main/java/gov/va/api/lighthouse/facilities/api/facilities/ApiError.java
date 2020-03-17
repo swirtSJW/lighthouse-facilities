@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.api.facilities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.util.List;
+import javax.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Value;
 
@@ -9,8 +10,7 @@ import lombok.Value;
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class ApiError {
-
-  List<ErrorMessage> errors;
+  @NotEmpty List<ErrorMessage> errors;
 
   @Value
   @Builder

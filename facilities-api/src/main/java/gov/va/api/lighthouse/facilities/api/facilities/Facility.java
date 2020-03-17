@@ -103,9 +103,9 @@ public class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Addresses {
-    private Address mailing;
+    @Valid Address mailing;
 
-    private Address physical;
+    @Valid Address physical;
   }
 
   @Value
@@ -114,33 +114,34 @@ public class Facility {
   public static class Attributes {
     @NotNull String name;
 
-    @JsonProperty("facility_type")
     @NotNull
+    @JsonProperty("facility_type")
     FacilityType facilityType;
 
     String classification;
 
-    @JsonProperty("lat")
     @NotNull
+    @JsonProperty("lat")
     BigDecimal latitude;
 
-    @JsonProperty("long")
     @NotNull
+    @JsonProperty("long")
     BigDecimal longitude;
 
     String website;
 
-    Addresses address;
+    @Valid Addresses address;
 
-    Phone phone;
+    @Valid Phone phone;
 
-    Hours hours;
+    @Valid Hours hours;
 
-    Services services;
+    @Valid Services services;
 
-    Satisfaction satisfaction;
+    @Valid Satisfaction satisfaction;
 
     @JsonProperty("wait_times")
+    @Valid
     WaitTimes waitTimes;
 
     Boolean mobile;
@@ -234,7 +235,7 @@ public class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class PatientWaitTime {
-    HealthService service;
+    @NotNull HealthService service;
 
     /**
      * The average number of days a Veteran who hasn???t been to this location has to wait for a
@@ -278,7 +279,7 @@ public class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Satisfaction {
-    PatientSatisfaction health;
+    @Valid PatientSatisfaction health;
 
     @JsonProperty("effective_date")
     LocalDate effectiveDate;
@@ -302,7 +303,7 @@ public class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class WaitTimes {
-    List<PatientWaitTime> health;
+    @Valid List<PatientWaitTime> health;
 
     @JsonProperty("effective_date")
     LocalDate effectiveDate;

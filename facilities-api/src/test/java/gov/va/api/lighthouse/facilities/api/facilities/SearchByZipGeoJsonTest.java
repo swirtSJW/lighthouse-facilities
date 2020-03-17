@@ -11,7 +11,8 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class SearchByZipGeoJsonTest {
-  public void assertReadable(String json) throws java.io.IOException {
+  @SneakyThrows
+  private void assertReadable(String json) {
     GeoFacilitiesResponse f =
         createMapper().readValue(getClass().getResourceAsStream(json), GeoFacilitiesResponse.class);
     assertThat(f).isEqualTo(sample());
@@ -32,7 +33,7 @@ public class SearchByZipGeoJsonTest {
     return waitTime.build();
   }
 
-  public GeoFacilitiesResponse sample() {
+  private GeoFacilitiesResponse sample() {
     return GeoFacilitiesResponse.builder()
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
@@ -172,6 +173,6 @@ public class SearchByZipGeoJsonTest {
   @Test
   @SneakyThrows
   public void unmarshallSample() {
-    assertReadable("/search-facility-by-zip-geojson.json");
+    assertReadable("/search-zip-geojson.json");
   }
 }

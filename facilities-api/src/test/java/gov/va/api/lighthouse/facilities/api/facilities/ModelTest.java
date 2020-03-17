@@ -11,8 +11,22 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class ModelTest {
+  private Facility.Addresses addresses() {
+    return Facility.Addresses.builder()
+        .mailing(
+            Facility.Address.builder()
+                .address1("1")
+                .address2("Two")
+                .address3("Drive")
+                .city("Melbourne")
+                .state("FL")
+                .zip("32935")
+                .build())
+        .build();
+  }
+
   @Test
-  public void ApiError() {
+  public void apiError() {
     roundTrip(
         ApiError.builder()
             .errors(
@@ -27,84 +41,25 @@ public class ModelTest {
   }
 
   @Test
-  public void FacilitiesReadResponse() {
+  public void facilitiesReadResponse() {
     roundTrip(FacilitiesReadResponse.builder().data(facility()).build());
   }
 
   @Test
-  public void FacilitiesSearchResponse() {
+  public void facilitiesSearchResponse() {
     roundTrip(
         FacilitiesSearchResponse.builder()
             .meta(
                 FacilitiesSearchResponse.Metadata.builder()
                     .distances(
                         List.of(
-                            FacilitiesSearchResponse.Items.builder()
+                            FacilitiesSearchResponse.Distance.builder()
                                 .id("BigBoi")
                                 .distance(BigDecimal.valueOf(120.95))
                                 .build()))
                     .build())
             .data(List.of(facility()))
             .build());
-  }
-
-  @Test
-  public void GenericError() {
-    roundTrip(GenericError.builder().message("First Try Baby").build());
-  }
-
-  @Test
-  public void GeoFacilitiesResponse() {
-    roundTrip(
-        GeoFacilitiesResponse.builder()
-            .type(GeoFacilitiesResponse.Type.FeatureCollection)
-            .features(List.of(geofacility()))
-            .build());
-  }
-
-  @Test
-  public void GeoFacility() {
-    roundTrip(geofacility());
-  }
-
-  @Test
-  public void NearbyFacility() {
-    roundTrip(
-        NearbyFacility.builder()
-            .data(
-                List.of(
-                    NearbyFacility.Nearby.builder()
-                        .id("8")
-                        .type(NearbyFacility.Type.NearbyFacility)
-                        .attributes(
-                            NearbyFacility.Attributes.builder().minTime(10).maxTime(20).build())
-                        .relationships(
-                            NearbyFacility.Relationships.builder()
-                                .vaFacility(
-                                    NearbyFacility.VaFacility.builder()
-                                        .links(
-                                            NearbyFacility.Links.builder()
-                                                .related(
-                                                    "/services/va_facilities/v0/facilities/vha_688")
-                                                .build())
-                                        .build())
-                                .build())
-                        .build()))
-            .build());
-  }
-
-  private Facility.Addresses addresses() {
-    return Facility.Addresses.builder()
-        .mailing(
-            Facility.Address.builder()
-                .address1("1")
-                .address2("Two")
-                .address3("Drive")
-                .city("Melbourne")
-                .state("FL")
-                .zip("32935")
-                .build())
-        .build();
   }
 
   private Facility facility() {
@@ -130,6 +85,25 @@ public class ModelTest {
                 .visn("20")
                 .build())
         .build();
+  }
+
+  @Test
+  public void genericError() {
+    roundTrip(GenericError.builder().message("First Try Baby").build());
+  }
+
+  @Test
+  public void geoFacilitiesResponse() {
+    roundTrip(
+        GeoFacilitiesResponse.builder()
+            .type(GeoFacilitiesResponse.Type.FeatureCollection)
+            .features(List.of(geofacility()))
+            .build());
+  }
+
+  @Test
+  public void geoFacilityRoundTrip() {
+    roundTrip(geofacility());
   }
 
   public GeoFacility geofacility() {
@@ -171,6 +145,32 @@ public class ModelTest {
         .friday("CLOSED")
         .saturday("CLOSED")
         .build();
+  }
+
+  @Test
+  public void nearbyFacility() {
+    roundTrip(
+        NearbyFacility.builder()
+            .data(
+                List.of(
+                    NearbyFacility.Nearby.builder()
+                        .id("8")
+                        .type(NearbyFacility.Type.NearbyFacility)
+                        .attributes(
+                            NearbyFacility.Attributes.builder().minTime(10).maxTime(20).build())
+                        .relationships(
+                            NearbyFacility.Relationships.builder()
+                                .vaFacility(
+                                    NearbyFacility.VaFacility.builder()
+                                        .links(
+                                            NearbyFacility.Links.builder()
+                                                .related(
+                                                    "/services/va_facilities/v0/facilities/vha_688")
+                                                .build())
+                                        .build())
+                                .build())
+                        .build()))
+            .build());
   }
 
   private Facility.Phone phones() {

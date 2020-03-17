@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.facilities;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
@@ -11,12 +12,11 @@ import lombok.Value;
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class NearbyFacility {
+  @Valid @NotNull List<Nearby> data;
 
-  @NotNull List<Nearby> data;
+  @Valid @NotNull PageLinks links;
 
-  PageLinks links;
-
-  Metadata meta;
+  @Valid @NotNull Metadata meta;
 
   public enum Type {
     @JsonProperty("nearby_facility")
@@ -27,12 +27,12 @@ public class NearbyFacility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Attributes {
-    @JsonProperty("min_time")
     @NotNull
+    @JsonProperty("min_time")
     Integer minTime;
 
-    @JsonProperty("max_time")
     @NotNull
+    @JsonProperty("max_time")
     Integer maxTime;
   }
 
@@ -47,7 +47,7 @@ public class NearbyFacility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Metadata {
-    @NotNull Pagination pagination;
+    @NotNull @Valid Pagination pagination;
   }
 
   @Value
@@ -58,17 +58,18 @@ public class NearbyFacility {
 
     @NotNull Type type;
 
-    @NotNull Attributes attributes;
+    @Valid @NotNull Attributes attributes;
 
-    Relationships relationships;
+    @Valid @NotNull Relationships relationships;
   }
 
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Relationships {
-    @JsonProperty("va_facility")
+    @Valid
     @NotNull
+    @JsonProperty("va_facility")
     VaFacility vaFacility;
   }
 
@@ -76,6 +77,6 @@ public class NearbyFacility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class VaFacility {
-    @NotNull Links links;
+    @Valid @NotNull Links links;
   }
 }
