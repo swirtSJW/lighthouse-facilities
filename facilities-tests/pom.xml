@@ -11,6 +11,9 @@
   <artifactId>facilities-tests</artifactId>
   <version>1.0.8-SNAPSHOT</version>
   <packaging>jar</packaging>
+  <properties>
+    <docker.imageName>lighthouse-facilities-tests</docker.imageName>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>gov.va.api.health</groupId>
