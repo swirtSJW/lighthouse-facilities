@@ -1,6 +1,6 @@
-package gov.va.api.lighthouse.facilities.api.facilities;
+package gov.va.api.lighthouse.facilities.api.v0;
 
-import static gov.va.api.lighthouse.facilities.api.facilities.JacksonConfigV0.createMapper;
+import static gov.va.api.lighthouse.facilities.api.v0.JacksonConfigV0.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;

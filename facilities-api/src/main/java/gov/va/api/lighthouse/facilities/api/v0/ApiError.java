@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilities.api.facilities;
+package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.util.List;

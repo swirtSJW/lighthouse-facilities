@@ -3,7 +3,7 @@ package gov.va.api.lighthouse.facilities.tests;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
-import gov.va.api.lighthouse.facilities.api.facilities.NearbyFacility;
+import gov.va.api.lighthouse.facilities.api.v0.NearbyFacility;
 import gov.va.api.lighthouse.facilities.tests.categories.NearbyAddress;
 import gov.va.api.lighthouse.facilities.tests.categories.NearbyLatLong;
 import io.restassured.http.Header;

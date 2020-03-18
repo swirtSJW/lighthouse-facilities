@@ -1,5 +1,6 @@
-package gov.va.api.lighthouse.facilities.api.facilities;
+package gov.va.api.lighthouse.facilities.api.v0;
 
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -10,10 +11,12 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class GeoFacilityReadResponse {
-  @NotNull GeoFacility.Type type;
+public class GeoFacilitiesResponse {
+  @NotNull Type type;
 
-  @Valid @NotNull GeoFacility.Geometry geometry;
+  @Valid List<GeoFacility> features;
 
-  @Valid @NotNull GeoFacility.Properties properties;
+  public enum Type {
+    FeatureCollection
+  }
 }

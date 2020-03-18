@@ -1,7 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import gov.va.api.lighthouse.facilities.api.facilities.Facility;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;

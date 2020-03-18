@@ -3,11 +3,11 @@ package gov.va.api.lighthouse.facilities.tests;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
-import gov.va.api.lighthouse.facilities.api.facilities.ApiError;
-import gov.va.api.lighthouse.facilities.api.facilities.FacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.facilities.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.facilities.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.facilities.GeoFacility;
+import gov.va.api.lighthouse.facilities.api.v0.ApiError;
+import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.tests.categories.AllFacilities;
 import gov.va.api.lighthouse.facilities.tests.categories.FacilityById;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByBoundingBox;

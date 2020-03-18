@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilities.api.facilities;
+package gov.va.api.lighthouse.facilities.api.v0;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,11 +10,11 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
-public class SearchByZipJsonTest {
+public class SearchByZipGeoJsonTest {
   @SneakyThrows
   private void assertReadable(String json) {
-    FacilitiesResponse f =
-        createMapper().readValue(getClass().getResourceAsStream(json), FacilitiesResponse.class);
+    GeoFacilitiesResponse f =
+        createMapper().readValue(getClass().getResourceAsStream(json), GeoFacilitiesResponse.class);
     assertThat(f).isEqualTo(sample());
   }
 
@@ -33,40 +33,28 @@ public class SearchByZipJsonTest {
     return waitTime.build();
   }
 
-  private FacilitiesResponse sample() {
-    return FacilitiesResponse.builder()
-        .links(
-            FacilitiesResponse.PageLinks.builder()
-                .self("https://dev-api.vets.gov/services/va_facilities/v0/facilities?zip=32940")
-                .first(
-                    "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&zip=32940")
-                .last(
-                    "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&zip=32940")
-                .build())
-        .meta(
-            FacilitiesResponse.Metadata.builder()
-                .distances(new ArrayList<>())
-                .pagination(
-                    Pagination.builder()
-                        .currentPage(1)
-                        .entriesPerPage(10)
-                        .totalEntries(1)
-                        .totalPages(1)
-                        .build())
-                .build())
-        .data(
+  private GeoFacilitiesResponse sample() {
+    return GeoFacilitiesResponse.builder()
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
+        .features(
             List.of(
-                Facility.builder()
-                    .id("vha_675GA")
-                    .type(Facility.Type.va_facilities)
-                    .attributes(
-                        Facility.Attributes.builder()
+                GeoFacility.builder()
+                    .type(GeoFacility.Type.Feature)
+                    .geometry(
+                        GeoFacility.Geometry.builder()
+                            .type(GeoFacility.GeometryType.Point)
+                            .coordinates(
+                                List.of(
+                                    BigDecimal.valueOf(-80.73907113),
+                                    BigDecimal.valueOf(28.2552385700001)))
+                            .build())
+                    .properties(
+                        GeoFacility.Properties.builder()
+                            .id("vha_675GA")
                             .name("Viera VA Clinic")
                             .facilityType(Facility.FacilityType.va_health_facility)
                             .classification("Health Care Center (HCC)")
                             .website("https://www.orlando.va.gov/locations/Viera.asp")
-                            .latitude(BigDecimal.valueOf(28.2552385700001))
-                            .longitude(BigDecimal.valueOf(-80.73907113))
                             .address(
                                 Facility.Addresses.builder()
                                     .mailing(Facility.Address.builder().build())
@@ -90,13 +78,13 @@ public class SearchByZipJsonTest {
                                     .build())
                             .hours(
                                 Facility.Hours.builder()
-                                    .monday("730AM-430PM")
-                                    .tuesday("730AM-430PM")
-                                    .wednesday("730AM-430PM")
-                                    .thursday("730AM-430PM")
-                                    .friday("730AM-430PM")
-                                    .saturday("Closed")
-                                    .sunday("Closed")
+                                    .mon("730AM-430PM")
+                                    .tues("730AM-430PM")
+                                    .wed("730AM-430PM")
+                                    .thurs("730AM-430PM")
+                                    .fri("730AM-430PM")
+                                    .sat("Closed")
+                                    .sun("Closed")
                                     .build())
                             .services(
                                 Facility.Services.builder()
@@ -185,6 +173,6 @@ public class SearchByZipJsonTest {
   @Test
   @SneakyThrows
   public void unmarshallSample() {
-    assertReadable("/search-zip.json");
+    assertReadable("/search-zip-geojson.json");
   }
 }
