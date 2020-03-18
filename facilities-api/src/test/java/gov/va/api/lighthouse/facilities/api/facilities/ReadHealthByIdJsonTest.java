@@ -13,9 +13,8 @@ import org.junit.Test;
 public class ReadHealthByIdJsonTest {
   @SneakyThrows
   private void assertReadable(String json) {
-    FacilitiesReadResponse f =
-        createMapper()
-            .readValue(getClass().getResourceAsStream(json), FacilitiesReadResponse.class);
+    FacilityReadResponse f =
+        createMapper().readValue(getClass().getResourceAsStream(json), FacilityReadResponse.class);
     assertThat(f).isEqualTo(sample());
   }
 
@@ -35,9 +34,9 @@ public class ReadHealthByIdJsonTest {
     return wait.build();
   }
 
-  private FacilitiesReadResponse sample() {
-    return FacilitiesReadResponse.builder()
-        .data(
+  private FacilityReadResponse sample() {
+    return FacilityReadResponse.builder()
+        .facility(
             Facility.builder()
                 .id("vha_402GA")
                 .type(Facility.Type.va_facilities)

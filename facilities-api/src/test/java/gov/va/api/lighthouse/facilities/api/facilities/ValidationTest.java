@@ -6,10 +6,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
+import javax.validation.Validator;
 import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class ValidationTest {
+  private static final Validator VALIDATOR =
+      Validation.buildDefaultValidatorFactory().getValidator();
+
   @Test
   public void all() {
     String path = "/all.json";
@@ -19,8 +23,7 @@ public class ValidationTest {
   @SneakyThrows
   private <T> void assertValid(String path, Class<T> clazz) {
     T response = createMapper().readValue(getClass().getResourceAsStream(path), clazz);
-    Set<ConstraintViolation<T>> violations =
-        Validation.buildDefaultValidatorFactory().getValidator().validate(response);
+    Set<ConstraintViolation<T>> violations = VALIDATOR.validate(response);
     assertThat(violations).isEmpty();
   }
 
@@ -34,72 +37,72 @@ public class ValidationTest {
   @SneakyThrows
   public void readBenefits() {
     String path = "/read-benefits.json";
-    assertValid(path, FacilitiesReadResponse.class);
+    assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
   public void readBenefitsGeoJson() {
     String path = "/read-benefits-geojson.json";
-    assertValid(path, GeoFacility.class);
+    assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
   public void readCemetery() {
     String path = "/read-cemetery.json";
-    assertValid(path, FacilitiesReadResponse.class);
+    assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
   public void readCemeteryGeoJson() {
     String path = "/read-cemetery-geojson.json";
-    assertValid(path, GeoFacility.class);
+    assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   public void readHealth() {
     String path = "/read-health.json";
-    assertValid(path, FacilitiesReadResponse.class);
+    assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   public void readHealthGeoJson() {
     String path = "/read-health-geojson.json";
-    assertValid(path, GeoFacility.class);
+    assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
   public void readStateCemetery() {
     String path = "/read-state-cemetery.json";
-    assertValid(path, FacilitiesReadResponse.class);
+    assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
   public void readStateCemeteryGeoJson() {
     String path = "/read-state-cemetery-geojson.json";
-    assertValid(path, GeoFacility.class);
+    assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   public void readVetCenter() {
     String path = "/read-vet-center.json";
-    assertValid(path, FacilitiesReadResponse.class);
+    assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   public void readVetCenterGeoJson() {
     String path = "/read-vet-center-geojson.json";
-    assertValid(path, GeoFacility.class);
+    assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   public void searchByBbox() {
     String path = "/search-bbox.json";
-    assertValid(path, FacilitiesSearchResponse.class);
+    assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
@@ -111,7 +114,7 @@ public class ValidationTest {
   @Test
   public void searchByIds() {
     String path = "/search-ids.json";
-    assertValid(path, FacilitiesSearchResponse.class);
+    assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
@@ -123,7 +126,7 @@ public class ValidationTest {
   @Test
   public void searchByLatLong() {
     String path = "/search-lat-long.json";
-    assertValid(path, FacilitiesSearchResponse.class);
+    assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
@@ -135,7 +138,7 @@ public class ValidationTest {
   @Test
   public void searchByState() {
     String path = "/search-state.json";
-    assertValid(path, FacilitiesSearchResponse.class);
+    assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
@@ -147,7 +150,7 @@ public class ValidationTest {
   @Test
   public void searchByZip() {
     String path = "/search-zip.json";
-    assertValid(path, FacilitiesSearchResponse.class);
+    assertValid(path, FacilitiesResponse.class);
   }
 
   @Test

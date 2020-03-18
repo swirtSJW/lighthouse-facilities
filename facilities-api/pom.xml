@@ -5,9 +5,16 @@
     <groupId>gov.va.api.health</groupId>
     <artifactId>api-starter</artifactId>
     <version>6.0.4</version>
+    <relativePath/>
   </parent>
   <groupId>gov.va.api.lighthouse</groupId>
   <artifactId>facilities-api</artifactId>
   <version>1.0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
+  <dependencies>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+    </dependency>
+  </dependencies>
 </project>

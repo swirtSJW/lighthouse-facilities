@@ -4,8 +4,8 @@ import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDef
 
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.api.facilities.ApiError;
-import gov.va.api.lighthouse.facilities.api.facilities.FacilitiesReadResponse;
-import gov.va.api.lighthouse.facilities.api.facilities.FacilitiesSearchResponse;
+import gov.va.api.lighthouse.facilities.api.facilities.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.facilities.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.facilities.GeoFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.facilities.GeoFacility;
 import gov.va.api.lighthouse.facilities.tests.categories.AllFacilities;
@@ -56,7 +56,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacility.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesReadResponse.class);
+        .expectValid(FacilityReadResponse.class);
   }
 
   @Test
@@ -69,7 +69,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -95,7 +95,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -108,7 +108,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -121,7 +121,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -135,7 +135,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -164,7 +164,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -183,7 +183,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -196,7 +196,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -222,7 +222,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -235,7 +235,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -248,7 +248,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -274,7 +274,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -287,7 +287,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(FacilitiesSearchResponse.class);
+        .expectValid(FacilitiesResponse.class);
   }
 
   private Header vetsApiFacilitiesApikey() {

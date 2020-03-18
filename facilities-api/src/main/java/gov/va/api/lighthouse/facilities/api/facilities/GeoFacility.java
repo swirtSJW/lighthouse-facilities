@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.facilities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.math.BigDecimal;
@@ -42,6 +43,7 @@ public class GeoFacility {
 
   @Value
   @Builder
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonPropertyOrder({
     "id",
@@ -64,8 +66,8 @@ public class GeoFacility {
 
     String name;
 
-    @JsonProperty("facility_type")
     @NotNull
+    @JsonProperty("facility_type")
     Facility.FacilityType facilityType;
 
     String classification;

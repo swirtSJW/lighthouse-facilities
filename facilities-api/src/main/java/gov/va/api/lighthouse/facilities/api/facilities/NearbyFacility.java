@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.facilities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import javax.validation.Valid;
@@ -47,7 +48,7 @@ public class NearbyFacility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Metadata {
-    @NotNull @Valid Pagination pagination;
+    @Valid @NotNull Pagination pagination;
   }
 
   @Value
@@ -61,6 +62,24 @@ public class NearbyFacility {
     @Valid @NotNull Attributes attributes;
 
     @Valid @NotNull Relationships relationships;
+  }
+
+  @Value
+  @Builder
+  @JsonInclude(JsonInclude.Include.ALWAYS)
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  public static class PageLinks {
+    String related;
+
+    @NotNull String self;
+
+    String first;
+
+    String prev;
+
+    String next;
+
+    String last;
   }
 
   @Value

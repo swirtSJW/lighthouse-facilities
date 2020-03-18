@@ -34,7 +34,7 @@ public class NearbyFacilityTest {
   private NearbyFacility sample() {
     return NearbyFacility.builder()
         .links(
-            PageLinks.builder()
+            NearbyFacility.PageLinks.builder()
                 .related(
                     "/services/va_facilities/v0/facilities?ids=vha_548GC,vha_548GF,vha_548QA,vha_548GA,vha_548GE,vha_675,vha_675GA,vha_675GB,vha_675GD,vha_675GF,vha_675GG,vha_675QB,vha_675QC,vha_675QD,vha_675QE,vha_675GC")
                 .self(

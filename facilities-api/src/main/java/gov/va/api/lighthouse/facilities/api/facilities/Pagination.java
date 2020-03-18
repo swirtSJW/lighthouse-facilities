@@ -10,19 +10,19 @@ import lombok.Value;
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Pagination {
-  @JsonProperty("current_page")
   @NotNull
+  @JsonProperty("current_page")
   Integer currentPage;
 
-  @JsonProperty("per_page")
   @NotNull
+  @JsonProperty("per_page")
   Integer entriesPerPage;
 
-  @JsonProperty("total_entries")
   @NotNull
-  Integer totalEntries;
-
   @JsonProperty("total_pages")
-  @NotNull
   Integer totalPages;
+
+  @NotNull
+  @JsonProperty("total_entries")
+  Integer totalEntries;
 }

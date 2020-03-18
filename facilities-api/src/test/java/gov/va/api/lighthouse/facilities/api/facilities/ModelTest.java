@@ -1,9 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.facilities;
 
+import static gov.va.api.lighthouse.facilities.api.facilities.JacksonConfigV0.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -42,18 +42,43 @@ public class ModelTest {
 
   @Test
   public void facilitiesReadResponse() {
-    roundTrip(FacilitiesReadResponse.builder().data(facility()).build());
+    roundTrip(
+        FacilityReadResponse.builder()
+            .facility(
+                Facility.builder()
+                    .id("98")
+                    .type(Facility.Type.va_facilities)
+                    .attributes(
+                        Facility.Attributes.builder()
+                            .name("Shanktopod")
+                            .facilityType(Facility.FacilityType.va_benefits_facility)
+                            .classification("VA Medical Center (VAMC)")
+                            .latitude(BigDecimal.valueOf(38.9311137))
+                            .longitude(BigDecimal.valueOf(-77.0109110499999))
+                            .website("http://www.washingtondc.va.gov/")
+                            .address(addresses())
+                            .phone(phones())
+                            .hours(hours())
+                            .services(services())
+                            .satisfaction(satisfaction())
+                            .waitTimes(waitTimes())
+                            .mobile(false)
+                            .activeStatus(Facility.ActiveStatus.T)
+                            .visn("20")
+                            .build())
+                    .build())
+            .build());
   }
 
   @Test
   public void facilitiesSearchResponse() {
     roundTrip(
-        FacilitiesSearchResponse.builder()
+        FacilitiesResponse.builder()
             .meta(
-                FacilitiesSearchResponse.Metadata.builder()
+                FacilitiesResponse.Metadata.builder()
                     .distances(
                         List.of(
-                            FacilitiesSearchResponse.Distance.builder()
+                            FacilitiesResponse.Distance.builder()
                                 .id("BigBoi")
                                 .distance(BigDecimal.valueOf(120.95))
                                 .build()))
@@ -97,16 +122,11 @@ public class ModelTest {
     roundTrip(
         GeoFacilitiesResponse.builder()
             .type(GeoFacilitiesResponse.Type.FeatureCollection)
-            .features(List.of(geofacility()))
+            .features(List.of(geoFacility()))
             .build());
   }
 
-  @Test
-  public void geoFacilityRoundTrip() {
-    roundTrip(geofacility());
-  }
-
-  public GeoFacility geofacility() {
+  private GeoFacility geoFacility() {
     return GeoFacility.builder()
         .type(GeoFacility.Type.Feature)
         .geometry(
@@ -133,6 +153,11 @@ public class ModelTest {
                 .visn("20")
                 .build())
         .build();
+  }
+
+  @Test
+  public void geoFacilityRoundTrip() {
+    roundTrip(geoFacility());
   }
 
   private Facility.Hours hours() {
@@ -187,7 +212,7 @@ public class ModelTest {
 
   @SneakyThrows
   private <T> void roundTrip(T object) {
-    ObjectMapper mapper = new JacksonConfig().objectMapper();
+    ObjectMapper mapper = createMapper();
     String json = mapper.writeValueAsString(object);
     Object evilTwin = mapper.readValue(json, object.getClass());
     assertThat(evilTwin).isEqualTo(object);

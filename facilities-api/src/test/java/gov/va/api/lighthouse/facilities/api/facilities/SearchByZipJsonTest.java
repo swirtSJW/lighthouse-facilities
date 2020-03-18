@@ -13,9 +13,8 @@ import org.junit.Test;
 public class SearchByZipJsonTest {
   @SneakyThrows
   private void assertReadable(String json) {
-    FacilitiesSearchResponse f =
-        createMapper()
-            .readValue(getClass().getResourceAsStream(json), FacilitiesSearchResponse.class);
+    FacilitiesResponse f =
+        createMapper().readValue(getClass().getResourceAsStream(json), FacilitiesResponse.class);
     assertThat(f).isEqualTo(sample());
   }
 
@@ -34,10 +33,10 @@ public class SearchByZipJsonTest {
     return waitTime.build();
   }
 
-  private FacilitiesSearchResponse sample() {
-    return FacilitiesSearchResponse.builder()
+  private FacilitiesResponse sample() {
+    return FacilitiesResponse.builder()
         .links(
-            PageLinks.builder()
+            FacilitiesResponse.PageLinks.builder()
                 .self("https://dev-api.vets.gov/services/va_facilities/v0/facilities?zip=32940")
                 .first(
                     "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&zip=32940")
@@ -45,7 +44,7 @@ public class SearchByZipJsonTest {
                     "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&zip=32940")
                 .build())
         .meta(
-            FacilitiesSearchResponse.Metadata.builder()
+            FacilitiesResponse.Metadata.builder()
                 .distances(new ArrayList<>())
                 .pagination(
                     Pagination.builder()

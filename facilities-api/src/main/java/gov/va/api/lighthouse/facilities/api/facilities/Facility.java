@@ -1,7 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.facilities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -83,6 +85,12 @@ public class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Address {
+    String zip;
+
+    String city;
+
+    String state;
+
     @JsonProperty("address_1")
     String address1;
 
@@ -91,12 +99,6 @@ public class Facility {
 
     @JsonProperty("address_3")
     String address3;
-
-    String city;
-
-    String state;
-
-    String zip;
   }
 
   @Value
@@ -110,7 +112,25 @@ public class Facility {
 
   @Value
   @Builder
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonPropertyOrder({
+    "name",
+    "facilityType",
+    "classification",
+    "website",
+    "latitude",
+    "longitude",
+    "address",
+    "phone",
+    "hours",
+    "services",
+    "satisfaction",
+    "waitTimes",
+    "mobile",
+    "activeStatus",
+    "visn"
+  })
   public static class Attributes {
     @NotNull String name;
 
@@ -120,6 +140,8 @@ public class Facility {
 
     String classification;
 
+    String website;
+
     @NotNull
     @JsonProperty("lat")
     BigDecimal latitude;
@@ -127,8 +149,6 @@ public class Facility {
     @NotNull
     @JsonProperty("long")
     BigDecimal longitude;
-
-    String website;
 
     @Valid Addresses address;
 
@@ -140,8 +160,8 @@ public class Facility {
 
     @Valid Satisfaction satisfaction;
 
-    @JsonProperty("wait_times")
     @Valid
+    @JsonProperty("wait_times")
     WaitTimes waitTimes;
 
     Boolean mobile;
@@ -233,12 +253,13 @@ public class Facility {
 
   @Value
   @Builder
+  @JsonInclude(JsonInclude.Include.ALWAYS)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class PatientWaitTime {
     @NotNull HealthService service;
 
     /**
-     * The average number of days a Veteran who hasn???t been to this location has to wait for a
+     * The average number of days a Veteran who hasn't been to this location has to wait for a
      * non-urgent appointment.
      */
     @JsonProperty("new")
@@ -256,9 +277,9 @@ public class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static class Phone {
-    String main;
-
     String fax;
+
+    String main;
 
     String pharmacy;
 
