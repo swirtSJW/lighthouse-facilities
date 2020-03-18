@@ -23,12 +23,69 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>facilities-mock-services</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
-  <!-- launch local processes for IT here
-  .
-  .
-  .
+  <!--
+    Launch process for services
   -->
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-applications</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+              <includeArtifactIds>facilities-mock-services</includeArtifactIds>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.bazaarvoice.maven.plugins</groupId>
+        <artifactId>process-exec-maven-plugin</artifactId>
+        <version>${process-exec-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>mock-services-process</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <name>data-query</name>
+              <healthcheckUrl>http://localhost:8666/help</healthcheckUrl>
+              <skip>${sentinel.skipLaunch}</skip>
+              <processLogFile>${project.build.directory}/mock-services.log</processLogFile>
+              <arguments>
+                <argument>java</argument>
+                <argument>-jar</argument>
+                <argument>facilities-mock-services.jar</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>stop-all</id>
+            <phase>post-integration-test</phase>
+            <goals>
+              <goal>stop-all</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
       <id>release</id>
