@@ -19,6 +19,8 @@ snatch() {
 snatch "access-to-care-wait-times" "https://www.accesstocare.va.gov/atcapis/v1.1/patientwaittimes"
 snatch "access-to-care-satisfaction" "https://www.accesstopwt.va.gov/Shep/getRawData?location=*"
 
+snatch "state-cemeteries" "https://www.cem.va.gov/cems/cems.xml"
+
 #474 benefits centers, 180 cemetaries, 320 vet centers:
 snatch "arcgis-benefits-facilities" "https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VBA_Facilities/FeatureServer/0/query?f=json&inSR=4326&outSR=4326&orderByFields=Facility_Number&outFields=*&resultOffset=0&returnCountOnly=false&returnDistinctValues=false&returnGeometry=true&where=1=1"
 

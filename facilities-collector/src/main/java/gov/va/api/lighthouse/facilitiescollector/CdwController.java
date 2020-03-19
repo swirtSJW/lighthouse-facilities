@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/")
 @AllArgsConstructor(onConstructor = @__({@Autowired}))
-public class Controller {
+public class CdwController {
   private final MentalHealthContactRepository mentalHealthContactRepository;
 
   private final JdbcTemplate jdbc;

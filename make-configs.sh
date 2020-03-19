@@ -38,5 +38,6 @@ makeConfig facilities-collector $PROFILE
 configValue facilities-collector $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
 configValue facilities-collector $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
 configValue facilities-collector $PROFILE spring.datasource.username 'SA'
+configValue facilities-collector $PROFILE state-cemeteries.url 'http://localhost:8666'
 
 checkForUnsetValues facilities-collector $PROFILE

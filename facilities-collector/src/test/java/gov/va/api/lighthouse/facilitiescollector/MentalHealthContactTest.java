@@ -30,7 +30,7 @@ public final class MentalHealthContactTest {
                     .created("2020-03-03 12:00:00.0")
                     .addedToOutbox("2020-03-09 13:00:00.0")
                     .build()));
-    assertThat(new Controller(repo, null).mentalHealthContacts())
+    assertThat(new CdwController(repo, null).mentalHealthContacts())
         .isEqualTo(
             MentalHealthContactResponse.builder()
                 .contacts(

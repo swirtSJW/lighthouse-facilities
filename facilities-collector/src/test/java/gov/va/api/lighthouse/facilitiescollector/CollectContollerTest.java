@@ -7,7 +7,7 @@ import org.junit.Test;
 public class CollectContollerTest {
   @Test
   public void verifyResponse() {
-    assertThat(new CollectController().collectFacilities())
+    assertThat(new CollectController("file:src/test/resources").collectFacilities())
         .isExactlyInstanceOf(CollectorFacilitiesResponse.class);
   }
 }

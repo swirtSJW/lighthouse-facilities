@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class MockServices {
-
   /** All queries added to the mock server are listed here, except for /help. */
   private final List<String> supportedQueries = new ArrayList<>();
 
@@ -151,6 +150,15 @@ public class MockServices {
     return request;
   }
 
+  private void addStateCemeteries(MockServerClient mock) {
+    mock.when(addQuery("/cems/cems.xml"))
+        .respond(
+            response()
+                .withStatusCode(200)
+                .withHeader(contentTextXml())
+                .withBody(contentOf("/cems.xml")));
+  }
+
   private void addVaArcGisHealthFacilities(MockServerClient mock) {
     mock.when(
             addQuery(
@@ -173,12 +181,16 @@ public class MockServices {
   @SneakyThrows
   private String contentOf(String resource) {
     log.info("Loading resource {}", resource);
-    //noinspection UnstableApiUsage
+    // noinspection UnstableApiUsage
     return Resources.toString(getClass().getResource(resource), StandardCharsets.UTF_8);
   }
 
   private Header contentTextPlain() {
     return new Header("Content-Type", "text/plain");
+  }
+
+  private Header contentTextXml() {
+    return new Header("Content-Type", "text/xml");
   }
 
   /** Start the server and configure it to support requests. */
@@ -189,6 +201,7 @@ public class MockServices {
     MockServerClient mock = new MockServerClient("localhost", options.getPort());
     addAccessToCareWaitTimes(mock);
     addAccessToCareSatisfactionScores(mock);
+    addStateCemeteries(mock);
     addArcGisBenefitsFacilities(mock);
     addArcGisCemetaries(mock);
     addArcGisVetCentersFacilities(mock);

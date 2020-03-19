@@ -12,12 +12,10 @@
   <version>1.0.14-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
+    <commons-csv.version>1.8</commons-csv.version>
     <docker.imageName>lighthouse-facilities-collector</docker.imageName>
+    <guava.version>28.2-jre</guava.version>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
-    <!-- Temporary Decrease. Once /collect is implemented and SneakyThrows isnt required, the
-         contoller should be able to get higher than 75%.
-    -->
-    <jacoco.coverage>0.94</jacoco.coverage>
   </properties>
   <dependencies>
     <dependency>
@@ -30,9 +28,19 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.microsoft.sqlserver</groupId>
       <artifactId>mssql-jdbc</artifactId>
       <version>${mssql-jdbc.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${commons-csv.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
