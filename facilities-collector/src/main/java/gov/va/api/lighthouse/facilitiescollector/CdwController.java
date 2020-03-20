@@ -40,10 +40,7 @@ public class CdwController {
   }
 
   /** Stop codes for debugging. */
-  @RequestMapping(
-      value = "/stop-code",
-      produces = "application/json",
-      method = RequestMethod.GET)
+  @RequestMapping(value = "/stop-code", produces = "application/json", method = RequestMethod.GET)
   public List<StopCode> stopCodes() {
     return jdbc.query(
         "SELECT DIVISION_FCDMD, CocClassification, Sta6a, PrimaryStopCode, PrimaryStopCodeName,"
