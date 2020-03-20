@@ -1,0 +1,51 @@
+{
+    "features" : [
+        {
+            "attributes" : {
+                "OBJECTID" : 39733,
+                "Facility_Name" : "New York Regional Office at Albany VAMC",
+                "Facility_Number" : "306e",
+                "Facility_Type" : "Outbased",
+                "Address_1" : "113 Holland Avenue",
+                "Address_2" : null,
+                "City" : "Albany",
+                "State" : "NY",
+                "Zip" : "12208",
+                "Fax" : "518-626-5695",
+                "Phone" : "518-626-5524",
+                "Monday" : "7:30AM-4:00PM",
+                "Tuesday" : "7:30AM-4:00PM",
+                "Wednesday" : "7:30AM-4:00PM",
+                "Thursday" : "7:30AM-4:00PM",
+                "Friday" : "7:30AM-4:00PM",
+                "Saturday" : "Closed",
+                "Sunday" : "Closed",
+                "Comments" : null,
+                "Applying_for_Benefits" : "YES",
+                "Burial_Claim_assistance" : "YES",
+                "Disability_Claim_assistance" : "YES",
+                "eBenefits_Registration" : "YES",
+                "Education_and_Career_Counseling" : "NO",
+                "Education_Claim_Assistance" : "NO",
+                "Family_Member_Claim_Assistance" : "YES",
+                "Homeless_Assistance" : "NO",
+                "VA_Home_Loan_Assistance" : "NO",
+                "Insurance_Claim_Assistance" : "NO",
+                "IDES" : "NO",
+                "Pre_Discharge_Claim_Assistance" : "NO",
+                "Transition_Assistance" : "NO",
+                "Updating_Direct_Deposit_Informa" : "YES",
+                "Vocational_Rehabilitation_Emplo" : "NO",
+                "Other_Services" : null,
+                "Organization" : "VBA",
+                "Lat" : 42.65140884,
+                "Long" : -73.77623285,
+                "Website_URL" : "NULL"
+            },
+            "geometry" : {
+                "x" : -73.77623284999999,
+                "y" : 42.651408840000045
+            }
+        }
+    ]
+}

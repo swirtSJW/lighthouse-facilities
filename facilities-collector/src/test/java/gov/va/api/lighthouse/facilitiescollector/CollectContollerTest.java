@@ -7,8 +7,12 @@ import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.util.List;
+import java.util.Optional;
+import lombok.SneakyThrows;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -17,10 +21,23 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.RestTemplate;
 
 public class CollectContollerTest {
+
   @Test
+  @SneakyThrows
   @SuppressWarnings("unchecked")
   public void verifyResponse() {
     RestTemplate restTemplate = mock(RestTemplate.class);
+
+    when(restTemplate.exchange(
+            startsWith("http://arcgis"),
+            eq(HttpMethod.GET),
+            Mockito.any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(ArcGisBenefits.builder().build()))));
 
     ResponseEntity<List<AccessToPwtEntry>> atpResponse = mock(ResponseEntity.class);
     when(atpResponse.getBody())
@@ -45,6 +62,7 @@ public class CollectContollerTest {
             new CollectController(
                     mock(JdbcTemplate.class),
                     restTemplate,
+                    "http://arcgis",
                     "file:src/test/resources",
                     "http://atp",
                     "file:src/test/resources",

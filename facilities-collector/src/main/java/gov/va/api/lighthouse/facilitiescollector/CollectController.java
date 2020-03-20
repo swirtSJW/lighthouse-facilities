@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -34,6 +35,9 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("WeakerAccess")
 @RequestMapping(value = "/collect", produces = "application/json")
 public class CollectController {
+
+  private final String arcgisUrl;
+
   private final JdbcTemplate jdbcTemplate;
 
   private final RestTemplate restTemplate;
@@ -50,27 +54,31 @@ public class CollectController {
   public CollectController(
       @Autowired JdbcTemplate jdbcTemplate,
       @Autowired RestTemplate restTemplate,
+      @Value("${arc-gis.url}") String arcgisUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
       @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
     this.jdbcTemplate = jdbcTemplate;
     this.restTemplate = restTemplate;
+    this.arcgisUrl = trailingSlash(arcgisUrl);
     this.atcBaseUrl = trailingSlash(atcBaseUrl);
     this.atpBaseUrl = trailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = trailingSlash(stateCemeteriesBaseUrl);
     this.vaArcGisBaseUrl = trailingSlash(vaArcGisBaseUrl);
   }
 
+  /** Loads the websites csv file. */
   @SneakyThrows
   private static Map<String, String> loadWebsites() {
     try (InputStreamReader reader =
-        new InputStreamReader(new ClassPathResource("websites.csv").getInputStream(), "UTF-8")) {
+        new InputStreamReader(
+            new ClassPathResource("websites.csv").getInputStream(), StandardCharsets.UTF_8)) {
       Iterable<CSVRecord> rows = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
       Map<String, String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
       for (CSVRecord row : rows) {
-        String id = trimToNull(row.get("id"));
-        String url = trimToNull(row.get("url"));
+        String id = trimToNull(row.get(WebsiteCsvHeaders.id));
+        String url = trimToNull(row.get(WebsiteCsvHeaders.url));
         checkState(id != null, "Website %s missing ID", url);
         checkState(url != null, "Website %s missing url", id);
         checkState(!map.containsKey(id), "Website %s duplicate", id);
@@ -106,11 +114,23 @@ public class CollectController {
             .websites(websites)
             .build()
             .stateCemeteries();
+    Collection<Facility> benefits =
+        BenefitsCollector.builder()
+            .arcgisUrl(arcgisUrl)
+            .restTemplate(restTemplate)
+            .websites(websites)
+            .build()
+            .collect();
     return CollectorFacilitiesResponse.builder()
         .facilities(
-            Streams.stream(Iterables.concat(healths, cems))
+            Streams.stream(Iterables.concat(benefits, cems, healths))
                 .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
                 .collect(Collectors.toList()))
         .build();
+  }
+
+  public enum WebsiteCsvHeaders {
+    id,
+    url
   }
 }
