@@ -223,44 +223,58 @@ public final class JacksonConfigV0 {
           && value.sunday() == null;
     }
 
+    @SneakyThrows
+    private static void writeEitherNonNull(
+        JsonGenerator jgen, String fieldName, String left, String right) {
+      if (left != null) {
+        writeNonNull(jgen, fieldName, left);
+      } else {
+        writeNonNull(jgen, fieldName, right);
+      }
+    }
+
     private static void writeLower(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "monday", value.monday());
-      writeNonNull(jgen, "tuesday", value.tuesday());
-      writeNonNull(jgen, "wednesday", value.wednesday());
-      writeNonNull(jgen, "thursday", value.thursday());
-      writeNonNull(jgen, "friday", value.friday());
-      writeNonNull(jgen, "saturday", value.saturday());
-      writeNonNull(jgen, "sunday", value.sunday());
+      writeEitherNonNull(jgen, "monday", value.monday(), value.mon());
+      writeEitherNonNull(jgen, "tuesday", value.tuesday(), value.tues());
+      writeEitherNonNull(jgen, "wednesday", value.wednesday(), value.wed());
+      writeEitherNonNull(jgen, "thursday", value.thursday(), value.thurs());
+      writeEitherNonNull(jgen, "friday", value.friday(), value.fri());
+      writeEitherNonNull(jgen, "saturday", value.saturday(), value.sat());
+      writeEitherNonNull(jgen, "sunday", value.sunday(), value.sun());
     }
 
     private static void writeLowerScrambled(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "friday", value.friday());
-      writeNonNull(jgen, "monday", value.monday());
-      writeNonNull(jgen, "sunday", value.sunday());
-      writeNonNull(jgen, "tuesday", value.tuesday());
-      writeNonNull(jgen, "saturday", value.saturday());
-      writeNonNull(jgen, "thursday", value.thursday());
-      writeNonNull(jgen, "wednesday", value.wednesday());
+      writeEitherNonNull(jgen, "friday", value.friday(), value.fri());
+      writeEitherNonNull(jgen, "monday", value.monday(), value.mon());
+      writeEitherNonNull(jgen, "sunday", value.sunday(), value.sun());
+      writeEitherNonNull(jgen, "tuesday", value.tuesday(), value.tues());
+      writeEitherNonNull(jgen, "saturday", value.saturday(), value.sat());
+      writeEitherNonNull(jgen, "thursday", value.thursday(), value.thurs());
+      writeEitherNonNull(jgen, "wednesday", value.wednesday(), value.wed());
     }
 
     private static void writeUpper(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "Monday", value.mon());
-      writeNonNull(jgen, "Tuesday", value.tues());
-      writeNonNull(jgen, "Wednesday", value.wed());
-      writeNonNull(jgen, "Thursday", value.thurs());
-      writeNonNull(jgen, "Friday", value.fri());
-      writeNonNull(jgen, "Saturday", value.sat());
-      writeNonNull(jgen, "Sunday", value.sun());
+      writeEitherNonNull(jgen, "Monday", value.mon(), value.monday());
+      writeEitherNonNull(jgen, "Tuesday", value.tues(), value.tuesday());
+      writeEitherNonNull(jgen, "Wednesday", value.wed(), value.wednesday());
+      writeEitherNonNull(jgen, "Thursday", value.thurs(), value.thursday());
+      writeEitherNonNull(jgen, "Friday", value.fri(), value.friday());
+      writeEitherNonNull(jgen, "Saturday", value.sat(), value.saturday());
+      writeEitherNonNull(jgen, "Sunday", value.sun(), value.sunday());
     }
 
     private static void writeUpperScrambled(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "Friday", value.fri());
-      writeNonNull(jgen, "Monday", value.mon());
-      writeNonNull(jgen, "Sunday", value.sun());
-      writeNonNull(jgen, "Tuesday", value.tues());
-      writeNonNull(jgen, "Saturday", value.sat());
-      writeNonNull(jgen, "Thursday", value.thurs());
-      writeNonNull(jgen, "Wednesday", value.wed());
+      writeEitherNonNull(jgen, "Friday", value.fri(), value.friday());
+      writeEitherNonNull(jgen, "Monday", value.mon(), value.monday());
+      writeEitherNonNull(jgen, "Sunday", value.sun(), value.sunday());
+      writeEitherNonNull(jgen, "Tuesday", value.tues(), value.tuesday());
+      writeEitherNonNull(jgen, "Saturday", value.sat(), value.saturday());
+      writeEitherNonNull(jgen, "Thursday", value.thurs(), value.thursday());
+      writeEitherNonNull(jgen, "Wednesday", value.wed(), value.wednesday());
+    }
+
+    private boolean hasParent(JsonGenerator jgen, Class<?> clazz) {
+      return parents(jgen).stream().anyMatch(p -> clazz.isInstance(p));
     }
 
     @Override
@@ -268,13 +282,22 @@ public final class JacksonConfigV0 {
     public void serialize(Facility.Hours value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
       if (!empty(value)) {
-        if (parents(jgen).stream().anyMatch(p -> p instanceof FacilityReadResponse)
-            || parents(jgen).stream().anyMatch(p -> p instanceof GeoFacilityReadResponse)) {
-          writeUpper(value, jgen);
+        if (hasParent(jgen, FacilityReadResponse.class)) {
           writeLower(value, jgen);
-        } else {
-          writeUpperScrambled(value, jgen);
+        } else if (hasParent(jgen, Facility.class)) {
           writeLowerScrambled(value, jgen);
+        } else if (hasParent(jgen, GeoFacilityReadResponse.class)) {
+          if (idStartsWith(jgen, "vc_")) {
+            writeLower(value, jgen);
+          } else {
+            writeUpper(value, jgen);
+          }
+        } else if (hasParent(jgen, GeoFacility.class)) {
+          if (idStartsWith(jgen, "vc_")) {
+            writeLowerScrambled(value, jgen);
+          } else {
+            writeUpperScrambled(value, jgen);
+          }
         }
       } else if (idStartsWith(jgen, "nca_")) {
         jgen.writeObjectField("Friday", null);

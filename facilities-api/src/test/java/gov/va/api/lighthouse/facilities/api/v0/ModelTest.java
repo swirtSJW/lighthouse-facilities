@@ -144,7 +144,7 @@ public class ModelTest {
                 .website("http://www.washingtondc.va.gov")
                 .address(addresses())
                 .phone(phones())
-                .hours(hours())
+                .hours(hoursCaps())
                 .services(services())
                 .satisfaction(satisfaction())
                 .waitTimes(waitTimes())
@@ -162,13 +162,25 @@ public class ModelTest {
 
   private Facility.Hours hours() {
     return Facility.Hours.builder()
-        .sunday("CLOSED")
         .monday("CLOSED")
         .tuesday("CLOSED")
         .wednesday("CLOSED")
         .thursday("CLOSED")
         .friday("CLOSED")
         .saturday("CLOSED")
+        .sunday("CLOSED")
+        .build();
+  }
+
+  private Facility.Hours hoursCaps() {
+    return Facility.Hours.builder()
+        .mon("CLOSED")
+        .tues("CLOSED")
+        .wed("CLOSED")
+        .thurs("CLOSED")
+        .fri("CLOSED")
+        .sat("CLOSED")
+        .sun("CLOSED")
         .build();
   }
 
