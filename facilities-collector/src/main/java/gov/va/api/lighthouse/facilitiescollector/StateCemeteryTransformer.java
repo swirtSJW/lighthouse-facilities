@@ -93,11 +93,11 @@ final class StateCemeteryTransformer {
   }
 
   private Facility.Attributes attributes() {
-    if (allBlank(xml.cemName(), website(), latitude(), longitude(), address(), phone())) {
+    if (allBlank(xml.name(), website(), latitude(), longitude(), address(), phone())) {
       return null;
     }
     return Facility.Attributes.builder()
-        .name(xml.cemName())
+        .name(xml.name())
         .facilityType(Facility.FacilityType.va_cemetery)
         .classification("State Cemetery")
         .website(website())
@@ -123,10 +123,10 @@ final class StateCemeteryTransformer {
   }
 
   private String id() {
-    if (allBlank(xml.facId())) {
+    if (allBlank(xml.id())) {
       return null;
     }
-    return "nca_s" + xml.facId();
+    return "nca_s" + xml.id();
   }
 
   private BigDecimal latitude() {
@@ -168,8 +168,8 @@ final class StateCemeteryTransformer {
   }
 
   String website() {
-    if (isNotBlank(xml.cemUrl())) {
-      return xml.cemUrl();
+    if (isNotBlank(xml.url())) {
+      return xml.url();
     }
     if (allBlank(id())) {
       return null;

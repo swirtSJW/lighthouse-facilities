@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -15,37 +14,35 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @JacksonXmlRootElement(localName = "cems")
-@JsonIgnoreProperties(ignoreUnknown = true)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class StateCemeteries {
+  @Builder.Default
   @JacksonXmlElementWrapper(useWrapping = false)
-  public List<StateCemetery> cem;
-
-  public List<StateCemetery> cem() {
-    if (cem == null) {
-      cem = new ArrayList<>();
-    }
-    return cem;
-  }
+  public List<StateCemetery> cem = new ArrayList<>();
 
   @Data
   @Builder
-  @JsonIgnoreProperties(ignoreUnknown = true)
   @NoArgsConstructor(access = AccessLevel.PRIVATE)
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   static final class StateCemetery {
     @JacksonXmlProperty(isAttribute = true, localName = "fac_id")
-    String facId;
+    String id;
+
+    @JacksonXmlProperty(isAttribute = true, localName = "cem_name")
+    String name;
+
+    @JacksonXmlProperty(isAttribute = true, localName = "lat")
+    String latitude;
+
+    @JacksonXmlProperty(isAttribute = true, localName = "long")
+    String longitude;
+
+    @JacksonXmlProperty(isAttribute = true, localName = "cem_url")
+    String url;
 
     @JacksonXmlProperty(isAttribute = true, localName = "statecode")
     String stateCode;
-
-    @JacksonXmlProperty(isAttribute = true, localName = "cem_name")
-    String cemName;
-
-    @JacksonXmlProperty(isAttribute = true, localName = "cem_url")
-    String cemUrl;
 
     @JacksonXmlProperty(isAttribute = true, localName = "address_line1")
     String addressLine1;
@@ -70,12 +67,6 @@ final class StateCemeteries {
 
     @JacksonXmlProperty(isAttribute = true)
     String fax;
-
-    @JacksonXmlProperty(isAttribute = true, localName = "lat")
-    String latitude;
-
-    @JacksonXmlProperty(isAttribute = true, localName = "long")
-    String longitude;
 
     // Unused fields:
     // contact1

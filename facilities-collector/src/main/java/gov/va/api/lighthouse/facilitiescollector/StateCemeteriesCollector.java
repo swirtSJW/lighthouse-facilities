@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -19,7 +20,7 @@ import lombok.SneakyThrows;
 
 @Builder
 final class StateCemeteriesCollector {
-  @NonNull final String stateCemeteriesUrl;
+  @NonNull final String baseUrl;
 
   @NonNull final Map<String, String> websites;
 
@@ -27,7 +28,8 @@ final class StateCemeteriesCollector {
   private StateCemeteries load() {
     return new XmlMapper()
         .registerModule(new StringTrimModule())
-        .readValue(new URL(stateCemeteriesUrl + "cems/cems.xml"), StateCemeteries.class);
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .readValue(new URL(baseUrl + "cems/cems.xml"), StateCemeteries.class);
   }
 
   Collection<Facility> stateCemeteries() {

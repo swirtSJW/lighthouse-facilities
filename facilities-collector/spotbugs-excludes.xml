@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
   <!-- Exclusions can be defined here and should include a comment on why the finding can be ignored -->
-  <!-- Lombok lazy getters -->
+  <!-- Allow null Boolean in facility model. -->
   <Match>
     <Or>
-      <Method name="equals"/>
-      <Method name="hashCode"/>
+      <Class name="HealthTransformer"/>
+      <Method name="mobile"/>
     </Or>
-    <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE"/>
+    <Bug pattern="NP_BOOLEAN_RETURN_NULL"/>
   </Match>
 </FindBugsFilter>

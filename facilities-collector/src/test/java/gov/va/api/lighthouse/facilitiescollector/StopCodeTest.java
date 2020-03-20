@@ -63,7 +63,7 @@ public class StopCodeTest {
         "CREATE ALIAS App.VHA_Stop_Code_Wait_Times_Paginated FOR"
             + " \"gov.va.api.lighthouse.facilitiescollector.StopCodeTest.stopCodeWaitTimesPaginated\"");
 
-    assertThat(new CdwController(null, template).stopCodes())
+    assertThat(new CdwController(template).stopCodes())
         .isEqualTo(
             StopCodeResponse.builder()
                 .stopCodes(

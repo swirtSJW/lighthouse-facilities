@@ -13,7 +13,7 @@ public class StateCemeteriesCollectorTest {
   public void collect() {
     assertThat(
             StateCemeteriesCollector.builder()
-                .stateCemeteriesUrl("file:src/test/resources/")
+                .baseUrl("file:src/test/resources/")
                 .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
                 .build()
                 .stateCemeteries())

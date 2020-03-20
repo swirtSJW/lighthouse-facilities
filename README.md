@@ -6,8 +6,8 @@ location, address, phone, hours of operation, and available services.
 
 ## Local Development
 
-- `local-db/local-db.sh` launches a SQL Server instance of the Corporate Data Warehouse (for stop codes and mental health contact data)
 - `make-configs.sh` generates `application-dev.properties` to run locally
+- `facilities-local-db/local-db.sh` launches a SQL Server instance of the Corporate Data Warehouse (for stop codes and mental health contact data)
 - `facilities-mock-services` can be used to create a local server that 
   mimics ArcGIS, VA ArcGIS, Access to Care, and PSSG.
 

@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/")
 @AllArgsConstructor(onConstructor = @__({@Autowired}))
 public class CdwController {
-  private final MentalHealthContactRepository mentalHealthContactRepository;
-
   private final JdbcTemplate jdbc;
-
-  private static String toLongAsString(Double num) {
-    return num == null ? null : Long.toString(num.longValue());
-  }
 
   /** Retrieve mental-health contacts. */
   @RequestMapping(
@@ -33,27 +26,8 @@ public class CdwController {
         "application/json",
       },
       method = RequestMethod.GET)
-  public MentalHealthContactResponse mentalHealthContacts() {
-    List<MentalHealthContactResponse.Contact> contacts = new ArrayList<>();
-    for (MentalHealthContactEntity entity : mentalHealthContactRepository.findAll()) {
-      contacts.add(
-          MentalHealthContactResponse.Contact.builder()
-              .id(entity.id())
-              .region(toLongAsString(entity.region()))
-              .visn(entity.visn())
-              .adminParent(toLongAsString(entity.adminParent()))
-              .stationNumber(entity.stationNumber())
-              .mhPhone(entity.mhPhone())
-              .extension(toLongAsString(entity.extension()))
-              .officialStationName(entity.officialStationName())
-              .pocEmail(entity.pocEmail())
-              .status(entity.status())
-              .modified(entity.modified())
-              .created(entity.created())
-              .addedToOutbox(entity.addedToOutbox())
-              .build());
-    }
-    return MentalHealthContactResponse.builder().contacts(contacts).build();
+  public String mentalHealthContacts() {
+    return "{}";
   }
 
   /** Retrieve stop codes. */

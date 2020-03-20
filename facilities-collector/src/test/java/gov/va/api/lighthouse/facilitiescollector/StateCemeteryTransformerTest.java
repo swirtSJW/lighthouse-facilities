@@ -77,7 +77,7 @@ public class StateCemeteryTransformerTest {
         .isNull();
     assertThat(
             StateCemeteryTransformer.builder()
-                .xml(StateCemeteries.StateCemetery.builder().facId("aBc123").build())
+                .xml(StateCemeteries.StateCemetery.builder().id("aBc123").build())
                 .websites(Collections.emptyMap())
                 .build()
                 .toFacility())
@@ -90,8 +90,8 @@ public class StateCemeteryTransformerTest {
             StateCemeteryTransformer.builder()
                 .xml(
                     StateCemeteries.StateCemetery.builder()
-                        .facId("aBc123")
-                        .cemUrl("orig-website")
+                        .id("aBc123")
+                        .url("orig-website")
                         .build())
                 .websites(ImmutableMap.of("nca_saBc123", "csv-website"))
                 .build()
@@ -100,7 +100,7 @@ public class StateCemeteryTransformerTest {
 
     assertThat(
             StateCemeteryTransformer.builder()
-                .xml(StateCemeteries.StateCemetery.builder().facId("abc123").build())
+                .xml(StateCemeteries.StateCemetery.builder().id("abc123").build())
                 .websites(ImmutableMap.of("nca_sabc123", "csv-website"))
                 .build()
                 .website())

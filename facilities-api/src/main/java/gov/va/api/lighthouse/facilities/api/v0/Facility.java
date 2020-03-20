@@ -47,27 +47,27 @@ public class Facility {
   }
 
   public enum FacilityType {
-    va_health_facility,
     va_benefits_facility,
     va_cemetery,
+    va_health_facility,
     vet_center
   }
 
   public enum HealthService {
-    DentalServices,
-    PrimaryCare,
-    MentalHealthCare,
-    UrgentCare,
-    EmergencyCare,
     Audiology,
     Cardiology,
+    DentalServices,
     Dermatology,
+    EmergencyCare,
     Gastroenterology,
     Gynecology,
+    MentalHealthCare,
     Ophthalmology,
     Optometry,
     Orthopedics,
+    PrimaryCare,
     SpecialtyCare,
+    UrgentCare,
     Urology,
     WomensHealth
   }
