@@ -164,7 +164,11 @@ final class StateCemeteryTransformer {
     if (allBlank(id())) {
       return null;
     }
-    return Facility.builder().id(id()).attributes(attributes()).build();
+    return Facility.builder()
+        .id(id())
+        .type(Facility.Type.va_facilities)
+        .attributes(attributes())
+        .build();
   }
 
   String website() {

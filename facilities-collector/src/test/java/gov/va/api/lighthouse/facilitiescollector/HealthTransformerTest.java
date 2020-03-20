@@ -88,6 +88,6 @@ public class HealthTransformerTest {
                 .websites(emptyMap())
                 .build()
                 .toFacility())
-        .isEqualTo(Facility.builder().id("vha_x").build());
+        .isEqualTo(Facility.builder().id("vha_x").type(Facility.Type.va_facilities).build());
   }
 }

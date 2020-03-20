@@ -81,7 +81,7 @@ public class StateCemeteryTransformerTest {
                 .websites(Collections.emptyMap())
                 .build()
                 .toFacility())
-        .isEqualTo(Facility.builder().id("nca_saBc123").build());
+        .isEqualTo(Facility.builder().id("nca_saBc123").type(Facility.Type.va_facilities).build());
   }
 
   @Test

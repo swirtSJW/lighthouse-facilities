@@ -35,12 +35,11 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("WeakerAccess")
 @RequestMapping(value = "/collect", produces = "application/json")
 public class CollectController {
-
-  private final String arcgisUrl;
-
   private final JdbcTemplate jdbcTemplate;
 
   private final RestTemplate restTemplate;
+
+  private final String arcGisBaseUrl;
 
   private final String atcBaseUrl;
 
@@ -54,14 +53,14 @@ public class CollectController {
   public CollectController(
       @Autowired JdbcTemplate jdbcTemplate,
       @Autowired RestTemplate restTemplate,
-      @Value("${arc-gis.url}") String arcgisUrl,
+      @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
       @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
     this.jdbcTemplate = jdbcTemplate;
     this.restTemplate = restTemplate;
-    this.arcgisUrl = trailingSlash(arcgisUrl);
+    this.arcGisBaseUrl = trailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = trailingSlash(atcBaseUrl);
     this.atpBaseUrl = trailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = trailingSlash(stateCemeteriesBaseUrl);
@@ -108,28 +107,39 @@ public class CollectController {
             .websites(websites)
             .build()
             .healths();
-    Collection<Facility> cems =
+
+    Collection<Facility> stateCems =
         StateCemeteriesCollector.builder()
             .baseUrl(stateCemeteriesBaseUrl)
             .websites(websites)
             .build()
             .stateCemeteries();
+
+    Collection<Facility> vetCenters =
+        VetCentersCollector.builder()
+            .baseUrl(arcGisBaseUrl)
+            .restTemplate(restTemplate)
+            .websites(websites)
+            .build()
+            .vetCenters();
+
     Collection<Facility> benefits =
         BenefitsCollector.builder()
-            .arcgisUrl(arcgisUrl)
+            .arcgisUrl(arcGisBaseUrl)
             .restTemplate(restTemplate)
             .websites(websites)
             .build()
             .collect();
+
     return CollectorFacilitiesResponse.builder()
         .facilities(
-            Streams.stream(Iterables.concat(benefits, cems, healths))
+            Streams.stream(Iterables.concat(benefits, healths, stateCems, vetCenters))
                 .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
                 .collect(Collectors.toList()))
         .build();
   }
 
-  public enum WebsiteCsvHeaders {
+  private enum WebsiteCsvHeaders {
     id,
     url
   }

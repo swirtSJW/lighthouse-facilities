@@ -108,6 +108,7 @@ public class HealthsCollectorTest {
             List.of(
                 Facility.builder()
                     .id("vha_666")
+                    .type(Facility.Type.va_facilities)
                     .attributes(
                         Facility.Attributes.builder()
                             .name("Manila VA Clinic")
