@@ -53,6 +53,7 @@ public final class Populaterator {
     mentalHealthContacts(connection);
     stopCodes(connection);
     System.out.println("Good bye.");
+    System.exit(0);
   }
 
   @SneakyThrows

@@ -27,7 +27,7 @@ public class Facility {
     T
   }
 
-  public enum BenefitsService {
+  public enum BenefitsService implements ServiceType {
     ApplyingForBenefits,
     BurialClaimAssistance,
     DisabilityClaimAssistance,
@@ -53,7 +53,7 @@ public class Facility {
     vet_center
   }
 
-  public enum HealthService {
+  public enum HealthService implements ServiceType {
     Audiology,
     Cardiology,
     DentalServices,
@@ -80,6 +80,8 @@ public class Facility {
   public enum Type {
     va_facilities
   }
+
+  public interface ServiceType {}
 
   @Value
   @Builder
