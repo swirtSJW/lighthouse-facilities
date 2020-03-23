@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -17,19 +16,31 @@ import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Builder
 final class StateCemeteriesCollector {
   @NonNull final String baseUrl;
 
+  @NonNull final RestTemplate insecureRestTemplate;
+
   @NonNull final Map<String, String> websites;
 
   @SneakyThrows
   private StateCemeteries load() {
+    String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "cems/cems.xml").build().toUriString();
+    String response =
+        insecureRestTemplate
+            .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
+            .getBody();
     return new XmlMapper()
         .registerModule(new StringTrimModule())
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .readValue(new URL(baseUrl + "cems/cems.xml"), StateCemeteries.class);
+        .readValue(response, StateCemeteries.class);
   }
 
   Collection<Facility> stateCemeteries() {

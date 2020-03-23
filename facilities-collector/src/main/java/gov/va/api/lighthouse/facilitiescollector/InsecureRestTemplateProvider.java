@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 public class InsecureRestTemplateProvider {
   /** Create RestTemplate with SSL disabled. */
   @SneakyThrows
-  public RestTemplate insecureRestTemplate() {
+  public RestTemplate restTemplate() {
     CloseableHttpClient httpClient =
         HttpClients.custom()
             .setSSLSocketFactory(

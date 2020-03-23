@@ -29,6 +29,11 @@ public class CollectContollerTest {
   public void verifyResponse() {
     RestTemplate restTemplate = mock(RestTemplate.class);
 
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    InsecureRestTemplateProvider insecureRestTemplateProvider =
+        mock(InsecureRestTemplateProvider.class);
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
+
     when(restTemplate.exchange(
             contains("VHA_VetCenters"),
             eq(HttpMethod.GET),
@@ -71,7 +76,6 @@ public class CollectContollerTest {
             ResponseEntity.of(
                 Optional.of(List.of(AccessToPwtEntry.builder().facilityId("x").build()))));
 
-    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
             startsWith("http://vaarcgis"),
             eq(HttpMethod.GET),
@@ -82,9 +86,13 @@ public class CollectContollerTest {
                 Optional.of(
                     JacksonConfig.createMapper()
                         .writeValueAsString(ArcGisHealths.builder().build()))));
-    InsecureRestTemplateProvider insecureRestTemplateProvider =
-        mock(InsecureRestTemplateProvider.class);
-    when(insecureRestTemplateProvider.insecureRestTemplate()).thenReturn(insecureRestTemplate);
+
+    when(insecureRestTemplate.exchange(
+            startsWith("http://statecems"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(ResponseEntity.of(Optional.of("<cems></cems>")));
 
     assertThat(
             new CollectController(
@@ -94,7 +102,7 @@ public class CollectContollerTest {
                     "http://arcgis",
                     "file:src/test/resources",
                     "http://atp",
-                    "file:src/test/resources",
+                    "http://statecems",
                     "http://vaarcgis")
                 .collectFacilities())
         .isExactlyInstanceOf(CollectorFacilitiesResponse.class);

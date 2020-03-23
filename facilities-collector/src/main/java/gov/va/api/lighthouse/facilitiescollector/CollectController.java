@@ -108,7 +108,7 @@ public class CollectController {
             .atpBaseUrl(atpBaseUrl)
             .jdbcTemplate(jdbcTemplate)
             .restTemplate(restTemplate)
-            .insecureRestTemplate(insecureRestTemplateProvider.insecureRestTemplate())
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .vaArcGisBaseUrl(vaArcGisBaseUrl)
             .websites(websites)
             .build()
@@ -117,6 +117,7 @@ public class CollectController {
     Collection<Facility> stateCems =
         StateCemeteriesCollector.builder()
             .baseUrl(stateCemeteriesBaseUrl)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .websites(websites)
             .build()
             .stateCemeteries();
