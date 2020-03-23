@@ -11,7 +11,7 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class GeoFacilitiesResponse {
+public final class GeoFacilitiesResponse {
   @NotNull Type type;
 
   @Valid List<GeoFacility> features;

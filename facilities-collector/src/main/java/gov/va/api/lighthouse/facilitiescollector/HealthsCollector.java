@@ -93,6 +93,9 @@ final class HealthsCollector {
     }
 
     String ext = trimToEmpty(resultSet.getString("Extension"));
+    if (ext.indexOf(".") >= 0) {
+      ext = ext.substring(0, ext.indexOf("."));
+    }
     if (isNotBlank(ext) && !equalsIgnoreCase(ext, "null") && !ext.matches("^[0]+$")) {
       phone = phone + " x " + ext;
     }

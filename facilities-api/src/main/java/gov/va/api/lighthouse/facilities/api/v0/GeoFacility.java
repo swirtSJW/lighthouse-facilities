@@ -1,8 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.Valid;
@@ -16,7 +14,7 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class GeoFacility {
+public final class GeoFacility {
   @NotNull Type type;
 
   @Valid @NotNull Geometry geometry;
@@ -34,7 +32,7 @@ public class GeoFacility {
   @Value
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
-  public static class Geometry {
+  public static final class Geometry {
     @NotNull GeometryType type;
 
     @Size(min = 2, max = 2)
@@ -43,25 +41,8 @@ public class GeoFacility {
 
   @Value
   @Builder
-  @JsonInclude(JsonInclude.Include.ALWAYS)
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
-  @JsonPropertyOrder({
-    "id",
-    "name",
-    "facilityType",
-    "classification",
-    "website",
-    "address",
-    "phone",
-    "hours",
-    "services",
-    "satisfaction",
-    "waitTimes",
-    "mobile",
-    "activeStatus",
-    "visn"
-  })
-  public static class Properties {
+  public static final class Properties {
     @NotNull String id;
 
     String name;

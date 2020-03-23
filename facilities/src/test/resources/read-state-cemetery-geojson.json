@@ -1,0 +1,45 @@
+{
+  "type" : "Feature",
+  "geometry" : {
+    "type" : "Point",
+    "coordinates" : [
+      -87.8985442,
+      30.7346233
+    ]
+  },
+  "properties" : {
+    "id" : "nca_s1001",
+    "name" : "Alabama State Veterans Memorial Cemetery At Spanish Fort",
+    "facility_type" : "va_cemetery",
+    "classification" : "State Cemetery",
+    "website" : "http://www.va.state.al.us/spanishfort.aspx",
+    "address" : {
+      "mailing" : { },
+      "physical" : {
+        "zip" : "36577",
+        "city" : "Spanish Fort",
+        "state" : "AL",
+        "address_1" : "34904 State Highway 225"
+      }
+    },
+    "phone" : {
+      "fax" : "251-626-9204",
+      "main" : "251-625-1338"
+    },
+    "hours" : {
+      "Monday" : "Sunrise - Sunset",
+      "Tuesday" : "Sunrise - Sunset",
+      "Wednesday" : "Sunrise - Sunset",
+      "Thursday" : "Sunrise - Sunset",
+      "Friday" : "Sunrise - Sunset",
+      "Saturday" : "Sunrise - Sunset",
+      "Sunday" : "Sunrise - Sunset"
+    },
+    "services" : { },
+    "satisfaction" : { },
+    "wait_times" : { },
+    "mobile" : null,
+    "active_status" : null,
+    "visn" : null
+  }
+}

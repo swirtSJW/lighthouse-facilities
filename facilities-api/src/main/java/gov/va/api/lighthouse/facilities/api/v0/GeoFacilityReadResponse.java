@@ -10,7 +10,7 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class GeoFacilityReadResponse {
+public final class GeoFacilityReadResponse {
   @NotNull GeoFacility.Type type;
 
   @Valid @NotNull GeoFacility.Geometry geometry;

@@ -1,9 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
-import static gov.va.api.lighthouse.facilities.api.v0.JacksonConfigV0.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,6 +22,7 @@ public class ModelTest {
                 .state("FL")
                 .zip("32935")
                 .build())
+        .physical(Facility.Address.builder().address1("PO BOX 101").build())
         .build();
   }
 
@@ -187,20 +188,20 @@ public class ModelTest {
   @Test
   public void nearbyFacility() {
     roundTrip(
-        NearbyFacility.builder()
+        NearbyResponse.builder()
             .data(
                 List.of(
-                    NearbyFacility.Nearby.builder()
+                    NearbyResponse.Nearby.builder()
                         .id("8")
-                        .type(NearbyFacility.Type.NearbyFacility)
+                        .type(NearbyResponse.Type.NearbyFacility)
                         .attributes(
-                            NearbyFacility.Attributes.builder().minTime(10).maxTime(20).build())
+                            NearbyResponse.Attributes.builder().minTime(10).maxTime(20).build())
                         .relationships(
-                            NearbyFacility.Relationships.builder()
+                            NearbyResponse.Relationships.builder()
                                 .vaFacility(
-                                    NearbyFacility.VaFacility.builder()
+                                    NearbyResponse.VaFacility.builder()
                                         .links(
-                                            NearbyFacility.Links.builder()
+                                            NearbyResponse.Links.builder()
                                                 .related(
                                                     "/services/va_facilities/v0/facilities/vha_688")
                                                 .build())
@@ -224,7 +225,7 @@ public class ModelTest {
 
   @SneakyThrows
   private <T> void roundTrip(T object) {
-    ObjectMapper mapper = createMapper();
+    ObjectMapper mapper = JacksonConfig.createMapper();
     String json = mapper.writeValueAsString(object);
     Object evilTwin = mapper.readValue(json, object.getClass());
     assertThat(evilTwin).isEqualTo(object);

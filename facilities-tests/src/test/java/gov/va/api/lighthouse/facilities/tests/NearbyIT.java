@@ -3,7 +3,7 @@ package gov.va.api.lighthouse.facilities.tests;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
-import gov.va.api.lighthouse.facilities.api.v0.NearbyFacility;
+import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import gov.va.api.lighthouse.facilities.tests.categories.NearbyAddress;
 import gov.va.api.lighthouse.facilities.tests.categories.NearbyLatLong;
 import io.restassured.http.Header;
@@ -42,7 +42,7 @@ public class NearbyIT {
             + zip;
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(NearbyFacility.class);
+        .expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class NearbyIT {
             + "&drive_time=100";
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(NearbyFacility.class);
+        .expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -75,7 +75,7 @@ public class NearbyIT {
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude;
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(NearbyFacility.class);
+        .expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class NearbyIT {
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude + "&drive_time=100";
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
-        .expectValid(NearbyFacility.class);
+        .expectValid(NearbyResponse.class);
   }
 
   private Header vetsApiFacilitiesApikey() {

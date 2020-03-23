@@ -36,7 +36,7 @@ public class SearchByZipJsonTest {
   private FacilitiesResponse sample() {
     return FacilitiesResponse.builder()
         .links(
-            FacilitiesResponse.PageLinks.builder()
+            PageLinks.builder()
                 .self("https://dev-api.vets.gov/services/va_facilities/v0/facilities?zip=32940")
                 .first(
                     "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&zip=32940")

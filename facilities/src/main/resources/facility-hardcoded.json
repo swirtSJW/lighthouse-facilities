@@ -1,0 +1,104 @@
+{
+  "id" : "vha_666",
+  "type" : "va_facilities",
+  "attributes" : {
+    "name" : "Sheridan VA Medical Center",
+    "facility_type" : "va_health_facility",
+    "classification" : "VA Medical Center (VAMC)",
+    "website" : "https://www.sheridan.va.gov/locations/directions.asp",
+    "lat" : 44.82696953000004,
+    "long" : -106.98488390999995,
+    "address" : {
+      "physical" : {
+        "zip" : "82801-8320",
+        "city" : "Sheridan",
+        "state" : "WY",
+        "address_1" : "1898 Fort Road"
+      }
+    },
+    "phone" : {
+      "fax" : "307-675-7030",
+      "main" : "307-672-3473",
+      "pharmacy" : "866-822-6714 x1",
+      "after_hours" : "866-822-6714",
+      "patient_advocate" : "866-822-6714 x3630",
+      "mental_health_clinic" : "307-675-3903",
+      "enrollment_coordinator" : "866-822-6714 x3182"
+    },
+    "hours" : {
+      "monday" : "24/7",
+      "tuesday" : "24/7",
+      "wednesday" : "24/7",
+      "thursday" : "24/7",
+      "friday" : "24/7",
+      "saturday" : "24/7",
+      "sunday" : "24/7"
+    },
+    "services" : {
+      "health" : [
+        "Audiology",
+        "Cardiology",
+        "DentalServices",
+        "EmergencyCare",
+        "MentalHealthCare",
+        "Optometry",
+        "Orthopedics",
+        "PrimaryCare",
+        "SpecialtyCare"
+      ],
+      "last_updated" : "2020-03-09"
+    },
+    "satisfaction" : {
+      "health" : {
+        "primary_care_urgent" : 0.8500000238418579,
+        "primary_care_routine" : 0.9100000262260437,
+        "specialty_care_urgent" : 0.8600000143051147,
+        "specialty_care_routine" : 0.8899999856948853
+      },
+      "effective_date" : "2019-06-20"
+    },
+    "wait_times" : {
+      "health" : [
+        {
+          "service" : "Audiology",
+          "new" : 18.346153,
+          "established" : 2.469387
+        },
+        {
+          "service" : "Cardiology",
+          "new" : 1.0,
+          "established" : 0.0
+        },
+        {
+          "service" : "MentalHealthCare",
+          "new" : 7.444444,
+          "established" : 2.863917
+        },
+        {
+          "service" : "Optometry",
+          "new" : 8.586206,
+          "established" : 1.881355
+        },
+        {
+          "service" : "Orthopedics",
+          "new" : 20.0,
+          "established" : 0.0
+        },
+        {
+          "service" : "PrimaryCare",
+          "new" : 20.25,
+          "established" : 4.338983
+        },
+        {
+          "service" : "SpecialtyCare",
+          "new" : 16.313953,
+          "established" : 4.213783
+        }
+      ],
+      "effective_date" : "2020-03-09"
+    },
+    "mobile" : false,
+    "active_status" : "A",
+    "visn" : "19"
+  }
+}

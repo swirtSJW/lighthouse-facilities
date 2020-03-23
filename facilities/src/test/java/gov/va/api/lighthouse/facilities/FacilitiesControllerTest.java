@@ -5,11 +5,14 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
+import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -69,5 +72,17 @@ public class FacilitiesControllerTest {
   void nearby() {
     // currently not implemented
     assertThat(controller().nearby(1.23, 4.56)).isNull();
+  }
+
+  @Test
+  @SneakyThrows
+  public void read() {
+    assertThat(controller().readJson("vha_666")).isInstanceOf(FacilityReadResponse.class);
+  }
+
+  @Test
+  @SneakyThrows
+  public void readGeoJson() {
+    assertThat(controller().readGeoJson("vha_666")).isInstanceOf(GeoFacilityReadResponse.class);
   }
 }
