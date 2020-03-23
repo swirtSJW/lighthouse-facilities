@@ -132,9 +132,17 @@ public class CollectController {
             .build()
             .collect();
 
+    Collection<Facility> cemeteries =
+        CemeteriesCollector.builder()
+            .arcgisUrl(arcGisBaseUrl)
+            .restTemplate(restTemplate)
+            .websites(websites)
+            .build()
+            .collect();
+
     return CollectorFacilitiesResponse.builder()
         .facilities(
-            Streams.stream(Iterables.concat(benefits, healths, stateCems, vetCenters))
+            Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
                 .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
                 .collect(Collectors.toList()))
         .build();

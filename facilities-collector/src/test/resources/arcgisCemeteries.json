@@ -1,0 +1,54 @@
+{
+  "features" : [
+    {
+      "attributes" : {
+        "OBJECTID" : 85722,
+        "SITE_ID" : "088",
+        "CEMETERY_I" : "088",
+        "FULL_NAME" : "Albany Rural",
+        "SHORT_NAME" : null,
+        "SITE_TYPE" : "Rural",
+        "SITE_STATUS" : "Closed",
+        "SITE_OWNER" : "NCA",
+        "SITE_ADDRESS1" : "Cemetery Avenue",
+        "SITE_ADDRESS2" : null,
+        "SITE_CITY" : "Albany",
+        "SITE_STATE" : "NY",
+        "SITE_ZIP" : "12204",
+        "SITE_COUNTRY" : "USA",
+        "MAIL_ADDRESS1" : "200 Duell Road",
+        "MAIL_ADDRESS2" : null,
+        "MAIL_CITY" : "Schuylerville",
+        "MAIL_STATE" : "NY",
+        "MAIL_ZIP" : "12871-1721",
+        "MAIL_COUNTRY" : "USA",
+        "PHONE" : null,
+        "FAX" : "5184630787",
+        "VISITATION_HOURS_WEEKDAY" : "Sunrise - Sundown",
+        "VISITATION_HOURS_WEEKEND" : "Sunrise - Sundown",
+        "VISITATION_HOURS_COMMENT" : "Located within private cemetery with seperate hours.",
+        "OFFICE_HOURS_WEEKDAY" : null,
+        "OFFICE_HOURS_WEEKEND" : null,
+        "OFFICE_HOURS_COMMENT" : null,
+        "SITE_SQFT" : null,
+        "GOVERNING_SITE_ID" : 917,
+        "DISTRICT" : "MSN1",
+        "LATITUDE_DD" : 42.7038449,
+        "LONGITUDE_DD" : -73.723565,
+        "POSITION_SRC" : "Geocoded",
+        "COMMENT" : null,
+        "ACTIVE" : 1,
+        "GlobalID" : "f3551469-64b4-44c7-a569-4a10b43892d0",
+        "created_user" : "BISL_GIS_ETL",
+        "created_date" : 1584669705000,
+        "last_edited_user" : null,
+        "last_edited_date" : null,
+        "Website_URL" : ""
+      },
+      "geometry" : {
+        "x" : -73.72356499999995,
+        "y" : 42.703844900000036
+      }
+    }
+  ]
+}

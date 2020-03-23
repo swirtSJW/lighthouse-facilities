@@ -52,6 +52,17 @@ public class CollectContollerTest {
                         .writeValueAsString(ArcGisBenefits.builder().build()))));
 
     when(restTemplate.exchange(
+            contains("NCA_Facilities"),
+            eq(HttpMethod.GET),
+            Mockito.any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(ArcGisCemeteries.builder().build()))));
+
+    when(restTemplate.exchange(
             startsWith("http://atp"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
