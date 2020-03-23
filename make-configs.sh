@@ -49,6 +49,7 @@ makeConfig facilities $PROFILE
 configValue facilities $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
 configValue facilities $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=facility;sendStringParametersAsUnicode=false'
 configValue facilities $PROFILE spring.datasource.username 'SA'
+configValue facilities $PROFILE facilities-collector.url 'http://localhost:8080'
 
 
 checkForUnsetValues facilities-collector $PROFILE

@@ -68,7 +68,7 @@ public final class Facility {
     WomensHealth
   }
 
-  public enum OtherService {
+  public enum OtherService implements ServiceType {
     @JsonProperty("Online Scheduling")
     OnlineScheduling
   }
@@ -77,6 +77,10 @@ public final class Facility {
     va_facilities
   }
 
+  /**
+   * This marker interface is used to indicate that an enumeration, such as HealthService, is a type
+   * of service offered at a facility.
+   */
   public interface ServiceType {}
 
   @Value

@@ -1,22 +1,18 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfig.quietlyMap;
 import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse.Type;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import java.io.InputStream;
-import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,45 +52,23 @@ public class FacilitiesController {
     throw new ExceptionsV0.NotFound(id);
   }
 
-  /** Get all facilities. */
+  /**
+   * Get all facilities.
+   *
+   * @return
+   */
   @GetMapping(value = {"/facilities/all"})
-  public List<String> all() {
-    /* TODO return an actual list of objects. */
-    return StreamSupport.stream(facilityRepository.findAll().spliterator(), false)
-        .map(FacilityEntity::facility)
-        .collect(toList());
-  }
+  public GeoFacilitiesResponse all() {
+    var mapper = FacilitiesJacksonConfig.createMapper();
 
-  /** Temporary method. */
-  @GetMapping(value = {"/garbage/{sn}"})
-  public void makeSomeGarbage(@PathVariable(name = "sn") String stationNumber) {
-    // TODO REMOVE ME
-    Random r = new SecureRandom();
-    HealthService[] healthyBois = HealthService.values();
-    Set<ServiceType> services = new HashSet<>();
-    services.add(healthyBois[r.nextInt(healthyBois.length)]);
-    services.add(healthyBois[r.nextInt(healthyBois.length)]);
-    FacilityEntity hotGarbage =
-        FacilityEntity.typeSafeBuilder()
-            .id(FacilityEntity.Pk.of(FacilityEntity.Type.vha, stationNumber))
-            .state(r.nextBoolean() ? "FL" : "South")
-            .zip("3290" + r.nextInt(10))
-            .longitude(r.nextDouble())
-            .latitude(r.nextDouble())
-            .servicesTypes(services)
-            .facility("{\"stationNumber\":\"" + stationNumber + "\",\"gargbage\":\"hot\"}")
-            .build();
-    facilityRepository.save(hotGarbage);
-    var moreGarbage =
-        DriveTimeBandEntity.builder()
-            .id(DriveTimeBandEntity.Pk.of(stationNumber, 0, 10))
-            .minLongitude(r.nextDouble())
-            .minLatitude(r.nextDouble())
-            .maxLongitude(r.nextDouble())
-            .maxLatitude(r.nextDouble())
-            .band("{\"stationNumber\":\"" + stationNumber + "\",\"gargbage\":\"hot\"}")
-            .build();
-    driveTimeBandRepository.save(moreGarbage);
+    return GeoFacilitiesResponse.builder()
+        .type(Type.FeatureCollection)
+        .features(
+            StreamSupport.stream(facilityRepository.findAll().spliterator(), false)
+                .map(e -> quietlyMap(mapper, e.facility(), Facility.class))
+                .map(f -> GeoFacilityTransformer.builder().facility(f).build().toGeoFacility())
+                .collect(toList()))
+        .build();
   }
 
   @SuppressWarnings("unused")

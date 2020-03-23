@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
 import java.io.Serializable;
 import java.util.Set;
@@ -24,6 +26,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @Entity
@@ -91,6 +94,11 @@ public class FacilityEntity {
         version);
   }
 
+  /** Populate services from a type safe collection. */
+  public void servicesFromServiceTypes(Set<ServiceType> serviceTypes) {
+    services(serviceTypes.stream().map(Object::toString).collect(Collectors.toSet()));
+  }
+
   public enum Type {
     /** Health facility. */
     vha,
@@ -103,7 +111,7 @@ public class FacilityEntity {
   }
 
   @Data
-  @NoArgsConstructor(access = AccessLevel.PRIVATE)
+  @NoArgsConstructor
   @AllArgsConstructor(staticName = "of")
   @Embeddable
   public static class Pk implements Serializable {
@@ -113,5 +121,16 @@ public class FacilityEntity {
 
     @Column(name = "station_number", nullable = false)
     private String stationNumber;
+
+    /** Create a Pk from the {type}_{id} style used in the Facilities API id. */
+    public static Pk fromIdString(@NonNull String typeAndStationNumber) {
+      int separator = typeAndStationNumber.indexOf('_');
+      checkArgument(separator > 0, typeAndStationNumber);
+      checkArgument(separator + 1 < typeAndStationNumber.length() - 1, typeAndStationNumber);
+      String typeValue = typeAndStationNumber.substring(0, separator);
+      String stationNumber = typeAndStationNumber.substring(separator + 1);
+      checkArgument(!stationNumber.isBlank(), typeAndStationNumber);
+      return of(Type.valueOf(typeValue), stationNumber);
+    }
   }
 }

@@ -169,3 +169,17 @@ databaseChangeLog:
                   name: type
               - column:
                   name: services
+  - changeSet:
+      id: 3
+      author: shanktopus
+      changes:
+        - dropNotNullConstraint:
+            schemaName: app
+            tableName: facility
+            columnName: zip
+            columnDataType: varchar(5)
+        - dropNotNullConstraint:
+            schemaName: app
+            tableName: facility
+            columnName: state
+            columnDataType: varchar(5)

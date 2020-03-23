@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -11,6 +12,7 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class ModelTest {
+
   private Facility.Addresses addresses() {
     return Facility.Addresses.builder()
         .mailing(
@@ -39,6 +41,11 @@ public class ModelTest {
                         .status("Error")
                         .build()))
             .build());
+  }
+
+  @Test
+  public void collectorFacilitiesResponse() {
+    roundTrip(CollectorFacilitiesResponse.builder().facilities(List.of(facility())).build());
   }
 
   @Test
