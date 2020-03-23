@@ -71,15 +71,24 @@ public class CollectContollerTest {
             ResponseEntity.of(
                 Optional.of(List.of(AccessToPwtEntry.builder().facilityId("x").build()))));
 
-    when(restTemplate.exchange(
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    when(insecureRestTemplate.exchange(
             startsWith("http://vaarcgis"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
-            eq(ArcGisHealths.class)))
-        .thenReturn(ResponseEntity.of(Optional.of(ArcGisHealths.builder().build())));
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(ArcGisHealths.builder().build()))));
+    InsecureRestTemplateProvider insecureRestTemplateProvider =
+        mock(InsecureRestTemplateProvider.class);
+    when(insecureRestTemplateProvider.insecureRestTemplate()).thenReturn(insecureRestTemplate);
 
     assertThat(
             new CollectController(
+                    insecureRestTemplateProvider,
                     mock(JdbcTemplate.class),
                     restTemplate,
                     "http://arcgis",

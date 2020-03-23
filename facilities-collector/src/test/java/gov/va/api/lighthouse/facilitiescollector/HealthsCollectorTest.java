@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableMap;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -26,9 +27,12 @@ import org.springframework.web.client.RestTemplate;
 
 public class HealthsCollectorTest {
   @Test
+  @SneakyThrows
   @SuppressWarnings("unchecked")
   public void collect() {
     RestTemplate restTemplate = mock(RestTemplate.class);
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+
     ResponseEntity<List<AccessToPwtEntry>> atpResponse = mock(ResponseEntity.class);
     when(atpResponse.getBody())
         .thenReturn(
@@ -39,67 +43,73 @@ public class HealthsCollectorTest {
                     .shepScore(new BigDecimal("0.9100000262260437"))
                     .sliceEndDate("2019-06-20T10:41:00")
                     .build()));
+
     when(restTemplate.exchange(
             startsWith("http://atp"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             any(ParameterizedTypeReference.class)))
         .thenReturn(atpResponse);
-    ResponseEntity<ArcGisHealths> arcGisResponse = mock(ResponseEntity.class);
+    ResponseEntity<String> arcGisResponse = mock(ResponseEntity.class);
     when(arcGisResponse.getBody())
         .thenReturn(
-            ArcGisHealths.builder()
-                .features(
-                    List.of(
-                        ArcGisHealths.Feature.builder()
-                            .geometry(
-                                ArcGisHealths.Geometry.builder()
-                                    .latitude(new BigDecimal("14.544080000000065"))
-                                    .longitude(new BigDecimal("120.99139000000002"))
-                                    .build())
-                            .attributes(
-                                ArcGisHealths.Attributes.builder()
-                                    .stationNum("666")
-                                    .name("Manila VA Clinic")
-                                    .featureCode("OOS")
-                                    .cocClassificationId("5")
-                                    .address1("NOX3 Seafront Compound")
-                                    .address2("1501 Roxas Boulevard")
-                                    .municipality("Pasay City")
-                                    .state("PH")
-                                    .zip("01302")
-                                    .zip4("0000")
-                                    .monday("730AM-430PM")
-                                    .tuesday("730AM-430PM")
-                                    .wednesday("730AM-430PM")
-                                    .thursday("730AM-430PM")
-                                    .friday("730AM-430PM")
-                                    .saturday("-")
-                                    .sunday("-")
-                                    .staPhone("632-550-3888 x")
-                                    .staFax("632-310-5962 x")
-                                    .afterHoursPhone("000-000-0000 x")
-                                    .patientAdvocatePhone("632-550-3888 x3716")
-                                    .enrollmentCoordinatorPhone("632-550-3888 x3780")
-                                    .pharmacyPhone("632-550-3888 x5029")
-                                    .pod("A")
-                                    .mobile(0)
-                                    .visn("21")
-                                    .build())
-                            .build()))
-                .build());
-    when(restTemplate.exchange(
+            JacksonConfig.createMapper()
+                .writeValueAsString(
+                    ArcGisHealths.builder()
+                        .features(
+                            List.of(
+                                ArcGisHealths.Feature.builder()
+                                    .geometry(
+                                        ArcGisHealths.Geometry.builder()
+                                            .latitude(new BigDecimal("14.544080000000065"))
+                                            .longitude(new BigDecimal("120.99139000000002"))
+                                            .build())
+                                    .attributes(
+                                        ArcGisHealths.Attributes.builder()
+                                            .stationNum("666")
+                                            .name("Manila VA Clinic")
+                                            .featureCode("OOS")
+                                            .cocClassificationId("5")
+                                            .address1("NOX3 Seafront Compound")
+                                            .address2("1501 Roxas Boulevard")
+                                            .municipality("Pasay City")
+                                            .state("PH")
+                                            .zip("01302")
+                                            .zip4("0000")
+                                            .monday("730AM-430PM")
+                                            .tuesday("730AM-430PM")
+                                            .wednesday("730AM-430PM")
+                                            .thursday("730AM-430PM")
+                                            .friday("730AM-430PM")
+                                            .saturday("-")
+                                            .sunday("-")
+                                            .staPhone("632-550-3888 x")
+                                            .staFax("632-310-5962 x")
+                                            .afterHoursPhone("000-000-0000 x")
+                                            .patientAdvocatePhone("632-550-3888 x3716")
+                                            .enrollmentCoordinatorPhone("632-550-3888 x3780")
+                                            .pharmacyPhone("632-550-3888 x5029")
+                                            .pod("A")
+                                            .mobile(0)
+                                            .visn("21")
+                                            .build())
+                                    .build()))
+                        .build()));
+
+    when(insecureRestTemplate.exchange(
             startsWith("http://vaarcgis"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
-            eq(ArcGisHealths.class)))
+            eq(String.class)))
         .thenReturn(arcGisResponse);
+
     assertThat(
             HealthsCollector.builder()
                 .atcBaseUrl("file:src/test/resources/")
                 .atpBaseUrl("http://atp")
                 .jdbcTemplate(mock(JdbcTemplate.class))
                 .restTemplate(restTemplate)
+                .insecureRestTemplate(insecureRestTemplate)
                 .vaArcGisBaseUrl("http://vaarcgis")
                 .websites(ImmutableMap.of())
                 .build()

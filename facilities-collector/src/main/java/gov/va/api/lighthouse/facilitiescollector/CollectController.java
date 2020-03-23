@@ -36,6 +36,8 @@ import org.springframework.web.client.RestTemplate;
 @SuppressWarnings("WeakerAccess")
 @RequestMapping(value = "/collect", produces = "application/json")
 public class CollectController {
+  private final InsecureRestTemplateProvider insecureRestTemplateProvider;
+
   private final JdbcTemplate jdbcTemplate;
 
   private final RestTemplate restTemplate;
@@ -52,6 +54,7 @@ public class CollectController {
 
   /** Autowired constructor. */
   public CollectController(
+      @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
       @Autowired RestTemplate restTemplate,
       @Value("${arc-gis.url}") String arcGisBaseUrl,
@@ -59,6 +62,7 @@ public class CollectController {
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
       @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
+    this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
     this.restTemplate = restTemplate;
     this.arcGisBaseUrl = trailingSlash(arcGisBaseUrl);
@@ -104,6 +108,7 @@ public class CollectController {
             .atpBaseUrl(atpBaseUrl)
             .jdbcTemplate(jdbcTemplate)
             .restTemplate(restTemplate)
+            .insecureRestTemplate(insecureRestTemplateProvider.insecureRestTemplate())
             .vaArcGisBaseUrl(vaArcGisBaseUrl)
             .websites(websites)
             .build()

@@ -56,6 +56,8 @@ final class HealthsCollector {
 
   @NonNull final RestTemplate restTemplate;
 
+  @NonNull final RestTemplate insecureRestTemplate;
+
   @NonNull final String vaArcGisBaseUrl;
 
   @NonNull final Map<String, String> websites;
@@ -195,9 +197,11 @@ final class HealthsCollector {
             .queryParam("where", "s_abbr!='VTCR' AND s_abbr!='MVCTR'")
             .build()
             .toUriString();
-    return restTemplate
-        .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), ArcGisHealths.class)
-        .getBody();
+    String response =
+        insecureRestTemplate
+            .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
+            .getBody();
+    return JacksonConfig.createMapper().readValue(response, ArcGisHealths.class);
   }
 
   @SneakyThrows
