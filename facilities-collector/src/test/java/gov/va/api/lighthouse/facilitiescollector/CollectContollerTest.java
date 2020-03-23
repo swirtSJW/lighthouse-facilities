@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;

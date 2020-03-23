@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilitiescollector;
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.util.List;

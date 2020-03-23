@@ -10,7 +10,7 @@ public class InternalManagementControllerTest {
   @Test
   void collect() {
     // TODO not implemented
-    controller().collect();
+    controller().reload();
   }
 
   private InternalManagementController controller() {

@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
+import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;

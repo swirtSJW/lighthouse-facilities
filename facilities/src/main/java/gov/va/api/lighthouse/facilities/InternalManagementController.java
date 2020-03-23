@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Builder
 public class InternalManagementController {
 
-  @GetMapping(value = {""})
+  @GetMapping(value = "/reload")
   @ResponseStatus(code = HttpStatus.NOT_IMPLEMENTED)
-  public void collect() {
+  public void reload() {
     // TODO go get the data
   }
 }
