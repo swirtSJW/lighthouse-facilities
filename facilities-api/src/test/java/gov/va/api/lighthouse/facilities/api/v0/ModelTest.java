@@ -12,7 +12,6 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class ModelTest {
-
   private Facility.Addresses addresses() {
     return Facility.Addresses.builder()
         .mailing(
@@ -161,6 +160,11 @@ public class ModelTest {
                 .visn("20")
                 .build())
         .build();
+  }
+
+  @Test
+  public void geoFacilityReadResponse() {
+    roundTrip(GeoFacilityReadResponse.of(geoFacility()));
   }
 
   @Test

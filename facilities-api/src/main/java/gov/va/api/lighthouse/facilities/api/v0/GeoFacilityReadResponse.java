@@ -5,6 +5,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 
 @Value
@@ -16,4 +17,13 @@ public final class GeoFacilityReadResponse {
   @Valid @NotNull GeoFacility.Geometry geometry;
 
   @Valid @NotNull GeoFacility.Properties properties;
+
+  /** Create GeoFacilityReadResponse with the same type, geometry, and properties. */
+  public static GeoFacilityReadResponse of(@NonNull GeoFacility facility) {
+    return GeoFacilityReadResponse.builder()
+        .type(facility.type())
+        .geometry(facility.geometry())
+        .properties(facility.properties())
+        .build();
+  }
 }

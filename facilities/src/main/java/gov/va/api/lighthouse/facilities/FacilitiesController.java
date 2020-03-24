@@ -1,10 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfig.quietlyMap;
 import static java.util.stream.Collectors.toList;
 
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
@@ -12,15 +11,13 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse.Type;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
-import java.io.InputStream;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @Validated
 @RestController
 @RequestMapping(value = {"/v0"})
@@ -41,16 +37,6 @@ public class FacilitiesController {
   @Autowired FacilityRepository facilityRepository;
 
   @Autowired DriveTimeBandRepository driveTimeBandRepository;
-
-  @SneakyThrows
-  private static Facility readHardcoded(String id) {
-    if ("vha_666".equalsIgnoreCase(id)) {
-      try (InputStream in = new ClassPathResource("facility-hardcoded.json").getInputStream()) {
-        return JacksonConfig.createMapper().readValue(in, Facility.class);
-      }
-    }
-    throw new ExceptionsV0.NotFound(id);
-  }
 
   /**
    * Get all facilities.
@@ -80,25 +66,33 @@ public class FacilitiesController {
     return null;
   }
 
+  @SneakyThrows
+  private Facility read(String id) {
+    Pk pk = null;
+    try {
+      pk = FacilityEntity.Pk.fromIdString(id);
+    } catch (IllegalArgumentException ex) {
+      throw new ExceptionsV0.NotFound(id, ex);
+    }
+    Optional<FacilityEntity> opt = facilityRepository.findById(pk);
+    if (opt.isEmpty()) {
+      throw new ExceptionsV0.NotFound(id);
+    }
+    return FacilitiesJacksonConfig.createMapper().readValue(opt.get().facility(), Facility.class);
+  }
+
   /** Read geo facility. */
   @SneakyThrows
   @GetMapping(value = "facilities/{id}", produces = "application/vnd.geo+json")
   public GeoFacilityReadResponse readGeoJson(@PathVariable("id") String id) {
-    log.info("Read geo+json facility {}", sanitize(id));
-    GeoFacility geo =
-        GeoFacilityTransformer.builder().facility(readHardcoded(id)).build().toGeoFacility();
-    return GeoFacilityReadResponse.builder()
-        .type(geo.type())
-        .geometry(geo.geometry())
-        .properties(geo.properties())
-        .build();
+    GeoFacility geo = GeoFacilityTransformer.builder().facility(read(id)).build().toGeoFacility();
+    return GeoFacilityReadResponse.of(geo);
   }
 
   /** Read facility. */
   @SneakyThrows
   @GetMapping(value = "facilities/{id}", produces = "application/json")
   public FacilityReadResponse readJson(@PathVariable("id") String id) {
-    log.info("Read facility {}", sanitize(id));
-    return FacilityReadResponse.builder().facility(readHardcoded(id)).build();
+    return FacilityReadResponse.builder().facility(read(id)).build();
   }
 }

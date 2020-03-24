@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -13,7 +14,6 @@ import lombok.Builder;
 import lombok.SneakyThrows;
 
 public class FacilitySamples {
-
   private final Map<String, Facility> facilities;
 
   @SneakyThrows
@@ -43,5 +43,9 @@ public class FacilitySamples {
   FacilityEntity facilityEntity(String id) {
     return InternalManagementController.populate(
         FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(id)).build(), facility(id));
+  }
+
+  GeoFacility geoFacility(String id) {
+    return GeoFacilityTransformer.builder().facility(facility(id)).build().toGeoFacility();
   }
 }
