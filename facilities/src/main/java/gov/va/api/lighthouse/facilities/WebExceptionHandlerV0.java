@@ -1,8 +1,11 @@
 package gov.va.api.lighthouse.facilities;
 
+import com.google.common.collect.Iterables;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.validation.ConstraintViolationException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -55,5 +58,25 @@ public final class WebExceptionHandlerV0 {
                         .build()))
             .build();
     return response(HttpStatus.NOT_FOUND, ex, error);
+  }
+
+  @ExceptionHandler(ConstraintViolationException.class)
+  ResponseEntity<ApiError> handleValidationException(ConstraintViolationException ex) {
+    String violations =
+        ex.getConstraintViolations().stream()
+            .map(v -> Iterables.getLast(v.getPropertyPath()) + " " + v.getMessage())
+            .collect(Collectors.joining(", "));
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Invalid field value")
+                        .detail(violations)
+                        .code("400")
+                        .status("400")
+                        .build()))
+            .build();
+    return response(HttpStatus.BAD_REQUEST, ex, response);
   }
 }

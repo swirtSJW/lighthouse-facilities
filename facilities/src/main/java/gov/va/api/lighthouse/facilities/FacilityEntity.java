@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Basic;
@@ -131,6 +132,17 @@ public class FacilityEntity {
       String stationNumber = typeAndStationNumber.substring(separator + 1);
       checkArgument(!stationNumber.isBlank(), typeAndStationNumber);
       return of(Type.valueOf(typeValue), stationNumber);
+    }
+
+    /**
+     * Create a Pk from the {type}_{id} style used in the Facilities API id, suppressing exceptions.
+     */
+    public static Optional<Pk> optionalFromIdString(@NonNull String typeAndStationNumber) {
+      try {
+        return Optional.ofNullable(fromIdString(typeAndStationNumber));
+      } catch (Exception ex) {
+        return Optional.empty();
+      }
     }
   }
 }

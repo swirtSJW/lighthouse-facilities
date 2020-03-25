@@ -44,12 +44,11 @@ configValue facilities-collector $PROFILE spring.datasource.username 'SA'
 configValue facilities-collector $PROFILE state-cemeteries.url 'http://localhost:8666'
 configValue facilities-collector $PROFILE va-arc-gis.url 'http://localhost:8666'
 
-
 makeConfig facilities $PROFILE
+configValue facilities $PROFILE facilities-collector.url 'http://localhost:8080'
+configValue facilities $PROFILE facilities.url 'http://localhost:8085'
 configValue facilities $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
 configValue facilities $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=facility;sendStringParametersAsUnicode=false'
 configValue facilities $PROFILE spring.datasource.username 'SA'
-configValue facilities $PROFILE facilities-collector.url 'http://localhost:8080'
-
 
 checkForUnsetValues facilities-collector $PROFILE
