@@ -8,6 +8,13 @@ import lombok.experimental.UtilityClass;
 /* Test clients for interacting with different services in a {@link SystemDefinition}. */
 @UtilityClass
 public class TestClients {
+  static TestClient collector() {
+    return BasicTestClient.builder()
+        .service(SystemDefinitions.systemDefinition().collector())
+        .mapper(JacksonConfig::createMapper)
+        .build();
+  }
+
   static TestClient facilties() {
     return BasicTestClient.builder()
         .service(SystemDefinitions.systemDefinition().facilities())

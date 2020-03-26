@@ -8,8 +8,7 @@ import lombok.Value;
 @Value
 @Builder
 class SystemDefinition {
-
   @NotNull FacilitiesIds facilitiesIds;
-
   @NotNull ServiceDefinition facilities;
+  @NotNull ServiceDefinition collector;
 }

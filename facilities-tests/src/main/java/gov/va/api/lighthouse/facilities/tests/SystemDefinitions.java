@@ -17,7 +17,8 @@ class SystemDefinitions {
   private static SystemDefinition local() {
     String url = "http://localhost";
     return SystemDefinition.builder()
-        .facilities(serviceDefinition("facilities", url, 8080, "/"))
+        .facilities(serviceDefinition("facilities", url, 8085, "/"))
+        .collector(serviceDefinition("facilities-collector", url, 8080, "/"))
         .facilitiesIds(facilitiesIds())
         .build();
   }

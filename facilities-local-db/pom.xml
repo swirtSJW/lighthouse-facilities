@@ -14,6 +14,7 @@
   <properties>
     <commons-csv.version>1.8</commons-csv.version>
     <guava.version>28.2-jre</guava.version>
+    <populator.sqlserver>false</populator.sqlserver>
   </properties>
   <dependencies>
     <dependency>
@@ -35,33 +36,67 @@
       <artifactId>mssql-jdbc</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>gov.va.api.lighthouse.facilitiescollector.Populaterator</mainClass>
+              <systemProperties>
+                <systemProperty>
+                  <key>basedir</key>
+                  <value>${project.basedir}</value>
+                </systemProperty>
+                <systemProperty>
+                  <key>populator.h2</key>
+                  <value>true</value>
+                </systemProperty>
+                <systemProperty>
+                  <key>populator.sqlserver</key>
+                  <value>${populator.sqlserver}</value>
+                </systemProperty>
+              </systemProperties>
+              <classpathScope>test</classpathScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
       <id>populaterator</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>install</phase>
-                <goals>
-                  <goal>java</goal>
-                </goals>
-                <configuration>
-                  <mainClass>gov.va.api.lighthouse.facilitiescollector.Populaterator</mainClass>
-                  <classpathScope>test</classpathScope>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <populator.sqlserver>true</populator.sqlserver>
+      </properties>
     </profile>
   </profiles>
 </project>
