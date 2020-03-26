@@ -106,6 +106,7 @@ public class FacilitiesControllerTest {
                                 .totalPages(3)
                                 .totalEntries(3)
                                 .build())
+                        .distances(emptyList())
                         .build())
                 .build());
   }
@@ -141,6 +142,7 @@ public class FacilitiesControllerTest {
                                 .totalPages(0)
                                 .totalEntries(3)
                                 .build())
+                        .distances(emptyList())
                         .build())
                 .build());
   }

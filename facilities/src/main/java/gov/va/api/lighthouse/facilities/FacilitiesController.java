@@ -149,7 +149,10 @@ public class FacilitiesController {
         .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
         .links(linker.links())
         .meta(
-            FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
+            FacilitiesResponse.FacilitiesMetadata.builder()
+                .pagination(linker.pagination())
+                .distances(emptyList())
+                .build())
         .build();
   }
 
