@@ -81,7 +81,9 @@ public class FacilitiesController {
   }
 
   /** Get all facilities. */
-  @GetMapping(value = {"/facilities/all"})
+  @GetMapping(
+      value = "/facilities/all",
+      produces = {"application/json", "application/vnd.geo+json"})
   public GeoFacilitiesResponse all() {
     var mapper = FacilitiesJacksonConfig.createMapper();
     return GeoFacilitiesResponse.builder()
