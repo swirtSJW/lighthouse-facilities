@@ -51,7 +51,7 @@ public class BenefitsCollectorTest {
                     .id("vba_306e")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("New York Regional Office at Albany VAMC")
                             .facilityType(Facility.FacilityType.va_benefits_facility)
                             .classification("Outbased")

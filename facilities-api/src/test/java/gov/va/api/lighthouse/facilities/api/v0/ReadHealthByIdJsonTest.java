@@ -41,7 +41,7 @@ public class ReadHealthByIdJsonTest {
                 .id("vha_402GA")
                 .type(Facility.Type.va_facilities)
                 .attributes(
-                    Facility.Attributes.builder()
+                    Facility.FacilityAttributes.builder()
                         .name("Caribou VA Clinic")
                         .facilityType(Facility.FacilityType.va_health_facility)
                         .classification("Primary Care CBOC")

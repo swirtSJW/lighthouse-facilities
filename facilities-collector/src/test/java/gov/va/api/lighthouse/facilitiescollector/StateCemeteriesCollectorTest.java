@@ -69,7 +69,7 @@ public class StateCemeteriesCollectorTest {
                     .id("nca_s1001")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Alabama State Veterans Memorial Cemetery At Spanish Fort")
                             .facilityType(Facility.FacilityType.va_cemetery)
                             .classification("State Cemetery")

@@ -44,7 +44,7 @@ public class SearchByZipJsonTest {
                     "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&zip=32940")
                 .build())
         .meta(
-            FacilitiesResponse.Metadata.builder()
+            FacilitiesResponse.FacilitiesMetadata.builder()
                 .distances(new ArrayList<>())
                 .pagination(
                     Pagination.builder()
@@ -60,7 +60,7 @@ public class SearchByZipJsonTest {
                     .id("vha_675GA")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Viera VA Clinic")
                             .facilityType(Facility.FacilityType.va_health_facility)
                             .classification("Health Care Center (HCC)")

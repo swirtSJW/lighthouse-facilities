@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public final class GeoFacilitiesResponse {
   @NotNull Type type;
 

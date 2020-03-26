@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -11,12 +13,16 @@ import lombok.Value;
 
 @Value
 @Builder
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Schema(description = "JSON API-compliant object describing a VA facility")
 public final class Facility {
-  @NotNull String id;
+  @Schema(example = "vha_688")
+  @NotNull
+  String id;
 
   @NotNull Type type;
 
-  @Valid @NotNull Attributes attributes;
+  @Valid @NotNull FacilityAttributes attributes;
 
   public enum ActiveStatus {
     A,
@@ -85,7 +91,9 @@ public final class Facility {
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Address {
+    @Schema(example = "50 Irving Street, Northwest")
     @JsonProperty("address_1")
     String address1;
 
@@ -95,15 +103,19 @@ public final class Facility {
     @JsonProperty("address_3")
     String address3;
 
+    @Schema(example = "20422-0001")
     String zip;
 
+    @Schema(example = "Washington")
     String city;
 
+    @Schema(example = "DC")
     String state;
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Addresses {
     @Valid Address mailing;
 
@@ -112,22 +124,29 @@ public final class Facility {
 
   @Value
   @Builder
-  public static final class Attributes {
-    @NotNull String name;
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  public static final class FacilityAttributes {
+    @Schema(example = "Washington VA Medical Center")
+    @NotNull
+    String name;
 
     @NotNull
     @JsonProperty("facility_type")
     FacilityType facilityType;
 
+    @Schema(example = "VA Medical Center (VAMC)")
     String classification;
 
+    @Schema(example = "http://www.washingtondc.va.gov")
     String website;
 
     @NotNull
+    @Schema(description = "Facility latitude", format = "float", example = "38.9311137")
     @JsonProperty("lat")
     BigDecimal latitude;
 
     @NotNull
+    @Schema(description = "Facility longitude", format = "float", example = "-77.0109110499999")
     @JsonProperty("long")
     BigDecimal longitude;
 
@@ -145,160 +164,216 @@ public final class Facility {
     @JsonProperty("wait_times")
     WaitTimes waitTimes;
 
+    @Schema(example = "false")
     Boolean mobile;
 
     @JsonProperty("active_status")
     ActiveStatus activeStatus;
 
+    @Schema(example = "20")
     String visn;
   }
 
-  /**
-   * Standard hours of operation. Currently formatted as descriptive text suitable for display, with
-   * no guarantee of a standard parseable format. Hours of operation may vary due to holidays or
-   * other events.
-   */
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(
+      description =
+          "Standard hours of operation. Currently formatted as descriptive text suitable for "
+              + "display, with no guarantee of a standard parseable format. "
+              + "Hours of operation may vary due to holidays or other events.")
   public static final class Hours {
-    @JsonProperty("Monday")
-    String mon;
-
-    @JsonProperty("Tuesday")
-    String tues;
-
-    @JsonProperty("Wednesday")
-    String wed;
-
-    @JsonProperty("Thursday")
-    String thurs;
-
-    @JsonProperty("Friday")
-    String fri;
-
-    @JsonProperty("Saturday")
-    String sat;
-
-    @JsonProperty("Sunday")
-    String sun;
-
-    /* NO CAP(e)S! */
+    @Schema(example = "9AM-5PM")
     String monday;
 
+    @Schema(example = "9AM-5PM")
     String tuesday;
 
+    @Schema(example = "9AM-5PM")
     String wednesday;
 
+    @Schema(example = "9AM-5PM")
     String thursday;
 
+    @Schema(example = "9AM-5PM")
     String friday;
 
+    @Schema(example = "Closed")
     String saturday;
 
+    @Schema(example = "Closed")
     String sunday;
+
+    public static final class HoursBuilder {
+      @JsonProperty("Friday")
+      public HoursBuilder fri(String val) {
+        return friday(val);
+      }
+
+      @JsonProperty("Monday")
+      public HoursBuilder mon(String val) {
+        return monday(val);
+      }
+
+      @JsonProperty("Saturday")
+      public HoursBuilder sat(String val) {
+        return saturday(val);
+      }
+
+      @JsonProperty("Sunday")
+      public HoursBuilder sun(String val) {
+        return sunday(val);
+      }
+
+      @JsonProperty("Thursday")
+      public HoursBuilder thurs(String val) {
+        return thursday(val);
+      }
+
+      @JsonProperty("Tuesday")
+      public HoursBuilder tues(String val) {
+        return tuesday(val);
+      }
+
+      @JsonProperty("Wednesday")
+      public HoursBuilder wed(String val) {
+        return wednesday(val);
+      }
+    }
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(description = "Veteran-reported satisfaction scores for health care services")
   public static final class PatientSatisfaction {
-    /**
-     * % of Veterans who say they usually or always get an appointment when they need care right
-     * away at a primary care location.
-     */
+    @Schema(
+        example = "0.85",
+        format = "float",
+        description =
+            "% of Veterans who say they usually or always get an appointment when "
+                + "they need care right away at a primary care location.")
     @JsonProperty("primary_care_urgent")
     BigDecimal primaryCareUrgent;
 
-    /**
-     * % of Veterans who say they usually or always get an appointment when they need it at a
-     * primary care location.
-     */
+    @Schema(
+        example = "0.85",
+        format = "float",
+        description =
+            "% of Veterans who say they usually or always get an appointment when "
+                + "they need it at a primary care location.")
     @JsonProperty("primary_care_routine")
     BigDecimal primaryCareRoutine;
 
-    /**
-     * % of Veterans who say they usually or always get an appointment when they need care right
-     * away at a specialty location.
-     */
+    @Schema(
+        example = "0.85",
+        format = "float",
+        description =
+            "% of Veterans who say they usually or always get an appointment when "
+                + "they need care right away at a specialty location.")
     @JsonProperty("specialty_care_urgent")
     BigDecimal specialtyCareUrgent;
 
-    /**
-     * % of Veterans who say they usually or always get an appointment when they need it at a
-     * specialty location.
-     */
+    @Schema(
+        example = "0.85",
+        format = "float",
+        description =
+            "% of Veterans who say they usually or always get an appointment when "
+                + "they need it at a specialty location.")
     @JsonProperty("specialty_care_routine")
     BigDecimal specialtyCareRoutine;
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(
+      description =
+          "Expected wait times for new and established patients for a given health care service")
   public static final class PatientWaitTime {
     @NotNull HealthService service;
 
-    /**
-     * Average number of days a Veteran who hasn't been to this location has to wait for a
-     * non-urgent appointment.
-     */
+    @Schema(
+        example = "10",
+        description =
+            "Average number of days a Veteran who hasn't been to this location has to wait "
+                + "for a non-urgent appointment.")
     @JsonProperty("new")
     BigDecimal newPatientWaitTime;
 
-    /**
-     * Average number of days a patient who has already been to this location has to wait for a
-     * non-urgent appointment.
-     */
+    @Schema(
+        example = "5",
+        description =
+            "Average number of days a patient who has already been to this location has to wait "
+                + "for a non-urgent appointment.")
     @JsonProperty("established")
     BigDecimal establishedPatientWaitTime;
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Phone {
+    @Schema(example = "202-555-1212")
     String fax;
 
+    @Schema(example = "202-555-1212")
     String main;
 
+    @Schema(example = "202-555-1212")
     String pharmacy;
 
+    @Schema(example = "202-555-1212")
     @JsonProperty("after_hours")
     String afterHours;
 
+    @Schema(example = "202-555-1212")
     @JsonProperty("patient_advocate")
     String patientAdvocate;
 
+    @Schema(example = "202-555-1212")
     @JsonProperty("mental_health_clinic")
     String mentalHealthClinic;
 
+    @Schema(example = "202-555-1212")
     @JsonProperty("enrollment_coordinator")
     String enrollmentCoordinator;
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Satisfaction {
     @Valid PatientSatisfaction health;
 
+    @Schema(example = "2018-01-01")
     @JsonProperty("effective_date")
     LocalDate effectiveDate;
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Services {
+
     List<OtherService> other;
 
     List<HealthService> health;
 
     List<BenefitsService> benefits;
 
+    @Schema(example = "2018-01-01")
     @JsonProperty("last_updated")
     LocalDate lastUpdated;
   }
 
   @Value
   @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class WaitTimes {
     @Valid List<PatientWaitTime> health;
 
+    @Schema(example = "2018-01-01")
     @JsonProperty("effective_date")
     LocalDate effectiveDate;
   }

@@ -13,7 +13,7 @@ final class GeoFacilityTransformer {
   @NonNull private final Facility facility;
 
   private GeoFacility.Geometry geometry() {
-    Facility.Attributes attr = facility.attributes();
+    Facility.FacilityAttributes attr = facility.attributes();
     if (attr == null || (attr.longitude() == null && attr.latitude() == null)) {
       return null;
     }
@@ -31,7 +31,7 @@ final class GeoFacilityTransformer {
     if (isBlank(id())) {
       return null;
     }
-    Facility.Attributes attr = facility.attributes();
+    Facility.FacilityAttributes attr = facility.attributes();
     return GeoFacility.Properties.builder()
         .id(id())
         .name(attr.name())

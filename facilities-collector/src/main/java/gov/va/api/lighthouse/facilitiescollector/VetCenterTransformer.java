@@ -36,11 +36,11 @@ final class VetCenterTransformer {
         .build();
   }
 
-  private Facility.Attributes attributes() {
+  private Facility.FacilityAttributes attributes() {
     if (allBlank(name(), website(), latitude(), longitude(), address(), phone(), hours())) {
       return null;
     }
-    return Facility.Attributes.builder()
+    return Facility.FacilityAttributes.builder()
         .name(name())
         .facilityType(Facility.FacilityType.vet_center)
         .website(website())

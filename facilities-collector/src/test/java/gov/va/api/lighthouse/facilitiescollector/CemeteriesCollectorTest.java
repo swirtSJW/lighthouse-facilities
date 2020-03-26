@@ -52,7 +52,7 @@ public class CemeteriesCollectorTest {
                     .id("nca_088")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Albany Rural")
                             .facilityType(Facility.FacilityType.va_cemetery)
                             .classification("Rural")

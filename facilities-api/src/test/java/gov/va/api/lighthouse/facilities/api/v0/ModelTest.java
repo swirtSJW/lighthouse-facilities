@@ -56,7 +56,7 @@ public class ModelTest {
                     .id("98")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Shanktopod")
                             .facilityType(Facility.FacilityType.va_benefits_facility)
                             .classification("VA Medical Center (VAMC)")
@@ -82,7 +82,7 @@ public class ModelTest {
     roundTrip(
         FacilitiesResponse.builder()
             .meta(
-                FacilitiesResponse.Metadata.builder()
+                FacilitiesResponse.FacilitiesMetadata.builder()
                     .distances(
                         List.of(
                             FacilitiesResponse.Distance.builder()
@@ -99,7 +99,7 @@ public class ModelTest {
         .id("98")
         .type(Facility.Type.va_facilities)
         .attributes(
-            Facility.Attributes.builder()
+            Facility.FacilityAttributes.builder()
                 .name("Shanktopod")
                 .facilityType(Facility.FacilityType.va_benefits_facility)
                 .classification("VA Medical Center (VAMC)")
@@ -151,7 +151,7 @@ public class ModelTest {
                 .website("http://www.washingtondc.va.gov")
                 .address(addresses())
                 .phone(phones())
-                .hours(hoursCaps())
+                .hours(hours())
                 .services(services())
                 .satisfaction(satisfaction())
                 .waitTimes(waitTimes())
@@ -184,18 +184,6 @@ public class ModelTest {
         .build();
   }
 
-  private Facility.Hours hoursCaps() {
-    return Facility.Hours.builder()
-        .mon("CLOSED")
-        .tues("CLOSED")
-        .wed("CLOSED")
-        .thurs("CLOSED")
-        .fri("CLOSED")
-        .sat("CLOSED")
-        .sun("CLOSED")
-        .build();
-  }
-
   @Test
   public void nearbyFacility() {
     roundTrip(
@@ -206,7 +194,10 @@ public class ModelTest {
                         .id("8")
                         .type(NearbyResponse.Type.NearbyFacility)
                         .attributes(
-                            NearbyResponse.Attributes.builder().minTime(10).maxTime(20).build())
+                            NearbyResponse.NearbyAttributes.builder()
+                                .minTime(10)
+                                .maxTime(20)
+                                .build())
                         .relationships(
                             NearbyResponse.Relationships.builder()
                                 .vaFacility(

@@ -27,7 +27,7 @@ public class CollectorFacilitiesResponseTest {
                     .id("vc_0101V")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Boston Vet Center")
                             .facilityType(Facility.FacilityType.vet_center)
                             .latitude(BigDecimal.valueOf(42.3445959000001))

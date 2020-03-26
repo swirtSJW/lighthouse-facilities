@@ -92,11 +92,11 @@ final class StateCemeteryTransformer {
     return Facility.Addresses.builder().mailing(mailing()).physical(physical()).build();
   }
 
-  private Facility.Attributes attributes() {
+  private Facility.FacilityAttributes attributes() {
     if (allBlank(xml.name(), website(), latitude(), longitude(), address(), phone())) {
       return null;
     }
-    return Facility.Attributes.builder()
+    return Facility.FacilityAttributes.builder()
         .name(xml.name())
         .facilityType(Facility.FacilityType.va_cemetery)
         .classification("State Cemetery")

@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.Valid;
@@ -14,8 +16,12 @@ import lombok.Value;
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Schema(description = "GeoJSON-complaint Feature object describing a VA Facility")
 public final class GeoFacility {
-  @NotNull Type type;
+  @Schema(example = "Feature")
+  @NotNull
+  Type type;
 
   @Valid @NotNull Geometry geometry;
 
@@ -32,9 +38,13 @@ public final class GeoFacility {
   @Value
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Geometry {
-    @NotNull GeometryType type;
+    @Schema(example = "Point")
+    @NotNull
+    GeometryType type;
 
+    @Schema(example = "[-77.0367761, 38.9004181]")
     @Size(min = 2, max = 2)
     List<BigDecimal> coordinates;
   }
@@ -42,17 +52,23 @@ public final class GeoFacility {
   @Value
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Properties {
-    @NotNull String id;
+    @Schema(example = "vha_688")
+    @NotNull
+    String id;
 
+    @Schema(example = "Washington VA Medical Center")
     String name;
 
     @NotNull
     @JsonProperty("facility_type")
     Facility.FacilityType facilityType;
 
+    @Schema(example = "VA Medical Center (VAMC)")
     String classification;
 
+    @Schema(example = "http://www.washingtondc.va.gov")
     String website;
 
     @Valid Facility.Addresses address;
@@ -69,11 +85,13 @@ public final class GeoFacility {
     @JsonProperty("wait_times")
     Facility.WaitTimes waitTimes;
 
+    @Schema(example = "false")
     Boolean mobile;
 
     @JsonProperty("active_status")
     Facility.ActiveStatus activeStatus;
 
+    @Schema(example = "20")
     String visn;
   }
 }

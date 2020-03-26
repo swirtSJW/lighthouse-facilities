@@ -79,7 +79,7 @@ public class VetCentersCollectorTest {
                     .id("vc_0404V")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Minot Vet Center")
                             .facilityType(Facility.FacilityType.vet_center)
                             .latitude(new BigDecimal("48.20065600000004"))

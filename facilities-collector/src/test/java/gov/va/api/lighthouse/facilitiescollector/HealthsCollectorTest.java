@@ -120,7 +120,7 @@ public class HealthsCollectorTest {
                     .id("vha_666")
                     .type(Facility.Type.va_facilities)
                     .attributes(
-                        Facility.Attributes.builder()
+                        Facility.FacilityAttributes.builder()
                             .name("Manila VA Clinic")
                             .facilityType(Facility.FacilityType.va_health_facility)
                             .classification("Other Outpatient Services (OOS)")

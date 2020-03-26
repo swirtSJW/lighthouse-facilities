@@ -98,7 +98,7 @@ public class FacilitiesControllerTest {
                             "http://foo/v0/facilities?ids=x%2Cvha_691GB%2C%2Cx%2C%2Cvha_740GA%2Cvha_757&page=3&per_page=1")
                         .build())
                 .meta(
-                    FacilitiesResponse.Metadata.builder()
+                    FacilitiesResponse.FacilitiesMetadata.builder()
                         .pagination(
                             Pagination.builder()
                                 .currentPage(2)
@@ -133,7 +133,7 @@ public class FacilitiesControllerTest {
                             "http://foo/v0/facilities?ids=x%2Cvha_691GB%2C%2Cx%2C%2Cvha_740GA%2Cvha_757&page=2&per_page=0")
                         .build())
                 .meta(
-                    FacilitiesResponse.Metadata.builder()
+                    FacilitiesResponse.FacilitiesMetadata.builder()
                         .pagination(
                             Pagination.builder()
                                 .currentPage(2)

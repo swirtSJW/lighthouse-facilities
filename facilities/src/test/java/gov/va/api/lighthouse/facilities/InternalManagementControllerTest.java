@@ -9,8 +9,8 @@ import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesRespons
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.Attributes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
@@ -41,7 +41,7 @@ public class InternalManagementControllerTest {
     return Facility.builder()
         .id(id)
         .attributes(
-            Attributes.builder()
+            FacilityAttributes.builder()
                 .address(
                     Addresses.builder()
                         .physical(Address.builder().state(state).zip(zip).build())
@@ -109,19 +109,20 @@ public class InternalManagementControllerTest {
   void servicesOf() {
     assertThat(
             InternalManagementController.serviceTypesOf(
-                Facility.builder().attributes(Attributes.builder().build()).build()))
+                Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isEmpty();
     assertThat(
             InternalManagementController.serviceTypesOf(
                 Facility.builder()
-                    .attributes(Attributes.builder().services(Services.builder().build()).build())
+                    .attributes(
+                        FacilityAttributes.builder().services(Services.builder().build()).build())
                     .build()))
         .isEmpty();
     assertThat(
             InternalManagementController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .services(
                                 Services.builder()
                                     .health(List.of())
@@ -135,7 +136,7 @@ public class InternalManagementControllerTest {
             InternalManagementController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .services(
                                 Services.builder()
                                     .health(
@@ -163,13 +164,14 @@ public class InternalManagementControllerTest {
     // No address
     assertThat(
             InternalManagementController.stateOf(
-                Facility.builder().attributes(Attributes.builder().build()).build()))
+                Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isNull();
     // No physical or mailing
     assertThat(
             InternalManagementController.stateOf(
                 Facility.builder()
-                    .attributes(Attributes.builder().address(Addresses.builder().build()).build())
+                    .attributes(
+                        FacilityAttributes.builder().address(Addresses.builder().build()).build())
                     .build()))
         .isNull();
     // No Physical zip
@@ -177,7 +179,7 @@ public class InternalManagementControllerTest {
             InternalManagementController.stateOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .address(
                                 Addresses.builder().physical(Address.builder().build()).build())
                             .build())
@@ -188,7 +190,7 @@ public class InternalManagementControllerTest {
             InternalManagementController.stateOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .address(
                                 Addresses.builder()
                                     .physical(Address.builder().state("FL").build())
@@ -203,13 +205,14 @@ public class InternalManagementControllerTest {
     // No address
     assertThat(
             InternalManagementController.zipOf(
-                Facility.builder().attributes(Attributes.builder().build()).build()))
+                Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isNull();
     // No physical or mailing
     assertThat(
             InternalManagementController.zipOf(
                 Facility.builder()
-                    .attributes(Attributes.builder().address(Addresses.builder().build()).build())
+                    .attributes(
+                        FacilityAttributes.builder().address(Addresses.builder().build()).build())
                     .build()))
         .isNull();
     // No Physical zip
@@ -217,7 +220,7 @@ public class InternalManagementControllerTest {
             InternalManagementController.zipOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .address(
                                 Addresses.builder().physical(Address.builder().build()).build())
                             .build())
@@ -228,7 +231,7 @@ public class InternalManagementControllerTest {
             InternalManagementController.zipOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .address(
                                 Addresses.builder()
                                     .physical(Address.builder().zip("12345").build())
@@ -241,7 +244,7 @@ public class InternalManagementControllerTest {
             InternalManagementController.zipOf(
                 Facility.builder()
                     .attributes(
-                        Attributes.builder()
+                        FacilityAttributes.builder()
                             .address(
                                 Addresses.builder()
                                     .physical(Address.builder().zip("12345-9876").build())

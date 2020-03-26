@@ -51,8 +51,8 @@ public class CemeteriesSamples {
 
   @AllArgsConstructor(staticName = "create")
   public static class Facilities {
-    private Facility.Attributes attributes() {
-      return Facility.Attributes.builder()
+    private Facility.FacilityAttributes attributes() {
+      return Facility.FacilityAttributes.builder()
           .name("Shanktopus Lot")
           .facilityType(Facility.FacilityType.va_cemetery)
           .classification("Lot")

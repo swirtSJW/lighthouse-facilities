@@ -20,7 +20,8 @@ public class NearbyResponseTest {
     return NearbyResponse.Nearby.builder()
         .id(facilityId)
         .type(NearbyResponse.Type.NearbyFacility)
-        .attributes(NearbyResponse.Attributes.builder().minTime(minTime).maxTime(maxTime).build())
+        .attributes(
+            NearbyResponse.NearbyAttributes.builder().minTime(minTime).maxTime(maxTime).build())
         .relationships(
             NearbyResponse.Relationships.builder()
                 .vaFacility(
@@ -45,7 +46,7 @@ public class NearbyResponseTest {
                     "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994&page=1&per_page=20")
                 .build())
         .meta(
-            NearbyResponse.Metadata.builder()
+            NearbyResponse.NearbyMetadata.builder()
                 .pagination(
                     Pagination.builder()
                         .currentPage(1)

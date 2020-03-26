@@ -70,20 +70,19 @@ final class JacksonSerializersV0 {
 
   /** Custom serialization rules for V0 API classes. */
   static SimpleModule serializersV0() {
-    SimpleModule customSerializers = new SimpleModule();
-    customSerializers.addSerializer(Facility.Address.class, new AddressSerializer());
-    customSerializers.addSerializer(Facility.Addresses.class, new AddressesSerializer());
-    customSerializers.addSerializer(Facility.Attributes.class, new AttributesSerializer());
-    customSerializers.addSerializer(Facility.Hours.class, new HoursSerializer());
-    customSerializers.addSerializer(
-        Facility.PatientWaitTime.class, new PatientWaitTimeSerializer());
-    customSerializers.addSerializer(Facility.Phone.class, new PhoneSerializer());
-    customSerializers.addSerializer(Facility.Satisfaction.class, new SatisfactionSerializer());
-    customSerializers.addSerializer(Facility.Services.class, new ServicesSerializer());
-    customSerializers.addSerializer(Facility.WaitTimes.class, new WaitTimesSerializer());
-    customSerializers.addSerializer(GeoFacility.Properties.class, new PropertiesSerializer());
-    customSerializers.addSerializer(PageLinks.class, new PageLinksSerializer());
-    return customSerializers;
+    SimpleModule mod = new SimpleModule();
+    mod.addSerializer(Facility.Address.class, new AddressSerializer());
+    mod.addSerializer(Facility.Addresses.class, new AddressesSerializer());
+    mod.addSerializer(Facility.FacilityAttributes.class, new FacilityAttributesSerializer());
+    mod.addSerializer(Facility.Hours.class, new HoursSerializer());
+    mod.addSerializer(Facility.PatientWaitTime.class, new PatientWaitTimeSerializer());
+    mod.addSerializer(Facility.Phone.class, new PhoneSerializer());
+    mod.addSerializer(Facility.Satisfaction.class, new SatisfactionSerializer());
+    mod.addSerializer(Facility.Services.class, new ServicesSerializer());
+    mod.addSerializer(Facility.WaitTimes.class, new WaitTimesSerializer());
+    mod.addSerializer(GeoFacility.Properties.class, new PropertiesSerializer());
+    mod.addSerializer(PageLinks.class, new PageLinksSerializer());
+    return mod;
   }
 
   @SneakyThrows
@@ -184,19 +183,20 @@ final class JacksonSerializersV0 {
     }
   }
 
-  private static final class AttributesSerializer extends StdSerializer<Facility.Attributes> {
-    public AttributesSerializer() {
+  private static final class FacilityAttributesSerializer
+      extends StdSerializer<Facility.FacilityAttributes> {
+    public FacilityAttributesSerializer() {
       this(null);
     }
 
-    public AttributesSerializer(Class<Facility.Attributes> t) {
+    public FacilityAttributesSerializer(Class<Facility.FacilityAttributes> t) {
       super(t);
     }
 
     @Override
     @SneakyThrows
     public void serialize(
-        Facility.Attributes value, JsonGenerator jgen, SerializerProvider provider) {
+        Facility.FacilityAttributes value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
       jgen.writeObjectField("name", value.name());
       jgen.writeObjectField("facility_type", value.facilityType());
@@ -238,14 +238,7 @@ final class JacksonSerializersV0 {
     }
 
     private static boolean empty(Facility.Hours value) {
-      return value.mon() == null
-          && value.tues() == null
-          && value.wed() == null
-          && value.thurs() == null
-          && value.fri() == null
-          && value.sat() == null
-          && value.sun() == null
-          && value.monday() == null
+      return value.monday() == null
           && value.tuesday() == null
           && value.wednesday() == null
           && value.thursday() == null
@@ -254,54 +247,44 @@ final class JacksonSerializersV0 {
           && value.sunday() == null;
     }
 
-    @SneakyThrows
-    private static void writeEitherNonNull(
-        JsonGenerator jgen, String fieldName, String left, String right) {
-      if (left != null) {
-        writeNonNull(jgen, fieldName, left);
-      } else {
-        writeNonNull(jgen, fieldName, right);
-      }
-    }
-
     private static void writeLower(Facility.Hours value, JsonGenerator jgen) {
-      writeEitherNonNull(jgen, "monday", value.monday(), value.mon());
-      writeEitherNonNull(jgen, "tuesday", value.tuesday(), value.tues());
-      writeEitherNonNull(jgen, "wednesday", value.wednesday(), value.wed());
-      writeEitherNonNull(jgen, "thursday", value.thursday(), value.thurs());
-      writeEitherNonNull(jgen, "friday", value.friday(), value.fri());
-      writeEitherNonNull(jgen, "saturday", value.saturday(), value.sat());
-      writeEitherNonNull(jgen, "sunday", value.sunday(), value.sun());
+      writeNonNull(jgen, "monday", value.monday());
+      writeNonNull(jgen, "tuesday", value.tuesday());
+      writeNonNull(jgen, "wednesday", value.wednesday());
+      writeNonNull(jgen, "thursday", value.thursday());
+      writeNonNull(jgen, "friday", value.friday());
+      writeNonNull(jgen, "saturday", value.saturday());
+      writeNonNull(jgen, "sunday", value.sunday());
     }
 
-    private static void writeLowerScrambled(Facility.Hours value, JsonGenerator jgen) {
-      writeEitherNonNull(jgen, "friday", value.friday(), value.fri());
-      writeEitherNonNull(jgen, "monday", value.monday(), value.mon());
-      writeEitherNonNull(jgen, "sunday", value.sunday(), value.sun());
-      writeEitherNonNull(jgen, "tuesday", value.tuesday(), value.tues());
-      writeEitherNonNull(jgen, "saturday", value.saturday(), value.sat());
-      writeEitherNonNull(jgen, "thursday", value.thursday(), value.thurs());
-      writeEitherNonNull(jgen, "wednesday", value.wednesday(), value.wed());
+    private static void writeLowerByLength(Facility.Hours value, JsonGenerator jgen) {
+      writeNonNull(jgen, "friday", value.friday());
+      writeNonNull(jgen, "monday", value.monday());
+      writeNonNull(jgen, "sunday", value.sunday());
+      writeNonNull(jgen, "tuesday", value.tuesday());
+      writeNonNull(jgen, "saturday", value.saturday());
+      writeNonNull(jgen, "thursday", value.thursday());
+      writeNonNull(jgen, "wednesday", value.wednesday());
     }
 
     private static void writeUpper(Facility.Hours value, JsonGenerator jgen) {
-      writeEitherNonNull(jgen, "Monday", value.mon(), value.monday());
-      writeEitherNonNull(jgen, "Tuesday", value.tues(), value.tuesday());
-      writeEitherNonNull(jgen, "Wednesday", value.wed(), value.wednesday());
-      writeEitherNonNull(jgen, "Thursday", value.thurs(), value.thursday());
-      writeEitherNonNull(jgen, "Friday", value.fri(), value.friday());
-      writeEitherNonNull(jgen, "Saturday", value.sat(), value.saturday());
-      writeEitherNonNull(jgen, "Sunday", value.sun(), value.sunday());
+      writeNonNull(jgen, "Monday", value.monday());
+      writeNonNull(jgen, "Tuesday", value.tuesday());
+      writeNonNull(jgen, "Wednesday", value.wednesday());
+      writeNonNull(jgen, "Thursday", value.thursday());
+      writeNonNull(jgen, "Friday", value.friday());
+      writeNonNull(jgen, "Saturday", value.saturday());
+      writeNonNull(jgen, "Sunday", value.sunday());
     }
 
-    private static void writeUpperScrambled(Facility.Hours value, JsonGenerator jgen) {
-      writeEitherNonNull(jgen, "Friday", value.fri(), value.friday());
-      writeEitherNonNull(jgen, "Monday", value.mon(), value.monday());
-      writeEitherNonNull(jgen, "Sunday", value.sun(), value.sunday());
-      writeEitherNonNull(jgen, "Tuesday", value.tues(), value.tuesday());
-      writeEitherNonNull(jgen, "Saturday", value.sat(), value.saturday());
-      writeEitherNonNull(jgen, "Thursday", value.thurs(), value.thursday());
-      writeEitherNonNull(jgen, "Wednesday", value.wed(), value.wednesday());
+    private static void writeUpperByLength(Facility.Hours value, JsonGenerator jgen) {
+      writeNonNull(jgen, "Friday", value.friday());
+      writeNonNull(jgen, "Monday", value.monday());
+      writeNonNull(jgen, "Sunday", value.sunday());
+      writeNonNull(jgen, "Tuesday", value.tuesday());
+      writeNonNull(jgen, "Saturday", value.saturday());
+      writeNonNull(jgen, "Thursday", value.thursday());
+      writeNonNull(jgen, "Wednesday", value.wednesday());
     }
 
     @Override
@@ -312,7 +295,7 @@ final class JacksonSerializersV0 {
         if (hasParent(jgen, FacilityReadResponse.class)) {
           writeLower(value, jgen);
         } else if (hasParent(jgen, Facility.class)) {
-          writeLowerScrambled(value, jgen);
+          writeLowerByLength(value, jgen);
         } else if (hasParent(jgen, GeoFacilityReadResponse.class)) {
           if (idStartsWith(jgen, "vc_")) {
             writeLower(value, jgen);
@@ -321,9 +304,9 @@ final class JacksonSerializersV0 {
           }
         } else if (hasParent(jgen, GeoFacility.class)) {
           if (idStartsWith(jgen, "vc_")) {
-            writeLowerScrambled(value, jgen);
+            writeLowerByLength(value, jgen);
           } else {
-            writeUpperScrambled(value, jgen);
+            writeUpperByLength(value, jgen);
           }
         }
       } else if (idStartsWith(jgen, "nca_")) {

@@ -76,8 +76,8 @@ public class BenefitsSamples {
           .build();
     }
 
-    private Facility.Attributes attributes() {
-      return Facility.Attributes.builder()
+    private Facility.FacilityAttributes attributes() {
+      return Facility.FacilityAttributes.builder()
           .name("Shanktopus VAMC")
           .facilityType(Facility.FacilityType.va_benefits_facility)
           .classification("VAMC")

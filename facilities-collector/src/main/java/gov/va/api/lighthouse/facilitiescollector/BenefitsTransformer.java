@@ -12,8 +12,8 @@ public class BenefitsTransformer {
 
   String csvWebsite;
 
-  private Facility.Attributes attributes(ArcGisBenefits.Attributes attributes) {
-    return Facility.Attributes.builder()
+  private Facility.FacilityAttributes attributes(ArcGisBenefits.Attributes attributes) {
+    return Facility.FacilityAttributes.builder()
         .name(attributes.facilityName())
         .facilityType(Facility.FacilityType.va_benefits_facility)
         .classification(attributes.facilityType())

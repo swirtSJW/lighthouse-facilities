@@ -10,8 +10,8 @@ public class CemeteriesTransformer {
 
   String csvWebsite;
 
-  private Facility.Attributes attributes(ArcGisCemeteries.Attributes attributes) {
-    return Facility.Attributes.builder()
+  private Facility.FacilityAttributes attributes(ArcGisCemeteries.Attributes attributes) {
+    return Facility.FacilityAttributes.builder()
         .name(attributes.fullName())
         .facilityType(Facility.FacilityType.va_cemetery)
         .classification(attributes.siteType())

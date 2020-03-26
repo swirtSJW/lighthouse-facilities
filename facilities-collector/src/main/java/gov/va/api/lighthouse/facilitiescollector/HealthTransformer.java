@@ -136,7 +136,7 @@ final class HealthTransformer {
         .orElse(null);
   }
 
-  private Facility.Attributes attributes() {
+  private Facility.FacilityAttributes attributes() {
     if (allBlank(
         name(),
         classification(),
@@ -154,7 +154,7 @@ final class HealthTransformer {
         visn())) {
       return null;
     }
-    return Facility.Attributes.builder()
+    return Facility.FacilityAttributes.builder()
         .name(name())
         .facilityType(Facility.FacilityType.va_health_facility)
         .classification(classification())
