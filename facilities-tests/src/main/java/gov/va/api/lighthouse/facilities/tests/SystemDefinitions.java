@@ -31,7 +31,7 @@ class SystemDefinitions {
     String url = "http://localhost";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
-        .facilitiesManagement(serviceDefinition("facilities", url, 443, "/facilities/"))
+        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
         .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
         .facilitiesIds(facilitiesIds())
         .apikey(System.getProperty("apikey", "not-specified"))

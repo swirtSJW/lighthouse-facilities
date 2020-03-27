@@ -28,7 +28,7 @@ public class FacilitiesCollectorIT {
             .requestSpecification()
             .accept("application/json")
             .header(clientKey())
-            .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + path));
+            .request(Method.GET, TestClients.collector().service().urlWithApiPath() + path));
   }
 
   @Test
