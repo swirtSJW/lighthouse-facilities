@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
@@ -73,6 +74,8 @@ final class JacksonSerializersV0 {
     SimpleModule mod = new SimpleModule();
     mod.addSerializer(Facility.Address.class, new AddressSerializer());
     mod.addSerializer(Facility.Addresses.class, new AddressesSerializer());
+    mod.addSerializer(
+        FacilitiesResponse.FacilitiesMetadata.class, new FacilitiesMetadataSerializer());
     mod.addSerializer(Facility.FacilityAttributes.class, new FacilityAttributesSerializer());
     mod.addSerializer(Facility.Hours.class, new HoursSerializer());
     mod.addSerializer(Facility.PatientWaitTime.class, new PatientWaitTimeSerializer());
@@ -179,6 +182,30 @@ final class JacksonSerializersV0 {
         jgen.writeStringField("address_2", null);
         jgen.writeStringField("address_3", null);
       }
+      jgen.writeEndObject();
+    }
+  }
+
+  private static final class FacilitiesMetadataSerializer
+      extends StdSerializer<FacilitiesResponse.FacilitiesMetadata> {
+    public FacilitiesMetadataSerializer() {
+      this(null);
+    }
+
+    public FacilitiesMetadataSerializer(Class<FacilitiesResponse.FacilitiesMetadata> t) {
+      super(t);
+    }
+
+    @Override
+    @SneakyThrows
+    public void serialize(
+        FacilitiesResponse.FacilitiesMetadata value,
+        JsonGenerator jgen,
+        SerializerProvider provider) {
+      jgen.writeStartObject();
+      jgen.writeObjectField("pagination", value.pagination());
+      jgen.writeObjectField(
+          "distances", Optional.ofNullable(value.distances()).orElse(emptyList()));
       jgen.writeEndObject();
     }
   }

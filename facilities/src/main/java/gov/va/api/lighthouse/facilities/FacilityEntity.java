@@ -2,7 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.Serializable;
 import java.util.Optional;
 import java.util.Set;
@@ -83,7 +83,7 @@ public class FacilityEntity {
       double longitude,
       String facility,
       Integer version,
-      Set<ServiceType> servicesTypes) {
+      Set<Facility.ServiceType> servicesTypes) {
     this(
         id,
         zip,
@@ -96,7 +96,7 @@ public class FacilityEntity {
   }
 
   /** Populate services from a type safe collection. */
-  public void servicesFromServiceTypes(Set<ServiceType> serviceTypes) {
+  public void servicesFromServiceTypes(Set<Facility.ServiceType> serviceTypes) {
     services(serviceTypes.stream().map(Object::toString).collect(Collectors.toSet()));
   }
 
@@ -123,7 +123,7 @@ public class FacilityEntity {
     @Column(name = "station_number", nullable = false)
     private String stationNumber;
 
-    /** Create a Pk from the {type}_{id} style used in the Facilities API id. */
+    /** Create a Pk from the {type}_{id} style used in the Facilities API ID. */
     public static Pk fromIdString(@NonNull String typeAndStationNumber) {
       int separator = typeAndStationNumber.indexOf('_');
       checkArgument(separator > 0, typeAndStationNumber);
@@ -135,7 +135,7 @@ public class FacilityEntity {
     }
 
     /**
-     * Create a Pk from the {type}_{id} style used in the Facilities API id, suppressing exceptions.
+     * Create a Pk from the {type}_{id} style used in the Facilities API ID, suppressing exceptions.
      */
     public static Optional<Pk> optionalFromIdString(@NonNull String typeAndStationNumber) {
       try {

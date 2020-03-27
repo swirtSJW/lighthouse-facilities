@@ -4,6 +4,12 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 final class ExceptionsV0 {
+  static final class InvalidParameter extends RuntimeException {
+    InvalidParameter(String name, Object value) {
+      super(String.format("'%s' is not a valid value for '%s'", value, name));
+    }
+  }
+
   static final class NotFound extends RuntimeException {
     public NotFound(String id) {
       super(String.format("The record identified by %s could not be found", id));

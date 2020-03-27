@@ -3,28 +3,41 @@ package gov.va.api.lighthouse.facilities;
 import static com.google.common.base.Preconditions.checkArgument;
 import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfig.quietlyMap;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.google.common.base.Splitter;
-import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse.Type;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.validation.constraints.Min;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +55,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = {"/v0"})
 public class FacilitiesController {
+  private static final Map<String, FacilityEntity.Type> ENTITY_TYPE_LOOKUP =
+      caseInsensitiveMap(
+          ImmutableMap.of(
+              "benefits",
+              FacilityEntity.Type.vba,
+              "cemetery",
+              FacilityEntity.Type.nca,
+              "health",
+              FacilityEntity.Type.vha,
+              "vet_center",
+              FacilityEntity.Type.vc));
+
+  private static final Map<String, Facility.ServiceType> SERVICE_LOOKUP =
+      caseInsensitiveMap(
+          Streams.stream(
+                  Iterables.concat(
+                      List.<Facility.ServiceType>of(Facility.HealthService.values()),
+                      List.<Facility.ServiceType>of(Facility.BenefitsService.values()),
+                      List.<Facility.ServiceType>of(Facility.OtherService.values())))
+              .collect(toMap(v -> v.toString(), Function.identity())));
+
   private final FacilityRepository facilityRepository;
 
   @SuppressWarnings("unused")
@@ -56,6 +90,18 @@ public class FacilitiesController {
     this.facilityRepository = facilityRepository;
     this.driveTimeBandRepository = driveTimeBandRepository;
     this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+  }
+
+  private static <T> Map<String, T> caseInsensitiveMap(@NonNull Map<String, T> source) {
+    Map<String, T> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    map.putAll(source);
+    return Collections.unmodifiableMap(map);
+  }
+
+  private static double distance(@NonNull FacilityEntity entity, double lng, double lat) {
+    double lngDiff = entity.longitude() - lng;
+    double latDiff = entity.latitude() - lat;
+    return Math.sqrt(lngDiff * lngDiff + latDiff * latDiff);
   }
 
   @SneakyThrows
@@ -80,6 +126,29 @@ public class FacilitiesController {
     return entities.subList(fromIndex, Math.min(fromIndex + perPage, entities.size()));
   }
 
+  private static FacilityEntity.Type validateFacilityType(String type) {
+    FacilityEntity.Type mapped = ENTITY_TYPE_LOOKUP.get(trimToEmpty(type));
+    if (mapped == null && isNotBlank(type)) {
+      throw new ExceptionsV0.InvalidParameter("type", type);
+    }
+    return mapped;
+  }
+
+  private static Set<Facility.ServiceType> validateServices(Collection<String> services) {
+    if (isEmpty(services)) {
+      return emptySet();
+    }
+    List<Facility.ServiceType> results = new ArrayList<>(services.size());
+    for (String service : services) {
+      Facility.ServiceType mapped = SERVICE_LOOKUP.get(trimToEmpty(service));
+      if (mapped == null) {
+        throw new ExceptionsV0.InvalidParameter("services", service);
+      }
+      results.add(mapped);
+    }
+    return ImmutableSet.copyOf(results);
+  }
+
   /** Get all facilities. */
   @GetMapping(
       value = "/facilities/all",
@@ -87,13 +156,41 @@ public class FacilitiesController {
   public GeoFacilitiesResponse all() {
     var mapper = FacilitiesJacksonConfig.createMapper();
     return GeoFacilitiesResponse.builder()
-        .type(Type.FeatureCollection)
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
             StreamSupport.stream(facilityRepository.findAll().spliterator(), false)
                 .map(e -> quietlyMap(mapper, e.facility(), Facility.class))
                 .map(f -> geoFacility(f))
                 .collect(toList()))
         .build();
+  }
+
+  private List<FacilityEntity> entitiesByBoundingBox(
+      List<BigDecimal> bbox, String rawType, List<String> rawServices) {
+    if (bbox.size() != 4) {
+      throw new ExceptionsV0.InvalidParameter("bbox", bbox);
+    }
+    FacilityEntity.Type facilityType = validateFacilityType(rawType);
+    Set<Facility.ServiceType> services = validateServices(rawServices);
+    // lng lat lng lat
+    List<FacilityEntity> allEntities =
+        facilityRepository.findAll(
+            FacilityRepository.BBoxSpecification.builder()
+                .minLongitude(bbox.get(0).min(bbox.get(2)))
+                .maxLongitude(bbox.get(0).max(bbox.get(2)))
+                .minLatitude(bbox.get(1).min(bbox.get(3)))
+                .maxLatitude(bbox.get(1).max(bbox.get(3)))
+                .facilityType(facilityType)
+                .services(services)
+                .build());
+    double centerLng = (bbox.get(0).doubleValue() + bbox.get(2).doubleValue()) / 2;
+    double centerLat = (bbox.get(1).doubleValue() + bbox.get(3).doubleValue()) / 2;
+    return allEntities.stream()
+        .sorted(
+            (left, right) ->
+                Double.compare(
+                    distance(left, centerLng, centerLat), distance(right, centerLng, centerLat)))
+        .collect(toList());
   }
 
   private List<FacilityEntity> entitiesByIds(String ids) {
@@ -108,8 +205,39 @@ public class FacilitiesController {
             .collect(toList());
     Map<FacilityEntity.Pk, FacilityEntity> entities =
         facilityRepository.findByIdIn(pks).stream()
-            .collect(Collectors.toMap(e -> e.id(), Function.identity()));
+            .collect(toMap(e -> e.id(), Function.identity()));
     return pks.stream().map(pk -> entities.get(pk)).filter(Objects::nonNull).collect(toList());
+  }
+
+  private FacilityEntity entityById(String id) {
+    FacilityEntity.Pk pk = null;
+    try {
+      pk = FacilityEntity.Pk.fromIdString(id);
+    } catch (IllegalArgumentException ex) {
+      throw new ExceptionsV0.NotFound(id, ex);
+    }
+    Optional<FacilityEntity> opt = facilityRepository.findById(pk);
+    if (opt.isEmpty()) {
+      throw new ExceptionsV0.NotFound(id);
+    }
+    return opt.get();
+  }
+
+  /** Get facilities by bounding box. */
+  @GetMapping(value = "/facilities", produces = "application/vnd.geo+json")
+  public GeoFacilitiesResponse geoFacilitiesByBoundingBox(
+      @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    return GeoFacilitiesResponse.builder()
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
+        .features(
+            page(entitiesByBoundingBox(bbox, type, services), page, perPage).stream()
+                .map(e -> geoFacility(facility(e)))
+                .collect(toList()))
+        .build();
   }
 
   /** Get facilities by IDs. */
@@ -124,6 +252,36 @@ public class FacilitiesController {
             page(entitiesByIds(ids), page, perPage).stream()
                 .map(e -> geoFacility(facility(e)))
                 .collect(toList()))
+        .build();
+  }
+
+  /** Get facilities by bounding box. */
+  @GetMapping(value = "/facilities", produces = "application/json")
+  public FacilitiesResponse jsonFacilitiesByBoundingBox(
+      @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    List<FacilityEntity> entities = entitiesByBoundingBox(bbox, type, services);
+    PageLinker linker =
+        PageLinker.builder()
+            .url(baseUrl + "v0/facilities")
+            .params(
+                Parameters.builder()
+                    .addAll("bbox[]", bbox)
+                    .addIgnoreNull("type", type)
+                    .addAll("services[]", services)
+                    .add("page", page)
+                    .add("per_page", perPage)
+                    .build())
+            .totalEntries(entities.size())
+            .build();
+    return FacilitiesResponse.builder()
+        .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .links(linker.links())
+        .meta(
+            FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
         .build();
   }
 
@@ -149,10 +307,7 @@ public class FacilitiesController {
         .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
         .links(linker.links())
         .meta(
-            FacilitiesResponse.FacilitiesMetadata.builder()
-                .pagination(linker.pagination())
-                .distances(emptyList())
-                .build())
+            FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
         .build();
   }
 
@@ -165,29 +320,15 @@ public class FacilitiesController {
     return null;
   }
 
-  private Facility read(String id) {
-    Pk pk = null;
-    try {
-      pk = FacilityEntity.Pk.fromIdString(id);
-    } catch (IllegalArgumentException ex) {
-      throw new ExceptionsV0.NotFound(id, ex);
-    }
-    Optional<FacilityEntity> opt = facilityRepository.findById(pk);
-    if (opt.isEmpty()) {
-      throw new ExceptionsV0.NotFound(id);
-    }
-    return facility(opt.get());
-  }
-
   /** Read geo facility. */
   @GetMapping(value = "/facilities/{id}", produces = "application/vnd.geo+json")
   public GeoFacilityReadResponse readGeoJson(@PathVariable("id") String id) {
-    return GeoFacilityReadResponse.of(geoFacility(read(id)));
+    return GeoFacilityReadResponse.of(geoFacility(facility(entityById(id))));
   }
 
   /** Read facility. */
   @GetMapping(value = "/facilities/{id}", produces = "application/json")
   public FacilityReadResponse readJson(@PathVariable("id") String id) {
-    return FacilityReadResponse.builder().facility(read(id)).build();
+    return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
   }
 }

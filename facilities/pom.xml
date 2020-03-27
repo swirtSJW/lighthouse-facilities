@@ -14,7 +14,7 @@
   <properties>
     <docker.imageName>lighthouse-facilities</docker.imageName>
     <guava.version>28.2-jre</guava.version>
-    <jacoco.coverage>0.91</jacoco.coverage>
+    <jacoco.coverage>0.93</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <swagger-maven-plugin.version>2.1.1</swagger-maven-plugin.version>
   </properties>

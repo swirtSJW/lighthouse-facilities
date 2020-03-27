@@ -75,7 +75,6 @@ public final class Facility {
   }
 
   public enum OtherService implements ServiceType {
-    @JsonProperty("Online Scheduling")
     OnlineScheduling
   }
 

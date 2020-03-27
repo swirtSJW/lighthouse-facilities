@@ -7,7 +7,7 @@ import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.tests.categories.AllFacilities;
 import gov.va.api.lighthouse.facilities.tests.categories.FacilityById;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByBoundingBox;
@@ -62,13 +62,12 @@ public class FacilitiesIT {
     final String request = "v0/facilities/" + facility;
     ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
         .expect(200)
-        .expectValid(GeoFacility.class);
+        .expectValid(GeoFacilityReadResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
         .expectValid(FacilityReadResponse.class);
   }
 
-  @Ignore
   @Test
   @Category({SearchByBoundingBox.class})
   public void searchByBoundingBox() {
@@ -82,21 +81,19 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByBoundingBox.class)
-  public void searchByBoundingBoxWithServicesMissingType() {
+  public void searchByBoundingBoxWithServices() {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&services[]=PrimaryCare";
     ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByBoundingBox.class)
   public void searchByBoundingBoxWithType() {
@@ -110,7 +107,6 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByBoundingBox.class)
   public void searchByBoundingBoxWithTypeAndServices() {
@@ -124,7 +120,6 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category({SearchByIds.class})
   public void searchByIds() {

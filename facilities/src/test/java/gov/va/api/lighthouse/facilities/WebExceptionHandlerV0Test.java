@@ -4,6 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import java.util.List;
+import java.util.Set;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validation;
+import javax.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Value;
 import org.junit.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +23,27 @@ public class WebExceptionHandlerV0Test {
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
     return headers;
+  }
+
+  @Test
+  public void invalidParameter() {
+    assertThat(
+            new WebExceptionHandlerV0()
+                .handleInvalidParameter(new ExceptionsV0.InvalidParameter("services", "x")))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Invalid field value")
+                                    .detail("'x' is not a valid value for 'services'")
+                                    .code("103")
+                                    .status("400")
+                                    .build()))
+                        .build()));
   }
 
   @Test
@@ -58,5 +86,34 @@ public class WebExceptionHandlerV0Test {
                                     .status("404")
                                     .build()))
                         .build()));
+  }
+
+  @Test
+  public void validationException() {
+    Set<ConstraintViolation<Foo>> violations =
+        Validation.buildDefaultValidatorFactory().getValidator().validate(Foo.builder().build());
+    assertThat(
+            new WebExceptionHandlerV0()
+                .handleValidationException(new ConstraintViolationException(violations)))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Invalid field value")
+                                    .detail("bar must not be null")
+                                    .code("400")
+                                    .status("400")
+                                    .build()))
+                        .build()));
+  }
+
+  @Value
+  @Builder
+  private static final class Foo {
+    @NotNull String bar;
   }
 }

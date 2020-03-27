@@ -28,6 +28,22 @@ public final class WebExceptionHandlerV0 {
     return ResponseEntity.status(status).headers(headers).body(error);
   }
 
+  @ExceptionHandler(ExceptionsV0.InvalidParameter.class)
+  ResponseEntity<ApiError> handleInvalidParameter(ExceptionsV0.InvalidParameter ex) {
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Invalid field value")
+                        .detail(ex.getMessage())
+                        .code("103")
+                        .status("400")
+                        .build()))
+            .build();
+    return response(HttpStatus.BAD_REQUEST, ex, response);
+  }
+
   @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
   ResponseEntity<ApiError> handleNotAcceptable(HttpMediaTypeNotAcceptableException ex) {
     ApiError error =
