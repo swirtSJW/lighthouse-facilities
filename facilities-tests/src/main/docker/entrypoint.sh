@@ -39,6 +39,7 @@ REQUIRED_ENV_VARIABLES=(
 #
 # Assume defaults for service locations to be on the load balancer.
 #
+if [ -z "$SENTINEL_ENV" ]; then SENTINEL_ENV=$K8S_ENVIRONMENT; fi
 if [ -z "$FACILITIES_URL" ]; then FACILITIES_URL=https://$K8S_LOAD_BALANCER; fi
 if [ -z "$FACILITIES_COLLECTOR_URL" ]; then FACILITIES_COLLECTOR_URL=https://$K8S_LOAD_BALANCER; fi
 #============================================================
