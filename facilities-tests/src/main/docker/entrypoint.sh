@@ -177,16 +177,19 @@ setupForAutomation() {
 
   SYSTEM_PROPERTIES+=( "-Dsentinel=$SENTINEL_ENV" )
   SYSTEM_PROPERTIES+=( "-Dapikey=$API_KEY" )
-  SYSTEM_PROPERTIES+=(
-    "-Dsentinel.facilities.url=$FACILITIES_URL"
-    "-Dsentinel.facilities.api-path=$FACILITIES_API_PATH"
-    "-Dsentinel.facilities-management.url=$FACILITIES_URL"
-    "-Dsentinel.facilities-management.api-path=$FACILITIES_MANAGEMENT_API_PATH"
-  )
-  SYSTEM_PROPERTIES+=(
-    "-Dsentinel.facilities-collector.url=$FACILITIES_COLLECTOR_URL"
-    "-Dsentinel.facilities-collector.api-path=$FACILITIES_COLLECTOR_API_PATH"
-  )
+
+  [ -n "$FACILITIES_URL" ] && \
+    SYSTEM_PROPERTIES+=("-Dsentinel.facilities.url=$FACILITIES_URL")
+  [ -n "$FACILITIES_API_PATH" ] && \
+    SYSTEM_PROPERTIES+=("-Dsentinel.facilities.api-path=$FACILITIES_API_PATH")
+  [ -n "$FACILITIES_URL" ] && \
+    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-management.url=$FACILITIES_URL")
+  [ -n "$FACILITIES_MANAGEMENT_API_PATH" ] && \
+    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-management.api-path=$FACILITIES_MANAGEMENT_API_PATH")
+  [ -n "$FACILITIES_COLLECTOR_URL" ] && \
+    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-collector.url=$FACILITIES_COLLECTOR_URL")
+  [ -n "$FACILITIES_COLLECTOR_API_PATH" ] && \
+    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-collector.api-path=$FACILITIES_COLLECTOR_API_PATH")
 }
 
 ARGS=$(getopt -n $(basename ${0}) \
