@@ -16,12 +16,12 @@ import org.junit.experimental.categories.Category;
 @Ignore
 public class NearbyIT {
   private Response makeRequest(String acceptHeader, String request) {
-    return TestClients.facilties()
+    return TestClients.facilities()
         .service()
         .requestSpecification()
         .accept(acceptHeader)
         .header(vetsApiFacilitiesApikey())
-        .request(Method.GET, TestClients.facilties().service().urlWithApiPath() + request);
+        .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request);
   }
 
   @Test

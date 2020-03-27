@@ -11,6 +11,9 @@
   <artifactId>facilities-tests</artifactId>
   <version>1.0.33-SNAPSHOT</version>
   <packaging>jar</packaging>
+  <properties>
+    <docker.imageName>lighthouse-${project.artifactId}</docker.imageName>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>com.h2database</groupId>
@@ -27,7 +30,6 @@
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>facilities-api</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>gov.va.api.lighthouse</groupId>
@@ -111,12 +113,13 @@
               <name>facilities-collector</name>
               <healthcheckUrl>http://localhost:8080/actuator/health</healthcheckUrl>
               <skip>${sentinel.skipLaunch}</skip>
+              <waitForInterrupt>false</waitForInterrupt>
               <!--
-             <processLogFile>${project.build.directory}/facilities-collector.log</processLogFile>
-             -->
+              <processLogFile>${project.build.directory}/facilities-collector.log</processLogFile>
+              -->
               <arguments>
                 <argument>java</argument>
-                <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5090</argument>
+                <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5080</argument>
                 <argument>-cp</argument>
                 <argument>facilities-collector.jar${path.separator}h2.jar${path.separator}facilities-local-db-tests.jar</argument>
                 <argument>-Dlogging.level.root=INFO</argument>
@@ -127,7 +130,40 @@
                 <argument>-Dstate-cemeteries.url=http://localhost:8666</argument>
                 <argument>-Dva-arc-gis.url=http://localhost:8666</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
-                <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/../facilities-local-db/target/mock-cdw;INIT=CREATE ALIAS App.VHA_Stop_Code_Wait_Times_Paginated FOR "gov.va.api.lighthouse.facilitiescollector.Populaterator.stopCodeWaitTimesPaginated"</argument>
+                <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/../facilities-local-db/target/mock-cdw;INIT=CREATE ALIAS IF NOT EXISTS App.VHA_Stop_Code_Wait_Times_Paginated FOR "gov.va.api.lighthouse.facilitiescollector.Populaterator.stopCodeWaitTimesPaginated"</argument>
+                <argument>-Dspring.datasource.username=sa</argument>
+                <argument>-Dspring.datasource.password=sa</argument>
+                <argument>-Dspring.jpa.generate-ddl=false</argument>
+                <argument>-Dspring.jpa.hibernate.ddl-auto=none</argument>
+                <argument>-Dspring.jpa.properties.hibernate.globally_quoted_identifiers=false</argument>
+                <argument>-Dspring.config.location=classpath:/application.properties,file:${project.basedir}/config/secrets.properties</argument>
+                <argument>org.springframework.boot.loader.PropertiesLauncher</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>facilities-process</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>start</goal>
+            </goals>
+            <configuration>
+              <name>facilities</name>
+              <healthcheckUrl>http://localhost:8085/actuator/health</healthcheckUrl>
+              <skip>${sentinel.skipLaunch}</skip>
+              <!--
+              <processLogFile>${project.build.directory}/facilities.log</processLogFile>
+              -->
+              <arguments>
+                <argument>java</argument>
+                <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5085</argument>
+                <argument>-cp</argument>
+                <argument>facilities.jar${path.separator}h2.jar</argument>
+                <argument>-Dlogging.level.root=INFO</argument>
+                <argument>-Dloader=gov.va.api.lighthouse.facilities.Application</argument>
+                <argument>-Dfacilities-collector.url=http://localhost:8080</argument>
+                <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
+                <argument>-Dspring.datasource.url=jdbc:h2:mem:facilities</argument>
                 <argument>-Dspring.datasource.username=sa</argument>
                 <argument>-Dspring.datasource.password=sa</argument>
                 <argument>-Dspring.jpa.generate-ddl=false</argument>
@@ -160,32 +196,11 @@
             <version>${docker-maven-plugin.version}</version>
             <executions>
               <execution>
-                <id>build-test</id>
-                <configuration>
-                  <images>
-                    <image>
-                      <name>${docker.organization}/lighthouse-facilities-tests</name>
-                      <build>
-                        <dockerFile>Dockerfile</dockerFile>
-                        <tags>
-                          <tag>${project.version}</tag>
-                          <tag>${docker.tag}</tag>
-                        </tags>
-                      </build>
-                    </image>
-                  </images>
-                </configuration>
-                <phase>package</phase>
-                <goals>
-                  <goal>build</goal>
-                </goals>
-              </execution>
-              <execution>
                 <id>deploy-test</id>
                 <configuration>
                   <images>
                     <image>
-                      <name>${docker.organization}/lighthouse-facilities-tests</name>
+                      <name>${docker.organization}/${docker.imageName}</name>
                       <build>
                         <dockerFile>Dockerfile</dockerFile>
                         <tags>

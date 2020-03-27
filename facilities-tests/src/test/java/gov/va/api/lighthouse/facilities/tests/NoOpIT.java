@@ -11,7 +11,7 @@ public class NoOpIT {
   @Test
   @Category({Local.class})
   public void noOperation() {
-    String path = TestClients.facilties().service().apiPath() + "NoOpResource";
+    String path = TestClients.facilities().service().apiPath() + "NoOpResource";
     log.info("NoOpIT path is: " + path);
   }
 }

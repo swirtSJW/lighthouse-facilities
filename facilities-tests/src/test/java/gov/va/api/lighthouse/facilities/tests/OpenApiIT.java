@@ -28,9 +28,9 @@ public class OpenApiIT {
   private Response requestOpenApi(String extension) {
     String openApi = "/openApi" + extension;
     log.info("Making request for openApi at {}", openApi);
-    return TestClients.facilties()
+    return TestClients.facilities()
         .service()
         .requestSpecification()
-        .request(Method.GET, TestClients.facilties().service().urlWithApiPath() + openApi);
+        .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + openApi);
   }
 }

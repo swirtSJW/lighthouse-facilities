@@ -15,35 +15,44 @@ import gov.va.api.lighthouse.facilities.tests.categories.SearchByIds;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByLatLong;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByState;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByZip;
-import io.restassured.http.Header;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Ignore
 public class FacilitiesIT {
+
+  @Rule public RequiresFacilities precondition = new RequiresFacilities();
+
+  @Ignore
   @Test
   @Category({AllFacilities.class})
-  public void all() {
+  public void allAsCsv() {
+    final String request = "v0/facilities/all";
+    ExpectedResponse.of(makeRequest("text/csv", request)).expect(200);
+  }
+
+  @Test
+  @Category({AllFacilities.class})
+  public void allAsJson() {
     final String request = "v0/facilities/all";
     ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
         .expect(200)
         .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("text/csv", request)).expect(200);
     ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(406)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(GeoFacilitiesResponse.class);
   }
 
   private Response makeRequest(String acceptHeader, String request) {
-    return TestClients.facilties()
+    return TestClients.facilities()
         .service()
         .requestSpecification()
         .accept(acceptHeader)
-        .header(vetsApiFacilitiesApikey())
-        .request(Method.GET, TestClients.facilties().service().urlWithApiPath() + request);
+        .header(SystemDefinitions.systemDefinition().apikeyAsHeader())
+        .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request);
   }
 
   @Test
@@ -59,6 +68,7 @@ public class FacilitiesIT {
         .expectValid(FacilityReadResponse.class);
   }
 
+  @Ignore
   @Test
   @Category({SearchByBoundingBox.class})
   public void searchByBoundingBox() {
@@ -72,6 +82,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByBoundingBox.class)
   public void searchByBoundingBoxWithServicesMissingType() {
@@ -85,6 +96,7 @@ public class FacilitiesIT {
         .expectValid(ApiError.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByBoundingBox.class)
   public void searchByBoundingBoxWithType() {
@@ -98,6 +110,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByBoundingBox.class)
   public void searchByBoundingBoxWithTypeAndServices() {
@@ -111,6 +124,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category({SearchByIds.class})
   public void searchByIds() {
@@ -124,6 +138,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category({SearchByLatLong.class})
   public void searchByLatLong() {
@@ -138,6 +153,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByLatLong.class)
   public void searchByLatLongWithServicesMissingType() {
@@ -153,6 +169,7 @@ public class FacilitiesIT {
         .expectValid(ApiError.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByLatLong.class)
   public void searchByLatLongWithType() {
@@ -167,6 +184,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByLatLong.class)
   public void searchByLatLongWithTypeAndServices() {
@@ -186,6 +204,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category({SearchByState.class})
   public void searchByState() {
@@ -199,6 +218,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByState.class)
   public void searchByStateWithServicesMissingType() {
@@ -212,6 +232,7 @@ public class FacilitiesIT {
         .expectValid(ApiError.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByState.class)
   public void searchByStateWithType() {
@@ -225,6 +246,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByState.class)
   public void searchByStateWithTypeAndServices() {
@@ -238,6 +260,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category({SearchByZip.class})
   public void searchByZip() {
@@ -251,6 +274,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByZip.class)
   public void searchByZipWithServicesMissingType() {
@@ -264,6 +288,7 @@ public class FacilitiesIT {
         .expectValid(ApiError.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByZip.class)
   public void searchByZipWithType() {
@@ -277,6 +302,7 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
+  @Ignore
   @Test
   @Category(SearchByZip.class)
   public void searchByZipWithTypeAndServices() {
@@ -288,9 +314,5 @@ public class FacilitiesIT {
     ExpectedResponse.of(makeRequest("application/json", request))
         .expect(200)
         .expectValid(FacilitiesResponse.class);
-  }
-
-  private Header vetsApiFacilitiesApikey() {
-    return new Header("apikey", System.getProperty("vets-api-facilities-apikey", "not-supplied"));
   }
 }

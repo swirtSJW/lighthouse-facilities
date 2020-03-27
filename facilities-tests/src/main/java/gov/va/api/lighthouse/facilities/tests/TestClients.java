@@ -15,9 +15,16 @@ public class TestClients {
         .build();
   }
 
-  static TestClient facilties() {
+  static TestClient facilities() {
     return BasicTestClient.builder()
         .service(SystemDefinitions.systemDefinition().facilities())
+        .mapper(JacksonConfig::createMapper)
+        .build();
+  }
+
+  static TestClient facilitiesManagement() {
+    return BasicTestClient.builder()
+        .service(SystemDefinitions.systemDefinition().facilitiesManagement())
         .mapper(JacksonConfig::createMapper)
         .build();
   }

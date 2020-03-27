@@ -18,8 +18,24 @@ class SystemDefinitions {
     String url = "http://localhost";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 8085, "/"))
+        .facilitiesManagement(serviceDefinition("facilities-management", url, 8085, "/"))
         .collector(serviceDefinition("facilities-collector", url, 8080, "/"))
         .facilitiesIds(facilitiesIds())
+        .apikey(System.getProperty("apikey", "not-needed"))
+        .clientkey(System.getProperty("client-key", "not-needed"))
+        .build();
+  }
+
+  /** Service definitions for local testing. */
+  private static SystemDefinition qa() {
+    String url = "http://localhost";
+    return SystemDefinition.builder()
+        .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
+        .facilitiesManagement(serviceDefinition("facilities", url, 443, "/facilities/"))
+        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesIds(facilitiesIds())
+        .apikey(System.getProperty("apikey", "not-specified"))
+        .clientkey(System.getProperty("client-key", "not-specified"))
         .build();
   }
 
@@ -36,15 +52,17 @@ class SystemDefinitions {
   /** Return the applicable system definition for the current environment. */
   static SystemDefinition systemDefinition() {
     switch (Environment.get()) {
+      case LOCAL:
+        return local();
       case QA:
+        return qa();
       case STAGING:
       case PROD:
       case STAGING_LAB:
       case LAB:
-      case LOCAL:
-        return local();
       default:
-        throw new IllegalArgumentException("Unknown sentinel environment: " + Environment.get());
+        throw new IllegalArgumentException(
+            "Unsupported sentinel environment: " + Environment.get());
     }
   }
 
