@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfig.quietlyMap;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
@@ -34,11 +33,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.StreamSupport;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -154,15 +154,34 @@ public class FacilitiesController {
       value = "/facilities/all",
       produces = {"application/json", "application/vnd.geo+json"})
   public GeoFacilitiesResponse all() {
-    var mapper = FacilitiesJacksonConfig.createMapper();
     return GeoFacilitiesResponse.builder()
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
-            StreamSupport.stream(facilityRepository.findAll().spliterator(), false)
-                .map(e -> quietlyMap(mapper, e.facility(), Facility.class))
-                .map(f -> geoFacility(f))
+            Streams.stream(facilityRepository.findAll())
+                .map(e -> geoFacility(facility(e)))
                 .collect(toList()))
         .build();
+  }
+
+  /** Get all facilities as CSV. */
+  @SneakyThrows
+  @GetMapping(value = "/facilities/all", produces = "text/csv")
+  public String allCsv() {
+    List<List<String>> rows =
+        Streams.stream(facilityRepository.findAll())
+            .parallel()
+            .map(e -> CsvTransformer.builder().facility(facility(e)).build().toRow())
+            .collect(toList());
+    StringBuilder sb = new StringBuilder();
+    try (CSVPrinter printer =
+        CSVFormat.DEFAULT
+            .withHeader(CsvTransformer.HEADERS.stream().toArray(String[]::new))
+            .print(sb)) {
+      for (List<String> row : rows) {
+        printer.printRecord(row);
+      }
+      return sb.toString();
+    }
   }
 
   private List<FacilityEntity> entitiesByBoundingBox(

@@ -12,6 +12,7 @@
   <version>1.0.38-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
+    <commons-csv.version>1.8</commons-csv.version>
     <docker.imageName>lighthouse-facilities</docker.imageName>
     <guava.version>28.2-jre</guava.version>
     <jacoco.coverage>0.93</jacoco.coverage>
@@ -45,6 +46,11 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>${guava.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>${commons-csv.version}</version>
     </dependency>
   </dependencies>
   <build>

@@ -26,7 +26,6 @@ public class FacilitiesIT {
 
   @Rule public RequiresFacilities precondition = new RequiresFacilities();
 
-  @Ignore
   @Test
   @Category({AllFacilities.class})
   public void allAsCsv() {

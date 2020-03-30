@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
@@ -35,6 +37,42 @@ public class FacilitiesControllerTest {
                 samples.facilityEntity("vha_757")));
     var actual = controller().all();
     assertThat(actual.features()).hasSize(3);
+  }
+
+  @Test
+  public void allCsv() {
+    FacilitySamples samples = FacilitySamples.defaultSamples();
+    when(fr.findAll())
+        .thenReturn(
+            List.of(
+                samples.facilityEntity("vha_691GB"),
+                samples.facilityEntity("vha_740GA"),
+                samples.facilityEntity("vha_757")));
+    String actual = controller().allCsv();
+    List<String> actualLines = Splitter.onPattern("\\r?\\n").omitEmptyStrings().splitToList(actual);
+    assertThat(actualLines.size()).isEqualTo(4);
+    assertThat(actualLines.get(0)).isEqualTo(Joiner.on(",").join(CsvTransformer.HEADERS));
+    assertThat(actualLines.get(1))
+        .isEqualTo(
+            "vha_691GB,Santa Barbara VA Clinic,691GB,34.4423637,-119.77646693,va_health_facility,"
+                + "Primary Care CBOC,https://www.losangeles.va.gov/locations/directions-SB.asp,false,A,"
+                + "22,4440 Calle Real,,,Santa Barbara,CA,93110-1002,,,,,,,805-683-1491,805-683-3631,"
+                + "310-268-4449,800-952-4852,877-252-4866,818-895-9564,818-891-7711 x35894,800AM-430PM,"
+                + "800AM-430PM,800AM-430PM,800AM-430PM,800AM-430PM,Closed,Closed");
+    assertThat(actualLines.get(2))
+        .isEqualTo(
+            "vha_740GA,Harlingen VA Clinic-Treasure Hills,740GA,26.1745479800001,-97.6667188,va_health_facility,"
+                + "Multi-Specialty CBOC,https://www.texasvalley.va.gov/locations/Harlingen_OPC.asp,false,A,"
+                + "17,2106 Treasure Hills Boulevard,,,Harlingen,TX,78550-8736,,,,,,,956-366-4500,956-366-4595,"
+                + "956-366-4526,877-752-0650,888-686-6350,956-366-4500 x67810,956-291-9791,800AM-430PM,"
+                + "800AM-430PM,800AM-430PM,800AM-430PM,800AM-430PM,Closed,Closed");
+    assertThat(actualLines.get(3))
+        .isEqualTo(
+            "vha_757,Chalmers P. Wylie Veterans Outpatient Clinic,757,39.9813738,-82.9118322899999,va_health_facility,"
+                + "Health Care Center (HCC),https://www.columbus.va.gov/locations/directions.asp,false,A,"
+                + "10,\"420 North James, Road\",,,Columbus,OH,43219-1834,,,,,,,614-257-5200,614-257-5460,"
+                + "614-257-5631,614-257-5230,614-257-5512,614-257-5290,614-257-5298,730AM-600PM,"
+                + "730AM-600PM,730AM-600PM,730AM-600PM,730AM-600PM,800AM-400PM,800AM-400PM");
   }
 
   private FacilitiesController controller() {
