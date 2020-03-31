@@ -106,4 +106,38 @@ public interface FacilityRepository
       return criteriaBuilder.and(combinedBase, anyService);
     }
   }
+
+  @Value
+  @Builder
+  final class ZipSpecification implements Specification<FacilityEntity> {
+    @NonNull String zip;
+
+    FacilityEntity.Type facilityType;
+
+    @Builder.Default Set<Facility.ServiceType> services = emptySet();
+
+    @Override
+    public Predicate toPredicate(
+        Root<FacilityEntity> root,
+        CriteriaQuery<?> criteriaQuery,
+        CriteriaBuilder criteriaBuilder) {
+      List<Predicate> basePredicates = new ArrayList<>(2);
+      basePredicates.add(criteriaBuilder.equal(root.get("zip"), zip));
+      if (facilityType != null) {
+        basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
+      }
+
+      Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
+      if (isEmpty(services)) {
+        return combinedBase;
+      }
+
+      Predicate[] servicePredicates =
+          services.stream()
+              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
+              .toArray(Predicate[]::new);
+      Predicate anyService = criteriaBuilder.or(servicePredicates);
+      return criteriaBuilder.and(combinedBase, anyService);
+    }
+  }
 }

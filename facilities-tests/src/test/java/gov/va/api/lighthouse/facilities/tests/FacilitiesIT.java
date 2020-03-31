@@ -250,7 +250,6 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category({SearchByZip.class})
   public void searchByZip() {
@@ -264,21 +263,19 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByZip.class)
-  public void searchByZipWithServicesMissingType() {
+  public void searchByZipWithServices() {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&services[]=PrimaryCare";
     ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByZip.class)
   public void searchByZipWithType() {
@@ -292,7 +289,6 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByZip.class)
   public void searchByZipWithTypeAndServices() {

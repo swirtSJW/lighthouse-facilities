@@ -247,6 +247,22 @@ public class FacilitiesController {
         PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
   }
 
+  private Page<FacilityEntity> entitiesPageByZip(
+      String rawZip, String rawType, List<String> rawServices, int page, int perPage) {
+    checkArgument(page >= 1);
+    checkArgument(perPage >= 1);
+    FacilityEntity.Type facilityType = validateFacilityType(rawType);
+    Set<Facility.ServiceType> services = validateServices(rawServices);
+    String zip = rawZip.substring(0, Math.min(rawZip.length(), 5));
+    return facilityRepository.findAll(
+        FacilityRepository.ZipSpecification.builder()
+            .zip(zip)
+            .facilityType(facilityType)
+            .services(services)
+            .build(),
+        PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
+  }
+
   private FacilityEntity entityById(String id) {
     FacilityEntity.Pk pk = null;
     try {
@@ -307,6 +323,25 @@ public class FacilitiesController {
             perPage == 0
                 ? emptyList()
                 : entitiesPageByState(state, type, services, page, perPage).stream()
+                    .map(e -> geoFacility(facility(e)))
+                    .collect(toList()))
+        .build();
+  }
+
+  /** Get facilities by zip. */
+  @GetMapping(value = "/facilities", produces = "application/vnd.geo+json", params = "zip")
+  public GeoFacilitiesResponse geoFacilitiesByZip(
+      @RequestParam(value = "zip") String zip,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    return GeoFacilitiesResponse.builder()
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
+        .features(
+            perPage == 0
+                ? emptyList()
+                : entitiesPageByZip(zip, type, services, page, perPage).stream()
                     .map(e -> geoFacility(facility(e)))
                     .collect(toList()))
         .build();
@@ -384,6 +419,40 @@ public class FacilitiesController {
             .params(
                 Parameters.builder()
                     .add("state", state)
+                    .addIgnoreNull("type", type)
+                    .addAll("services[]", services)
+                    .add("page", page)
+                    .add("per_page", perPage)
+                    .build())
+            .totalEntries((int) entitiesPage.getTotalElements())
+            .build();
+    return FacilitiesResponse.builder()
+        .data(
+            perPage == 0
+                ? emptyList()
+                : entitiesPage.stream().map(e -> facility(e)).collect(toList()))
+        .links(linker.links())
+        .meta(
+            FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
+        .build();
+  }
+
+  /** Get facilities by zip. */
+  @GetMapping(value = "/facilities", produces = "application/json", params = "zip")
+  public FacilitiesResponse jsonFacilitiesByZip(
+      @RequestParam(value = "zip") String zip,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    Page<FacilityEntity> entitiesPage =
+        entitiesPageByZip(zip, type, services, page, Math.max(perPage, 1));
+    PageLinker linker =
+        PageLinker.builder()
+            .url(baseUrl + "v0/facilities")
+            .params(
+                Parameters.builder()
+                    .add("zip", zip)
                     .addIgnoreNull("type", type)
                     .addAll("services[]", services)
                     .add("page", page)

@@ -38,7 +38,6 @@ import org.springframework.data.domain.Sort;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FacilityEntity {
-
   /**
    * API V0 searches by {type}_{faciliityId}. We might want to change that in the future, so we are
    * keeping those two pieces of information separate. However, the two (type + facility) are
@@ -113,7 +112,7 @@ public class FacilityEntity {
     /** Cemetery. */
     nca,
     /** Vet Center. */
-    vc;
+    vc
   }
 
   @Data
