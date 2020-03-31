@@ -307,7 +307,7 @@ final class HealthTransformer {
     return Facility.Address.builder()
         .zip(zip())
         .city(attr.municipality())
-        .state(attr.state())
+        .state(upperCase(attr.state(), Locale.US))
         .address1(attr.address2())
         .address2(attr.address1())
         .address3(attr.address3())

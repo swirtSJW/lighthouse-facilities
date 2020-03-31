@@ -198,7 +198,6 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category({SearchByState.class})
   public void searchByState() {
@@ -212,21 +211,19 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByState.class)
-  public void searchByStateWithServicesMissingType() {
+  public void searchByStateWithServices() {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&services[]=PrimaryCare";
     ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(GeoFacilitiesResponse.class);
     ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+        .expect(200)
+        .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByState.class)
   public void searchByStateWithType() {
@@ -240,7 +237,6 @@ public class FacilitiesIT {
         .expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByState.class)
   public void searchByStateWithTypeAndServices() {

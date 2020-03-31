@@ -7,6 +7,7 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.Map;
 import lombok.Builder;
 import lombok.NonNull;
@@ -29,7 +30,7 @@ final class VetCenterTransformer {
             Facility.Address.builder()
                 .zip(attr.zip())
                 .city(attr.city())
-                .state(upperCase(attr.state()))
+                .state(upperCase(attr.state(), Locale.US))
                 .address1(attr.address2())
                 .address2(attr.address3())
                 .build())

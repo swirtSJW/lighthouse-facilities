@@ -33,7 +33,7 @@ public class BenefitsSamples {
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("North")
-          .state("Dakota")
+          .state("sd")
           .zip("12208")
           .fax("123-456-7890")
           .phone("123-789-0456")
@@ -71,7 +71,7 @@ public class BenefitsSamples {
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("North")
-          .state("Dakota")
+          .state("SD")
           .zip("12208")
           .build();
     }

@@ -1,6 +1,9 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static org.apache.commons.lang3.StringUtils.upperCase;
+
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import java.util.Locale;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -25,7 +28,7 @@ public class CemeteriesTransformer {
                         .address1(attributes.siteAddress1())
                         .address2(attributes.siteAddress2())
                         .city(attributes.siteCity())
-                        .state(attributes.siteState())
+                        .state(upperCase(attributes.siteState(), Locale.US))
                         .zip(attributes.siteZip())
                         .build())
                 .mailing(
@@ -33,7 +36,7 @@ public class CemeteriesTransformer {
                         .address1(attributes.mailAddress1())
                         .address2(attributes.mailAddress2())
                         .city(attributes.mailCity())
-                        .state(attributes.mailState())
+                        .state(upperCase(attributes.mailState(), Locale.US))
                         .zip(attributes.mailZip())
                         .build())
                 .build())

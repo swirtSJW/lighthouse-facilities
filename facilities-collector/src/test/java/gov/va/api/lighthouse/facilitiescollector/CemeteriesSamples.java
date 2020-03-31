@@ -33,12 +33,12 @@ public class CemeteriesSamples {
           .siteAddress1("8 Shanktopus Lane")
           .siteAddress2("Apartment 8")
           .siteCity("North")
-          .siteState("Dakota")
+          .siteState("sd")
           .siteZip("12208")
           .mailAddress1("8 Shanktopus Lane")
           .mailAddress2("Apartment 8")
           .mailCity("South")
-          .mailState("Dakota")
+          .mailState("sd")
           .mailZip("12208")
           .fax("123-456-7890")
           .phone("123-789-0456")
@@ -91,7 +91,7 @@ public class CemeteriesSamples {
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("South")
-          .state("Dakota")
+          .state("SD")
           .zip("12208")
           .build();
     }
@@ -101,7 +101,7 @@ public class CemeteriesSamples {
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("North")
-          .state("Dakota")
+          .state("SD")
           .zip("12208")
           .build();
     }

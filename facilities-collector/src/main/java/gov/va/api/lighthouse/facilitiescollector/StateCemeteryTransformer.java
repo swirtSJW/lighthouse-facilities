@@ -5,9 +5,11 @@ import static gov.va.api.lighthouse.facilitiescollector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.indexOf;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
+import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -144,7 +146,11 @@ final class StateCemeteryTransformer {
   }
 
   private Facility.Address mailing() {
-    return asAddress(xml.stateCode(), xml.mailingLine1(), xml.mailingLine2(), xml.mailingLine3());
+    return asAddress(
+        upperCase(xml.stateCode(), Locale.US),
+        xml.mailingLine1(),
+        xml.mailingLine2(),
+        xml.mailingLine3());
   }
 
   private Facility.Phone phone() {
@@ -157,7 +163,11 @@ final class StateCemeteryTransformer {
   }
 
   private Facility.Address physical() {
-    return asAddress(xml.stateCode(), xml.addressLine1(), xml.addressLine2(), xml.addressLine3());
+    return asAddress(
+        upperCase(xml.stateCode(), Locale.US),
+        xml.addressLine1(),
+        xml.addressLine2(),
+        xml.addressLine3());
   }
 
   Facility toFacility() {

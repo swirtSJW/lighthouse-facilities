@@ -1,8 +1,11 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static org.apache.commons.lang3.StringUtils.upperCase;
+
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
 
@@ -27,7 +30,7 @@ public class BenefitsTransformer {
                         .address1(attributes.address1())
                         .address2(attributes.address2())
                         .city(attributes.city())
-                        .state(attributes.state())
+                        .state(upperCase(attributes.state(), Locale.US))
                         .zip(attributes.zip())
                         .build())
                 .build())

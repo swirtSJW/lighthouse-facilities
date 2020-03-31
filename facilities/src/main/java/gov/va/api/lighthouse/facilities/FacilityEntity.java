@@ -28,6 +28,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.data.domain.Sort;
 
 @Data
 @Entity
@@ -93,6 +94,10 @@ public class FacilityEntity {
         servicesTypes.stream().map(Object::toString).collect(Collectors.toSet()),
         facility,
         version);
+  }
+
+  static Sort naturalOrder() {
+    return Sort.by("id").ascending();
   }
 
   /** Populate services from a type safe collection. */

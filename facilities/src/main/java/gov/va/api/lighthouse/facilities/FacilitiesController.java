@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,6 +42,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -228,6 +231,22 @@ public class FacilitiesController {
     return pks.stream().map(pk -> entities.get(pk)).filter(Objects::nonNull).collect(toList());
   }
 
+  private Page<FacilityEntity> entitiesPageByState(
+      String rawState, String rawType, List<String> rawServices, int page, int perPage) {
+    checkArgument(page >= 1);
+    checkArgument(perPage >= 1);
+    String state = rawState.trim().toUpperCase(Locale.US);
+    FacilityEntity.Type facilityType = validateFacilityType(rawType);
+    Set<Facility.ServiceType> services = validateServices(rawServices);
+    return facilityRepository.findAll(
+        FacilityRepository.StateSpecification.builder()
+            .state(state)
+            .facilityType(facilityType)
+            .services(services)
+            .build(),
+        PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
+  }
+
   private FacilityEntity entityById(String id) {
     FacilityEntity.Pk pk = null;
     try {
@@ -243,7 +262,7 @@ public class FacilitiesController {
   }
 
   /** Get facilities by bounding box. */
-  @GetMapping(value = "/facilities", produces = "application/vnd.geo+json")
+  @GetMapping(value = "/facilities", produces = "application/vnd.geo+json", params = "bbox[]")
   public GeoFacilitiesResponse geoFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
@@ -274,8 +293,27 @@ public class FacilitiesController {
         .build();
   }
 
+  /** Get facilities by state. */
+  @GetMapping(value = "/facilities", produces = "application/vnd.geo+json", params = "state")
+  public GeoFacilitiesResponse geoFacilitiesByState(
+      @RequestParam(value = "state") String state,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    return GeoFacilitiesResponse.builder()
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
+        .features(
+            perPage == 0
+                ? emptyList()
+                : entitiesPageByState(state, type, services, page, perPage).stream()
+                    .map(e -> geoFacility(facility(e)))
+                    .collect(toList()))
+        .build();
+  }
+
   /** Get facilities by bounding box. */
-  @GetMapping(value = "/facilities", produces = "application/json")
+  @GetMapping(value = "/facilities", produces = "application/json", params = "bbox[]")
   public FacilitiesResponse jsonFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
@@ -324,6 +362,40 @@ public class FacilitiesController {
             .build();
     return FacilitiesResponse.builder()
         .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .links(linker.links())
+        .meta(
+            FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
+        .build();
+  }
+
+  /** Get facilities by state. */
+  @GetMapping(value = "/facilities", produces = "application/json", params = "state")
+  public FacilitiesResponse jsonFacilitiesByState(
+      @RequestParam(value = "state") String state,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    Page<FacilityEntity> entitiesPage =
+        entitiesPageByState(state, type, services, page, Math.max(perPage, 1));
+    PageLinker linker =
+        PageLinker.builder()
+            .url(baseUrl + "v0/facilities")
+            .params(
+                Parameters.builder()
+                    .add("state", state)
+                    .addIgnoreNull("type", type)
+                    .addAll("services[]", services)
+                    .add("page", page)
+                    .add("per_page", perPage)
+                    .build())
+            .totalEntries((int) entitiesPage.getTotalElements())
+            .build();
+    return FacilitiesResponse.builder()
+        .data(
+            perPage == 0
+                ? emptyList()
+                : entitiesPage.stream().map(e -> facility(e)).collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
