@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.tests;
 
-
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.tests.categories.OpenApi;
 import io.restassured.http.Method;
