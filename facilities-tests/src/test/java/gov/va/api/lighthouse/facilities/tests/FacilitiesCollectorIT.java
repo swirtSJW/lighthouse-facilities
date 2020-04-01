@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.tests.categories.Collector;
 import io.restassured.http.Header;
 import io.restassured.http.Method;
 import java.util.Map;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 public class FacilitiesCollectorIT {
 
@@ -17,6 +19,7 @@ public class FacilitiesCollectorIT {
   }
 
   @Test
+  @Category({Collector.class})
   public void collectFacilities() {
     makeRequest("collect/facilities").expect(200).expectValid(CollectorFacilitiesResponse.class);
   }
@@ -32,12 +35,14 @@ public class FacilitiesCollectorIT {
   }
 
   @Test
+  @Category({Collector.class})
   public void mentalHealth() {
     var items = makeRequest("mental-health-contact").expect(200).expectListOf(Map.class);
     assertThat(items.size()).isGreaterThan(500);
   }
 
   @Test
+  @Category({Collector.class})
   public void stopCodes() {
     var items = makeRequest("stop-code").expect(200).expectListOf(Map.class);
     assertThat(items.size()).isGreaterThan(1000);
