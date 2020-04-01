@@ -24,6 +24,7 @@ public class HealthTransformerTest {
                 .accessToPwt(ArrayListMultimap.create())
                 .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
+                .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
                 .build()
                 .classification())
@@ -39,6 +40,7 @@ public class HealthTransformerTest {
                 .accessToPwt(ArrayListMultimap.create())
                 .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
+                .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
                 .build()
                 .classification())
@@ -65,6 +67,7 @@ public class HealthTransformerTest {
                 .accessToPwt(ArrayListMultimap.create())
                 .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
+                .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
                 .build()
                 .toFacility())
@@ -74,6 +77,8 @@ public class HealthTransformerTest {
     atc.put("VHA_X", AccessToCareEntry.builder().build());
     ArrayListMultimap<String, AccessToPwtEntry> atp = ArrayListMultimap.create();
     atp.put("VHA_X", AccessToPwtEntry.builder().build());
+    ArrayListMultimap<String, StopCode> sc = ArrayListMultimap.create();
+    sc.put("VHA_X", StopCode.builder().build());
 
     assertThat(
             HealthTransformer.builder()
@@ -85,6 +90,7 @@ public class HealthTransformerTest {
                 .accessToPwt(atp)
                 .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
+                .stopCodesMap(sc)
                 .websites(emptyMap())
                 .build()
                 .toFacility())

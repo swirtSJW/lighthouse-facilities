@@ -67,6 +67,8 @@ public final class Facility {
     Ophthalmology,
     Optometry,
     Orthopedics,
+    Nutrition,
+    Podiatry,
     PrimaryCare,
     SpecialtyCare,
     UrgentCare,

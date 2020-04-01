@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilitiescollector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableMap;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DataJpaTest
 @RunWith(SpringRunner.class)
 public class CdwControllerTest {
-  @Autowired private JdbcTemplate template;
+  @Autowired JdbcTemplate template;
 
   @SneakyThrows
   @SuppressWarnings("unused")
@@ -26,66 +27,41 @@ public class CdwControllerTest {
 
   @Test
   public void mentalHealthContacts() {
+    template.execute("DROP TABLE IF EXISTS App.VHA_Mental_Health_Contact_Info");
+
     template.execute(
         "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
             + "StationNumber VARCHAR,"
             + "MHPhone VARCHAR,"
-            + "Extension FLOAT"
+            + "Extension VARCHAR"
             + ")");
 
-    template.execute(
-        "INSERT INTO App.VHA_Mental_Health_Contact_Info ("
-            + "StationNumber,"
-            + "MHPhone,"
-            + "Extension"
-            + ") VALUES ("
-            + "'503GA',"
-            + "'867-5309',"
-            + "5555"
-            + ")");
-
-    assertThat(new CdwController(template).mentalHealthContacts())
-        .isEqualTo(
-            List.of(
-                CdwController.MentalHealthContact.builder()
-                    .stationNumber("503GA")
-                    .mhPhone("867-5309")
-                    .extension("5555.0")
-                    .build()));
+    assertThat(new CdwController(template).mentalHealthContacts()).isEmpty();
   }
 
   @Test
   public void stopCodes() {
+    template.execute("DROP ALIAS IF EXISTS App.VHA_Stop_Code_Wait_Times_Paginated");
+    template.execute("DROP TABLE IF EXISTS App.VHA_Stop_Code_Wait_Times");
+
     template.execute(
         "CREATE TABLE App.VHA_Stop_Code_Wait_Times ("
-            + "DIVISION_FCDMD VARCHAR,"
-            + "CocClassification VARCHAR,"
             + "Sta6a VARCHAR,"
             + "PrimaryStopCode VARCHAR,"
             + "PrimaryStopCodeName VARCHAR,"
-            + "NumberOfAppointmentsLinkedToConsult VARCHAR,"
-            + "NumberOfLocations VARCHAR,"
             + "AvgWaitTimeNew VARCHAR"
             + ")");
 
     template.execute(
         "INSERT INTO App.VHA_Stop_Code_Wait_Times ("
-            + "DIVISION_FCDMD,"
-            + "CocClassification,"
             + "Sta6a,"
             + "PrimaryStopCode,"
             + "PrimaryStopCodeName,"
-            + "NumberOfAppointmentsLinkedToConsult,"
-            + "NumberOfLocations,"
             + "AvgWaitTimeNew"
             + ") VALUES ("
-            + "'(503GA) Melbourne, FL',"
-            + "'Primary Care CBOC',"
             + "'402GA',"
             + "'123',"
             + "'PRIMARY CARE/MEDICINE',"
-            + "'99',"
-            + "'3',"
             + "'14.15'"
             + ")");
 
@@ -96,15 +72,14 @@ public class CdwControllerTest {
     assertThat(new CdwController(template).stopCodes())
         .isEqualTo(
             List.of(
-                CdwController.StopCode.builder()
-                    .divisionFcdmd("(503GA) Melbourne, FL")
-                    .cocClassification("Primary Care CBOC")
-                    .sta6a("402GA")
-                    .primaryStopCode("123")
-                    .primaryStopCodeName("PRIMARY CARE/MEDICINE")
-                    .numberOfAppointmentsLinkedToConsult("99")
-                    .numberOfLocations("3")
-                    .avgWaitTimeNew("14.15")
-                    .build()));
+                ImmutableMap.of(
+                    "STA6A",
+                    "402GA",
+                    "PRIMARYSTOPCODE",
+                    "123",
+                    "PRIMARYSTOPCODENAME",
+                    "PRIMARY CARE/MEDICINE",
+                    "AVGWAITTIMENEW",
+                    "14.15")));
   }
 }

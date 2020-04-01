@@ -68,6 +68,15 @@ public class CollectContollerTest {
                         .writeValueAsString(ArcGisCemeteries.builder().build()))));
 
     when(restTemplate.exchange(
+            startsWith("http://atc"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            any(ParameterizedTypeReference.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(List.of(AccessToCareEntry.builder().facilityId("x").build()))));
+
+    when(restTemplate.exchange(
             startsWith("http://atp"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
@@ -100,7 +109,7 @@ public class CollectContollerTest {
                     mock(JdbcTemplate.class),
                     restTemplate,
                     "http://arcgis",
-                    "file:src/test/resources",
+                    "http://atc",
                     "http://atp",
                     "http://statecems",
                     "http://vaarcgis")

@@ -29,7 +29,8 @@ public class BenefitsCollectorTest {
     ResponseEntity<String> body =
         ResponseEntity.of(
             Optional.of(
-                new String(getClass().getResourceAsStream("/arcgisBenefits.json").readAllBytes())));
+                new String(
+                    getClass().getResourceAsStream("/arcgis-benefits.json").readAllBytes())));
 
     when(restTemplate.exchange(
             startsWith("http://localhost:8080"),

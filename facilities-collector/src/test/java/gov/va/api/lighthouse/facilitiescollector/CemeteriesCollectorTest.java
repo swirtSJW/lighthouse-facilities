@@ -30,7 +30,7 @@ public class CemeteriesCollectorTest {
         ResponseEntity.of(
             Optional.of(
                 new String(
-                    getClass().getResourceAsStream("/arcgisCemeteries.json").readAllBytes())));
+                    getClass().getResourceAsStream("/arcgis-cemeteries.json").readAllBytes())));
 
     when(restTemplate.exchange(
             startsWith("http://localhost:8080"),

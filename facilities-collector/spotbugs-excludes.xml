@@ -3,10 +3,12 @@
   <!-- Exclusions can be defined here and should include a comment on why the finding can be ignored -->
   <!-- Allow null Boolean in facility model. -->
   <Match>
-    <Or>
-      <Class name="HealthTransformer"/>
-      <Method name="mobile"/>
-    </Or>
+    <Method name="mobile"/>
     <Bug pattern="NP_BOOLEAN_RETURN_NULL"/>
+  </Match>
+  <!-- False positive: https://github.com/spotbugs/spotbugs/issues/756 -->
+  <Match>
+    <Class name="gov.va.api.lighthouse.facilitiescollector.CdwController"/>
+    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
   </Match>
 </FindBugsFilter>

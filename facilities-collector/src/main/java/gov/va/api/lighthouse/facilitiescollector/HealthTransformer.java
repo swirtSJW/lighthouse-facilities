@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilitiescollector;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.emptyToNull;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.hoursToClosed;
+import static gov.va.api.lighthouse.facilitiescollector.Transformers.isBlank;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.compareIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -13,6 +14,7 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import com.google.common.collect.ListMultimap;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.PatientWaitTime;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ final class HealthTransformer {
 
   @NonNull private final Map<String, String> mentalHealthPhoneNumbers;
 
+  @NonNull private final ListMultimap<String, StopCode> stopCodesMap;
+
   @NonNull private final Map<String, String> websites;
 
   private static Map<String, Facility.HealthService> initHealthServicesMap() {
@@ -74,10 +78,8 @@ final class HealthTransformer {
 
   private static Facility.PatientWaitTime waitTime(AccessToCareEntry atc) {
     if (atc == null
-        || allBlank(
-            serviceName(atc),
-            waitTimeNumber(atc.newWaitTime()),
-            waitTimeNumber(atc.estWaitTime()))) {
+        || isBlank(serviceName(atc))
+        || allBlank(waitTimeNumber(atc.newWaitTime()), waitTimeNumber(atc.estWaitTime()))) {
       return null;
     }
     return Facility.PatientWaitTime.builder()
@@ -359,9 +361,6 @@ final class HealthTransformer {
   }
 
   private List<Facility.HealthService> servicesHealth() {
-    if (gis.attributes() == null) {
-      return null;
-    }
     List<Facility.HealthService> services =
         accessToCareEntries().stream()
             .map(ace -> serviceName(ace))
@@ -376,8 +375,18 @@ final class HealthTransformer {
     if (dentalServiceFacilityIds.contains(id())) {
       services.add(Facility.HealthService.DentalServices);
     }
+    if (stopCodes().stream().anyMatch(sc -> StopCode.NUTRITION.contains(trimToEmpty(sc.code())))) {
+      services.add(Facility.HealthService.Nutrition);
+    }
+    if (stopCodes().stream().anyMatch(sc -> StopCode.PODIATRY.contains(trimToEmpty(sc.code())))) {
+      services.add(Facility.HealthService.Podiatry);
+    }
     Collections.sort(services, (left, right) -> left.name().compareToIgnoreCase(right.name()));
     return emptyToNull(services);
+  }
+
+  private List<StopCode> stopCodes() {
+    return stopCodesMap.get(trimToEmpty(upperCase(id(), Locale.US)));
   }
 
   Facility toFacility() {
@@ -406,13 +415,15 @@ final class HealthTransformer {
   }
 
   private List<Facility.PatientWaitTime> waitTimesHealth() {
-    return emptyToNull(
+    List<PatientWaitTime> results =
         accessToCareEntries().stream()
             .map(ace -> waitTime(ace))
             .filter(Objects::nonNull)
-            .sorted(
-                (left, right) -> compareIgnoreCase(left.service().name(), right.service().name()))
-            .collect(Collectors.toList()));
+            .collect(Collectors.toCollection(ArrayList::new));
+
+    Collections.sort(
+        results, (left, right) -> compareIgnoreCase(left.service().name(), right.service().name()));
+    return emptyToNull(results);
   }
 
   String website() {

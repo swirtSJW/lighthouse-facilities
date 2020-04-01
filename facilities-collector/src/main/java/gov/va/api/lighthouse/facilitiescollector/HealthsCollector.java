@@ -9,8 +9,8 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Splitter;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -18,7 +18,7 @@ import com.google.common.io.CharStreams;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.InputStreamReader;
-import java.net.URL;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
@@ -54,9 +55,9 @@ final class HealthsCollector {
 
   @NonNull final JdbcTemplate jdbcTemplate;
 
-  @NonNull final RestTemplate restTemplate;
-
   @NonNull final RestTemplate insecureRestTemplate;
+
+  @NonNull final RestTemplate restTemplate;
 
   @NonNull final String vaArcGisBaseUrl;
 
@@ -86,14 +87,12 @@ final class HealthsCollector {
       log.warn("Mental health contact missing station number");
       return;
     }
-
     String phone = trimToEmpty(resultSet.getString("MHPhone"));
     if (isBlank(phone)) {
       log.warn(
           "Mental health contact for station number {} missing phone", sanitize(stationNumber));
       return;
     }
-
     String ext = trimToEmpty(resultSet.getString("Extension"));
     if (ext.indexOf(".") >= 0) {
       ext = ext.substring(0, ext.indexOf("."));
@@ -101,13 +100,45 @@ final class HealthsCollector {
     if (isNotBlank(ext) && !equalsIgnoreCase(ext, "null") && !ext.matches("^[0]+$")) {
       phone = phone + " x " + ext;
     }
-
     String id = "vha_" + stationNumber;
     if (map.containsKey(id)) {
       log.warn("Duplicate mental health contact for station number {}", sanitize(stationNumber));
     }
-
     map.put(id, phone);
+  }
+
+  @SneakyThrows
+  static void putStopCode(ResultSet resultSet, ListMultimap<String, StopCode> map) {
+    String stationNumber = trimToNull(resultSet.getString("Sta6a"));
+    if (stationNumber == null) {
+      log.warn("Stop code missing station number");
+      return;
+    }
+    String code = trimToNull(resultSet.getString("PrimaryStopCode"));
+    if (code == null) {
+      log.warn("Stop code for station number {} missing PrimaryStopCode", sanitize(stationNumber));
+      return;
+    }
+    String name = trimToNull(resultSet.getString("PrimaryStopCodeName"));
+    String wait = trimToNull(resultSet.getString("AvgWaitTimeNew"));
+    BigDecimal waitNum = null;
+    try {
+      waitNum = wait == null ? null : new BigDecimal(wait);
+    } catch (NumberFormatException nfe) {
+      log.warn(
+          "Stop code for station number {} has invalid AvgWaitTimeNew '{}'",
+          sanitize(stationNumber),
+          sanitize(wait));
+      return;
+    }
+    map.put(
+        upperCase("vha_" + stationNumber, Locale.US),
+        StopCode.builder()
+            .stationNum(stationNumber)
+            .code(code)
+            .name(name)
+            .waitTimeNew(waitNum)
+            .build());
   }
 
   Collection<Facility> healths() {
@@ -115,6 +146,7 @@ final class HealthsCollector {
     ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
     Set<String> dentalServiceFacilityIds = loadDentalServiceFacilityIds();
     Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
+    ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
     return loadArcGis().features().stream()
         .filter(Objects::nonNull)
         .map(
@@ -125,6 +157,7 @@ final class HealthsCollector {
                     .accessToPwt(accessToPwtEntries)
                     .dentalServiceFacilityIds(dentalServiceFacilityIds)
                     .mentalHealthPhoneNumbers(mentalHealthPhoneNumbers)
+                    .stopCodesMap(stopCodesMap)
                     .websites(websites)
                     .build()
                     .toFacility())
@@ -134,31 +167,39 @@ final class HealthsCollector {
 
   @SneakyThrows
   private ListMultimap<String, AccessToCareEntry> loadAccessToCare() {
+    Stopwatch watch = Stopwatch.createStarted();
+    String url =
+        UriComponentsBuilder.fromHttpUrl(atcBaseUrl + "atcapis/v1.1/patientwaittimes")
+            .build()
+            .toUriString();
     List<AccessToCareEntry> entries =
-        JacksonConfig.createMapper()
-            .readValue(
-                new URL(atcBaseUrl + "atcapis/v1.1/patientwaittimes"),
-                new TypeReference<List<AccessToCareEntry>>() {});
-
+        restTemplate
+            .exchange(
+                url,
+                HttpMethod.GET,
+                new HttpEntity<>(new HttpHeaders()),
+                new ParameterizedTypeReference<List<AccessToCareEntry>>() {})
+            .getBody();
     ListMultimap<String, AccessToCareEntry> map = ArrayListMultimap.create();
-    for (AccessToCareEntry entry : entries) {
+    for (AccessToCareEntry entry : Optional.ofNullable(entries).orElse(emptyList())) {
       if (entry.facilityId() == null) {
         log.warn("AccessToCare entry has null facility ID");
         continue;
       }
       map.put(upperCase("vha_" + entry.facilityId(), Locale.US), entry);
     }
+    log.info("Loading AccessToCare took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
     return ImmutableListMultimap.copyOf(map);
   }
 
   @SneakyThrows
   private ListMultimap<String, AccessToPwtEntry> loadAccessToPwt() {
+    Stopwatch watch = Stopwatch.createStarted();
     String url =
         UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
             .queryParam("location", "*")
             .build()
             .toUriString();
-
     List<AccessToPwtEntry> entries =
         restTemplate
             .exchange(
@@ -167,7 +208,6 @@ final class HealthsCollector {
                 new HttpEntity<>(new HttpHeaders()),
                 new ParameterizedTypeReference<List<AccessToPwtEntry>>() {})
             .getBody();
-
     ListMultimap<String, AccessToPwtEntry> map = ArrayListMultimap.create();
     for (AccessToPwtEntry entry : Optional.ofNullable(entries).orElse(emptyList())) {
       if (entry.facilityId() == null) {
@@ -176,11 +216,13 @@ final class HealthsCollector {
       }
       map.put(upperCase("vha_" + entry.facilityId(), Locale.US), entry);
     }
+    log.info("Loading AccessToPWT took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
     return ImmutableListMultimap.copyOf(map);
   }
 
   @SneakyThrows
   private ArcGisHealths loadArcGis() {
+    Stopwatch watch = Stopwatch.createStarted();
     String url =
         UriComponentsBuilder.fromHttpUrl(
                 vaArcGisBaseUrl
@@ -201,15 +243,31 @@ final class HealthsCollector {
         insecureRestTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
-    return JacksonConfig.createMapper().readValue(response, ArcGisHealths.class);
+    ArcGisHealths result = JacksonConfig.createMapper().readValue(response, ArcGisHealths.class);
+    log.info("Loading VA ArcGIS took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
+    return result;
   }
 
-  @SneakyThrows
   private Map<String, String> loadMentalHealthPhoneNumbers() {
+    Stopwatch watch = Stopwatch.createStarted();
     Map<String, String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     jdbcTemplate.query(
         "SELECT StationNumber, MHPhone, Extension FROM App.VHA_Mental_Health_Contact_Info",
         (RowCallbackHandler) (rs) -> putMentalHealthContact(rs, map));
+    log.info(
+        "Loading mental health contact took {} millis",
+        watch.stop().elapsed(TimeUnit.MILLISECONDS));
     return Collections.unmodifiableMap(map);
+  }
+
+  private ListMultimap<String, StopCode> loadStopCodes() {
+    Stopwatch watch = Stopwatch.createStarted();
+    ListMultimap<String, StopCode> map = ArrayListMultimap.create();
+    jdbcTemplate.query(
+        "SELECT Sta6a, PrimaryStopCode, PrimaryStopCodeName, AvgWaitTimeNew"
+            + " FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 999999)",
+        (RowCallbackHandler) (rs) -> putStopCode(rs, map));
+    log.info("Loading stop codes took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
+    return ImmutableListMultimap.copyOf(map);
   }
 }
