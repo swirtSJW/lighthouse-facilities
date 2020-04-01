@@ -27,13 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @RequestMapping(
-    value = {"/internal/management"},
+    value = {"/internal/management/reload"},
     produces = {"application/json"})
 @Loggable
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Builder
 @Slf4j
-public class InternalManagementController {
+public class FacilityManagementController {
   private final CollectorApi collector;
 
   private final FacilityRepository facilityRepository;
@@ -100,7 +100,7 @@ public class InternalManagementController {
   }
 
   /** Attempt to reload all facilities. */
-  @GetMapping(value = "/reload")
+  @GetMapping
   @ResponseStatus(code = HttpStatus.NOT_IMPLEMENTED)
   public ResponseEntity<ReloadResponse> reload() {
     var response = ReloadResponse.start();

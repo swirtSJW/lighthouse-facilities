@@ -41,7 +41,7 @@ public class FacilitySamples {
   }
 
   FacilityEntity facilityEntity(String id) {
-    return InternalManagementController.populate(
+    return FacilityManagementController.populate(
         FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(id)).build(), facility(id));
   }
 

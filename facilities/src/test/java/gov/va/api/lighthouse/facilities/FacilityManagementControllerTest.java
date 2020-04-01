@@ -26,7 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class InternalManagementControllerTest {
+public class FacilityManagementControllerTest {
 
   @Mock FacilityRepository facilityRepository;
   @Mock CollectorApi collector;
@@ -98,8 +98,8 @@ public class InternalManagementControllerTest {
     verify(facilityRepository).save(f2eExpected);
   }
 
-  private InternalManagementController controller() {
-    return InternalManagementController.builder()
+  private FacilityManagementController controller() {
+    return FacilityManagementController.builder()
         .collector(collector)
         .facilityRepository(facilityRepository)
         .build();
@@ -108,18 +108,18 @@ public class InternalManagementControllerTest {
   @Test
   void servicesOf() {
     assertThat(
-            InternalManagementController.serviceTypesOf(
+            FacilityManagementController.serviceTypesOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isEmpty();
     assertThat(
-            InternalManagementController.serviceTypesOf(
+            FacilityManagementController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder().services(Services.builder().build()).build())
                     .build()))
         .isEmpty();
     assertThat(
-            InternalManagementController.serviceTypesOf(
+            FacilityManagementController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -133,7 +133,7 @@ public class InternalManagementControllerTest {
                     .build()))
         .isEmpty();
     assertThat(
-            InternalManagementController.serviceTypesOf(
+            FacilityManagementController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -163,12 +163,12 @@ public class InternalManagementControllerTest {
   void stateOf() {
     // No address
     assertThat(
-            InternalManagementController.stateOf(
+            FacilityManagementController.stateOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isNull();
     // No physical or mailing
     assertThat(
-            InternalManagementController.stateOf(
+            FacilityManagementController.stateOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder().address(Addresses.builder().build()).build())
@@ -176,7 +176,7 @@ public class InternalManagementControllerTest {
         .isNull();
     // No Physical zip
     assertThat(
-            InternalManagementController.stateOf(
+            FacilityManagementController.stateOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -187,7 +187,7 @@ public class InternalManagementControllerTest {
         .isNull();
     // Physical zip
     assertThat(
-            InternalManagementController.stateOf(
+            FacilityManagementController.stateOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -204,12 +204,12 @@ public class InternalManagementControllerTest {
   void zipOf() {
     // No address
     assertThat(
-            InternalManagementController.zipOf(
+            FacilityManagementController.zipOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isNull();
     // No physical or mailing
     assertThat(
-            InternalManagementController.zipOf(
+            FacilityManagementController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder().address(Addresses.builder().build()).build())
@@ -217,7 +217,7 @@ public class InternalManagementControllerTest {
         .isNull();
     // No Physical zip
     assertThat(
-            InternalManagementController.zipOf(
+            FacilityManagementController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -228,7 +228,7 @@ public class InternalManagementControllerTest {
         .isNull();
     // Physical zip
     assertThat(
-            InternalManagementController.zipOf(
+            FacilityManagementController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -241,7 +241,7 @@ public class InternalManagementControllerTest {
         .isEqualTo("12345");
     // Physical zip that is log
     assertThat(
-            InternalManagementController.zipOf(
+            FacilityManagementController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
