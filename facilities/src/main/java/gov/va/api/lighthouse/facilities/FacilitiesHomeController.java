@@ -23,7 +23,7 @@ public class FacilitiesHomeController {
     this.openapi = openapi;
   }
 
-  /** The OpenAPI specific content in yaml form. */
+  /** Load openapi.json content as a string value. */
   @SuppressWarnings("WeakerAccess")
   @Bean
   public String openapiContent() throws IOException {
@@ -34,7 +34,7 @@ public class FacilitiesHomeController {
 
   /** OpenAPI Json. */
   @GetMapping(
-      value = {"/", "/docs/v0/api", "/openapi.json"},
+      value = {"/", "/docs/v0/api", "/v0/facilities/openapi.json"},
       produces = "application/json")
   @ResponseBody
   public Object openapiJson() throws IOException {
