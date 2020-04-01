@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
+import org.apache.commons.lang3.StringUtils;
 
 @Builder
 public class BenefitsTransformer {
@@ -96,6 +97,9 @@ public class BenefitsTransformer {
     if (yesnoToBoolean(attributes.vocationalRehabilitationEmplo())) {
       benefitsServices.add(
           Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance);
+    }
+    if (StringUtils.containsIgnoreCase(attributes.otherServices(), "PENSION")) {
+      benefitsServices.add(Facility.BenefitsService.Pensions);
     }
     return Facility.Services.builder().benefits(benefitsServices).build();
   }

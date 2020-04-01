@@ -59,6 +59,7 @@ public class BenefitsSamples {
           .transitionAssistance("NO")
           .updatingDirectDepositInformation("NO")
           .vocationalRehabilitationEmplo("NO")
+          .otherServices("We got pensions for days.")
           .websiteUrl("NULL")
           .build();
     }
@@ -104,7 +105,8 @@ public class BenefitsSamples {
                           Facility.BenefitsService.eBenefitsRegistrationAssistance,
                           Facility.BenefitsService.EducationAndCareerCounseling,
                           Facility.BenefitsService.HomelessAssistance,
-                          Facility.BenefitsService.PreDischargeClaimAssistance))
+                          Facility.BenefitsService.PreDischargeClaimAssistance,
+                          Facility.BenefitsService.Pensions))
                   .build())
           .build();
     }

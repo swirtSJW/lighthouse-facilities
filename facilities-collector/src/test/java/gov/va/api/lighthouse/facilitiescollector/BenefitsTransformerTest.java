@@ -54,6 +54,12 @@ public class BenefitsTransformerTest {
         .isEqualTo(
             facilityService(
                 Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance));
+    assertThat(
+            tx().services(
+                    ArcGisBenefits.Attributes.builder()
+                        .otherServices("You want pensions? We got em!")
+                        .build()))
+        .isEqualTo(facilityService(Facility.BenefitsService.Pensions));
   }
 
   private Facility.Services facilityService(Facility.BenefitsService service) {

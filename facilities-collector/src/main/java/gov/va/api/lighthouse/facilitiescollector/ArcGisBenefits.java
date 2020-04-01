@@ -151,6 +151,9 @@ class ArcGisBenefits {
     @Builder.Default
     String vocationalRehabilitationEmplo = "NO";
 
+    @JsonProperty("Other_Services")
+    String otherServices;
+
     @JsonProperty("Website_URL")
     String websiteUrl;
 
@@ -163,8 +166,6 @@ class ArcGisBenefits {
      *   BigDecimal lat;
      *   @JsonProperty("Long")
      *   BigDecimal lng;
-     *   @JsonProperty("Other_Services")
-     *   String otherServices;
      *   @JsonProperty("Organization")
      *   String organization;
      */
