@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
-import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -9,6 +8,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -36,7 +35,6 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -167,28 +165,52 @@ final class HealthsCollector {
 
   @SneakyThrows
   private ListMultimap<String, AccessToCareEntry> loadAccessToCare() {
-    Stopwatch watch = Stopwatch.createStarted();
+    final Stopwatch totalWatch = Stopwatch.createStarted();
+
+    Stopwatch atcWatch = Stopwatch.createStarted();
+    log.info("Calling AccessToCare");
     String url =
         UriComponentsBuilder.fromHttpUrl(atcBaseUrl + "atcapis/v1.1/patientwaittimes")
             .build()
             .toUriString();
-    List<AccessToCareEntry> entries =
+    String response =
         restTemplate
-            .exchange(
-                url,
-                HttpMethod.GET,
-                new HttpEntity<>(new HttpHeaders()),
-                new ParameterizedTypeReference<List<AccessToCareEntry>>() {})
+            .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
+    log.info("Call to AccessToCare took {} millis", atcWatch.stop().elapsed(TimeUnit.MILLISECONDS));
+
+    Stopwatch jacksonWatch = Stopwatch.createStarted();
+    log.info("Deserializing AccessToCare response");
+    List<AccessToCareEntry> entries =
+        JacksonConfig.createMapper()
+            .readValue(response, new TypeReference<List<AccessToCareEntry>>() {});
+    log.info(
+        "Deserializing AccessToCare response took {} millis",
+        jacksonWatch.stop().elapsed(TimeUnit.MILLISECONDS));
+
+    Stopwatch mapWatch = Stopwatch.createStarted();
+    log.info("Populating AccessToCare multimap");
     ListMultimap<String, AccessToCareEntry> map = ArrayListMultimap.create();
-    for (AccessToCareEntry entry : Optional.ofNullable(entries).orElse(emptyList())) {
+    for (int i = 0; i < entries.size(); i++) {
+      AccessToCareEntry entry = entries.get(i);
+      log.info(
+          "Processing AccessToCare entry {} of {}, {}/{}",
+          i + 1,
+          entries.size(),
+          entry.facilityId(),
+          entry.apptTypeName());
       if (entry.facilityId() == null) {
         log.warn("AccessToCare entry has null facility ID");
         continue;
       }
       map.put(upperCase("vha_" + entry.facilityId(), Locale.US), entry);
     }
-    log.info("Loading AccessToCare took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
+    log.info(
+        "Populating AccessToCare multimap took {} millis",
+        mapWatch.stop().elapsed(TimeUnit.MILLISECONDS));
+
+    log.info(
+        "Loading AccessToCare took {} millis", totalWatch.stop().elapsed(TimeUnit.MILLISECONDS));
     return ImmutableListMultimap.copyOf(map);
   }
 
@@ -200,16 +222,15 @@ final class HealthsCollector {
             .queryParam("location", "*")
             .build()
             .toUriString();
-    List<AccessToPwtEntry> entries =
+    String response =
         restTemplate
-            .exchange(
-                url,
-                HttpMethod.GET,
-                new HttpEntity<>(new HttpHeaders()),
-                new ParameterizedTypeReference<List<AccessToPwtEntry>>() {})
+            .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
+    List<AccessToPwtEntry> entries =
+        JacksonConfig.createMapper()
+            .readValue(response, new TypeReference<List<AccessToPwtEntry>>() {});
     ListMultimap<String, AccessToPwtEntry> map = ArrayListMultimap.create();
-    for (AccessToPwtEntry entry : Optional.ofNullable(entries).orElse(emptyList())) {
+    for (AccessToPwtEntry entry : entries) {
       if (entry.facilityId() == null) {
         log.warn("AccessToPwt entry has null facility ID");
         continue;

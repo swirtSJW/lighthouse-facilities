@@ -15,7 +15,6 @@ import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -68,22 +67,22 @@ public class CollectContollerTest {
                         .writeValueAsString(ArcGisCemeteries.builder().build()))));
 
     when(restTemplate.exchange(
-            startsWith("http://atc"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            any(ParameterizedTypeReference.class)))
+            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
-                Optional.of(List.of(AccessToCareEntry.builder().facilityId("x").build()))));
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            List.of(AccessToCareEntry.builder().facilityId("x").build())))));
 
     when(restTemplate.exchange(
-            startsWith("http://atp"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            any(ParameterizedTypeReference.class)))
+            startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
-                Optional.of(List.of(AccessToPwtEntry.builder().facilityId("x").build()))));
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            List.of(AccessToPwtEntry.builder().facilityId("x").build())))));
 
     when(insecureRestTemplate.exchange(
             startsWith("http://vaarcgis"),

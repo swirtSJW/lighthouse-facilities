@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -107,40 +106,41 @@ public class HealthsCollectorTest {
     _saveStopCode("666", "123", "", "10");
     _saveStopCode("666", "124", "", "20");
     _saveStopCode("666", "411", "", "30");
+
     RestTemplate restTemplate = mock(RestTemplate.class);
     when(restTemplate.exchange(
-            startsWith("http://atc"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            any(ParameterizedTypeReference.class)))
+            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
                 Optional.of(
-                    List.of(
-                        AccessToCareEntry.builder()
-                            .facilityId("666")
-                            .apptTypeName("Audiology")
-                            .estWaitTime(new BigDecimal("28.857142"))
-                            .newWaitTime(new BigDecimal("128.378378"))
-                            .emergencyCare(true)
-                            .urgentCare(true)
-                            .sliceEndDate("2020-03-02T00:00:00")
-                            .build()))));
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            List.of(
+                                AccessToCareEntry.builder()
+                                    .facilityId("666")
+                                    .apptTypeName("Audiology")
+                                    .estWaitTime(new BigDecimal("28.857142"))
+                                    .newWaitTime(new BigDecimal("128.378378"))
+                                    .emergencyCare(true)
+                                    .urgentCare(true)
+                                    .sliceEndDate("2020-03-02T00:00:00")
+                                    .build())))));
+
     when(restTemplate.exchange(
-            startsWith("http://atp"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            any(ParameterizedTypeReference.class)))
+            startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
                 Optional.of(
-                    List.of(
-                        AccessToPwtEntry.builder()
-                            .facilityId("666")
-                            .apptTypeName("Specialty Care (Routine)")
-                            .shepScore(new BigDecimal("0.9100000262260437"))
-                            .sliceEndDate("2019-06-20T10:41:00")
-                            .build()))));
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            List.of(
+                                AccessToPwtEntry.builder()
+                                    .facilityId("666")
+                                    .apptTypeName("Specialty Care (Routine)")
+                                    .shepScore(new BigDecimal("0.9100000262260437"))
+                                    .sliceEndDate("2019-06-20T10:41:00")
+                                    .build())))));
+
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
             startsWith("http://vaarcgis"),
@@ -193,6 +193,7 @@ public class HealthsCollectorTest {
                                                     .build())
                                             .build()))
                                 .build()))));
+
     assertThat(
             HealthsCollector.builder()
                 .atcBaseUrl("http://atc")
