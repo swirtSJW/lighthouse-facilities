@@ -5,6 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Attributes;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Geometry;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -223,6 +226,27 @@ public class ModelTest {
         .pharmacy("789-456-1230")
         .afterHours("(123)456-7890")
         .build();
+  }
+
+  @Test
+  public void pssgDriveTimeBand() {
+    List<List<Double>> ring1 = PssgDriveTimeBand.newRing(2);
+    ring1.add(PssgDriveTimeBand.coord(1, 2));
+    ring1.add(PssgDriveTimeBand.coord(3, 4));
+
+    List<List<Double>> ring2 = PssgDriveTimeBand.newRing(2);
+    ring2.add(PssgDriveTimeBand.coord(5, 6));
+    ring2.add(PssgDriveTimeBand.coord(7, 8));
+
+    List<List<List<Double>>> rings = PssgDriveTimeBand.newListOfRings();
+    rings.add(ring1);
+    rings.add(ring2);
+
+    roundTrip(
+        PssgDriveTimeBand.builder()
+            .attributes(Attributes.builder().stationNumber("No1").fromBreak(10).toBreak(20).build())
+            .geometry(Geometry.builder().rings(rings).build())
+            .build());
   }
 
   @SneakyThrows
