@@ -107,8 +107,8 @@ public class HealthsCollectorTest {
     _saveStopCode("666", "124", "", "20");
     _saveStopCode("666", "411", "", "30");
 
-    RestTemplate restTemplate = mock(RestTemplate.class);
-    when(restTemplate.exchange(
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    when(insecureRestTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
@@ -126,7 +126,7 @@ public class HealthsCollectorTest {
                                     .sliceEndDate("2020-03-02T00:00:00")
                                     .build())))));
 
-    when(restTemplate.exchange(
+    when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
@@ -141,7 +141,6 @@ public class HealthsCollectorTest {
                                     .sliceEndDate("2019-06-20T10:41:00")
                                     .build())))));
 
-    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
             startsWith("http://vaarcgis"),
             eq(HttpMethod.GET),
@@ -199,7 +198,6 @@ public class HealthsCollectorTest {
                 .atcBaseUrl("http://atc")
                 .atpBaseUrl("http://atp")
                 .jdbcTemplate(jdbcTemplate)
-                .restTemplate(restTemplate)
                 .insecureRestTemplate(insecureRestTemplate)
                 .vaArcGisBaseUrl("http://vaarcgis")
                 .websites(ImmutableMap.of())

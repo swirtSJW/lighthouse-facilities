@@ -55,8 +55,6 @@ final class HealthsCollector {
 
   @NonNull final RestTemplate insecureRestTemplate;
 
-  @NonNull final RestTemplate restTemplate;
-
   @NonNull final String vaArcGisBaseUrl;
 
   @NonNull final Map<String, String> websites;
@@ -174,7 +172,7 @@ final class HealthsCollector {
             .build()
             .toUriString();
     String response =
-        restTemplate
+        insecureRestTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
     log.info("Call to AccessToCare took {} millis", atcWatch.stop().elapsed(TimeUnit.MILLISECONDS));
@@ -223,7 +221,7 @@ final class HealthsCollector {
             .build()
             .toUriString();
     String response =
-        restTemplate
+        insecureRestTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
     List<AccessToPwtEntry> entries =

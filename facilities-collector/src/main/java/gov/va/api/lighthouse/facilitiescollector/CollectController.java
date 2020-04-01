@@ -107,7 +107,6 @@ public class CollectController {
             .atcBaseUrl(atcBaseUrl)
             .atpBaseUrl(atpBaseUrl)
             .jdbcTemplate(jdbcTemplate)
-            .restTemplate(restTemplate)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .vaArcGisBaseUrl(vaArcGisBaseUrl)
             .websites(websites)

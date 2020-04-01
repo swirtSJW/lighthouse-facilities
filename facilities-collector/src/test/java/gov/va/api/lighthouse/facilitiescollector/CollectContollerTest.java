@@ -27,11 +27,7 @@ public class CollectContollerTest {
   @SuppressWarnings("unchecked")
   public void verifyResponse() {
     RestTemplate restTemplate = mock(RestTemplate.class);
-
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
-    InsecureRestTemplateProvider insecureRestTemplateProvider =
-        mock(InsecureRestTemplateProvider.class);
-    when(insecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
 
     when(restTemplate.exchange(
             contains("VHA_VetCenters"),
@@ -66,7 +62,7 @@ public class CollectContollerTest {
                     JacksonConfig.createMapper()
                         .writeValueAsString(ArcGisCemeteries.builder().build()))));
 
-    when(restTemplate.exchange(
+    when(insecureRestTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
@@ -75,7 +71,7 @@ public class CollectContollerTest {
                         .writeValueAsString(
                             List.of(AccessToCareEntry.builder().facilityId("x").build())))));
 
-    when(restTemplate.exchange(
+    when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
@@ -101,6 +97,10 @@ public class CollectContollerTest {
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(ResponseEntity.of(Optional.of("<cems></cems>")));
+
+    InsecureRestTemplateProvider insecureRestTemplateProvider =
+        mock(InsecureRestTemplateProvider.class);
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
 
     assertThat(
             new CollectController(
