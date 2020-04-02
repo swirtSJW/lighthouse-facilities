@@ -18,7 +18,7 @@ import javax.ws.rs.Path;
             title = "VA Facilities",
             description =
                 "\n## Background\n\n"
-                    + "This API provides information about physical VA facilities. "
+                    + "This RESTful API provides information about physical VA facilities. "
                     + "Information available includes\ngeographic location, address, phone,"
                     + " hours of operation, and available services.\n\n"
                     + "VA operates several different types of facilities, "
@@ -30,7 +30,7 @@ import javax.ws.rs.Path;
                     + "To read an FAQ on how wait times are calculated, "
                     + "click the \"For more information\" link on [this page]"
                     + "(https://www.accesstocare.va.gov/PWT/SearchWaitTimes)."
-                    + "\n\n## Design\n\n### Base URLs\n\n"
+                    + "\n\n## Getting Started\n\n### Base URLs\n\n"
                     + "The base URLs for the VA Facilities API in the various environments are:\n"
                     + "- Sandbox: `https://sandbox-api.va.gov/services/va_facilities/v0`\n"
                     + "- Production: `https://api.va.gov/services/va_facilities/v0`"
