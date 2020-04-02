@@ -3,7 +3,6 @@ package gov.va.api.lighthouse.facilities.tests;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
-import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
@@ -17,7 +16,6 @@ import gov.va.api.lighthouse.facilities.tests.categories.SearchByState;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByZip;
 import io.restassured.http.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
