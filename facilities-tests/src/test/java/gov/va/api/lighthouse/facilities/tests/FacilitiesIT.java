@@ -16,12 +16,13 @@ import gov.va.api.lighthouse.facilities.tests.categories.SearchByLatLong;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByState;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByZip;
 import io.restassured.http.Method;
-import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
+@Slf4j
 public class FacilitiesIT {
 
   @Rule public RequiresFacilities precondition = new RequiresFacilities();
@@ -30,28 +31,32 @@ public class FacilitiesIT {
   @Category({AllFacilities.class})
   public void allAsCsv() {
     final String request = "v0/facilities/all";
-    ExpectedResponse.of(makeRequest("text/csv", request)).expect(200);
+    makeRequest("text/csv", request, 200);
   }
 
   @Test
   @Category({AllFacilities.class})
   public void allAsJson() {
     final String request = "v0/facilities/all";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(GeoFacilitiesResponse.class);
   }
 
-  private Response makeRequest(String acceptHeader, String request) {
-    return TestClients.facilities()
-        .service()
-        .requestSpecification()
-        .accept(acceptHeader)
-        .header(SystemDefinitions.systemDefinition().apikeyAsHeader())
-        .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request);
+  private ExpectedResponse makeRequest(
+      String acceptHeader, String request, Integer expectedStatus) {
+    log.info(
+        "Expect {} with accept header ({}) is status code ({})",
+        TestClients.facilities().service().apiPath() + request,
+        acceptHeader,
+        expectedStatus);
+    return ExpectedResponse.of(
+            TestClients.facilities()
+                .service()
+                .requestSpecification()
+                .accept(acceptHeader)
+                .header(SystemDefinitions.systemDefinition().apikeyAsHeader())
+                .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request))
+        .expect(expectedStatus);
   }
 
   @Test
@@ -59,12 +64,9 @@ public class FacilitiesIT {
   public void readById() {
     final String facility = systemDefinition().facilitiesIds().facility();
     final String request = "v0/facilities/" + facility;
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
+    makeRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilityReadResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilityReadResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilityReadResponse.class);
   }
 
   @Test
@@ -72,12 +74,8 @@ public class FacilitiesIT {
   public void searchByBoundingBox() {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox;
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -85,12 +83,8 @@ public class FacilitiesIT {
   public void searchByBoundingBoxWithServices() {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -98,12 +92,8 @@ public class FacilitiesIT {
   public void searchByBoundingBoxWithType() {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&type=health";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -111,12 +101,8 @@ public class FacilitiesIT {
   public void searchByBoundingBoxWithTypeAndServices() {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&type=health&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -124,12 +110,8 @@ public class FacilitiesIT {
   public void searchByIds() {
     final String facilities = systemDefinition().facilitiesIds().facilitiesList();
     final String request = "v0/facilities?ids=" + facilities;
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Ignore
@@ -139,12 +121,8 @@ public class FacilitiesIT {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/facilities?lat=" + latitude + "&long=" + longitude;
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Ignore
@@ -155,12 +133,8 @@ public class FacilitiesIT {
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(400)
-        .expectValid(ApiError.class);
+    makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
+    makeRequest("application/json", request, 400).expectValid(ApiError.class);
   }
 
   @Ignore
@@ -170,12 +144,8 @@ public class FacilitiesIT {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/facilities?lat=" + latitude + "&long=" + longitude + "&type=health";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Ignore
@@ -190,12 +160,8 @@ public class FacilitiesIT {
             + "&long="
             + longitude
             + "&type=health&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -203,12 +169,8 @@ public class FacilitiesIT {
   public void searchByState() {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state;
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -216,12 +178,8 @@ public class FacilitiesIT {
   public void searchByStateWithServices() {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -229,12 +187,8 @@ public class FacilitiesIT {
   public void searchByStateWithType() {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&type=health";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -242,12 +196,8 @@ public class FacilitiesIT {
   public void searchByStateWithTypeAndServices() {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&type=health&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -255,12 +205,8 @@ public class FacilitiesIT {
   public void searchByZip() {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip;
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -268,12 +214,8 @@ public class FacilitiesIT {
   public void searchByZipWithServices() {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -281,12 +223,8 @@ public class FacilitiesIT {
   public void searchByZipWithType() {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&type=health";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -294,11 +232,7 @@ public class FacilitiesIT {
   public void searchByZipWithTypeAndServices() {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&type=health&services[]=PrimaryCare";
-    ExpectedResponse.of(makeRequest("application/vnd.geo+json", request))
-        .expect(200)
-        .expectValid(GeoFacilitiesResponse.class);
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(FacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 }

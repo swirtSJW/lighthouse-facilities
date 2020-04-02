@@ -8,20 +8,29 @@ import gov.va.api.lighthouse.facilities.tests.categories.NearbyAddress;
 import gov.va.api.lighthouse.facilities.tests.categories.NearbyLatLong;
 import io.restassured.http.Header;
 import io.restassured.http.Method;
-import io.restassured.response.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 @Ignore
+@Slf4j
 public class NearbyIT {
-  private Response makeRequest(String acceptHeader, String request) {
-    return TestClients.facilities()
-        .service()
-        .requestSpecification()
-        .accept(acceptHeader)
-        .header(vetsApiFacilitiesApikey())
-        .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request);
+  private ExpectedResponse makeRequest(
+      String acceptHeader, String request, Integer expectedStatus) {
+    log.info(
+        "Expect {} with accept header ({}) is status code ({})",
+        TestClients.facilities().service().apiPath() + request,
+        acceptHeader,
+        expectedStatus);
+    return ExpectedResponse.of(
+            TestClients.facilities()
+                .service()
+                .requestSpecification()
+                .accept(acceptHeader)
+                .header(vetsApiFacilitiesApikey())
+                .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request))
+        .expect(expectedStatus);
   }
 
   @Test
@@ -40,9 +49,7 @@ public class NearbyIT {
             + state
             + "&zip="
             + zip;
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(NearbyResponse.class);
+    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -62,9 +69,7 @@ public class NearbyIT {
             + "&zip="
             + zip
             + "&drive_time=100";
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(NearbyResponse.class);
+    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -73,9 +78,7 @@ public class NearbyIT {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude;
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(NearbyResponse.class);
+    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -84,9 +87,7 @@ public class NearbyIT {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude + "&drive_time=100";
-    ExpectedResponse.of(makeRequest("application/json", request))
-        .expect(200)
-        .expectValid(NearbyResponse.class);
+    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   private Header vetsApiFacilitiesApikey() {

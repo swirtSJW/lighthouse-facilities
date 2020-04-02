@@ -18,8 +18,9 @@ public class OpenApiIT {
 
   private ExpectedResponse requestOpenApi(String openApiPath, Integer expectedStatus) {
     log.info(
-        "Expect {} is status code (200)",
-        TestClients.facilities().service().apiPath() + openApiPath);
+        "Expect {} is status code ({})",
+        TestClients.facilities().service().apiPath() + openApiPath,
+        expectedStatus);
     return ExpectedResponse.of(
             TestClients.facilities()
                 .service()
