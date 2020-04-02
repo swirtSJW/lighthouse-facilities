@@ -187,6 +187,7 @@ setupForAutomation() {
 
   SYSTEM_PROPERTIES+=( "-Dsentinel=$SENTINEL_ENV" )
   SYSTEM_PROPERTIES+=( "-Dapikey=$API_KEY" )
+  SYSTEM_PROPERTIES+=( "-Dclient-key=$CLIENT_KEY" )
 
   [ -n "$FACILITIES_URL" ] && \
     SYSTEM_PROPERTIES+=("-Dsentinel.facilities.url=$FACILITIES_URL")
