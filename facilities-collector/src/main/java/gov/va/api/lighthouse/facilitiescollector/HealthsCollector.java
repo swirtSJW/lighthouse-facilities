@@ -164,9 +164,6 @@ final class HealthsCollector {
   @SneakyThrows
   private ListMultimap<String, AccessToCareEntry> loadAccessToCare() {
     final Stopwatch totalWatch = Stopwatch.createStarted();
-
-    Stopwatch atcWatch = Stopwatch.createStarted();
-    log.info("Calling AccessToCare");
     String url =
         UriComponentsBuilder.fromHttpUrl(atcBaseUrl + "atcapis/v1.1/patientwaittimes")
             .build()
@@ -175,38 +172,18 @@ final class HealthsCollector {
         insecureRestTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
-    log.info("Call to AccessToCare took {} millis", atcWatch.stop().elapsed(TimeUnit.MILLISECONDS));
-
-    Stopwatch jacksonWatch = Stopwatch.createStarted();
-    log.info("Deserializing AccessToCare response");
     List<AccessToCareEntry> entries =
         JacksonConfig.createMapper()
             .readValue(response, new TypeReference<List<AccessToCareEntry>>() {});
-    log.info(
-        "Deserializing AccessToCare response took {} millis",
-        jacksonWatch.stop().elapsed(TimeUnit.MILLISECONDS));
-
-    Stopwatch mapWatch = Stopwatch.createStarted();
-    log.info("Populating AccessToCare multimap");
     ListMultimap<String, AccessToCareEntry> map = ArrayListMultimap.create();
     for (int i = 0; i < entries.size(); i++) {
       AccessToCareEntry entry = entries.get(i);
-      log.info(
-          "Processing AccessToCare entry {} of {}, {}/{}",
-          i + 1,
-          entries.size(),
-          entry.facilityId(),
-          entry.apptTypeName());
       if (entry.facilityId() == null) {
         log.warn("AccessToCare entry has null facility ID");
         continue;
       }
       map.put(upperCase("vha_" + entry.facilityId(), Locale.US), entry);
     }
-    log.info(
-        "Populating AccessToCare multimap took {} millis",
-        mapWatch.stop().elapsed(TimeUnit.MILLISECONDS));
-
     log.info(
         "Loading AccessToCare took {} millis", totalWatch.stop().elapsed(TimeUnit.MILLISECONDS));
     return ImmutableListMultimap.copyOf(map);
