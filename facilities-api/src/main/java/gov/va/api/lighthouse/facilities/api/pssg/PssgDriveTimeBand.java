@@ -5,13 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Value
+@Data
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@AllArgsConstructor
+@NoArgsConstructor
 public class PssgDriveTimeBand {
+
+  /** The two item lis of coordinates, this is the longitude (or x) value. */
+  public static int INDEX_LONGITUDE = 0;
+  /** The two item lis of coordinates, this is the lattitude (or x) value. */
+  public static int INDEX_LATITUDE = 1;
+
   Attributes attributes;
 
   Geometry geometry;
@@ -35,10 +45,12 @@ public class PssgDriveTimeBand {
    * The PSSG response actually contains more fields, but we don't use them and have not been
    * mapped.
    */
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonIgnoreProperties(ignoreUnknown = true)
+  @AllArgsConstructor
+  @NoArgsConstructor
   public static class Attributes {
     @JsonProperty("Sta_No")
     String stationNumber;
@@ -50,9 +62,11 @@ public class PssgDriveTimeBand {
     int toBreak;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @AllArgsConstructor
+  @NoArgsConstructor
   public static class Geometry {
     /**
      * Oh lawdy.

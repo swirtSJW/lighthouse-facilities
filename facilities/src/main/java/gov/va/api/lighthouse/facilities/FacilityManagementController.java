@@ -3,7 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -29,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(
     value = {"/internal/management/reload"},
     produces = {"application/json"})
-@Loggable
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Builder
 @Slf4j

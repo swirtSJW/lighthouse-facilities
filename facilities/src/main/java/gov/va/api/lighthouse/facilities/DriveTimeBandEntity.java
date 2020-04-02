@@ -1,5 +1,10 @@
 package gov.va.api.lighthouse.facilities;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.base.Splitter;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -16,12 +21,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 
 @Data
 @Entity
 @Builder
 @Table(name = "drive_time_band", schema = "app")
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DriveTimeBandEntity {
@@ -55,8 +62,14 @@ public class DriveTimeBandEntity {
 
   @Version private Integer version;
 
+  /** Deserialize the band JSON payload into an object. */
+  @SneakyThrows
+  PssgDriveTimeBand asPssgDriveTimeBand() {
+    return JacksonConfig.createMapper().readValue(band, PssgDriveTimeBand.class);
+  }
+
   @Data
-  @NoArgsConstructor(access = AccessLevel.PRIVATE)
+  @NoArgsConstructor(access = AccessLevel.PUBLIC)
   @AllArgsConstructor(staticName = "of")
   @Embeddable
   public static class Pk implements Serializable {
@@ -68,5 +81,20 @@ public class DriveTimeBandEntity {
 
     @Column(name = "to_minutes", nullable = false)
     private int toMinutes;
+
+    /** Parse a 'name' into a PK. Name format is {stationNumber}-{fromMinutes}-{toMinutes}. */
+    public static Pk fromName(@NonNull String name) {
+      var parts = Splitter.on('-').splitToList(name);
+      checkArgument(
+          parts.size() == 3,
+          "Expected {stationNumber}-{fromMinutes}-{toMinutes}, got \"%s\"",
+          name);
+      return of(parts.get(0), Integer.parseInt(parts.get(1)), Integer.parseInt(parts.get(2)));
+    }
+
+    /** Return a 'name' into a PK. Name format is {stationNumber}-{fromMinutes}-{toMinutes}. */
+    public String name() {
+      return stationNumber + "-" + fromMinutes + "-" + toMinutes;
+    }
   }
 }

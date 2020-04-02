@@ -42,7 +42,6 @@ REQUIRED_ENV_VARIABLES=(
 if [ -z "$SENTINEL_ENV" ]; then SENTINEL_ENV=$K8S_ENVIRONMENT; fi
 if [ -z "$FACILITIES_URL" ]; then FACILITIES_URL=https://$K8S_LOAD_BALANCER; fi
 if [ -z "$FACILITIES_COLLECTOR_URL" ]; then FACILITIES_COLLECTOR_URL=https://$K8S_LOAD_BALANCER; fi
-#============================================================
 
 
 SYSTEM_PROPERTIES=()
@@ -50,10 +49,21 @@ SYSTEM_PROPERTIES=()
 # These may be optional set to reduce the tests that are ran (class name csv)
 # For regress or smoke tests, they will be set automatically based on sentinel categories.
 #
-EXCLUDE_CATEGORY=
-INCLUDE_CATEGORY=
+if [ -z "${EXCLUDE_CATEGORY:-}" ]; then EXCLUDE_CATEGORY=; fi
+if [ -z "${INCLUDE_CATEGORY:-}" ]; then INCLUDE_CATEGORY=; fi
 
+#
+# These drive time band management tests invent data are should never be allowed to run
+# in normal environments, since they will pollute the database. They can run locally though.
+#
+if [ "${SENTINEL_ENV,,}" != "local" ]
+then
+  if [ -n "$EXCLUDE_CATEGORY" ]; then EXCLUDE_CATEGORY+=","; fi
+  EXCLUDE_CATEGORY+="gov.va.api.lighthouse.facilities.tests.categories.DriveTimeBandManagement"
+fi
 #============================================================
+
+
 if [ ! -f "$MAIN_JAR" ]; then echo "Cannot find main jar: $MAIN_JAR"; exit 1; fi
 if [ ! -f "$TESTS_JAR" ]; then echo "Cannot find tests jar: $TESTS_JAR"; exit 1; fi
 

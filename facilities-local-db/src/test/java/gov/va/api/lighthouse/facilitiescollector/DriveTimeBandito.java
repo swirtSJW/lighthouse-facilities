@@ -50,8 +50,9 @@ public class DriveTimeBandito {
   @SneakyThrows
   public void stealDriveTimeBands() {
     log("Reading " + sqlExport.toAbsolutePath().getFileName());
+
     try (FileBunder bundler =
-        FileBunder.builder().outputDir(new File(".")).itemsPerPage(1000).build()) {
+        FileBunder.builder().outputDir(new File("./pssg")).itemsPerPage(100).build()) {
       var bandLine = Pattern.compile("^[0-9]+.*$");
       Files.lines(sqlExport)
           .filter(l -> bandLine.matcher(l).matches())
