@@ -25,6 +25,7 @@ public class FacilitiesByZipTest {
         .facilityRepository(repo)
         .driveTimeBandRepository(mock(DriveTimeBandRepository.class))
         .baseUrl("http://foo/")
+        .basePath("bp")
         .build();
   }
 
@@ -65,7 +66,7 @@ public class FacilitiesByZipTest {
                 .data(emptyList())
                 .links(
                     PageLinks.builder()
-                        .self("http://foo/v0/facilities?zip=43219&page=100&per_page=0")
+                        .self("http://foo/bp/v0/facilities?zip=43219&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -97,11 +98,11 @@ public class FacilitiesByZipTest {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
+                            "http://foo/bp/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
                         .first(
-                            "http://foo/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
+                            "http://foo/bp/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
                         .last(
-                            "http://foo/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
+                            "http://foo/bp/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()

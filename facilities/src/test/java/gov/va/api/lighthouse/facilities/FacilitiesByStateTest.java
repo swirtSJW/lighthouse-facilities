@@ -25,6 +25,7 @@ public class FacilitiesByStateTest {
         .facilityRepository(repo)
         .driveTimeBandRepository(mock(DriveTimeBandRepository.class))
         .baseUrl("http://foo/")
+        .basePath("bp")
         .build();
   }
 
@@ -66,7 +67,7 @@ public class FacilitiesByStateTest {
   @Test
   public void json_typeAndService() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    String linkBase = "http://foo/v0/facilities?services%5B%5D=primarycare&state=oh&type=HEALTH";
+    String linkBase = "http://foo/bp/v0/facilities?services%5B%5D=primarycare&state=oh&type=HEALTH";
     assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
@@ -106,7 +107,7 @@ public class FacilitiesByStateTest {
                 .data(emptyList())
                 .links(
                     PageLinks.builder()
-                        .self("http://foo/v0/facilities?state=oh&page=100&per_page=0")
+                        .self("http://foo/bp/v0/facilities?state=oh&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()

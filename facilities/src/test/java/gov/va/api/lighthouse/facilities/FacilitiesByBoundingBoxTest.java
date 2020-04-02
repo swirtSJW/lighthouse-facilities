@@ -26,6 +26,7 @@ public class FacilitiesByBoundingBoxTest {
         .facilityRepository(repo)
         .driveTimeBandRepository(mock(DriveTimeBandRepository.class))
         .baseUrl("http://foo/")
+        .basePath("bp")
         .build();
   }
 
@@ -137,7 +138,7 @@ public class FacilitiesByBoundingBoxTest {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/v0/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&page=100&per_page=0")
+                            "http://foo/bp/v0/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -177,7 +178,7 @@ public class FacilitiesByBoundingBoxTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
 
     String linkBase =
-        "http://foo/v0/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&services%5B%5D=primarycare&type=HEALTH";
+        "http://foo/bp/v0/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&services%5B%5D=primarycare&type=HEALTH";
     assertThat(
             controller()
                 .jsonFacilitiesByBoundingBox(

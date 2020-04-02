@@ -86,13 +86,18 @@ public class FacilitiesController {
 
   private final String baseUrl;
 
+  private final String basePath;
+
   FacilitiesController(
       @Autowired FacilityRepository facilityRepository,
       @Autowired DriveTimeBandRepository driveTimeBandRepository,
-      @Value("${facilities.url}") String baseUrl) {
+      @Value("${facilities.url}") String baseUrl,
+      @Value("${facilities.base-path}") String basePath) {
     this.facilityRepository = facilityRepository;
     this.driveTimeBandRepository = driveTimeBandRepository;
     this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+    basePath = basePath.replace("/", "");
+    this.basePath = basePath.isEmpty() ? basePath : basePath + "/";
   }
 
   private static <T> Map<String, T> caseInsensitiveMap(@NonNull Map<String, T> source) {
@@ -358,7 +363,7 @@ public class FacilitiesController {
     List<FacilityEntity> entities = entitiesByBoundingBox(bbox, type, services);
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + "v0/facilities")
+            .url(baseUrl + basePath + "v0/facilities")
             .params(
                 Parameters.builder()
                     .addAll("bbox[]", bbox)
@@ -386,7 +391,7 @@ public class FacilitiesController {
     List<FacilityEntity> entities = entitiesByIds(ids);
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + "v0/facilities")
+            .url(baseUrl + basePath + "v0/facilities")
             .params(
                 Parameters.builder()
                     .add("ids", ids)
@@ -415,7 +420,7 @@ public class FacilitiesController {
         entitiesPageByState(state, type, services, page, Math.max(perPage, 1));
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + "v0/facilities")
+            .url(baseUrl + basePath + "v0/facilities")
             .params(
                 Parameters.builder()
                     .add("state", state)
@@ -449,7 +454,7 @@ public class FacilitiesController {
         entitiesPageByZip(zip, type, services, page, Math.max(perPage, 1));
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + "v0/facilities")
+            .url(baseUrl + basePath + "v0/facilities")
             .params(
                 Parameters.builder()
                     .add("zip", zip)
