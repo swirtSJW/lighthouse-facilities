@@ -114,7 +114,6 @@ public class FacilitiesIT {
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category({SearchByLatLong.class})
   public void searchByLatLong() {
@@ -125,19 +124,17 @@ public class FacilitiesIT {
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByLatLong.class)
-  public void searchByLatLongWithServicesMissingType() {
+  public void searchByLatLongWithServices() {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&services[]=PrimaryCare";
-    makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
-    makeRequest("application/json", request, 400).expectValid(ApiError.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByLatLong.class)
   public void searchByLatLongWithType() {
@@ -148,7 +145,6 @@ public class FacilitiesIT {
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
-  @Ignore
   @Test
   @Category(SearchByLatLong.class)
   public void searchByLatLongWithTypeAndServices() {

@@ -23,6 +23,7 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import java.util.TreeMap;
 import java.util.function.Function;
 import javax.validation.constraints.Min;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
@@ -106,6 +108,7 @@ public class FacilitiesController {
     return Collections.unmodifiableMap(map);
   }
 
+  /** Unitless distance approximation based on geometric distance formula. For sorting only. */
   private static double distance(@NonNull FacilityEntity entity, double lng, double lat) {
     double lngDiff = entity.longitude() - lng;
     double latDiff = entity.latitude() - lat;
@@ -121,17 +124,32 @@ public class FacilitiesController {
     return GeoFacilityTransformer.builder().facility(facility).build().toGeoFacility();
   }
 
-  private static List<FacilityEntity> page(List<FacilityEntity> entities, int page, int perPage) {
+  /** Distance in miles using Haversine algorithm. */
+  private static double haversine(@NonNull FacilityEntity entity, double lng, double lat) {
+    double lon1 = Math.toRadians(entity.longitude());
+    double lat1 = Math.toRadians(entity.latitude());
+    double lon2 = Math.toRadians(lng);
+    double lat2 = Math.toRadians(lat);
+    double lonDiff = lon2 - lon1;
+    double latDiff = lat2 - lat1;
+    double x = Math.sin(latDiff / 2);
+    double y = Math.sin(lonDiff / 2);
+    double coeff = Math.cos(lat1) * Math.cos(lat2);
+    // 3958.8 is Earth radius in miles
+    return 3958.8 * 2 * Math.asin(Math.sqrt(x * x + coeff * y * y));
+  }
+
+  private static <T> List<T> page(List<T> objects, int page, int perPage) {
     checkArgument(page >= 1);
     checkArgument(perPage >= 0);
     if (perPage == 0) {
       return emptyList();
     }
     int fromIndex = (page - 1) * perPage;
-    if (entities.size() < fromIndex) {
+    if (objects.size() < fromIndex) {
       return emptyList();
     }
-    return entities.subList(fromIndex, Math.min(fromIndex + perPage, entities.size()));
+    return objects.subList(fromIndex, Math.min(fromIndex + perPage, objects.size()));
   }
 
   private static FacilityEntity.Type validateFacilityType(String type) {
@@ -236,6 +254,30 @@ public class FacilitiesController {
     return pks.stream().map(pk -> entities.get(pk)).filter(Objects::nonNull).collect(toList());
   }
 
+  @SneakyThrows
+  private List<DistanceEntity> entitiesByLatLong(
+      BigDecimal longitude, BigDecimal latitude, String rawType, List<String> rawServices) {
+    FacilityEntity.Type facilityType = validateFacilityType(rawType);
+    Set<Facility.ServiceType> services = validateServices(rawServices);
+    List<FacilityEntity> entities =
+        facilityRepository.findAll(
+            FacilityRepository.TypeServicesOnlySpecification.builder()
+                .facilityType(facilityType)
+                .services(services)
+                .build());
+    double lng = longitude.doubleValue();
+    double lat = latitude.doubleValue();
+    return entities.stream()
+        .map(
+            e ->
+                DistanceEntity.builder()
+                    .entity(e)
+                    .distance(new BigDecimal(haversine(e, lng, lat)))
+                    .build())
+        .sorted((left, right) -> left.distance().compareTo(right.distance()))
+        .collect(toList());
+  }
+
   private Page<FacilityEntity> entitiesPageByState(
       String rawState, String rawType, List<String> rawServices, int page, int perPage) {
     checkArgument(page >= 1);
@@ -310,6 +352,27 @@ public class FacilitiesController {
         .features(
             page(entitiesByIds(ids), page, perPage).stream()
                 .map(e -> geoFacility(facility(e)))
+                .collect(toList()))
+        .build();
+  }
+
+  /** Get facilities by coordinates. */
+  @GetMapping(
+      value = "/facilities",
+      produces = "application/vnd.geo+json",
+      params = {"lat", "long"})
+  public GeoFacilitiesResponse geoFacilitiesByLatLong(
+      @RequestParam(value = "lat") BigDecimal latitude,
+      @RequestParam(value = "long") BigDecimal longitude,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    return GeoFacilitiesResponse.builder()
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
+        .features(
+            page(entitiesByLatLong(longitude, latitude, type, services), page, perPage).stream()
+                .map(e -> geoFacility(e.facility()))
                 .collect(toList()))
         .build();
   }
@@ -408,6 +471,54 @@ public class FacilitiesController {
         .build();
   }
 
+  /** Get facilities by coordinates. */
+  @GetMapping(
+      value = "/facilities",
+      produces = "application/json",
+      params = {"lat", "long"})
+  public FacilitiesResponse jsonFacilitiesByLatLong(
+      @RequestParam(value = "lat") BigDecimal latitude,
+      @RequestParam(value = "long") BigDecimal longitude,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    List<DistanceEntity> entities = entitiesByLatLong(longitude, latitude, type, services);
+    PageLinker linker =
+        PageLinker.builder()
+            .url(baseUrl + basePath + "v0/facilities")
+            .params(
+                Parameters.builder()
+                    .add("lat", latitude)
+                    .add("long", longitude)
+                    .addIgnoreNull("type", type)
+                    .addAll("services[]", services)
+                    .add("page", page)
+                    .add("per_page", perPage)
+                    .build())
+            .totalEntries(entities.size())
+            .build();
+    List<DistanceEntity> entitiesPage = page(entities, page, perPage);
+    List<FacilitiesResponse.Distance> distances =
+        entitiesPage.stream()
+            .map(
+                e ->
+                    FacilitiesResponse.Distance.builder()
+                        .id(e.facility().id())
+                        .distance(e.distance().setScale(2, RoundingMode.HALF_EVEN))
+                        .build())
+            .collect(toList());
+    return FacilitiesResponse.builder()
+        .data(entitiesPage.stream().map(e -> e.facility()).collect(toList()))
+        .links(linker.links())
+        .meta(
+            FacilitiesResponse.FacilitiesMetadata.builder()
+                .pagination(linker.pagination())
+                .distances(distances)
+                .build())
+        .build();
+  }
+
   /** Get facilities by state. */
   @GetMapping(value = "/facilities", produces = "application/json", params = "state")
   public FacilitiesResponse jsonFacilitiesByState(
@@ -495,5 +606,22 @@ public class FacilitiesController {
   @GetMapping(value = "/facilities/{id}", produces = "application/json")
   public FacilityReadResponse readJson(@PathVariable("id") String id) {
     return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
+  }
+
+  @Data
+  @Builder
+  private static final class DistanceEntity {
+    final FacilityEntity entity;
+
+    final BigDecimal distance;
+
+    Facility facility;
+
+    Facility facility() {
+      if (facility == null) {
+        facility = FacilitiesController.facility(entity);
+      }
+      return facility;
+    }
   }
 }
