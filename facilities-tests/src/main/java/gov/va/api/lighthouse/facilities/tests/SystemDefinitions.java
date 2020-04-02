@@ -12,6 +12,18 @@ import lombok.experimental.UtilityClass;
  */
 @UtilityClass
 class SystemDefinitions {
+  /** Service definitions for lab testing. */
+  private static SystemDefinition lab() {
+    String url = "http://blue.lab.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
+        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
+        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesIds(facilitiesIds())
+        .apikey(System.getProperty("apikey", "not-specified"))
+        .clientkey(System.getProperty("client-key", "not-specified"))
+        .build();
+  }
 
   /** Service definitions for local testing. */
   private static SystemDefinition local() {
@@ -26,9 +38,22 @@ class SystemDefinitions {
         .build();
   }
 
-  /** Service definitions for local testing. */
+  /** Service definitions for production testing. */
+  private static SystemDefinition production() {
+    String url = "http://blue.production.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
+        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
+        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesIds(facilitiesIds())
+        .apikey(System.getProperty("apikey", "not-specified"))
+        .clientkey(System.getProperty("client-key", "not-specified"))
+        .build();
+  }
+
+  /** Service definitions for qa testing. */
   private static SystemDefinition qa() {
-    String url = "http://localhost";
+    String url = "http://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
         .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
@@ -49,6 +74,32 @@ class SystemDefinitions {
         .build();
   }
 
+  /** Service definitions for staging testing. */
+  private static SystemDefinition staging() {
+    String url = "http://blue.staging.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
+        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
+        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesIds(facilitiesIds())
+        .apikey(System.getProperty("apikey", "not-specified"))
+        .clientkey(System.getProperty("client-key", "not-specified"))
+        .build();
+  }
+
+  /** Service definitions for staging-lab testing. */
+  private static SystemDefinition stagingLab() {
+    String url = "http://blue.staging-lab.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
+        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
+        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesIds(facilitiesIds())
+        .apikey(System.getProperty("apikey", "not-specified"))
+        .clientkey(System.getProperty("client-key", "not-specified"))
+        .build();
+  }
+
   /** Return the applicable system definition for the current environment. */
   static SystemDefinition systemDefinition() {
     switch (Environment.get()) {
@@ -57,9 +108,13 @@ class SystemDefinitions {
       case QA:
         return qa();
       case STAGING:
+        return staging();
       case PROD:
+        return production();
       case STAGING_LAB:
+        return stagingLab();
       case LAB:
+        return lab();
       default:
         throw new IllegalArgumentException(
             "Unsupported sentinel environment: " + Environment.get());
