@@ -15,6 +15,7 @@ import lombok.Value;
 public class ReloadResponse {
   private List<String> facilitiesCreated;
   private List<String> facilitiesUpdated;
+  private List<String> facilitiesDeleted;
   private List<Problem> problems;
   private Timing timing;
 
@@ -27,6 +28,7 @@ public class ReloadResponse {
         .timing(Timing.builder().start(Instant.now()).build())
         .facilitiesCreated(new CopyOnWriteArrayList<>())
         .facilitiesUpdated(new CopyOnWriteArrayList<>())
+        .facilitiesDeleted(new CopyOnWriteArrayList<>())
         .problems(new CopyOnWriteArrayList<>())
         .build();
   }
@@ -43,13 +45,16 @@ public class ReloadResponse {
   public static class Timing {
     /** The time we started the reload process. */
     private Instant start;
+
     /**
      * The time after we started and completed the collection phase, but not yet started updating
      * the database.
      */
     private Instant completeCollection;
+
     /** The time completed all work (including the DB updates). */
     private Instant complete;
+
     /** The amount of time it took to perform the full reload cycle. */
     private Duration totalDuration;
 

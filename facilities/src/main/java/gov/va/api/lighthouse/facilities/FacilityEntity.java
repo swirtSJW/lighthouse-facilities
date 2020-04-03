@@ -148,5 +148,9 @@ public class FacilityEntity {
         return Optional.empty();
       }
     }
+
+    public String toIdString() {
+      return type + "_" + stationNumber;
+    }
   }
 }

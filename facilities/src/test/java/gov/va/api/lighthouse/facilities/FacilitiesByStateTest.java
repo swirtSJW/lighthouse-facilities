@@ -9,6 +9,7 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 public class FacilitiesByStateTest {
   @Autowired private FacilityRepository repo;
+
+  @Before
+  public void _resetDatabase() {
+    repo.deleteAll();
+  }
 
   private FacilitiesController controller() {
     return FacilitiesController.builder()

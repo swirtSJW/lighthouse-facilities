@@ -10,6 +10,7 @@ import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.math.BigDecimal;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 public class FacilitiesByLatLongTest {
   @Autowired private FacilityRepository repo;
+
+  @Before
+  public void _resetDatabase() {
+    repo.deleteAll();
+  }
 
   private FacilitiesController controller() {
     return FacilitiesController.builder()
@@ -149,7 +155,6 @@ public class FacilitiesByLatLongTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-
     String linkBase =
         "http://foo/v0/facilities?lat=28.112464&long=-80.7015994&services%5B%5D=primarycare&type=HEALTH";
     assertThat(

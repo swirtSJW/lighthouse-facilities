@@ -3,13 +3,19 @@ package gov.va.api.lighthouse.facilities;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
+import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
 import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -20,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Validated
@@ -35,6 +40,8 @@ public class FacilityManagementController {
   private final CollectorApi collector;
 
   private final FacilityRepository facilityRepository;
+
+  private final FacilityIdRepository facilityIdRepository;
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
@@ -97,9 +104,37 @@ public class FacilityManagementController {
     updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
   }
 
+  private void deleteStaleFacilities(
+      ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
+    Set<Pk> newIds =
+        collectedFacilities.facilities().stream()
+            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    Set<FacilityEntity.Pk> oldIds =
+        Streams.stream(facilityIdRepository.findAll())
+            .map(e -> e.id())
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
+    Set<FacilityEntity.Pk> staleIds = Sets.difference(oldIds, newIds);
+
+    for (FacilityEntity.Pk id : staleIds) {
+      response.facilitiesDeleted().add(id.toIdString());
+      log.debug("Deleting facility {}", id.toIdString());
+      try {
+        facilityRepository.deleteById(id);
+      } catch (Exception e) {
+        log.error("Failed to delete facility record {}: {}", id.toIdString(), e.getMessage());
+        response
+            .problems()
+            .add(Problem.of(id.toIdString(), "Failed to delete record: " + e.getMessage()));
+        throw e;
+      }
+    }
+  }
+
   /** Attempt to reload all facilities. */
   @GetMapping
-  @ResponseStatus(code = HttpStatus.NOT_IMPLEMENTED)
   public ResponseEntity<ReloadResponse> reload() {
     var response = ReloadResponse.start();
     var collectedFacilities = collector.collectFacilities();
@@ -107,6 +142,7 @@ public class FacilityManagementController {
     log.info("Facilities collected: {}", collectedFacilities.facilities().size());
     try {
       collectedFacilities.facilities().parallelStream().forEach(f -> updateFacility(response, f));
+      deleteStaleFacilities(response, collectedFacilities);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     } finally {

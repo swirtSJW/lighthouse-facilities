@@ -1,10 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.lighthouse.facilities.FacilityEntity.Type;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
@@ -17,21 +16,24 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-@ExtendWith(MockitoExtension.class)
+@DataJpaTest
+@RunWith(SpringRunner.class)
 public class FacilityManagementControllerTest {
+  @Autowired FacilityRepository facilityRepository;
 
-  @Mock FacilityRepository facilityRepository;
-  @Mock CollectorApi collector;
+  @Autowired FacilityIdRepository facilityIdRepository;
 
-  private static Facility facility(
+  CollectorApi collector = mock(CollectorApi.class);
+
+  private static Facility _facility(
       String id,
       String state,
       String zip,
@@ -53,60 +55,68 @@ public class FacilityManagementControllerTest {
         .build();
   }
 
-  @Test
-  @SneakyThrows
-  void collect() {
-    Facility f1 =
-        facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
-    FacilityEntity f1eExpected =
-        FacilityEntity.builder()
-            .id(FacilityEntity.Pk.of(Type.vha, "f1"))
-            .state("FL")
-            .zip("South")
-            .latitude(1.2)
-            .longitude(3.4)
-            .services(Set.of(HealthService.MentalHealthCare.toString()))
-            .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(f1))
-            .build();
-    Facility f2 = facility("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
-    FacilityEntity f2eExisting =
-        FacilityEntity.builder()
-            .id(FacilityEntity.Pk.of(Type.vha, "f2"))
-            .state("NO")
-            .zip("666")
-            .latitude(9.0)
-            .longitude(9.1)
-            .services(Set.of(HealthService.SpecialtyCare.toString()))
-            .facility("{}")
-            .build();
-    FacilityEntity f2eExpected =
-        FacilityEntity.builder()
-            .id(FacilityEntity.Pk.of(Type.vha, "f2"))
-            .state("NEAT")
-            .zip("32934")
-            .latitude(5.6)
-            .longitude(6.7)
-            .services(Set.of(HealthService.UrgentCare.toString()))
-            .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(f2))
-            .build();
-    when(facilityRepository.findById(f1eExpected.id())).thenReturn(Optional.empty());
-    when(facilityRepository.findById(f2eExpected.id())).thenReturn(Optional.of(f2eExisting));
-    when(collector.collectFacilities())
-        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1, f2)).build());
-    controller().reload();
-    verify(facilityRepository).save(f2eExpected);
-    verify(facilityRepository).save(f2eExpected);
-  }
-
-  private FacilityManagementController controller() {
+  private FacilityManagementController _controller() {
     return FacilityManagementController.builder()
         .collector(collector)
         .facilityRepository(facilityRepository)
+        .facilityIdRepository(facilityIdRepository)
         .build();
   }
 
+  private FacilityEntity _entity(Facility f1) {
+    return FacilityManagementController.populate(
+        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(f1.id())).build(), f1);
+  }
+
+  @Before
+  public void _resetDatabase() {
+    facilityRepository.deleteAll();
+  }
+
   @Test
-  void servicesOf() {
+  @SneakyThrows
+  public void collect_createUpdate() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    Facility f2 = _facility("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
+    Facility f2Old =
+        _facility("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    facilityRepository.save(_entity(f2Old));
+    when(collector.collectFacilities())
+        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1, f2)).build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
+    assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f2"));
+    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entity(f1), _entity(f2)));
+  }
+
+  @Test
+  @SneakyThrows
+  public void collect_delete() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    Facility f1Old =
+        _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    Facility f2Old =
+        _facility("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    Facility f3Old =
+        _facility("vha_f3", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    Facility f4Old =
+        _facility("vha_f4", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    facilityRepository.save(_entity(f1Old));
+    facilityRepository.save(_entity(f2Old));
+    facilityRepository.save(_entity(f3Old));
+    facilityRepository.save(_entity(f4Old));
+    when(collector.collectFacilities())
+        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
+    assertThat(response.facilitiesDeleted()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
+    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entity(f1)));
+  }
+
+  @Test
+  public void servicesOf() {
     assertThat(
             FacilityManagementController.serviceTypesOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
@@ -160,7 +170,7 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  void stateOf() {
+  public void stateOf() {
     // No address
     assertThat(
             FacilityManagementController.stateOf(
@@ -201,7 +211,7 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  void zipOf() {
+  public void zipOf() {
     // No address
     assertThat(
             FacilityManagementController.zipOf(

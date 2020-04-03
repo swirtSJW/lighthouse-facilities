@@ -7,6 +7,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DataJpaTest
 @RunWith(SpringRunner.class)
 public class RepositoriesTest {
-
   @Autowired FacilityRepository facilityRepository;
   @Autowired DriveTimeBandRepository driveTimeBandRepository;
   @PersistenceContext private EntityManager entityManager;
+
+  @Before
+  public void _resetDatabase() {
+    facilityRepository.deleteAll();
+    driveTimeBandRepository.deleteAll();
+  }
 
   @Test
   public void addDriveTimeBandEntities() {
