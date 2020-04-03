@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -22,7 +21,6 @@ public class HealthTransformerTest {
                         .build())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToPwt(ArrayListMultimap.create())
-                .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
                 .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
@@ -38,7 +36,6 @@ public class HealthTransformerTest {
                 .gis(ArcGisHealths.Feature.builder().build())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToPwt(ArrayListMultimap.create())
-                .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
                 .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
@@ -65,7 +62,6 @@ public class HealthTransformerTest {
                 .gis(ArcGisHealths.Feature.builder().build())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToPwt(ArrayListMultimap.create())
-                .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
                 .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
@@ -88,7 +84,6 @@ public class HealthTransformerTest {
                         .build())
                 .accessToCare(atc)
                 .accessToPwt(atp)
-                .dentalServiceFacilityIds(emptySet())
                 .mentalHealthPhoneNumbers(emptyMap())
                 .stopCodesMap(sc)
                 .websites(emptyMap())

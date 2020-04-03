@@ -9,15 +9,12 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.io.CharStreams;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Collection;
@@ -26,16 +23,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -58,23 +52,6 @@ final class HealthsCollector {
   @NonNull final String vaArcGisBaseUrl;
 
   @NonNull final Map<String, String> websites;
-
-  @SneakyThrows
-  private static Set<String> loadDentalServiceFacilityIds() {
-    try (InputStreamReader reader =
-        new InputStreamReader(
-            new ClassPathResource("dental-services.txt").getInputStream(), "UTF-8")) {
-      List<String> list =
-          Splitter.onPattern("\\s")
-              .splitToStream(CharStreams.toString(reader))
-              .map(id -> trimToNull(id))
-              .filter(Objects::nonNull)
-              .collect(Collectors.toList());
-      Set<String> set = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-      set.addAll(list);
-      return Collections.unmodifiableSet(set);
-    }
-  }
 
   @SneakyThrows
   static void putMentalHealthContact(ResultSet resultSet, Map<String, String> map) {
@@ -140,7 +117,6 @@ final class HealthsCollector {
   Collection<Facility> healths() {
     ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
     ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
-    Set<String> dentalServiceFacilityIds = loadDentalServiceFacilityIds();
     Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
     ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
     return loadArcGis().features().stream()
@@ -151,7 +127,6 @@ final class HealthsCollector {
                     .gis(gis)
                     .accessToCare(accessToCareEntries)
                     .accessToPwt(accessToPwtEntries)
-                    .dentalServiceFacilityIds(dentalServiceFacilityIds)
                     .mentalHealthPhoneNumbers(mentalHealthPhoneNumbers)
                     .stopCodesMap(stopCodesMap)
                     .websites(websites)

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -41,8 +40,6 @@ final class HealthTransformer {
   @NonNull private final ListMultimap<String, AccessToCareEntry> accessToCare;
 
   @NonNull private final ListMultimap<String, AccessToPwtEntry> accessToPwt;
-
-  @NonNull private final Set<String> dentalServiceFacilityIds;
 
   @NonNull private final Map<String, String> mentalHealthPhoneNumbers;
 
@@ -372,7 +369,7 @@ final class HealthTransformer {
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.urgentCare()))) {
       services.add(Facility.HealthService.UrgentCare);
     }
-    if (dentalServiceFacilityIds.contains(id())) {
+    if (stopCodes().stream().anyMatch(sc -> StopCode.DENTISTRY.contains(trimToEmpty(sc.code())))) {
       services.add(Facility.HealthService.DentalServices);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.NUTRITION.contains(trimToEmpty(sc.code())))) {
