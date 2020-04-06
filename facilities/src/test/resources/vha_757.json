@@ -139,6 +139,9 @@
       },
       "mobile" : false,
       "active_status" : "A",
+      "operating_status" : {
+        "code" : "NORMAL"
+      },
       "visn" : "10"
     }
   }

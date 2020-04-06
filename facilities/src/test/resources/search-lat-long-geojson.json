@@ -43,7 +43,10 @@
         "satisfaction" : { },
         "wait_times" : { },
         "mobile" : null,
-        "active_status" : null,
+        "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -178,6 +181,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -269,6 +275,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -417,6 +426,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -475,7 +487,10 @@
         "satisfaction" : { },
         "wait_times" : { },
         "mobile" : null,
-        "active_status" : null,
+        "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -521,7 +536,10 @@
         "satisfaction" : { },
         "wait_times" : { },
         "mobile" : null,
-        "active_status" : null,
+        "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -613,6 +631,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -666,7 +687,10 @@
         "satisfaction" : { },
         "wait_times" : { },
         "mobile" : null,
-        "active_status" : null,
+        "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -742,6 +766,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -851,6 +878,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     }

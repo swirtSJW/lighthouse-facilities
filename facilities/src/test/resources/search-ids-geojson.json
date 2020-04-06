@@ -52,6 +52,9 @@
         "wait_times" : { },
         "mobile" : null,
         "active_status" : null,
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -97,6 +100,9 @@
         "wait_times" : { },
         "mobile" : null,
         "active_status" : null,
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -149,6 +155,9 @@
         "wait_times" : { },
         "mobile" : null,
         "active_status" : null,
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -195,6 +204,9 @@
         "wait_times" : { },
         "mobile" : null,
         "active_status" : null,
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : null
       }
     },
@@ -287,6 +299,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "1"
       }
     }

@@ -125,11 +125,12 @@ public class SerializationV0Test {
   private <T> void roundTrip(String path, Class<T> clazz) {
     T response = createMapper().readValue(getClass().getResourceAsStream(path), clazz);
     assertThat(response).isExactlyInstanceOf(clazz);
-    assertThat(createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response))
-        .isEqualTo(
-            createMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(createMapper().readTree(getClass().getResourceAsStream(path))));
+    String actual = createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(response);
+    String expected =
+        createMapper()
+            .writerWithDefaultPrettyPrinter()
+            .writeValueAsString(createMapper().readTree(getClass().getResourceAsStream(path)));
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test

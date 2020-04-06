@@ -95,36 +95,6 @@ final class JacksonSerializersV0 {
     }
   }
 
-  private static final class AddressesSerializer extends StdSerializer<Facility.Addresses> {
-    public AddressesSerializer() {
-      this(null);
-    }
-
-    public AddressesSerializer(Class<Facility.Addresses> t) {
-      super(t);
-    }
-
-    private static boolean empty(Facility.Addresses value) {
-      return value.mailing() == null && value.physical() == null;
-    }
-
-    @Override
-    @SneakyThrows
-    public void serialize(
-        Facility.Addresses value, JsonGenerator jgen, SerializerProvider provider) {
-      jgen.writeStartObject();
-      if (!empty(value)) {
-        jgen.writeObjectField(
-            "mailing",
-            Optional.ofNullable(value.mailing()).orElse(Facility.Address.builder().build()));
-        jgen.writeObjectField(
-            "physical",
-            Optional.ofNullable(value.physical()).orElse(Facility.Address.builder().build()));
-      }
-      jgen.writeEndObject();
-    }
-  }
-
   private static final class AddressSerializer extends StdSerializer<Facility.Address> {
     public AddressSerializer() {
       this(null);
@@ -181,6 +151,36 @@ final class JacksonSerializersV0 {
         jgen.writeStringField("address_1", null);
         jgen.writeStringField("address_2", null);
         jgen.writeStringField("address_3", null);
+      }
+      jgen.writeEndObject();
+    }
+  }
+
+  private static final class AddressesSerializer extends StdSerializer<Facility.Addresses> {
+    public AddressesSerializer() {
+      this(null);
+    }
+
+    public AddressesSerializer(Class<Facility.Addresses> t) {
+      super(t);
+    }
+
+    private static boolean empty(Facility.Addresses value) {
+      return value.mailing() == null && value.physical() == null;
+    }
+
+    @Override
+    @SneakyThrows
+    public void serialize(
+        Facility.Addresses value, JsonGenerator jgen, SerializerProvider provider) {
+      jgen.writeStartObject();
+      if (!empty(value)) {
+        jgen.writeObjectField(
+            "mailing",
+            Optional.ofNullable(value.mailing()).orElse(Facility.Address.builder().build()));
+        jgen.writeObjectField(
+            "physical",
+            Optional.ofNullable(value.physical()).orElse(Facility.Address.builder().build()));
       }
       jgen.writeEndObject();
     }
@@ -250,6 +250,7 @@ final class JacksonSerializersV0 {
           Optional.ofNullable(value.waitTimes()).orElse(Facility.WaitTimes.builder().build()));
       jgen.writeObjectField("mobile", value.mobile());
       jgen.writeObjectField("active_status", value.activeStatus());
+      jgen.writeObjectField("operating_status", value.operatingStatus());
       jgen.writeObjectField("visn", value.visn());
       jgen.writeEndObject();
     }
@@ -493,6 +494,7 @@ final class JacksonSerializersV0 {
           Optional.ofNullable(value.waitTimes()).orElse(Facility.WaitTimes.builder().build()));
       jgen.writeObjectField("mobile", value.mobile());
       jgen.writeObjectField("active_status", value.activeStatus());
+      jgen.writeObjectField("operating_status", value.operatingStatus());
       jgen.writeObjectField("visn", value.visn());
       jgen.writeEndObject();
     }

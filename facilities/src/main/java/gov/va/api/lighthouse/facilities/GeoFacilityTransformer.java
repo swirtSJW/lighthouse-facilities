@@ -46,6 +46,7 @@ final class GeoFacilityTransformer {
         .waitTimes(attr.waitTimes())
         .mobile(attr.mobile())
         .activeStatus(attr.activeStatus())
+        .operatingStatus(attr.operatingStatus())
         .visn(attr.visn())
         .build();
   }

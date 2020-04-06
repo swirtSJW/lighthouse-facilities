@@ -133,6 +133,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "16"
       }
     },
@@ -276,6 +279,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -411,6 +417,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -521,6 +530,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -601,6 +613,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -718,6 +733,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -810,6 +828,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -902,6 +923,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -1019,6 +1043,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     },
@@ -1117,6 +1144,9 @@
         },
         "mobile" : false,
         "active_status" : "A",
+        "operating_status" : {
+          "code" : "NORMAL"
+        },
         "visn" : "8"
       }
     }

@@ -123,7 +123,10 @@ public class FacilitiesController {
 
   @SneakyThrows
   private static Facility facility(FacilityEntity entity) {
-    return FacilitiesJacksonConfig.createMapper().readValue(entity.facility(), Facility.class);
+    return FacilityOverlay.builder()
+        .mapper(FacilitiesJacksonConfig.createMapper())
+        .build()
+        .apply(entity);
   }
 
   private static GeoFacility geoFacility(Facility facility) {

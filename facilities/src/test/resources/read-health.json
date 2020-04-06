@@ -83,6 +83,10 @@
       },
       "mobile" : false,
       "active_status" : "A",
+      "operating_status" : {
+        "code" : "NOTICE",
+        "additional_info" : "all day, every day"
+      },
       "visn" : "1"
     }
   }

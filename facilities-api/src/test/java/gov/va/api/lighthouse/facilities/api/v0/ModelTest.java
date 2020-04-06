@@ -8,6 +8,12 @@ import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesRespons
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Attributes;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Geometry;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -100,11 +106,11 @@ public class ModelTest {
   private Facility facility() {
     return Facility.builder()
         .id("98")
-        .type(Facility.Type.va_facilities)
+        .type(Type.va_facilities)
         .attributes(
-            Facility.FacilityAttributes.builder()
+            FacilityAttributes.builder()
                 .name("Shanktopod")
-                .facilityType(Facility.FacilityType.va_benefits_facility)
+                .facilityType(FacilityType.va_benefits_facility)
                 .classification("VA Medical Center (VAMC)")
                 .latitude(BigDecimal.valueOf(38.9311137))
                 .longitude(BigDecimal.valueOf(-77.0109110499999))
@@ -116,7 +122,8 @@ public class ModelTest {
                 .satisfaction(satisfaction())
                 .waitTimes(waitTimes())
                 .mobile(false)
-                .activeStatus(Facility.ActiveStatus.T)
+                .activeStatus(ActiveStatus.T)
+                .operatingStatus(operatingStatus())
                 .visn("20")
                 .build())
         .build();
@@ -160,6 +167,7 @@ public class ModelTest {
                 .waitTimes(waitTimes())
                 .mobile(true)
                 .activeStatus(Facility.ActiveStatus.A)
+                .operatingStatus(operatingStatus())
                 .visn("20")
                 .build())
         .build();
@@ -214,6 +222,13 @@ public class ModelTest {
                                 .build())
                         .build()))
             .build());
+  }
+
+  private OperatingStatus operatingStatus() {
+    return OperatingStatus.builder()
+        .code(OperatingStatusCode.NORMAL)
+        .additionalInfo("rando text")
+        .build();
   }
 
   private Facility.Phone phones() {

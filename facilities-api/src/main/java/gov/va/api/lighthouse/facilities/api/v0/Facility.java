@@ -8,10 +8,11 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @Schema(description = "JSON API-compliant object describing a VA facility")
@@ -84,13 +85,20 @@ public final class Facility {
     va_facilities
   }
 
+  public enum OperatingStatusCode {
+    NORMAL,
+    NOTICE,
+    LIMITED,
+    CLOSED
+  }
+
   /**
    * This marker interface is used to indicate that an enumeration, such as HealthService, is a type
    * of service offered at a facility.
    */
   public interface ServiceType {}
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Address {
@@ -114,7 +122,7 @@ public final class Facility {
     String state;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Addresses {
@@ -123,7 +131,7 @@ public final class Facility {
     @Valid Address physical;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class FacilityAttributes {
@@ -169,13 +177,22 @@ public final class Facility {
     Boolean mobile;
 
     @JsonProperty("active_status")
+    @Schema(
+        description =
+            "This field is deprecated and will be removed in a future release."
+                + " Use operating_status.")
     ActiveStatus activeStatus;
 
     @Schema(example = "20")
     String visn;
+
+    @Valid
+    @NotNull
+    @JsonProperty(value = "operating_status", required = true)
+    OperatingStatus operatingStatus;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(
@@ -243,7 +260,29 @@ public final class Facility {
     }
   }
 
-  @Value
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(
+      description =
+          "The overall status of the facility which can be"
+              + " Normal Hours and Services,"
+              + " Facility Notice,"
+              + " Limited Hours and/or Services,"
+              + " or Closed."
+              + " This field replaces active_status.")
+  public static class OperatingStatus {
+    @NotNull
+    @JsonProperty(required = true)
+    @Schema(example = "NORMAL")
+    OperatingStatusCode code;
+
+    @JsonProperty(value = "additional_info", required = false)
+    @Size(max = 300)
+    String additionalInfo;
+  }
+
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(description = "Veteran-reported satisfaction scores for health care services")
@@ -285,7 +324,7 @@ public final class Facility {
     BigDecimal specialtyCareRoutine;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(
@@ -311,7 +350,7 @@ public final class Facility {
     BigDecimal establishedPatientWaitTime;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Phone {
@@ -341,7 +380,7 @@ public final class Facility {
     String enrollmentCoordinator;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Satisfaction {
@@ -352,7 +391,7 @@ public final class Facility {
     LocalDate effectiveDate;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Services {
@@ -368,7 +407,7 @@ public final class Facility {
     LocalDate lastUpdated;
   }
 
-  @Value
+  @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class WaitTimes {

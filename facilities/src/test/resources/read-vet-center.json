@@ -37,6 +37,9 @@
       "wait_times" : { },
       "mobile" : null,
       "active_status" : null,
+      "operating_status" : {
+        "code" : "NORMAL"
+      },
       "visn" : null
     }
   }

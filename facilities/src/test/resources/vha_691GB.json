@@ -82,6 +82,10 @@
       },
       "mobile" : false,
       "active_status" : "A",
+      "operating_status" : {
+        "code" : "NORMAL",
+        "additional_info" : "all day, every day"
+      },
       "visn" : "22"
     }
   }
