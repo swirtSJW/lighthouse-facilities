@@ -34,7 +34,7 @@ import org.springframework.data.domain.Sort;
 @Entity
 @Builder
 @Table(name = "facility", schema = "app")
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FacilityEntity {
@@ -69,6 +69,11 @@ public class FacilityEntity {
   @Column
   private String facility;
 
+  @Lob
+  @Basic(fetch = FetchType.EAGER)
+  @Column(name = "cms_overlay")
+  private String cmsOverlay;
+
   @Version private Integer version;
 
   /** Builder alternative that allows enums to be specified instead of strings. */
@@ -82,6 +87,7 @@ public class FacilityEntity {
       double latitude,
       double longitude,
       String facility,
+      String cmsOverlay,
       Integer version,
       Set<Facility.ServiceType> servicesTypes) {
     this(
@@ -92,6 +98,7 @@ public class FacilityEntity {
         longitude,
         servicesTypes.stream().map(Object::toString).collect(Collectors.toSet()),
         facility,
+        cmsOverlay,
         version);
   }
 

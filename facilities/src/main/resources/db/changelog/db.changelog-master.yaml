@@ -183,3 +183,16 @@ databaseChangeLog:
             tableName: facility
             columnName: state
             columnDataType: varchar(5)
+  - changeSet:
+      id: 4
+      author: shanktopus
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: cms_overlay
+                type: clob
+                constraints:
+                  nullable: true
