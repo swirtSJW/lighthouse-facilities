@@ -47,6 +47,9 @@ final class PageLinker {
   }
 
   private int lastPage() {
+    if (totalEntries == 0) {
+      return 1;
+    }
     return (int) Math.ceil((double) totalEntries / (double) Parameters.perPageOf(params));
   }
 

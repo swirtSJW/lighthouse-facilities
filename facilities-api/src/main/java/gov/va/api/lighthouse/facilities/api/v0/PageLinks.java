@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Value;
 
 @Value
-@Builder
+@Builder(toBuilder = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public final class PageLinks {
   @Schema(description = "/services/va_facilities/v0/facilities?id=vha_688")

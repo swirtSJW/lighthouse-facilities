@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableMap;
 import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 public class WebExceptionHandlerV0Test {
   private static HttpHeaders jsonHeaders() {
@@ -40,6 +43,29 @@ public class WebExceptionHandlerV0Test {
                                 ApiError.ErrorMessage.builder()
                                     .title("Invalid field value")
                                     .detail("'x' is not a valid value for 'services'")
+                                    .code("103")
+                                    .status("400")
+                                    .build()))
+                        .build()));
+  }
+
+  @Test
+  public void methodArgumentTypeMismatch() {
+    assertThat(
+            new WebExceptionHandlerV0()
+                .handleMethodArgumentTypeMismatch(
+                    new MethodArgumentTypeMismatchException(
+                        "hello", Integer.class, "foo", null, null)))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Invalid field value")
+                                    .detail("'hello' is not a valid value for 'foo'")
                                     .code("103")
                                     .status("400")
                                     .build()))
@@ -84,6 +110,30 @@ public class WebExceptionHandlerV0Test {
                                     .detail("The record identified by vha_555 could not be found")
                                     .code("404")
                                     .status("404")
+                                    .build()))
+                        .build()));
+  }
+
+  @Test
+  public void unsatisfiedServletRequestParameter() {
+    assertThat(
+            new WebExceptionHandlerV0()
+                .handleUnsatisfiedServletRequestParameter(
+                    new UnsatisfiedServletRequestParameterException(
+                        new String[] {"hello"}, ImmutableMap.of("foo", new String[] {"bar"}))))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Missing parameter")
+                                    .detail(
+                                        "Parameter conditions \"hello\" not met for actual request parameters: foo={bar}")
+                                    .code("108")
+                                    .status("400")
                                     .build()))
                         .build()));
   }

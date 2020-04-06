@@ -13,8 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
@@ -37,6 +39,25 @@ public final class WebExceptionHandlerV0 {
                     ApiError.ErrorMessage.builder()
                         .title("Invalid field value")
                         .detail(ex.getMessage())
+                        .code("103")
+                        .status("400")
+                        .build()))
+            .build();
+    return response(HttpStatus.BAD_REQUEST, ex, response);
+  }
+
+  @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+  ResponseEntity<ApiError> handleMethodArgumentTypeMismatch(
+      MethodArgumentTypeMismatchException ex) {
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Invalid field value")
+                        .detail(
+                            String.format(
+                                "'%s' is not a valid value for '%s'", ex.getValue(), ex.getName()))
                         .code("103")
                         .status("400")
                         .build()))
@@ -74,6 +95,23 @@ public final class WebExceptionHandlerV0 {
                         .build()))
             .build();
     return response(HttpStatus.NOT_FOUND, ex, error);
+  }
+
+  @ExceptionHandler(UnsatisfiedServletRequestParameterException.class)
+  ResponseEntity<ApiError> handleUnsatisfiedServletRequestParameter(
+      UnsatisfiedServletRequestParameterException ex) {
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Missing parameter")
+                        .detail(ex.getMessage())
+                        .code("108")
+                        .status("400")
+                        .build()))
+            .build();
+    return response(HttpStatus.BAD_REQUEST, ex, response);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)

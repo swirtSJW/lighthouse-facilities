@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.toList;
@@ -11,10 +12,13 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.google.common.base.Splitter;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Streams;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
@@ -22,11 +26,14 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +42,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
@@ -46,20 +54,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-@Builder
 @Validated
 @RestController
 @RequestMapping(value = {"/v0"})
 public class FacilitiesController {
+  private static final Set<Integer> DRIVE_TIME_VALUES = Set.of(10, 20, 30, 40, 50, 60, 70, 80, 90);
+
   private static final Map<String, FacilityEntity.Type> ENTITY_TYPE_LOOKUP =
       caseInsensitiveMap(
           ImmutableMap.of(
@@ -83,13 +90,11 @@ public class FacilitiesController {
 
   private final FacilityRepository facilityRepository;
 
-  @SuppressWarnings("unused")
   private final DriveTimeBandRepository driveTimeBandRepository;
 
-  private final String baseUrl;
+  private final String linkerUrl;
 
-  private final String basePath;
-
+  @Builder
   FacilitiesController(
       @Autowired FacilityRepository facilityRepository,
       @Autowired DriveTimeBandRepository driveTimeBandRepository,
@@ -97,9 +102,10 @@ public class FacilitiesController {
       @Value("${facilities.base-path}") String basePath) {
     this.facilityRepository = facilityRepository;
     this.driveTimeBandRepository = driveTimeBandRepository;
-    this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-    basePath = basePath.replace("/", "");
-    this.basePath = basePath.isEmpty() ? basePath : basePath + "/";
+    String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
+    String path = basePath.replace("/", "");
+    path = path.isEmpty() ? path : path + "/";
+    this.linkerUrl = url + path + "v0/";
   }
 
   private static <T> Map<String, T> caseInsensitiveMap(@NonNull Map<String, T> source) {
@@ -150,6 +156,28 @@ public class FacilitiesController {
       return emptyList();
     }
     return objects.subList(fromIndex, Math.min(fromIndex + perPage, objects.size()));
+  }
+
+  private static Path2D toPath2D(List<List<Double>> coordinates) {
+    checkArgument(!coordinates.isEmpty());
+    Path2D shape = null;
+    for (List<Double> c : coordinates) {
+      if (shape == null) {
+        shape = new Path2D.Double(Path2D.WIND_NON_ZERO);
+        shape.moveTo(c.get(0), c.get(1));
+      } else {
+        shape.lineTo(c.get(0), c.get(1));
+      }
+    }
+    shape.closePath();
+    return shape;
+  }
+
+  private static Integer validateDriveTime(Integer val) {
+    if (val != null && !DRIVE_TIME_VALUES.contains(val)) {
+      throw new ExceptionsV0.InvalidParameter("drive_time", val);
+    }
+    return val;
   }
 
   private static FacilityEntity.Type validateFacilityType(String type) {
@@ -324,6 +352,25 @@ public class FacilitiesController {
     return opt.get();
   }
 
+  private Optional<DriveTimeBandEntity> firstIntersection(
+      @NonNull Point2D point, List<DriveTimeBandEntity> entities) {
+    for (DriveTimeBandEntity entity : entities) {
+      PssgDriveTimeBand asBand = entity.asPssgDriveTimeBand();
+      List<List<List<Double>>> rings = asBand.geometry().rings();
+      checkState(!rings.isEmpty());
+      List<List<Double>> exteriorRing = rings.get(0);
+      Path2D path2D = toPath2D(exteriorRing);
+      for (int i = 1; i < rings.size(); i++) {
+        List<List<Double>> interiorRing = rings.get(i);
+        path2D.append(toPath2D(interiorRing), false);
+      }
+      if (path2D.contains(point)) {
+        return Optional.of(entity);
+      }
+    }
+    return Optional.empty();
+  }
+
   /** Get facilities by bounding box. */
   @GetMapping(value = "/facilities", produces = "application/vnd.geo+json", params = "bbox[]")
   public GeoFacilitiesResponse geoFacilitiesByBoundingBox(
@@ -415,6 +462,31 @@ public class FacilitiesController {
         .build();
   }
 
+  private Map<String, DriveTimeBandEntity> intersections(
+      @NonNull BigDecimal longitude,
+      @NonNull BigDecimal latitude,
+      List<DriveTimeBandEntity> entities) {
+    ListMultimap<String, DriveTimeBandEntity> bandsForStation = ArrayListMultimap.create();
+    for (DriveTimeBandEntity e : entities) {
+      bandsForStation.put(e.id().stationNumber(), e);
+    }
+    Map<String, DriveTimeBandEntity> results = new LinkedHashMap<>();
+    Point2D point = new Point2D.Double(longitude.doubleValue(), latitude.doubleValue());
+    for (var entry : bandsForStation.asMap().entrySet()) {
+      List<DriveTimeBandEntity> sortedEntities =
+          entry.getValue().stream()
+              .sorted(
+                  (left, right) ->
+                      Integer.compare(left.id().fromMinutes(), right.id().fromMinutes()))
+              .collect(toList());
+      Optional<DriveTimeBandEntity> intersection = firstIntersection(point, sortedEntities);
+      if (intersection.isPresent()) {
+        results.put(intersection.get().id().stationNumber(), intersection.get());
+      }
+    }
+    return results;
+  }
+
   /** Get facilities by bounding box. */
   @GetMapping(value = "/facilities", produces = "application/json", params = "bbox[]")
   public FacilitiesResponse jsonFacilitiesByBoundingBox(
@@ -426,7 +498,7 @@ public class FacilitiesController {
     List<FacilityEntity> entities = entitiesByBoundingBox(bbox, type, services);
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + basePath + "v0/facilities")
+            .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
                     .addAll("bbox[]", bbox)
@@ -454,7 +526,7 @@ public class FacilitiesController {
     List<FacilityEntity> entities = entitiesByIds(ids);
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + basePath + "v0/facilities")
+            .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
                     .add("ids", ids)
@@ -486,7 +558,7 @@ public class FacilitiesController {
     List<DistanceEntity> entities = entitiesByLatLong(longitude, latitude, type, services);
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + basePath + "v0/facilities")
+            .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
                     .add("lat", latitude)
@@ -531,7 +603,7 @@ public class FacilitiesController {
         entitiesPageByState(state, type, services, page, Math.max(perPage, 1));
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + basePath + "v0/facilities")
+            .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
                     .add("state", state)
@@ -565,7 +637,7 @@ public class FacilitiesController {
         entitiesPageByZip(zip, type, services, page, Math.max(perPage, 1));
     PageLinker linker =
         PageLinker.builder()
-            .url(baseUrl + basePath + "v0/facilities")
+            .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
                     .add("zip", zip)
@@ -587,13 +659,113 @@ public class FacilitiesController {
         .build();
   }
 
-  @SuppressWarnings("unused")
-  @GetMapping(params = {"lat", "lng"})
-  @ResponseStatus(code = HttpStatus.NOT_IMPLEMENTED)
-  public NearbyResponse nearby(
-      @RequestParam(name = "lat", required = true) double latitude,
-      @RequestParam(name = "lng", required = true) double longitude) {
-    return null;
+  @SneakyThrows
+  private List<NearbyId> nearbyEntities(
+      @NonNull BigDecimal longitude,
+      @NonNull BigDecimal latitude,
+      String rawType,
+      List<String> rawServices,
+      Integer rawMaxDriveTime) {
+    FacilityEntity.Type facilityType = validateFacilityType(rawType);
+    Set<Facility.ServiceType> services = validateServices(rawServices);
+    Integer maxDriveTime = validateDriveTime(rawMaxDriveTime);
+    List<DriveTimeBandEntity> maybeBands =
+        driveTimeBandRepository.findAll(
+            DriveTimeBandRepository.MinMaxSpecification.builder()
+                .longitude(longitude)
+                .latitude(latitude)
+                .maxDriveTime(maxDriveTime)
+                .build());
+    Map<String, DriveTimeBandEntity> bandsByStation =
+        intersections(longitude, latitude, maybeBands);
+    List<FacilityEntity> facilityEntities =
+        facilityRepository.findAll(
+            FacilityRepository.StationNumbersSpecification.builder()
+                .stationNumbers(bandsByStation.keySet())
+                .facilityType(facilityType)
+                .services(services)
+                .build());
+    return facilityEntities.stream()
+        .map(
+            e ->
+                NearbyId.builder()
+                    .bandId(bandsByStation.get(e.id().stationNumber()).id())
+                    .facilityId(e.id().toIdString())
+                    .build())
+        .sorted(
+            (left, right) -> Integer.compare(left.bandId().toMinutes(), right.bandId().toMinutes()))
+        .collect(toList());
+  }
+
+  private NearbyResponse.Nearby nearbyFacility(@NonNull NearbyId entity) {
+    return NearbyResponse.Nearby.builder()
+        .id(entity.facilityId())
+        .type(NearbyResponse.Type.NearbyFacility)
+        .attributes(
+            NearbyResponse.NearbyAttributes.builder()
+                .minTime(entity.bandId().fromMinutes())
+                .maxTime(entity.bandId().toMinutes())
+                .build())
+        .relationships(
+            NearbyResponse.Relationships.builder()
+                .vaFacility(
+                    NearbyResponse.VaFacility.builder()
+                        .links(
+                            NearbyResponse.Links.builder()
+                                .related(linkerUrl + "facilities/" + entity.facilityId())
+                                .build())
+                        .build())
+                .build())
+        .build();
+  }
+
+  /** Nearby facilities by coordinates. */
+  @GetMapping(
+      value = "/nearby",
+      produces = "application/json",
+      params = {"lat", "lng"})
+  public NearbyResponse nearbyLatLong(
+      @RequestParam(value = "lat") BigDecimal latitude,
+      @RequestParam(value = "lng") BigDecimal longitude,
+      @RequestParam(value = "type", required = false) String type,
+      @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "drive_time", required = false) Integer maxDriveTime,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "20") @Min(0) int perPage) {
+    List<NearbyId> entities = nearbyEntities(longitude, latitude, type, services, maxDriveTime);
+    PageLinker linker =
+        PageLinker.builder()
+            .url(linkerUrl + "nearby")
+            .params(
+                Parameters.builder()
+                    .add("lat", latitude)
+                    .add("lng", longitude)
+                    .addIgnoreNull("type", type)
+                    .addAll("services[]", services)
+                    .addIgnoreNull("drive_time", maxDriveTime)
+                    .add("page", page)
+                    .add("per_page", perPage)
+                    .build())
+            .totalEntries(entities.size())
+            .build();
+    List<NearbyId> entitiesPage = page(entities, page, perPage);
+    return NearbyResponse.builder()
+        .data(entitiesPage.stream().map(e -> nearbyFacility(e)).collect(toList()))
+        .links(
+            linker
+                .links()
+                .toBuilder()
+                .related(
+                    entitiesPage.isEmpty()
+                        ? null
+                        : linkerUrl
+                            + "facilities?ids="
+                            + entitiesPage.stream()
+                                .map(e -> e.facilityId())
+                                .collect(Collectors.joining(",")))
+                .build())
+        .meta(NearbyResponse.NearbyMetadata.builder().pagination(linker.pagination()).build())
+        .build();
   }
 
   /** Read geo facility. */
@@ -623,5 +795,13 @@ public class FacilitiesController {
       }
       return facility;
     }
+  }
+
+  @Builder
+  @lombok.Value
+  private static final class NearbyId {
+    DriveTimeBandEntity.Pk bandId;
+
+    String facilityId;
   }
 }

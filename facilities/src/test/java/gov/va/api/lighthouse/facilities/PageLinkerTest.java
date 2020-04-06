@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import org.junit.Test;
+import org.springframework.util.MultiValueMap;
 
 public class PageLinkerTest {
   @Test
@@ -123,23 +124,6 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_perPageZero() {
-    assertThat(
-            PageLinker.builder()
-                .url("http://foo")
-                .params(
-                    Parameters.builder()
-                        .add("foo", "bar")
-                        .add("page", "5")
-                        .add("per_page", "0")
-                        .build())
-                .totalEntries(10)
-                .build()
-                .links())
-        .isEqualTo(PageLinks.builder().self("http://foo?foo=bar&page=5&per_page=0").build());
-  }
-
-  @Test
   public void links_singlePage() {
     assertThat(
             PageLinker.builder()
@@ -162,6 +146,28 @@ public class PageLinkerTest {
   }
 
   @Test
+  public void links_zeroEntries() {
+    assertThat(
+            PageLinker.builder()
+                .url("http://foo")
+                .params(
+                    Parameters.builder()
+                        .add("foo", "bar")
+                        .add("page", "1")
+                        .add("per_page", "100")
+                        .build())
+                .totalEntries(0)
+                .build()
+                .links())
+        .isEqualTo(
+            PageLinks.builder()
+                .self("http://foo?foo=bar&page=1&per_page=100")
+                .first("http://foo?foo=bar&page=1&per_page=100")
+                .last("http://foo?foo=bar&page=1&per_page=100")
+                .build());
+  }
+
+  @Test
   public void pagination() {
     assertThat(
             PageLinker.builder()
@@ -180,17 +186,34 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void pagination_perPageZero() {
+  public void pagination_zeroEntries() {
     assertThat(
             PageLinker.builder()
                 .url("unused")
-                .params(Parameters.builder().add("page", "1").add("per_page", "0").build())
-                .totalEntries(10)
+                .params(Parameters.builder().add("page", "1").add("per_page", "1").build())
+                .totalEntries(0)
                 .build()
                 .pagination())
         .isEqualTo(
             Pagination.builder()
                 .currentPage(1)
+                .entriesPerPage(1)
+                .totalPages(1)
+                .totalEntries(0)
+                .build());
+  }
+
+  @Test
+  public void perPageZero() {
+    String url = "http://foo";
+    MultiValueMap<String, String> params =
+        Parameters.builder().add("foo", "bar").add("page", "5").add("per_page", "0").build();
+    assertThat(PageLinker.builder().url(url).params(params).totalEntries(10).build().links())
+        .isEqualTo(PageLinks.builder().self("http://foo?foo=bar&page=5&per_page=0").build());
+    assertThat(PageLinker.builder().url(url).params(params).totalEntries(10).build().pagination())
+        .isEqualTo(
+            Pagination.builder()
+                .currentPage(5)
                 .entriesPerPage(0)
                 .totalPages(0)
                 .totalEntries(10)

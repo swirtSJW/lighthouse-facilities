@@ -58,8 +58,8 @@ public class DriveTimeBandManagementControllerTest {
     var a23 = Entities.diamond("a-2-3", 200); // update
     var a34 = Entities.diamond("a-3-4", 300); // create
 
-    when(repo.findById(a12.id())).thenReturn(Optional.of(a12));
-    when(repo.findById(a23.id())).thenReturn(Optional.of(a23));
+    when(repo.findById(a12.id())).thenReturn(Optional.of(existingA12));
+    when(repo.findById(a23.id())).thenReturn(Optional.of(existingA23));
     when(repo.findById(a34.id())).thenReturn(Optional.empty());
 
     controller()

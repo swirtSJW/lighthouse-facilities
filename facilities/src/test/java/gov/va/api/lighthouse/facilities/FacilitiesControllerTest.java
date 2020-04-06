@@ -179,12 +179,6 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void nearby() {
-    // currently not implemented
-    assertThat(controller().nearby(1.23, 4.56)).isNull();
-  }
-
-  @Test
   public void readGeoJson() {
     GeoFacility geo = FacilitySamples.defaultSamples().geoFacility("vha_691GB");
     FacilityEntity entity = FacilitySamples.defaultSamples().facilityEntity("vha_691GB");

@@ -13,7 +13,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-@Ignore
 @Slf4j
 public class NearbyIT {
   private ExpectedResponse makeRequest(
@@ -34,6 +33,7 @@ public class NearbyIT {
   }
 
   @Test
+  @Ignore
   @Category({NearbyAddress.class})
   public void searchByAddress() {
     final String streetAddress = systemDefinition().facilitiesIds().streetAddress();
@@ -53,6 +53,7 @@ public class NearbyIT {
   }
 
   @Test
+  @Ignore
   @Category({NearbyAddress.class})
   public void searchByAddressWithDriveTime() {
     final String streetAddress = systemDefinition().facilitiesIds().streetAddress();
@@ -68,7 +69,7 @@ public class NearbyIT {
             + state
             + "&zip="
             + zip
-            + "&drive_time=100";
+            + "&drive_time=90";
     makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
@@ -86,7 +87,7 @@ public class NearbyIT {
   public void searchByLatLongWithDriveTime() {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
-    final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude + "&drive_time=100";
+    final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude + "&drive_time=90";
     makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 

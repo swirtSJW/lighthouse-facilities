@@ -32,7 +32,6 @@ import lombok.SneakyThrows;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DriveTimeBandEntity {
-
   /**
    * A band is unique to a facility and a drive-time range (or band), e.g. 10-20 minutes. A given
    * facility can have multiple bands around it.

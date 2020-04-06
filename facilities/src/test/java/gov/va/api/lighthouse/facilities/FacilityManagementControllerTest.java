@@ -29,8 +29,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class FacilityManagementControllerTest {
   @Autowired FacilityRepository facilityRepository;
 
-  @Autowired FacilityIdRepository facilityIdRepository;
-
   CollectorApi collector = mock(CollectorApi.class);
 
   private static Facility _facility(
@@ -59,13 +57,12 @@ public class FacilityManagementControllerTest {
     return FacilityManagementController.builder()
         .collector(collector)
         .facilityRepository(facilityRepository)
-        .facilityIdRepository(facilityIdRepository)
         .build();
   }
 
-  private FacilityEntity _entity(Facility f1) {
+  private FacilityEntity _entity(Facility fac) {
     return FacilityManagementController.populate(
-        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(f1.id())).build(), f1);
+        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).build(), fac);
   }
 
   @Before

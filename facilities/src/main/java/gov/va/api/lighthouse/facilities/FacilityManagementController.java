@@ -4,7 +4,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
@@ -40,8 +39,6 @@ public class FacilityManagementController {
   private final CollectorApi collector;
 
   private final FacilityRepository facilityRepository;
-
-  private final FacilityIdRepository facilityIdRepository;
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
@@ -111,10 +108,7 @@ public class FacilityManagementController {
             .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(Collectors.toCollection(LinkedHashSet::new));
-    Set<FacilityEntity.Pk> oldIds =
-        Streams.stream(facilityIdRepository.findAll())
-            .map(e -> e.id())
-            .collect(Collectors.toCollection(LinkedHashSet::new));
+    Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
 
     Set<FacilityEntity.Pk> staleIds = Sets.difference(oldIds, newIds);
 
