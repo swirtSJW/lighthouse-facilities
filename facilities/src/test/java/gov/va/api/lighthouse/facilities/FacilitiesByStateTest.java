@@ -2,7 +2,6 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
@@ -29,7 +28,6 @@ public class FacilitiesByStateTest {
   private FacilitiesController controller() {
     return FacilitiesController.builder()
         .facilityRepository(repo)
-        .driveTimeBandRepository(mock(DriveTimeBandRepository.class))
         .baseUrl("http://foo/")
         .basePath("bp")
         .build();

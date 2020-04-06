@@ -29,6 +29,25 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
+  public void bing() {
+    assertThat(new WebExceptionHandlerV0().handleBing(new ExceptionsV0.BingException("foo")))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Bing error")
+                                    .detail("Bing error: foo")
+                                    .code("503")
+                                    .status("503")
+                                    .build()))
+                        .build()));
+  }
+
+  @Test
   public void invalidParameter() {
     assertThat(
             new WebExceptionHandlerV0()

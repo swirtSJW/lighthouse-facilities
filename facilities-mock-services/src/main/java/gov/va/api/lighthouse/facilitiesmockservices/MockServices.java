@@ -96,6 +96,15 @@ public class MockServices {
                 .withBody(contentOf("/arcgis-vet-center-facilities.json")));
   }
 
+  private void addBing(MockServerClient mock) {
+    mock.when(addQuery("/REST/v1/Locations"))
+        .respond(
+            response()
+                .withStatusCode(200)
+                .withHeader(contentApplicationJson())
+                .withBody(contentOf("/bing.json")));
+  }
+
   private void addHelp(MockServerClient mock) {
     mock.when(request().withPath("/help"))
         .respond(
@@ -207,6 +216,7 @@ public class MockServices {
     addArcGisVetCentersFacilities(mock);
     addVaArcGisHealthFacilities(mock);
     addPssgDriveTimeBands(mock);
+    addBing(mock);
     addHelp(mock);
   }
 }

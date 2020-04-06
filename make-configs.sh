@@ -45,6 +45,8 @@ configValue facilities-collector $PROFILE state-cemeteries.url 'http://localhost
 configValue facilities-collector $PROFILE va-arc-gis.url 'http://localhost:8666'
 
 makeConfig facilities $PROFILE
+configValue facilities $PROFILE bing.key 'unused'
+configValue facilities $PROFILE bing.url 'http://localhost:8666'
 configValue facilities $PROFILE facilities-collector.url 'http://localhost:8080'
 configValue facilities $PROFILE facilities.url 'http://localhost:8085'
 configValue facilities $PROFILE facilities.base-path '/'

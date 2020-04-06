@@ -161,6 +161,7 @@
                 <argument>facilities.jar${path.separator}h2.jar</argument>
                 <argument>-Dlogging.level.root=INFO</argument>
                 <argument>-Dloader=gov.va.api.lighthouse.facilities.Application</argument>
+                <argument>-Dbing.url=http://localhost:8666</argument>
                 <argument>-Dfacilities-collector.url=http://localhost:8080</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
                 <argument>-Dspring.datasource.url=jdbc:h2:mem:facilities</argument>

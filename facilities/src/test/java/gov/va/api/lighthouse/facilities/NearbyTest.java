@@ -2,37 +2,51 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
-import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Attributes;
-import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Geometry;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
 public class NearbyTest {
-  @Autowired private FacilityRepository facilityRepository;
+  @Autowired FacilityRepository facilityRepository;
 
-  @Autowired private DriveTimeBandRepository driveTimeBandRepository;
+  @Autowired DriveTimeBandRepository driveTimeBandRepository;
 
-  private FacilitiesController _controller() {
-    return FacilitiesController.builder()
+  @Mock RestTemplate restTemplate = mock(RestTemplate.class);
+
+  private NearbyController _controller() {
+    return NearbyController.builder()
         .facilityRepository(facilityRepository)
         .driveTimeBandRepository(driveTimeBandRepository)
+        .restTemplate(restTemplate)
+        .bingKey("bingKey")
+        .bingUrl("http://bing")
         .baseUrl("http://foo")
         .basePath("bp")
         .build();
@@ -42,13 +56,13 @@ public class NearbyTest {
       String stationNumber, int fromMinutes, int toMinutes, int offset) {
     return PssgDriveTimeBand.builder()
         .attributes(
-            Attributes.builder()
+            PssgDriveTimeBand.Attributes.builder()
                 .stationNumber(stationNumber)
                 .fromBreak(fromMinutes)
                 .toBreak(toMinutes)
                 .build())
         .geometry(
-            Geometry.builder()
+            PssgDriveTimeBand.Geometry.builder()
                 .rings(
                     List.of(
                         List.of(
@@ -116,6 +130,151 @@ public class NearbyTest {
   @Before
   public void _resetDatabase() {
     driveTimeBandRepository.deleteAll();
+  }
+
+  @Test
+  @SneakyThrows
+  public void address() {
+    when(restTemplate.exchange(
+            startsWith("http://bing"),
+            eq(HttpMethod.GET),
+            Mockito.any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            BingResponse.builder()
+                                .resourceSets(
+                                    List.of(
+                                        BingResponse.ResourceSet.builder().build(),
+                                        BingResponse.ResourceSet.builder()
+                                            .resources(
+                                                List.of(
+                                                    BingResponse.Resource.builder().build(),
+                                                    BingResponse.Resource.builder()
+                                                        .point(BingResponse.Point.builder().build())
+                                                        .build(),
+                                                    BingResponse.Resource.builder()
+                                                        .point(
+                                                            BingResponse.Point.builder()
+                                                                .coordinates(
+                                                                    List.of(BigDecimal.ZERO))
+                                                                .build())
+                                                        .build(),
+                                                    BingResponse.Resource.builder()
+                                                        .point(
+                                                            BingResponse.Point.builder()
+                                                                .coordinates(
+                                                                    List.of(
+                                                                        new BigDecimal("-0.1"),
+                                                                        new BigDecimal("0.1")))
+                                                                .build())
+                                                        .build()))
+                                            .build()))
+                                .build()))));
+    facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
+    facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
+    driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
+    driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
+    NearbyResponse response =
+        _controller()
+            .nearbyAddress(
+                "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1);
+    String linkBase =
+        "http://foo/bp/v0/nearby?city=Melbourne&state=FL&street_address=505+N+John+Rodes+Blvd&zip=32934";
+    assertThat(response)
+        .isEqualTo(
+            NearbyResponse.builder()
+                .data(
+                    List.of(
+                        NearbyResponse.Nearby.builder()
+                            .id("vha_666")
+                            .type(NearbyResponse.Type.NearbyFacility)
+                            .attributes(
+                                NearbyResponse.NearbyAttributes.builder()
+                                    .minTime(0)
+                                    .maxTime(10)
+                                    .build())
+                            .relationships(
+                                NearbyResponse.Relationships.builder()
+                                    .vaFacility(
+                                        NearbyResponse.VaFacility.builder()
+                                            .links(
+                                                NearbyResponse.Links.builder()
+                                                    .related("http://foo/bp/v0/facilities/vha_666")
+                                                    .build())
+                                            .build())
+                                    .build())
+                            .build()))
+                .links(
+                    PageLinks.builder()
+                        .related("http://foo/bp/v0/facilities?ids=vha_666")
+                        .self(linkBase + "&page=1&per_page=1")
+                        .first(linkBase + "&page=1&per_page=1")
+                        .last(linkBase + "&page=1&per_page=1")
+                        .build())
+                .meta(
+                    NearbyResponse.NearbyMetadata.builder()
+                        .pagination(
+                            Pagination.builder()
+                                .currentPage(1)
+                                .entriesPerPage(1)
+                                .totalPages(1)
+                                .totalEntries(1)
+                                .build())
+                        .build())
+                .build());
+  }
+
+  @Test(expected = ExceptionsV0.BingException.class)
+  public void address_bingException() {
+    when(restTemplate.exchange(
+            startsWith("http://bing"),
+            eq(HttpMethod.GET),
+            Mockito.any(HttpEntity.class),
+            eq(String.class)))
+        .thenThrow(new IllegalStateException("Google instead?"));
+    _controller()
+        .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1);
+  }
+
+  @SneakyThrows
+  @Test(expected = ExceptionsV0.BingException.class)
+  public void address_bingNoResults() {
+    when(restTemplate.exchange(
+            startsWith("http://bing"),
+            eq(HttpMethod.GET),
+            Mockito.any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            BingResponse.builder()
+                                .resourceSets(
+                                    List.of(
+                                        BingResponse.ResourceSet.builder().build(),
+                                        BingResponse.ResourceSet.builder()
+                                            .resources(
+                                                List.of(
+                                                    BingResponse.Resource.builder().build(),
+                                                    BingResponse.Resource.builder()
+                                                        .point(BingResponse.Point.builder().build())
+                                                        .build(),
+                                                    BingResponse.Resource.builder()
+                                                        .point(
+                                                            BingResponse.Point.builder()
+                                                                .coordinates(
+                                                                    List.of(BigDecimal.ZERO))
+                                                                .build())
+                                                        .build()))
+                                            .build()))
+                                .build()))));
+    _controller()
+        .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1);
   }
 
   @Test

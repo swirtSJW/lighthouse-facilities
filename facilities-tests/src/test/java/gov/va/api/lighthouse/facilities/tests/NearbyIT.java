@@ -9,7 +9,6 @@ import gov.va.api.lighthouse.facilities.tests.categories.NearbyLatLong;
 import io.restassured.http.Header;
 import io.restassured.http.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -33,7 +32,6 @@ public class NearbyIT {
   }
 
   @Test
-  @Ignore
   @Category({NearbyAddress.class})
   public void searchByAddress() {
     final String streetAddress = systemDefinition().facilitiesIds().streetAddress();
@@ -53,7 +51,6 @@ public class NearbyIT {
   }
 
   @Test
-  @Ignore
   @Category({NearbyAddress.class})
   public void searchByAddressWithDriveTime() {
     final String streetAddress = systemDefinition().facilitiesIds().streetAddress();

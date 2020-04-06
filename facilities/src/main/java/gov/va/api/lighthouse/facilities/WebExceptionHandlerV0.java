@@ -30,6 +30,22 @@ public final class WebExceptionHandlerV0 {
     return ResponseEntity.status(status).headers(headers).body(error);
   }
 
+  @ExceptionHandler(ExceptionsV0.BingException.class)
+  ResponseEntity<ApiError> handleBing(ExceptionsV0.BingException ex) {
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Bing error")
+                        .detail(ex.getMessage())
+                        .code("503")
+                        .status("503")
+                        .build()))
+            .build();
+    return response(HttpStatus.SERVICE_UNAVAILABLE, ex, response);
+  }
+
   @ExceptionHandler(ExceptionsV0.InvalidParameter.class)
   ResponseEntity<ApiError> handleInvalidParameter(ExceptionsV0.InvalidParameter ex) {
     ApiError response =

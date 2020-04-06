@@ -76,7 +76,6 @@ public class FacilitiesControllerTest {
   private FacilitiesController controller() {
     return FacilitiesController.builder()
         .facilityRepository(fr)
-        .driveTimeBandRepository(dbr)
         .baseUrl("http://foo/")
         .basePath("bp")
         .build();
