@@ -19,6 +19,7 @@ public class TestClients {
     return BasicTestClient.builder()
         .service(SystemDefinitions.systemDefinition().facilities())
         .mapper(JacksonConfig::createMapper)
+        .contentType("application/json")
         .build();
   }
 

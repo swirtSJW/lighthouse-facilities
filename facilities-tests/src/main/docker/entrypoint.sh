@@ -52,15 +52,31 @@ SYSTEM_PROPERTIES=()
 if [ -z "${EXCLUDE_CATEGORY:-}" ]; then EXCLUDE_CATEGORY=; fi
 if [ -z "${INCLUDE_CATEGORY:-}" ]; then INCLUDE_CATEGORY=; fi
 
+alsoExclude() {
+  local category=$1
+  echo "Excluding $category"
+  if [ -n "$EXCLUDE_CATEGORY" ]; then EXCLUDE_CATEGORY+=","; fi
+  EXCLUDE_CATEGORY+="$category"
+}
+
 #
-# These drive time band management tests invent data are should never be allowed to run
-# in normal environments, since they will pollute the database. They can run locally though.
+# These drive time band management tests invent data that will not be cleaned up.
+# They should never be allowed to run in normal environments, since they will
+# pollute the database. They can run locally though.
 #
 if [ "${SENTINEL_ENV,,}" != "local" ]
 then
-  if [ -n "$EXCLUDE_CATEGORY" ]; then EXCLUDE_CATEGORY+=","; fi
-  EXCLUDE_CATEGORY+="gov.va.api.lighthouse.facilities.tests.categories.DriveTimeBandManagement"
+  alsoExclude "gov.va.api.lighthouse.facilities.tests.categories.DriveTimeBandManagement"
 fi
+#
+# CMS overlay tests _alter_ data but do not infinitely create more. These can
+# run in lower environments, but not in SLA'd environments.
+#
+if [[ "${SENTINEL_ENV,,}" == prod* || "${SENTINEL_ENV,,}" == "lab" ]]
+then
+  alsoExclude "gov.va.api.lighthouse.facilities.tests.categories.Cms"
+fi
+
 #============================================================
 
 
