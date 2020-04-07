@@ -48,6 +48,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = {"/v0"})
 public class FacilitiesController {
+  private static final FacilityOverlay FACILITY_OVERLAY =
+      FacilityOverlay.builder().mapper(FacilitiesJacksonConfig.createMapper()).build();
+
   private final FacilityRepository facilityRepository;
 
   private final String linkerUrl;
@@ -73,10 +76,7 @@ public class FacilitiesController {
 
   @SneakyThrows
   private static Facility facility(FacilityEntity entity) {
-    return FacilityOverlay.builder()
-        .mapper(FacilitiesJacksonConfig.createMapper())
-        .build()
-        .apply(entity);
+    return FACILITY_OVERLAY.apply(entity);
   }
 
   private static GeoFacility geoFacility(Facility facility) {
@@ -107,6 +107,7 @@ public class FacilitiesController {
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
             Streams.stream(facilityRepository.findAll())
+                .parallel()
                 .map(e -> geoFacility(facility(e)))
                 .collect(toList()))
         .build();

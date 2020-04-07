@@ -8,6 +8,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
 import java.util.function.Function;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +17,28 @@ import lombok.extern.slf4j.Slf4j;
 @Value
 @Slf4j
 public class FacilityOverlay implements Function<FacilityEntity, Facility> {
+  @NonNull ObjectMapper mapper;
 
-  ObjectMapper mapper;
+  private static void applyCmsOverlay(Facility facility, CmsOverlay overlay) {
+    if (overlay.operatingStatus() == null) {
+      log.warn("CMS Overlay for facility {} is missing operating status", facility.id());
+      return;
+    }
+    facility.attributes().operatingStatus(overlay.operatingStatus());
+    if (overlay.operatingStatus().code() == OperatingStatusCode.CLOSED) {
+      facility.attributes().activeStatus(ActiveStatus.T);
+    } else {
+      facility.attributes().activeStatus(ActiveStatus.A);
+    }
+  }
+
+  private static OperatingStatus determineOperatingStatusFromActiveStatus(
+      ActiveStatus activeStatus) {
+    if (activeStatus == ActiveStatus.T) {
+      return OperatingStatus.builder().code(OperatingStatusCode.CLOSED).build();
+    }
+    return OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build();
+  }
 
   @Override
   @SneakyThrows
@@ -33,25 +54,5 @@ public class FacilityOverlay implements Function<FacilityEntity, Facility> {
               determineOperatingStatusFromActiveStatus(facility.attributes().activeStatus()));
     }
     return facility;
-  }
-
-  private void applyCmsOverlay(Facility facility, CmsOverlay overlay) {
-    if (overlay.operatingStatus() == null) {
-      log.warn("CMS Overlay for facility {} is missing operating status", facility.id());
-      return;
-    }
-    facility.attributes().operatingStatus(overlay.operatingStatus());
-    if (overlay.operatingStatus().code() == OperatingStatusCode.CLOSED) {
-      facility.attributes().activeStatus(ActiveStatus.T);
-    } else {
-      facility.attributes().activeStatus(ActiveStatus.A);
-    }
-  }
-
-  private OperatingStatus determineOperatingStatusFromActiveStatus(ActiveStatus activeStatus) {
-    if (activeStatus == ActiveStatus.T) {
-      return OperatingStatus.builder().code(OperatingStatusCode.CLOSED).build();
-    }
-    return OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build();
   }
 }
