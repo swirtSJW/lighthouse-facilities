@@ -29,7 +29,10 @@ public class CmsOverlayIT {
         OperatingStatus.builder().code(code).additionalInfo(message + " " + code).build();
     TestClients.facilities()
         .post(
-            "v0/facilities/" + id + "/cms-overlay",
+            TestClients.facilities().service().urlWithApiPath()
+                + "v0/facilities/"
+                + id
+                + "/cms-overlay",
             CmsOverlay.builder().operatingStatus(op).build())
         .expect(200);
     var facility =
