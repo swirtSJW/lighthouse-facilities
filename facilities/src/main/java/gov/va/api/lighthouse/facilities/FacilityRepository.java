@@ -33,6 +33,8 @@ public interface FacilityRepository
   @Query("select e.id from #{#entityName} e")
   List<FacilityEntity.Pk> findAllIds();
 
+  List<HasFacilityPayload> findAllProjectedBy();
+
   List<FacilityEntity> findByIdIn(Collection<FacilityEntity.Pk> ids);
 
   @Value

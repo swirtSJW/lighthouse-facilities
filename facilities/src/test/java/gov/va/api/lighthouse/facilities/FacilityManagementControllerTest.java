@@ -208,6 +208,19 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
+  @SneakyThrows
+  public void upload() {
+    Facility f1 =
+        _facility("vha_f91", "FU", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    Facility f2 =
+        _facility("vha_f92", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
+    CollectorFacilitiesResponse collected =
+        CollectorFacilitiesResponse.builder().facilities(List.of(f1, f2)).build();
+    ReloadResponse response = _controller().upload(collected).getBody();
+    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entity(f1), _entity(f2)));
+  }
+
+  @Test
   public void zipOf() {
     // No address
     assertThat(
@@ -246,7 +259,7 @@ public class FacilityManagementControllerTest {
                             .build())
                     .build()))
         .isEqualTo("12345");
-    // Physical zip that is log
+    // Physical zip that is long
     assertThat(
             FacilityManagementController.zipOf(
                 Facility.builder()

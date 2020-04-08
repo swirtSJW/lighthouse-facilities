@@ -37,7 +37,7 @@ import org.springframework.data.domain.Sort;
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class FacilityEntity {
+public class FacilityEntity implements HasFacilityPayload {
   /**
    * API V0 searches by {type}_{faciliityId}. We might want to change that in the future, so we are
    * keeping those two pieces of information separate. However, the two (type + facility) are

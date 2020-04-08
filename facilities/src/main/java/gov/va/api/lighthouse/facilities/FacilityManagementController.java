@@ -4,6 +4,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.google.common.collect.Sets;
+import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
@@ -24,6 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -127,11 +130,8 @@ public class FacilityManagementController {
     }
   }
 
-  /** Attempt to reload all facilities. */
-  @GetMapping
-  public ResponseEntity<ReloadResponse> reload() {
-    var response = ReloadResponse.start();
-    var collectedFacilities = collector.collectFacilities();
+  private ResponseEntity<ReloadResponse> process(
+      ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
     response.timing().markCompleteCollection();
     log.info("Facilities collected: {}", collectedFacilities.facilities().size());
     try {
@@ -143,6 +143,14 @@ public class FacilityManagementController {
       response.timing().markComplete();
     }
     return ResponseEntity.ok(response);
+  }
+
+  /** Attempt to reload all facilities. */
+  @GetMapping
+  public ResponseEntity<ReloadResponse> reload() {
+    var response = ReloadResponse.start();
+    var collectedFacilities = collector.collectFacilities();
+    return process(response, collectedFacilities);
   }
 
   @SneakyThrows
@@ -181,12 +189,21 @@ public class FacilityManagementController {
     var existing = facilityRepository.findById(pk);
     if (existing.isEmpty()) {
       response.facilitiesCreated().add(facility.id());
-      log.debug("Creating new facility {}", facility.id());
+      log.warn("Creating new facility {}", facility.id());
       createNewEntity(response, pk, facility);
     } else {
       response.facilitiesUpdated().add(facility.id());
-      log.debug("Updating old facility {}", facility.id());
+      log.warn("Updating old facility {}", facility.id());
       updateAndSave(response, existing.get(), facility);
     }
+  }
+
+  /** Force feed a collector response. */
+  @PostMapping
+  @Loggable(arguments = false)
+  public ResponseEntity<ReloadResponse> upload(
+      @RequestBody CollectorFacilitiesResponse collectedFacilities) {
+    var response = ReloadResponse.start();
+    return process(response, collectedFacilities);
   }
 }

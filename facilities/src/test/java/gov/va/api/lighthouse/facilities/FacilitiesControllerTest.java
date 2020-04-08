@@ -27,7 +27,7 @@ public class FacilitiesControllerTest {
   @Test
   public void all() {
     FacilitySamples samples = FacilitySamples.defaultSamples();
-    when(fr.findAll())
+    when(fr.findAllProjectedBy())
         .thenReturn(
             List.of(
                 samples.facilityEntity("vha_691GB"),
@@ -40,7 +40,7 @@ public class FacilitiesControllerTest {
   @Test
   public void allCsv() {
     FacilitySamples samples = FacilitySamples.defaultSamples();
-    when(fr.findAll())
+    when(fr.findAllProjectedBy())
         .thenReturn(
             List.of(
                 samples.facilityEntity("vha_691GB"),

@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @Value
 @Slf4j
-public class FacilityOverlay implements Function<FacilityEntity, Facility> {
+public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
   @NonNull ObjectMapper mapper;
 
   private static void applyCmsOverlay(Facility facility, CmsOverlay overlay) {
@@ -42,7 +42,7 @@ public class FacilityOverlay implements Function<FacilityEntity, Facility> {
 
   @Override
   @SneakyThrows
-  public Facility apply(FacilityEntity entity) {
+  public Facility apply(HasFacilityPayload entity) {
     Facility facility = mapper.readValue(entity.facility(), Facility.class);
     if (entity.cmsOverlay() != null) {
       applyCmsOverlay(facility, mapper.readValue(entity.cmsOverlay(), CmsOverlay.class));

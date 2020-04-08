@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
@@ -64,7 +63,7 @@ public class FacilitiesController {
     String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     String path = basePath.replace("/", "");
     path = path.isEmpty() ? path : path + "/";
-    this.linkerUrl = url + path + "v0/";
+    linkerUrl = url + path + "v0/";
   }
 
   /** Unitless distance approximation based on geometric distance formula. For sorting only. */
@@ -75,7 +74,7 @@ public class FacilitiesController {
   }
 
   @SneakyThrows
-  private static Facility facility(FacilityEntity entity) {
+  private static Facility facility(HasFacilityPayload entity) {
     return FACILITY_OVERLAY.apply(entity);
   }
 
@@ -106,7 +105,7 @@ public class FacilitiesController {
     return GeoFacilitiesResponse.builder()
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
-            Streams.stream(facilityRepository.findAll())
+            facilityRepository.findAllProjectedBy().stream()
                 .parallel()
                 .map(e -> geoFacility(facility(e)))
                 .collect(toList()))
@@ -118,7 +117,7 @@ public class FacilitiesController {
   @GetMapping(value = "/facilities/all", produces = "text/csv")
   public String allCsv() {
     List<List<String>> rows =
-        Streams.stream(facilityRepository.findAll())
+        facilityRepository.findAllProjectedBy().stream()
             .parallel()
             .map(e -> CsvTransformer.builder().facility(facility(e)).build().toRow())
             .collect(toList());
