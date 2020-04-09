@@ -63,6 +63,26 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>escape-baskslash</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <value>${project.build.directory}</value>
+              <regex>\\</regex>
+              <replacement>/</replacement>
+              <name>project.build.directory.escape</name>
+              <failIfNoMatch>false</failIfNoMatch>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
@@ -130,7 +150,7 @@
                 <argument>-Dstate-cemeteries.url=http://localhost:8666</argument>
                 <argument>-Dva-arc-gis.url=http://localhost:8666</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
-                <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/../facilities-local-db/target/mock-cdw;INIT=CREATE ALIAS IF NOT EXISTS App.VHA_Stop_Code_Wait_Times_Paginated FOR "gov.va.api.lighthouse.facilitiescollector.Populaterator.stopCodeWaitTimesPaginated"</argument>
+                <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/../facilities-local-db/target/mock-cdw;INIT=RUNSCRIPT FROM '${project.build.directory.escape}/classes/stop-code-alias.sql'</argument>
                 <argument>-Dspring.datasource.username=sa</argument>
                 <argument>-Dspring.datasource.password=sa</argument>
                 <argument>-Dspring.jpa.generate-ddl=false</argument>
