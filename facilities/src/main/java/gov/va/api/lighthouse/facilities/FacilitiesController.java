@@ -61,7 +61,7 @@ public class FacilitiesController {
       @Value("${facilities.base-path}") String basePath) {
     this.facilityRepository = facilityRepository;
     String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-    String path = basePath.replace("/", "");
+    String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
     linkerUrl = url + path + "v0/";
   }
