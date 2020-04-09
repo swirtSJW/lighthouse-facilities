@@ -58,13 +58,27 @@ public class CdwController {
       produces = "application/json",
       method = RequestMethod.GET)
   public List<Map<String, String>> mentalHealthContacts() {
-    return allResults("SELECT * FROM App.VHA_Mental_Health_Contact_Info");
+    try {
+      return allResults("SELECT * FROM App.VHA_Mental_Health_Contact_Info");
+    } catch (Exception ex) {
+      throw new CdwException(ex);
+    }
   }
 
   /** Stop codes for debugging. */
   @SneakyThrows
   @RequestMapping(value = "/stop-code", produces = "application/json", method = RequestMethod.GET)
   public List<Map<String, String>> stopCodes() {
-    return allResults("SELECT * FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 999999)");
+    try {
+      return allResults("SELECT * FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 999999)");
+    } catch (Exception ex) {
+      throw new CdwException(ex);
+    }
+  }
+
+  static final class CdwException extends RuntimeException {
+    public CdwException(Throwable cause) {
+      super(cause);
+    }
   }
 }

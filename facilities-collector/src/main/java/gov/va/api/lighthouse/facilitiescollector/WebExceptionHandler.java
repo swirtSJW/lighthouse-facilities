@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  */
 @Slf4j
 @RestControllerAdvice
-@RequestMapping(produces = {"application/json", "application/xml"})
+@RequestMapping(produces = "application/json")
 public final class WebExceptionHandler {
   @ExceptionHandler({Exception.class})
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

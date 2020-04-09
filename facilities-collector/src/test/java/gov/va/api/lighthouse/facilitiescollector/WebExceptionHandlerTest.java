@@ -10,11 +10,10 @@ public class WebExceptionHandlerTest {
   public void handleSnafu() {
     ErrorResponse response = new WebExceptionHandler().handleSnafu(new RuntimeException("oh noez"));
     assertThat(Instant.now().toEpochMilli() - response.timestamp()).isLessThan(2000);
-    response.timestamp(0);
     assertThat(response)
         .isEqualTo(
             ErrorResponse.builder()
-                .timestamp(0)
+                .timestamp(response.timestamp())
                 .type("RuntimeException")
                 .message("oh noez")
                 .build());

@@ -1,19 +1,13 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.time.Instant;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Value;
 
 /** The error response is the payload returned to the caller should a failure occur. */
-@Data
+@Value
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@JsonDeserialize(builder = ErrorResponse.ErrorResponseBuilder.class)
 public final class ErrorResponse {
   long timestamp;
 
