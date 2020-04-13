@@ -9,6 +9,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -47,8 +48,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = {"/v0"})
 public class FacilitiesController {
+  private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
+
   private static final FacilityOverlay FACILITY_OVERLAY =
-      FacilityOverlay.builder().mapper(FacilitiesJacksonConfig.createMapper()).build();
+      FacilityOverlay.builder().mapper(MAPPER).build();
 
   private final FacilityRepository facilityRepository;
 
@@ -98,18 +101,25 @@ public class FacilitiesController {
   }
 
   /** Get all facilities. */
+  @SneakyThrows
   @GetMapping(
       value = "/facilities/all",
       produces = {"application/json", "application/vnd.geo+json"})
-  public GeoFacilitiesResponse all() {
-    return GeoFacilitiesResponse.builder()
-        .type(GeoFacilitiesResponse.Type.FeatureCollection)
-        .features(
-            facilityRepository.findAllProjectedBy().stream()
-                .parallel()
-                .map(e -> geoFacility(facility(e)))
-                .collect(toList()))
-        .build();
+  public String all() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("{\"type\":\"FeatureCollection\",\"features\":[");
+    List<HasFacilityPayload> all = facilityRepository.findAllProjectedBy();
+    if (!all.isEmpty()) {
+      all.parallelStream()
+          .map(
+              e ->
+                  FacilitiesJacksonConfig.quietlyWriteValueAsString(
+                      MAPPER, geoFacility(facility(e))))
+          .forEachOrdered(g -> sb.append(g).append(","));
+      sb.deleteCharAt(sb.length() - 1);
+    }
+    sb.append("]}");
+    return sb.toString();
   }
 
   /** Get all facilities as CSV. */

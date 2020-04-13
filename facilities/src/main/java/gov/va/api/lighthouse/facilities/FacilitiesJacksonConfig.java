@@ -15,14 +15,14 @@ class FacilitiesJacksonConfig {
 
   /** Mask away checked exception so this Jackson can be used in streams. */
   @SneakyThrows
-  static <T> T quietlyMap(ObjectMapper mapper, String json, Class<T> type) {
+  static <T> T quietlyMap(ObjectMapper mapper, InputStream json, Class<T> type) {
     return mapper.readValue(json, type);
   }
 
   /** Mask away checked exception so this Jackson can be used in streams. */
   @SneakyThrows
-  static <T> T quietlyMap(ObjectMapper mapper, InputStream json, Class<T> type) {
-    return mapper.readValue(json, type);
+  static String quietlyWriteValueAsString(ObjectMapper mapper, Object obj) {
+    return mapper.writeValueAsString(obj);
   }
 
   @Bean

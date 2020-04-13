@@ -17,6 +17,7 @@ import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.util.List;
 import java.util.Optional;
+import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class FacilitiesControllerTest {
@@ -25,6 +26,7 @@ public class FacilitiesControllerTest {
   DriveTimeBandRepository dbr = mock(DriveTimeBandRepository.class);
 
   @Test
+  @SneakyThrows
   public void all() {
     FacilitySamples samples = FacilitySamples.defaultSamples();
     when(fr.findAllProjectedBy())
@@ -33,8 +35,12 @@ public class FacilitiesControllerTest {
                 samples.facilityEntity("vha_691GB"),
                 samples.facilityEntity("vha_740GA"),
                 samples.facilityEntity("vha_757")));
-    var actual = controller().all();
-    assertThat(actual.features()).hasSize(3);
+    String actual = controller().all();
+    assertThat(
+            FacilitiesJacksonConfig.createMapper()
+                .readValue(actual, GeoFacilitiesResponse.class)
+                .features())
+        .hasSize(3);
   }
 
   @Test
