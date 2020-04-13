@@ -1,0 +1,40 @@
+@startuml
+!include va-colors.iuml
+
+skinparam shadowing false
+
+
+skinparam {
+ ArrowColor<<public>> $PrimaryBlue
+ ArrowColor<<internal>> $Red
+ RectangleBackgroundColor<<document>> $LightBrightBlue
+ RectangleBackgroundColor<<facilities>> $BrightBlue
+ DatabaseBackgroundColor<<facilities>> $BrightBlue
+ RectangleBackgroundColor<<kubernetes cron>> $MediumBrightBlue
+ RectangleBackgroundColor<<sql package>> $MediumBrightBlue
+ RectangleBackgroundColor<<dependency>> $MediumGold
+ RectangleBackgroundColor<<partner>> $MediumGreen
+ DatabaseBackgroundColor<<dependency>> $MediumGold
+ ActorBackgroundColor $White
+ ActorBorderColor<<consumer>> $PrimaryBlue
+ ActorBorderColor<<facilities>> $Red
+}
+
+actor "API Consumer" as CONSUMER <<consumer>>
+actor "API Admin" as ADMIN <<facilities>>
+rectangle facilties as F <<facilities>>
+rectangle "facilities-collector" as C <<facilities>>
+rectangle "facilities-timer" as TIMER <<kubernetes cron>>
+database "facilities-operational-db" as DB <<facilities>>
+database "Corporate Data Warehouse" as CDW <<dependency>>
+
+rectangle "Access to Care" as ATC <<dependency>>
+rectangle "Content Management System" as CMS <<partner>>
+rectangle ArcGIS as ARCGIS <<dependency>>
+rectangle "VA ArcGIS" as VAARC <<dependency>>
+rectangle "Cemetery XML" as CXML <<document>>
+rectangle "Website CSV" as WCSV <<document>>
+rectangle "PSSG Drive Band" as BANDS <<document>>
+rectangle "ETL from A01 to SQL52" as ETL <<sql package>>
+
+@enduml

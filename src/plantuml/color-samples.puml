@@ -1,0 +1,83 @@
+@startuml
+!include va-colors.iuml
+skinparam {
+  RectangleBackgroundColor<<PrimaryBlue>> $PrimaryBlue
+  RectangleBackgroundColor<<DarkGray>> $DarkGray
+  RectangleBackgroundColor<<Black>> $Black
+  RectangleBackgroundColor<<Gray>> $Gray
+  RectangleBackgroundColor<<White>> $White
+  RectangleBackgroundColor<<DarkBlue>> $DarkBlue
+  RectangleBackgroundColor<<BrightBlue>> $BrightBlue
+  RectangleBackgroundColor<<Purple>> $Purple
+  RectangleBackgroundColor<<Gold>> $Gold
+  RectangleBackgroundColor<<Red>> $Red
+  RectangleBackgroundColor<<Green>> $Green
+  RectangleBackgroundColor<<AccountManagementOffice>> $AccountManagementOffice
+  RectangleBackgroundColor<<EnterpriseDataManagement>> $EnterpriseDataManagement
+  RectangleBackgroundColor<<EnterpriseProgramManagementOffice>> $EnterpriseProgramManagementOffice
+  RectangleBackgroundColor<<ITOperationsandServices>> $ITOperationsandServices
+  RectangleBackgroundColor<<ITResourceManagement>> $ITResourceManagement
+  RectangleBackgroundColor<<OfficeofInformationSecurity>> $OfficeofInformationSecurity
+  RectangleBackgroundColor<<QualityPrivacyRisk>> $QualityPrivacyRisk
+  RectangleBackgroundColor<<StrategicSourcing>> $StrategicSourcing
+  RectangleBackgroundColor<<MediumBlue>> $MediumBlue
+  RectangleBackgroundColor<<MediumBrightBlue>> $MediumBrightBlue
+  RectangleBackgroundColor<<MediumGray>> $MediumGray
+  RectangleBackgroundColor<<MediumGold>> $MediumGold
+  RectangleBackgroundColor<<MediumRed>> $MediumRed
+  RectangleBackgroundColor<<MediumGreen>> $MediumGreen
+  RectangleBackgroundColor<<LightBlue>> $LightBlue
+  RectangleBackgroundColor<<LightBrightBlue>> $LightBrightBlue
+  RectangleBackgroundColor<<LightGray>> $LightGray
+  RectangleBackgroundColor<<LightGold>> $LightGold
+  RectangleBackgroundColor<<LightRed>> $LightRed
+  RectangleBackgroundColor<<LightGreen>> $LightGreen
+}
+
+rectangle Primary {
+rectangle "PrimaryBlue" <<PrimaryBlue>>
+rectangle "DarkGray" <<DarkGray>>
+rectangle "Black" <<Black>>
+rectangle "Gray" <<Gray>>
+rectangle "White" <<White>>
+}
+
+rectangle Secondary {
+rectangle "DarkBlue" <<DarkBlue>>
+rectangle "BrightBlue" <<BrightBlue>>
+rectangle "Purple" <<Purple>>
+rectangle "Gold" <<Gold>>
+rectangle "Red" <<Red>>
+rectangle "Green" <<Green>>
+}
+
+rectangle Tertiary {
+rectangle "MediumBlue" <<MediumBlue>>
+rectangle "MediumBrightBlue" <<MediumBrightBlue>>
+rectangle "MediumGray" <<MediumGray>>
+rectangle "MediumGold" <<MediumGold>>
+rectangle "MediumRed" <<MediumRed>>
+rectangle "MediumGreen" <<MediumGreen>>
+}
+
+rectangle Accent {
+rectangle "LightBlue" <<LightBlue>>
+rectangle "LightBrightBlue" <<LightBrightBlue>>
+rectangle "LightGray" <<LightGray>>
+rectangle "LightGold" <<LightGold>>
+rectangle "LightRed" <<LightRed>>
+rectangle "LightGreen" <<LightGreen>>
+}
+
+rectangle Division {
+rectangle "AccountManagementOffice" <<AccountManagementOffice>>
+rectangle "EnterpriseDataManagement" <<EnterpriseDataManagement>>
+rectangle "EnterpriseProgramManagementOffice" <<EnterpriseProgramManagementOffice>>
+rectangle "ITOperationsandServices" <<ITOperationsandServices>>
+rectangle "ITResourceManagement" <<ITResourceManagement>>
+rectangle "OfficeofInformationSecurity" <<OfficeofInformationSecurity>>
+rectangle "QualityPrivacyRisk" <<QualityPrivacyRisk>>
+rectangle "StrategicSourcing" <<StrategicSourcing>>
+}
+
+@enduml

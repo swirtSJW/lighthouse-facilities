@@ -1,0 +1,25 @@
+@startuml
+!include component-definitions.iuml!0
+
+
+CONSUMER -(0- F <<public>> : "/v0/facilities\n/v0/nearby"
+ADMIN -(0- F <<internal>> : /internal/management
+TIMER -right(0- F <<internal>> : /internal/management/reload
+F -(0- C
+F -- DB
+F . BANDS : Manually uploaded\nsince PSSG is down
+C -- CDW
+C .. CXML
+C .. WCSV
+C -(0- ATC
+C -(0- ARCGIS
+C -(0- VAARC
+ETL --> CDW
+ETL <-- CDW
+
+CMS -(0- F : /facilities/{id}/cms-overlay\n/facilities/all
+CMS -[hidden]up- F
+' The hidden connector is to force CMS below F with lollipop in the correct direction
+' Without it, the lollipop is rendered backwards.
+
+@enduml

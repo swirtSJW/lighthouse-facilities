@@ -1,0 +1,3 @@
+# facilities-tests
+
+Integration tests.
