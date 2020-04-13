@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
@@ -52,6 +53,24 @@ public class NearbyTest {
         .build();
   }
 
+  @SneakyThrows
+  private DriveTimeBandEntity _deprecatedPssgDriveTimeBandEntity(PssgDriveTimeBand band) {
+    List<List<Double>> flatRings =
+        band.geometry().rings().stream().flatMap(r -> r.stream()).collect(Collectors.toList());
+    return DriveTimeBandEntity.builder()
+        .id(
+            DriveTimeBandEntity.Pk.of(
+                band.attributes().stationNumber(),
+                band.attributes().fromBreak(),
+                band.attributes().toBreak()))
+        .minLongitude(flatRings.stream().mapToDouble(c -> c.get(0)).min().orElseThrow())
+        .maxLongitude(flatRings.stream().mapToDouble(c -> c.get(0)).max().orElseThrow())
+        .minLatitude(flatRings.stream().mapToDouble(c -> c.get(1)).min().orElseThrow())
+        .maxLatitude(flatRings.stream().mapToDouble(c -> c.get(1)).max().orElseThrow())
+        .band(JacksonConfig.createMapper().writeValueAsString(band))
+        .build();
+  }
+
   private PssgDriveTimeBand _diamondBand(
       String stationNumber, int fromMinutes, int toMinutes, int offset) {
     return PssgDriveTimeBand.builder()
@@ -88,7 +107,7 @@ public class NearbyTest {
         .maxLongitude(flatRings.stream().mapToDouble(c -> c.get(0)).max().orElseThrow())
         .minLatitude(flatRings.stream().mapToDouble(c -> c.get(1)).min().orElseThrow())
         .maxLatitude(flatRings.stream().mapToDouble(c -> c.get(1)).max().orElseThrow())
-        .band(JacksonConfig.createMapper().writeValueAsString(band))
+        .band(PathEncoder.create().encodeToBase64(band))
         .build();
   }
 
@@ -458,48 +477,59 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
         _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 1, 1);
-    assertThat(response)
-        .isEqualTo(
-            NearbyResponse.builder()
-                .data(
-                    List.of(
-                        NearbyResponse.Nearby.builder()
-                            .id("vha_666")
-                            .type(NearbyResponse.Type.NearbyFacility)
-                            .attributes(
-                                NearbyResponse.NearbyAttributes.builder()
-                                    .minTime(0)
-                                    .maxTime(10)
-                                    .build())
-                            .relationships(
-                                NearbyResponse.Relationships.builder()
-                                    .vaFacility(
-                                        NearbyResponse.VaFacility.builder()
-                                            .links(
-                                                NearbyResponse.Links.builder()
-                                                    .related("http://foo/bp/v0/facilities/vha_666")
-                                                    .build())
+    assertThat(response).isEqualTo(hitVha666());
+  }
+
+  public NearbyResponse hitVha666() {
+    return NearbyResponse.builder()
+        .data(
+            List.of(
+                NearbyResponse.Nearby.builder()
+                    .id("vha_666")
+                    .type(NearbyResponse.Type.NearbyFacility)
+                    .attributes(
+                        NearbyResponse.NearbyAttributes.builder().minTime(0).maxTime(10).build())
+                    .relationships(
+                        NearbyResponse.Relationships.builder()
+                            .vaFacility(
+                                NearbyResponse.VaFacility.builder()
+                                    .links(
+                                        NearbyResponse.Links.builder()
+                                            .related("http://foo/bp/v0/facilities/vha_666")
                                             .build())
                                     .build())
-                            .build()))
-                .links(
-                    PageLinks.builder()
-                        .related("http://foo/bp/v0/facilities?ids=vha_666")
-                        .self("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .first("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .last("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
+                            .build())
+                    .build()))
+        .links(
+            PageLinks.builder()
+                .related("http://foo/bp/v0/facilities?ids=vha_666")
+                .self("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
+                .first("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
+                .last("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
+                .build())
+        .meta(
+            NearbyResponse.NearbyMetadata.builder()
+                .pagination(
+                    Pagination.builder()
+                        .currentPage(1)
+                        .entriesPerPage(1)
+                        .totalPages(1)
+                        .totalEntries(1)
                         .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(1)
-                                .totalPages(1)
-                                .totalEntries(1)
-                                .build())
-                        .build())
-                .build());
+                .build())
+        .build();
+  }
+
+  @Test
+  public void hitWithDeprecatedPssgDriveBands() {
+    facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
+    facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
+    driveTimeBandRepository.save(_deprecatedPssgDriveTimeBandEntity(_diamondBand("666", 0, 10, 0)));
+    driveTimeBandRepository.save(
+        _deprecatedPssgDriveTimeBandEntity(_diamondBand("777", 80, 90, 5)));
+    NearbyResponse response =
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 1, 1);
+    assertThat(response).isEqualTo(hitVha666());
   }
 
   @Test

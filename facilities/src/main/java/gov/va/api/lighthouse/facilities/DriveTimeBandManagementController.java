@@ -2,9 +2,9 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.stream.Collectors.toList;
 
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.ExceptionsV0.NotFound;
+import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -14,6 +14,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,13 +38,17 @@ public class DriveTimeBandManagementController {
 
   private final DriveTimeBandRepository repository;
 
-  /** Get a band based on it's internal name: {stationNumber}-{fromMinutes}-{toMinutes}. */
+  /**
+   * Get a band based on it's internal name: {stationNumber}-{fromMinutes}-{toMinutes}.
+   *
+   * @return
+   */
   @GetMapping("/{name}")
-  public PssgDriveTimeBand band(@PathVariable("name") String name) {
+  public BandResult band(@PathVariable("name") String name) {
     return repository
         .findById(DriveTimeBandEntity.Pk.fromName(name))
-        .orElseThrow(() -> new NotFound(name))
-        .asPssgDriveTimeBand();
+        .map(BandResult::new)
+        .orElseThrow(() -> new NotFound(name));
   }
 
   private Rectangle2D boundsOf(PssgDriveTimeBand band) {
@@ -97,7 +102,34 @@ public class DriveTimeBandManagementController {
     entity.minLatitude(bounds.getMinY());
     entity.maxLongitude(bounds.getMaxX());
     entity.maxLatitude(bounds.getMaxY());
-    entity.band(JacksonConfig.createMapper().writeValueAsString(band));
+    entity.band(PathEncoder.create().encodeToBase64(band));
     repository.save(entity);
+  }
+
+  @Data
+  @AllArgsConstructor
+  public static class BandResult {
+    String stationNumber;
+    int fromMinutes;
+    int toMinutes;
+    double minLatitude;
+    double minLongitude;
+    double maxLatitude;
+    double maxLongitude;
+    String band;
+    int version;
+
+    BandResult(DriveTimeBandEntity e) {
+      this(
+          e.id().stationNumber(),
+          e.id().fromMinutes(),
+          e.id().fromMinutes(),
+          e.minLatitude(),
+          e.minLongitude(),
+          e.maxLatitude(),
+          e.maxLongitude(),
+          e.band(),
+          e.version() == null ? 0 : e.version());
+    }
   }
 }

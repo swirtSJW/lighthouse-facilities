@@ -6,28 +6,37 @@ import static gov.va.api.lighthouse.facilities.Controllers.page;
 import static gov.va.api.lighthouse.facilities.Controllers.validateFacilityType;
 import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
 import static java.util.stream.Collectors.toList;
+import static org.apache.logging.log4j.util.Strings.isBlank;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.BingResponse.Point;
+import gov.va.api.lighthouse.facilities.BingResponse.Resource;
+import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -45,6 +54,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Validated
 @RestController
 @RequestMapping(value = "/v0/nearby")
+@Slf4j
 public class NearbyController {
   private static final Set<Integer> DRIVE_TIME_VALUES = Set.of(10, 20, 30, 40, 50, 60, 70, 80, 90);
 
@@ -59,6 +69,9 @@ public class NearbyController {
   private final String bingUrl;
 
   private final String linkerUrl;
+
+  private final DeprecatedPssgDriveTimeBandSupport deprecatedPssgDriveTimeBandSupport =
+      new DeprecatedPssgDriveTimeBandSupport();
 
   @Builder
   NearbyController(
@@ -78,22 +91,7 @@ public class NearbyController {
     String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
-    this.linkerUrl = url + path + "v0/";
-  }
-
-  private static Path2D toPath2D(List<List<Double>> coordinates) {
-    checkArgument(!coordinates.isEmpty());
-    Path2D shape = null;
-    for (List<Double> c : coordinates) {
-      if (shape == null) {
-        shape = new Path2D.Double(Path2D.WIND_NON_ZERO);
-        shape.moveTo(c.get(0), c.get(1));
-      } else {
-        shape.lineTo(c.get(0), c.get(1));
-      }
-    }
-    shape.closePath();
-    return shape;
+    linkerUrl = url + path + "v0/";
   }
 
   private static Integer validateDriveTime(Integer val) {
@@ -103,22 +101,26 @@ public class NearbyController {
     return val;
   }
 
+  @SneakyThrows
   private Optional<DriveTimeBandEntity> firstIntersection(
       @NonNull Point2D point, List<DriveTimeBandEntity> entities) {
+    Stopwatch timer = Stopwatch.createStarted();
+    int count = 0;
     for (DriveTimeBandEntity entity : entities) {
-      PssgDriveTimeBand asBand = entity.asPssgDriveTimeBand();
-      List<List<List<Double>>> rings = asBand.geometry().rings();
-      checkState(!rings.isEmpty());
-      List<List<Double>> exteriorRing = rings.get(0);
-      Path2D path2D = toPath2D(exteriorRing);
-      for (int i = 1; i < rings.size(); i++) {
-        List<List<Double>> interiorRing = rings.get(i);
-        path2D.append(toPath2D(interiorRing), false);
-      }
+      count++;
+      Path2D path2D = toPath(entity);
       if (path2D.contains(point)) {
+        log.info(
+            "Found {} intersection in {} ms, looked at {} of {} options",
+            entity.id().stationNumber(),
+            timer.elapsed(TimeUnit.MILLISECONDS),
+            count,
+            entities.size());
         return Optional.of(entity);
       }
     }
+    log.info("No matches found in {} options", entities.size());
+
     return Optional.empty();
   }
 
@@ -143,14 +145,16 @@ public class NearbyController {
     } catch (Exception ex) {
       throw new ExceptionsV0.BingException(ex);
     }
-
+    if (isBlank(body)) {
+      throw new ExceptionsV0.BingException("Empty response");
+    }
     BingResponse response = JacksonConfig.createMapper().readValue(body, BingResponse.class);
     Optional<List<BigDecimal>> coordinates =
         response.resourceSets().stream()
             .flatMap(rs -> rs.resources().stream())
-            .map(r -> r.point())
+            .map(Resource::point)
             .filter(Objects::nonNull)
-            .map(p -> p.coordinates())
+            .map(Point::coordinates)
             .filter(c -> c.size() >= 2)
             .findFirst();
 
@@ -184,9 +188,7 @@ public class NearbyController {
             entry -> {
               List<DriveTimeBandEntity> sortedEntities =
                   entry.getValue().stream()
-                      .sorted(
-                          (left, right) ->
-                              Integer.compare(left.id().fromMinutes(), right.id().fromMinutes()))
+                      .sorted(Comparator.comparingInt(left -> left.id().fromMinutes()))
                       .collect(toList());
               return firstIntersection(point, sortedEntities).orElse(null);
             })
@@ -230,7 +232,7 @@ public class NearbyController {
             .build();
     List<NearbyId> idsPage = page(ids, page, perPage);
     return NearbyResponse.builder()
-        .data(idsPage.stream().map(e -> nearbyFacility(e)).collect(toList()))
+        .data(idsPage.stream().map(this::nearbyFacility).collect(toList()))
         .links(linker.links().toBuilder().related(nearbyRelatedLink(ids)).build())
         .meta(NearbyResponse.NearbyMetadata.builder().pagination(linker.pagination()).build())
         .build();
@@ -268,6 +270,13 @@ public class NearbyController {
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<Facility.ServiceType> services = validateServices(rawServices);
     Integer maxDriveTime = validateDriveTime(rawMaxDriveTime);
+    log.info(
+        "Searching near {},{} within {} minutes with {} services",
+        longitude.doubleValue(),
+        latitude.doubleValue(),
+        maxDriveTime,
+        services.size());
+    var timer = Stopwatch.createStarted();
     List<DriveTimeBandEntity> maybeBands =
         driveTimeBandRepository.findAll(
             DriveTimeBandRepository.MinMaxSpecification.builder()
@@ -275,6 +284,7 @@ public class NearbyController {
                 .latitude(latitude)
                 .maxDriveTime(maxDriveTime)
                 .build());
+    log.info("{} bands found in {} ms", maybeBands.size(), timer.elapsed(TimeUnit.MILLISECONDS));
     Map<String, DriveTimeBandEntity> bandsByStation =
         intersections(longitude, latitude, maybeBands);
     List<FacilityEntity> facilityEntities =
@@ -291,8 +301,7 @@ public class NearbyController {
                     .bandId(bandsByStation.get(e.id().stationNumber()).id())
                     .facilityId(e.id().toIdString())
                     .build())
-        .sorted(
-            (left, right) -> Integer.compare(left.bandId().toMinutes(), right.bandId().toMinutes()))
+        .sorted(Comparator.comparingInt(left -> left.bandId().toMinutes()))
         .collect(toList());
   }
 
@@ -327,7 +336,7 @@ public class NearbyController {
             .build();
     List<NearbyId> idsPage = page(ids, page, perPage);
     return NearbyResponse.builder()
-        .data(idsPage.stream().map(e -> nearbyFacility(e)).collect(toList()))
+        .data(idsPage.stream().map(this::nearbyFacility).collect(toList()))
         .links(linker.links().toBuilder().related(nearbyRelatedLink(idsPage)).build())
         .meta(NearbyResponse.NearbyMetadata.builder().pagination(linker.pagination()).build())
         .build();
@@ -338,20 +347,76 @@ public class NearbyController {
         ? null
         : linkerUrl
             + "facilities?ids="
-            + ids.stream().map(e -> e.facilityId()).collect(Collectors.joining(","));
+            + ids.stream().map(NearbyId::facilityId).collect(Collectors.joining(","));
+  }
+
+  @SneakyThrows
+  private Path2D toPath(DriveTimeBandEntity entity) {
+    if (deprecatedPssgDriveTimeBandSupport.isPssgDriveTimeBand(entity)) {
+      return deprecatedPssgDriveTimeBandSupport.toPath(entity);
+    }
+    try {
+      return PathEncoder.create().decodeFromBase64(entity.band());
+    } catch (Exception e) {
+      log.info("Failed to decode {}", entity.id());
+      throw e;
+    }
   }
 
   @Builder
   @lombok.Value
-  private static final class Coordinates {
+  private static class Coordinates {
     BigDecimal latitude;
 
     BigDecimal longitude;
   }
 
+  /**
+   * This encapsulates the older support where PSSG drive time bands were stored directly as JSON.
+   * They were big and slow, and we have our own serialization model now. But to keep supporting any
+   * records that have not be converted yet, this class allows for a graceful transition. It can
+   * deleted once all databases have been upgraded.
+   */
+  private static class DeprecatedPssgDriveTimeBandSupport {
+    private final ObjectMapper mapper = JacksonConfig.createMapper();
+
+    boolean isPssgDriveTimeBand(DriveTimeBandEntity entity) {
+      return entity.band().startsWith("{\"attributes");
+    }
+
+    @SneakyThrows
+    Path2D toPath(DriveTimeBandEntity entity) {
+      PssgDriveTimeBand asBand = mapper.readValue(entity.band(), PssgDriveTimeBand.class);
+      List<List<List<Double>>> rings = asBand.geometry().rings();
+      checkState(!rings.isEmpty());
+      List<List<Double>> exteriorRing = rings.get(0);
+      Path2D path2D = toPath2D(exteriorRing);
+      for (int i = 1; i < rings.size(); i++) {
+        List<List<Double>> interiorRing = rings.get(i);
+        path2D.append(toPath2D(interiorRing), false);
+      }
+      return path2D;
+    }
+
+    private Path2D toPath2D(List<List<Double>> coordinates) {
+      checkArgument(!coordinates.isEmpty());
+      Path2D shape = null;
+      for (List<Double> c : coordinates) {
+        if (shape == null) {
+          shape = new Path2D.Double(Path2D.WIND_NON_ZERO);
+          shape.moveTo(c.get(0), c.get(1));
+        } else {
+          shape.lineTo(c.get(0), c.get(1));
+        }
+      }
+      shape.closePath();
+      return shape;
+    }
+  }
+
   @Builder
   @lombok.Value
-  private static final class NearbyId {
+  private static class NearbyId {
     DriveTimeBandEntity.Pk bandId;
 
     String facilityId;

@@ -8,6 +8,7 @@ import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.tests.categories.DriveTimeBandManagement;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -37,8 +38,8 @@ public class DriveTimeBandManagementIT {
         TestClients.facilitiesManagement()
             .get("internal/management/bands/{name}", name)
             .expect(200)
-            .expectValid(PssgDriveTimeBand.class);
-    assertThat(actual).isEqualTo(favorite);
+            .expectValid(Map.class);
+    assertThat(actual.get("stationNumber")).isEqualTo(favorite.attributes().stationNumber());
     var allIds =
         TestClients.facilitiesManagement()
             .get("internal/management/bands")

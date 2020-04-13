@@ -5,15 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.DriveTimeBandEntity.Pk;
+import gov.va.api.lighthouse.facilities.DriveTimeBandManagementController.BandResult;
 import gov.va.api.lighthouse.facilities.ExceptionsV0.NotFound;
+import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Attributes;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Geometry;
 import java.util.List;
 import java.util.Optional;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -41,7 +41,7 @@ public class DriveTimeBandManagementControllerTest {
   void getBandByNameReturnsKnownBand() {
     var e = Entities.diamond("a-1-2", 100);
     when(repo.findById(e.id())).thenReturn(Optional.of(e));
-    assertThat(controller().band("a-1-2")).isEqualTo(e.asPssgDriveTimeBand());
+    assertThat(controller().band("a-1-2")).isEqualTo(new BandResult(e));
   }
 
   @Test
@@ -65,7 +65,9 @@ public class DriveTimeBandManagementControllerTest {
     controller()
         .update(
             List.of(
-                a12.asPssgDriveTimeBand(), a23.asPssgDriveTimeBand(), a34.asPssgDriveTimeBand()));
+                Entities.diamondBand("a-1-2", 100),
+                Entities.diamondBand("a-2-3", 200),
+                Entities.diamondBand("a-3-4", 300)));
 
     verify(repo).save(a12);
     verify(repo).save(a23);
@@ -80,7 +82,7 @@ public class DriveTimeBandManagementControllerTest {
           .maxLatitude(offset + 2)
           .minLongitude(offset - 1)
           .minLatitude(offset - 2)
-          .band(json(diamondBand(name, offset)))
+          .band(PathEncoder.create().encodeToBase64(diamondBand(name, offset)))
           .build();
     }
 
@@ -103,11 +105,6 @@ public class DriveTimeBandManagementControllerTest {
                   .build())
           .geometry(Geometry.builder().rings(rings).build())
           .build();
-    }
-
-    @SneakyThrows
-    static String json(Object o) {
-      return JacksonConfig.createMapper().writeValueAsString(o);
     }
   }
 }

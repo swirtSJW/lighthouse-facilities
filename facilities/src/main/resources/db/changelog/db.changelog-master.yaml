@@ -196,3 +196,23 @@ databaseChangeLog:
                 type: clob
                 constraints:
                   nullable: true
+  - changeSet:
+      id: 5
+      author: shanktopus
+      changes:
+        - createIndex:
+            tableName: drive_time_band
+            schemaName: app
+            clustered: false
+            indexName: drive_time_band_bbox_idx
+            columns:
+              - column:
+                  name: to_minutes
+              - column:
+                  name: min_latitude
+              - column:
+                  name: max_latitude
+              - column:
+                  name: min_longitude
+              - column:
+                  name: max_longitude

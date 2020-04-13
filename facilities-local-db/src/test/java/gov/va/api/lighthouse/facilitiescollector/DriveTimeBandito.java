@@ -52,7 +52,7 @@ public class DriveTimeBandito {
     log("Reading " + sqlExport.toAbsolutePath().getFileName());
 
     try (FileBunder bundler =
-        FileBunder.builder().outputDir(new File("./pssg")).itemsPerPage(100).build()) {
+        FileBunder.builder().outputDir(new File("./pssg")).itemsPerPage(50).build()) {
       var bandLine = Pattern.compile("^[0-9]+.*$");
       Files.lines(sqlExport)
           .filter(l -> bandLine.matcher(l).matches())
@@ -168,6 +168,11 @@ public class DriveTimeBandito {
    * coordinate lists.
    */
   private static class PolygonBabyGon {
+    static double truncateTo(double unroundedNumber, int decimalPlaces) {
+      int truncatedNumberInt = (int) (unroundedNumber * Math.pow(10, decimalPlaces));
+      return (double) (truncatedNumberInt / Math.pow(10, decimalPlaces));
+    }
+
     /**
      * The Geometry will be converted into rings per the GeoJSON specification.
      * https://tools.ietf.org/html/rfc7946#section-3.1.6
@@ -188,7 +193,7 @@ public class DriveTimeBandito {
     private List<List<Double>> toRing(Coordinate[] coordinates) {
       var ring = PssgDriveTimeBand.newRing(coordinates.length);
       for (Coordinate c : coordinates) {
-        ring.add(PssgDriveTimeBand.coord(c.x, c.y));
+        ring.add(PssgDriveTimeBand.coord(truncateTo(c.x, 5), truncateTo(c.y, 5)));
       }
       return ring;
     }

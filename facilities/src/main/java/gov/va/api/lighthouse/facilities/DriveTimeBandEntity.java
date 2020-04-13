@@ -3,8 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Splitter;
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -22,7 +20,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 
 @Data
 @Entity
@@ -32,6 +29,7 @@ import lombok.SneakyThrows;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DriveTimeBandEntity {
+
   /**
    * A band is unique to a facility and a drive-time range (or band), e.g. 10-20 minutes. A given
    * facility can have multiple bands around it.
@@ -55,17 +53,11 @@ public class DriveTimeBandEntity {
   private double maxLongitude;
 
   @Lob
-  @Basic(fetch = FetchType.EAGER)
+  @Basic(fetch = FetchType.LAZY)
   @Column
   private String band;
 
   @Version private Integer version;
-
-  /** Deserialize the band JSON payload into an object. */
-  @SneakyThrows
-  PssgDriveTimeBand asPssgDriveTimeBand() {
-    return JacksonConfig.createMapper().readValue(band, PssgDriveTimeBand.class);
-  }
 
   @Data
   @NoArgsConstructor(access = AccessLevel.PUBLIC)
