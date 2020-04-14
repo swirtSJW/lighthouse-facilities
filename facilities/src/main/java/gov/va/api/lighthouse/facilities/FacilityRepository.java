@@ -152,7 +152,9 @@ public interface FacilityRepository
 
   @Value
   @Builder
-  final class TypeServicesOnlySpecification implements Specification<FacilityEntity> {
+  final class TypeServicesIdsSpecification implements Specification<FacilityEntity> {
+    @Builder.Default Collection<FacilityEntity.Pk> ids = emptySet();
+
     FacilityEntity.Type facilityType;
 
     @Builder.Default Set<Facility.ServiceType> services = emptySet();
@@ -162,7 +164,12 @@ public interface FacilityRepository
         Root<FacilityEntity> root,
         CriteriaQuery<?> criteriaQuery,
         CriteriaBuilder criteriaBuilder) {
-      List<Predicate> basePredicates = new ArrayList<>(1);
+      List<Predicate> basePredicates = new ArrayList<>(2);
+      if (!isEmpty(ids)) {
+        In<FacilityEntity.Pk> idsInClause = criteriaBuilder.in(root.get("id"));
+        ids.forEach(idsInClause::value);
+        basePredicates.add(idsInClause);
+      }
       if (facilityType != null) {
         basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
       }

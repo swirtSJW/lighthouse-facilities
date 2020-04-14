@@ -11,6 +11,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
+import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
@@ -74,6 +75,20 @@ public class FacilitiesController {
     double lngDiff = entity.longitude() - lng;
     double latDiff = entity.latitude() - lat;
     return Math.sqrt(lngDiff * lngDiff + latDiff * latDiff);
+  }
+
+  private static List<Pk> entityIds(String ids) {
+    if (ids == null) {
+      return emptyList();
+    }
+    return Splitter.on(",")
+        .splitToStream(ids)
+        .map(id -> trimToNull(id))
+        .filter(Objects::nonNull)
+        .distinct()
+        .map(id -> FacilityEntity.Pk.optionalFromIdString(id).orElse(null))
+        .filter(Objects::nonNull)
+        .collect(toList());
   }
 
   @SneakyThrows
@@ -172,15 +187,7 @@ public class FacilitiesController {
   }
 
   private List<FacilityEntity> entitiesByIds(String ids) {
-    List<FacilityEntity.Pk> pks =
-        Splitter.on(",")
-            .splitToStream(ids)
-            .map(id -> trimToNull(id))
-            .filter(Objects::nonNull)
-            .distinct()
-            .map(id -> FacilityEntity.Pk.optionalFromIdString(id).orElse(null))
-            .filter(Objects::nonNull)
-            .collect(toList());
+    List<FacilityEntity.Pk> pks = entityIds(ids);
     Map<FacilityEntity.Pk, FacilityEntity> entities =
         facilityRepository.findByIdIn(pks).stream()
             .collect(toMap(e -> e.id(), Function.identity()));
@@ -189,12 +196,17 @@ public class FacilitiesController {
 
   @SneakyThrows
   private List<DistanceEntity> entitiesByLatLong(
-      BigDecimal longitude, BigDecimal latitude, String rawType, List<String> rawServices) {
+      BigDecimal longitude,
+      BigDecimal latitude,
+      String ids,
+      String rawType,
+      List<String> rawServices) {
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<Facility.ServiceType> services = validateServices(rawServices);
     List<FacilityEntity> entities =
         facilityRepository.findAll(
-            FacilityRepository.TypeServicesOnlySpecification.builder()
+            FacilityRepository.TypeServicesIdsSpecification.builder()
+                .ids(entityIds(ids))
                 .facilityType(facilityType)
                 .services(services)
                 .build());
@@ -297,6 +309,7 @@ public class FacilitiesController {
   public GeoFacilitiesResponse geoFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "long") BigDecimal longitude,
+      @RequestParam(value = "ids", required = false) String ids,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
@@ -304,7 +317,8 @@ public class FacilitiesController {
     return GeoFacilitiesResponse.builder()
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
-            page(entitiesByLatLong(longitude, latitude, type, services), page, perPage).stream()
+            page(entitiesByLatLong(longitude, latitude, ids, type, services), page, perPage)
+                .stream()
                 .map(e -> geoFacility(e.facility()))
                 .collect(toList()))
         .build();
@@ -412,11 +426,12 @@ public class FacilitiesController {
   public FacilitiesResponse jsonFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "long") BigDecimal longitude,
+      @RequestParam(value = "ids", required = false) String ids,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
-    List<DistanceEntity> entities = entitiesByLatLong(longitude, latitude, type, services);
+    List<DistanceEntity> entities = entitiesByLatLong(longitude, latitude, ids, type, services);
     PageLinker linker =
         PageLinker.builder()
             .url(linkerUrl + "facilities")

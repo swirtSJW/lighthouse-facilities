@@ -123,6 +123,18 @@ public class FacilitiesIT {
   }
 
   @Test
+  @Category({SearchByLatLong.class})
+  public void searchByLatLongWithIds() {
+    final String latitude = systemDefinition().facilitiesIds().latitude();
+    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String facilities = systemDefinition().facilitiesIds().facilitiesList();
+    final String request =
+        "v0/facilities?lat=" + latitude + "&long=" + longitude + "&ids=" + facilities;
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+  }
+
+  @Test
   @Category(SearchByLatLong.class)
   public void searchByLatLongWithServices() {
     final String latitude = systemDefinition().facilitiesIds().latitude();

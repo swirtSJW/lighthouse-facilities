@@ -44,6 +44,7 @@ public class FacilitiesByLatLongTest {
                 .geoFacilitiesByLatLong(
                     new BigDecimal("28.112464"),
                     new BigDecimal("-80.7015994"),
+                    null,
                     "HEALTH",
                     List.of("primarycare"),
                     1,
@@ -59,12 +60,54 @@ public class FacilitiesByLatLongTest {
                 .build());
   }
 
+  @Test
+  public void geoFacilities_ids() {
+    repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
+    repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
+    repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
+    assertThat(
+            controller()
+                .geoFacilitiesByLatLong(
+                    new BigDecimal("28.112464"),
+                    new BigDecimal("-80.7015994"),
+                    "x,,xxx,,,,vha_757,vha_757,vha_757,xxxx,x",
+                    "HEALTH",
+                    List.of("primarycare"),
+                    1,
+                    10))
+        .isEqualTo(
+            GeoFacilitiesResponse.builder()
+                .type(GeoFacilitiesResponse.Type.FeatureCollection)
+                .features(List.of(FacilitySamples.defaultSamples().geoFacility("vha_757")))
+                .build());
+  }
+
+  @Test
+  public void json_ids() {
+    repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
+    repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
+    repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
+    assertThat(
+            controller()
+                .jsonFacilitiesByLatLong(
+                    new BigDecimal("28.112464"),
+                    new BigDecimal("-80.7015994"),
+                    "x,,xxx,,,,vha_757,vha_757,vha_757,xxxx,x",
+                    null,
+                    null,
+                    1,
+                    10)
+                .data())
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+  }
+
   @Test(expected = ExceptionsV0.InvalidParameter.class)
   public void json_invalidService() {
     controller()
         .jsonFacilitiesByLatLong(
             new BigDecimal("28.112464"),
             new BigDecimal("-80.7015994"),
+            null,
             null,
             List.of("unknown"),
             1,
@@ -75,7 +118,7 @@ public class FacilitiesByLatLongTest {
   public void json_invalidType() {
     controller()
         .jsonFacilitiesByLatLong(
-            new BigDecimal("28.112464"), new BigDecimal("-80.7015994"), "xxx", null, 1, 1);
+            new BigDecimal("28.112464"), new BigDecimal("-80.7015994"), null, "xxx", null, 1, 1);
   }
 
   @Test
@@ -86,7 +129,13 @@ public class FacilitiesByLatLongTest {
     assertThat(
             controller()
                 .jsonFacilitiesByLatLong(
-                    new BigDecimal("28.112464"), new BigDecimal("-80.7015994"), null, null, 1, 10)
+                    new BigDecimal("28.112464"),
+                    new BigDecimal("-80.7015994"),
+                    null,
+                    null,
+                    null,
+                    1,
+                    10)
                 .data())
         .isEqualTo(
             List.of(
@@ -103,7 +152,13 @@ public class FacilitiesByLatLongTest {
     assertThat(
             controller()
                 .jsonFacilitiesByLatLong(
-                    new BigDecimal("28.112464"), new BigDecimal("-80.7015994"), null, null, 100, 0))
+                    new BigDecimal("28.112464"),
+                    new BigDecimal("-80.7015994"),
+                    null,
+                    null,
+                    null,
+                    100,
+                    0))
         .isEqualTo(
             FacilitiesResponse.builder()
                 .data(emptyList())
@@ -137,6 +192,7 @@ public class FacilitiesByLatLongTest {
                     new BigDecimal("28.112464"),
                     new BigDecimal("-80.7015994"),
                     null,
+                    null,
                     List.of("primarycare"),
                     1,
                     10)
@@ -160,6 +216,7 @@ public class FacilitiesByLatLongTest {
                 .jsonFacilitiesByLatLong(
                     new BigDecimal("28.112464"),
                     new BigDecimal("-80.7015994"),
+                    null,
                     "HEALTH",
                     List.of("primarycare"),
                     1,
@@ -214,6 +271,7 @@ public class FacilitiesByLatLongTest {
                 .jsonFacilitiesByLatLong(
                     new BigDecimal("28.112464"),
                     new BigDecimal("-80.7015994"),
+                    null,
                     "HEALTH",
                     emptyList(),
                     1,
