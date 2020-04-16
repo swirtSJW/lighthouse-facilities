@@ -131,7 +131,9 @@ public interface FacilityRepository
       List<Predicate> basePredicates = new ArrayList<>(2);
 
       In<String> stationsInClause = criteriaBuilder.in(root.get("id").get("stationNumber"));
-      stationNumbers.forEach(stationsInClause::value);
+      for (String stationNumber : stationNumbers) {
+        stationsInClause.value(stationNumber);
+      }
       basePredicates.add(stationsInClause);
 
       if (facilityType != null) {
