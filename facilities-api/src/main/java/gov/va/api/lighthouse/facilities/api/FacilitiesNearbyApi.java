@@ -25,19 +25,22 @@ public interface FacilitiesNearbyApi {
               + "within the specified time period",
       description =
           "Retrieve all VA health facilities that are located within a specified drive time from "
-              + "a specified location\nbased on passing in a combination of `street_address`, "
-              + "`city`, `state`, and `zip` or `lat` and `lng` required\nparameters along with "
-              + "`drive_time`.\nAdditionally one can filter the facilities within the "
-              + "drive time by available services.\nResults of this operation are paginated. "
-              + "Responses include pagination information\nin the standard JSON API \"links\" and "
-              + "\"meta\" elements.\nThe \"attributes\" element has information about the "
-              + "drivetime band that the requested location \nfell within for each facility "
-              + "included in the response. The values of min_time and \nmax_time are in minutes. "
-              + "For example, a facility returned with a matched min_time \nof 10 and max_time of "
-              + "20 is a 10 to 20 minute drive from the requested location.\n"
-              + "This endpoint does not return facility information. "
-              + "To retrieve details for facilities found by `/nearby`, \n"
-              + "follow the relationship links and check documentation for `/facilities`.\n",
+              + "a specified location based on address (`street_address`, "
+              + "`city`, `state`, and `zip`) or coordinates (`lat` and `lng`). "
+              + "Optional filter parameters include `drive_time` and `services[]`. "
+              + "\n\n"
+              + "Results of this operation are paginated. "
+              + "Responses include pagination information in the standard JSON API \"links\" and "
+              + "\"meta\" elements. "
+              + "\n\n"
+              + "The \"attributes\" element has information about the "
+              + "drive-time band that contains the requested location for each facility "
+              + "in the response. The values of `min_time` and `max_time` are in minutes. "
+              + "For example, a facility returned with a matched `min_time` of 10 and "
+              + "`max_time` of 20 is a 10 to 20 minute drive from the requested location."
+              + "\n\n"
+              + "To retrieve full details for nearby facilities, "
+              + "see the documentation for `/facilities?ids`.",
       security = @SecurityRequirement(name = "apikey"))
   @GET
   @Path("nearby")
@@ -104,13 +107,13 @@ public interface FacilitiesNearbyApi {
       @Parameter(
               name = "lat",
               in = ParameterIn.QUERY,
-              description = "Latitude of point to search for nearest VA Facilities.",
+              description = "Latitude of the location from which drive time will be calculated.",
               schema = @Schema(type = "number", format = "float"))
           BigDecimal lat,
       @Parameter(
               name = "lng",
               in = ParameterIn.QUERY,
-              description = "Longitude of point to search for nearest VA Facilities.",
+              description = "Longitude of the location from which drive time will be calculated.",
               style = ParameterStyle.FORM,
               explode = Explode.TRUE,
               schema = @Schema(type = "number", format = "float"))
@@ -143,6 +146,6 @@ public interface FacilitiesNearbyApi {
               name = "per_page",
               description = "Number of results to return per paginated response.",
               in = ParameterIn.QUERY,
-              schema = @Schema(defaultValue = "30"))
+              schema = @Schema(defaultValue = "20"))
           Integer perPage);
 }

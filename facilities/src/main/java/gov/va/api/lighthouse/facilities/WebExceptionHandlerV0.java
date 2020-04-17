@@ -113,6 +113,22 @@ public final class WebExceptionHandlerV0 {
     return response(HttpStatus.NOT_FOUND, ex, error);
   }
 
+  @ExceptionHandler(Exception.class)
+  ResponseEntity<ApiError> handleSnafu(Exception ex) {
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Internal server error")
+                        .detail(ex.getMessage())
+                        .code("500")
+                        .status("500")
+                        .build()))
+            .build();
+    return response(HttpStatus.INTERNAL_SERVER_ERROR, ex, response);
+  }
+
   @ExceptionHandler(UnsatisfiedServletRequestParameterException.class)
   ResponseEntity<ApiError> handleUnsatisfiedServletRequestParameter(
       UnsatisfiedServletRequestParameterException ex) {

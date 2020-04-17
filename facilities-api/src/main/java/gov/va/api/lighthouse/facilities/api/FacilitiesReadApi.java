@@ -15,7 +15,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 public interface FacilitiesReadApi {
-
   @Operation(
       summary = "Retrieve a specific facility by ID",
       operationId = "getFacilityById",
@@ -74,10 +73,10 @@ public interface FacilitiesReadApi {
               in = ParameterIn.PATH,
               name = "id",
               description =
-                  "Facility ID, in the form `<prefix>_<id>`, where prefix is one of "
-                      + "\"vha\", \"vba\", \"nca\", or \"vc\"\n"
-                      + "for health, benefits, cemetery, "
-                      + "or Vet Center facilities respectively.\n",
+                  "Facility ID, in the form `<prefix>_<station>`, where prefix is one of "
+                      + "\"vha\", \"vba\", \"nca\", or \"vc\", "
+                      + "for health facility, benefits, cemetery, "
+                      + "or vet center, respectively.",
               required = true)
           String id);
 }

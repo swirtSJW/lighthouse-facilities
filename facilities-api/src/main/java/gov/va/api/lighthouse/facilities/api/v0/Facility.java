@@ -395,7 +395,6 @@ public final class Facility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Services {
-
     List<OtherService> other;
 
     List<HealthService> health;

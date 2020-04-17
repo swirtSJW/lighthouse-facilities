@@ -134,6 +134,25 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
+  public void snafu() {
+    assertThat(new WebExceptionHandlerV0().handleSnafu(new IllegalStateException("oh noez")))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Internal server error")
+                                    .detail("oh noez")
+                                    .code("500")
+                                    .status("500")
+                                    .build()))
+                        .build()));
+  }
+
+  @Test
   public void unsatisfiedServletRequestParameter() {
     assertThat(
             new WebExceptionHandlerV0()

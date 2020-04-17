@@ -18,11 +18,11 @@ public interface FacilitiesAllApi {
       tags = {"facilities"},
       summary = "Bulk download of all available facilities",
       description =
-          "Retrieve all available facilities in a single operation, formatted as either a GeoJSON\n"
+          "Retrieve all available facilities in a single operation, formatted as either a GeoJSON "
               + "FeatureCollection or as a CSV. Due to the complexity of the facility resource "
-              + "type, the CSV\nresponse contains a subset of available facility data - "
-              + "specifically it omits the\navailable services, patient satisfaction, "
-              + "and patient wait time data.\n",
+              + "type, the CSV response contains a subset of available facility data - "
+              + "specifically it omits the available services, patient satisfaction, "
+              + "and patient wait time data.",
       operationId = "getAllFacilities",
       parameters = {
         @Parameter(

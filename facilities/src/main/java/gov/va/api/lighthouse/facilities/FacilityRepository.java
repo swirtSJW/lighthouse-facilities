@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -130,7 +129,8 @@ public interface FacilityRepository
 
       List<Predicate> basePredicates = new ArrayList<>(2);
 
-      In<String> stationsInClause = criteriaBuilder.in(root.get("id").get("stationNumber"));
+      CriteriaBuilder.In<String> stationsInClause =
+          criteriaBuilder.in(root.get("id").get("stationNumber"));
       stationNumbers.forEach(stationsInClause::value);
       basePredicates.add(stationsInClause);
 
@@ -166,7 +166,7 @@ public interface FacilityRepository
         CriteriaBuilder criteriaBuilder) {
       List<Predicate> basePredicates = new ArrayList<>(2);
       if (!isEmpty(ids)) {
-        In<FacilityEntity.Pk> idsInClause = criteriaBuilder.in(root.get("id"));
+        CriteriaBuilder.In<FacilityEntity.Pk> idsInClause = criteriaBuilder.in(root.get("id"));
         ids.forEach(idsInClause::value);
         basePredicates.add(idsInClause);
       }
