@@ -179,8 +179,8 @@ public final class Facility {
     @JsonProperty("active_status")
     @Schema(
         description =
-            "This field is deprecated and will be removed in a future release."
-                + " Use operating_status.")
+            "This field is deprecated and replaced with \"operating_status\"."
+                + " It will be removed in version 1.0.0")
     ActiveStatus activeStatus;
 
     @Schema(example = "20")
@@ -265,7 +265,8 @@ public final class Facility {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(
       description =
-          "The overall status of the facility which can be"
+          "Current status of facility operations."
+              + "The overall status of the facility which can be"
               + " Normal Hours and Services,"
               + " Facility Notice,"
               + " Limited Hours and/or Services,"
@@ -274,11 +275,21 @@ public final class Facility {
   public static class OperatingStatus {
     @NotNull
     @JsonProperty(required = true)
-    @Schema(example = "NORMAL")
+    @Schema(
+        example = "NORMAL",
+        description =
+            "Status codes indicate normal hours/services,"
+                + " limited hours/services, closed operations,"
+                + " or published facility notices for visitors.")
     OperatingStatusCode code;
 
     @JsonProperty(value = "additional_info", required = false)
     @Size(max = 300)
+    @Schema(
+        description =
+            "Details of facility notices for visitors,"
+                + " such as messages about parking lot closures or"
+                + " floor visitation information.")
     String additionalInfo;
   }
 
