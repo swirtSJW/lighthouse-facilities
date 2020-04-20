@@ -18,7 +18,6 @@ import org.junit.experimental.categories.Category;
 
 @Slf4j
 public class CmsOverlayIT {
-
   @Rule public RequiresFacilities precondition = new RequiresFacilities();
 
   public void assertUpdate(
@@ -61,5 +60,29 @@ public class CmsOverlayIT {
     assertUpdate(OperatingStatusCode.LIMITED, message, ActiveStatus.A);
     assertUpdate(OperatingStatusCode.NOTICE, message, ActiveStatus.A);
     assertUpdate(OperatingStatusCode.NORMAL, message, ActiveStatus.A);
+  }
+
+  @Test
+  @Category(Cms.class)
+  public void validation() {
+    var id = SystemDefinitions.systemDefinition().facilitiesIds().facility();
+    StringBuilder longMessage = new StringBuilder();
+    for (int i = 1; i <= 301; i++) {
+      longMessage.append(i % 10);
+    }
+    log.info("Updating facility {} with invalid operating status", id);
+    OperatingStatus op =
+        OperatingStatus.builder()
+            .code(OperatingStatusCode.CLOSED)
+            .additionalInfo(longMessage.toString())
+            .build();
+    TestClients.facilities()
+        .post(
+            TestClients.facilities().service().urlWithApiPath()
+                + "v0/facilities/"
+                + id
+                + "/cms-overlay",
+            CmsOverlay.builder().operatingStatus(op).build())
+        .expect(400);
   }
 }

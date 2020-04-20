@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableMap;
 import gov.va.api.lighthouse.facilities.api.v0.ApiError;
@@ -11,13 +12,17 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.SneakyThrows;
 import lombok.Value;
 import org.junit.Test;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -63,6 +68,32 @@ public class WebExceptionHandlerV0Test {
                                     .title("Invalid field value")
                                     .detail("'x' is not a valid value for 'services'")
                                     .code("103")
+                                    .status("400")
+                                    .build()))
+                        .build()));
+  }
+
+  @Test
+  @SneakyThrows
+  public void methodArgumentNotValid() {
+    assertThat(
+            new WebExceptionHandlerV0()
+                .handleMethodArgumentNotValidException(
+                    new MethodArgumentNotValidException(
+                        new MethodParameter(Foo.class.getDeclaredMethod("equals", Object.class), 0),
+                        mock(BindingResult.class))))
+        .isEqualTo(
+            ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .headers(jsonHeaders())
+                .body(
+                    ApiError.builder()
+                        .errors(
+                            List.of(
+                                ApiError.ErrorMessage.builder()
+                                    .title("Method argument not valid")
+                                    .detail(
+                                        "Validation failed for argument [0] in public boolean gov.va.api.lighthouse.facilities.WebExceptionHandlerV0Test$Foo.equals(java.lang.Object): ")
+                                    .code("400")
                                     .status("400")
                                     .build()))
                         .build()));

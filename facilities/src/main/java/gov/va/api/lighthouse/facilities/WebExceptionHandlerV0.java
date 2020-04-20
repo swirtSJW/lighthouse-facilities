@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -56,6 +57,23 @@ public final class WebExceptionHandlerV0 {
                         .title("Invalid field value")
                         .detail(ex.getMessage())
                         .code("103")
+                        .status("400")
+                        .build()))
+            .build();
+    return response(HttpStatus.BAD_REQUEST, ex, response);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  ResponseEntity<ApiError> handleMethodArgumentNotValidException(
+      MethodArgumentNotValidException ex) {
+    ApiError response =
+        ApiError.builder()
+            .errors(
+                List.of(
+                    ApiError.ErrorMessage.builder()
+                        .title("Method argument not valid")
+                        .detail(ex.getMessage())
+                        .code("400")
                         .status("400")
                         .build()))
             .build();
