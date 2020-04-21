@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.tests;
 
+import static gov.va.api.health.sentinel.ExpectedResponse.logAllWithTruncatedBody;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
@@ -54,6 +55,7 @@ public class FacilitiesIT {
                 .accept(acceptHeader)
                 .header(SystemDefinitions.systemDefinition().apikeyAsHeader())
                 .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request))
+        .logAction(logAllWithTruncatedBody(2000))
         .expect(expectedStatus);
   }
 
