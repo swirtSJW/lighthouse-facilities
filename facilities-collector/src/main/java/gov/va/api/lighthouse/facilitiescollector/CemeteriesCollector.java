@@ -1,13 +1,16 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import com.google.common.base.Stopwatch;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Builder
+@Slf4j
 public class CemeteriesCollector {
   @NonNull private final String arcgisUrl;
 
@@ -39,6 +43,7 @@ public class CemeteriesCollector {
   /** Requests ArcGIS VA_Cemeteries_Facilities in application/json. */
   @SneakyThrows
   private ArcGisCemeteries requestArcGisCemeteries() {
+    final Stopwatch totalWatch = Stopwatch.createStarted();
     String url =
         UriComponentsBuilder.fromHttpUrl(
                 arcgisUrl
@@ -62,6 +67,12 @@ public class CemeteriesCollector {
         restTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
-    return JacksonConfig.createMapper().readValue(arcgisResponse, ArcGisCemeteries.class);
+    ArcGisCemeteries cemeteries =
+        JacksonConfig.createMapper().readValue(arcgisResponse, ArcGisCemeteries.class);
+    log.info(
+        "Loading cemeteries took {} millis for {} features",
+        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        cemeteries.features().size());
+    return cemeteries;
   }
 }

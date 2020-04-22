@@ -13,6 +13,7 @@ import lombok.Value;
 @Builder
 @Data
 public class ReloadResponse {
+  private int totalFacilities;
   private List<String> facilitiesCreated;
   private List<String> facilitiesUpdated;
   private List<String> facilitiesDeleted;

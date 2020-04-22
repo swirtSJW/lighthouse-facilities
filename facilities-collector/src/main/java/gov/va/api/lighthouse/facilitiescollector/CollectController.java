@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilitiescollector;
 import static com.google.common.base.Preconditions.checkState;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
@@ -13,8 +14,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @SuppressWarnings("WeakerAccess")
 @RequestMapping(value = "/collect", produces = "application/json")
+@Slf4j
 public class CollectController {
   private final InsecureRestTemplateProvider insecureRestTemplateProvider;
 
@@ -75,6 +79,7 @@ public class CollectController {
   /** Loads the websites csv file. */
   @SneakyThrows
   private static Map<String, String> loadWebsites() {
+    final Stopwatch totalWatch = Stopwatch.createStarted();
     try (InputStreamReader reader =
         new InputStreamReader(
             new ClassPathResource("websites.csv").getInputStream(), StandardCharsets.UTF_8)) {
@@ -88,7 +93,12 @@ public class CollectController {
         checkState(!map.containsKey(id), "Website %s duplicate", id);
         map.put(id, url);
       }
-      return Collections.unmodifiableMap(map);
+      Map<String, String> websites = Collections.unmodifiableMap(map);
+      log.info(
+          "Loading websites took {} millis for {} entries",
+          totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+          websites.size());
+      return websites;
     }
   }
 
@@ -144,6 +154,14 @@ public class CollectController {
             .websites(websites)
             .build()
             .collect();
+
+    log.info(
+        "Collected: Health {},  Benefits {},  Vet Centers {}, State Cemeteries {}, Cemeteries {}",
+        healths.size(),
+        benefits.size(),
+        vetCenters.size(),
+        stateCems.size(),
+        cemeteries.size());
 
     return CollectorFacilitiesResponse.builder()
         .facilities(

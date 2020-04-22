@@ -8,14 +8,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.google.common.base.Stopwatch;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Builder
+@Slf4j
 final class StateCemeteriesCollector {
   @NonNull final String baseUrl;
 
@@ -44,11 +49,24 @@ final class StateCemeteriesCollector {
   }
 
   Collection<Facility> stateCemeteries() {
-    return load().cem().stream()
-        .filter(Objects::nonNull)
-        .map(c -> StateCemeteryTransformer.builder().xml(c).websites(websites).build().toFacility())
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+    final Stopwatch totalWatch = Stopwatch.createStarted();
+    List<Facility> cemeteries =
+        load().cem().stream()
+            .filter(Objects::nonNull)
+            .map(
+                c ->
+                    StateCemeteryTransformer.builder()
+                        .xml(c)
+                        .websites(websites)
+                        .build()
+                        .toFacility())
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    log.info(
+        "Loading state cemeteries took {} millis for {} features",
+        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        cemeteries.size());
+    return cemeteries;
   }
 
   private static final class StringTrimModule extends SimpleModule {

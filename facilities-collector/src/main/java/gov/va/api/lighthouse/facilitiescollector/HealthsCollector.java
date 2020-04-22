@@ -119,6 +119,7 @@ final class HealthsCollector {
     ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
     Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
     ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
+
     return loadArcGis().features().stream()
         .filter(Objects::nonNull)
         .map(
@@ -160,7 +161,9 @@ final class HealthsCollector {
       map.put(upperCase("vha_" + entry.facilityId(), Locale.US), entry);
     }
     log.info(
-        "Loading AccessToCare took {} millis", totalWatch.stop().elapsed(TimeUnit.MILLISECONDS));
+        "Loading patient wait times took {} millis for {} entries",
+        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        entries.size());
     return ImmutableListMultimap.copyOf(map);
   }
 
@@ -187,7 +190,10 @@ final class HealthsCollector {
       }
       map.put(upperCase("vha_" + entry.facilityId(), Locale.US), entry);
     }
-    log.info("Loading AccessToPWT took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
+    log.info(
+        "Loading satisfaction scores took {} millis for {} entries",
+        watch.stop().elapsed(TimeUnit.MILLISECONDS),
+        entries.size());
     return ImmutableListMultimap.copyOf(map);
   }
 
@@ -215,7 +221,10 @@ final class HealthsCollector {
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
     ArcGisHealths result = JacksonConfig.createMapper().readValue(response, ArcGisHealths.class);
-    log.info("Loading VA ArcGIS took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
+    log.info(
+        "Loading health facilities took {} millis for {} features",
+        watch.stop().elapsed(TimeUnit.MILLISECONDS),
+        result.features().size());
     return result;
   }
 
@@ -226,8 +235,9 @@ final class HealthsCollector {
         "SELECT StationNumber, MHPhone, Extension FROM App.VHA_Mental_Health_Contact_Info",
         (RowCallbackHandler) (rs) -> putMentalHealthContact(rs, map));
     log.info(
-        "Loading mental health contact took {} millis",
-        watch.stop().elapsed(TimeUnit.MILLISECONDS));
+        "Loading mental health contacts took {} millis for {} entries",
+        watch.stop().elapsed(TimeUnit.MILLISECONDS),
+        map.size());
     return Collections.unmodifiableMap(map);
   }
 
@@ -238,7 +248,11 @@ final class HealthsCollector {
         "SELECT Sta6a, PrimaryStopCode, PrimaryStopCodeName, AvgWaitTimeNew"
             + " FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 999999)",
         (RowCallbackHandler) (rs) -> putStopCode(rs, map));
-    log.info("Loading stop codes took {} millis", watch.stop().elapsed(TimeUnit.MILLISECONDS));
+
+    log.info(
+        "Loading stop codes took {} millis for {} entries",
+        watch.stop().elapsed(TimeUnit.MILLISECONDS),
+        map.values().size());
     return ImmutableListMultimap.copyOf(map);
   }
 }

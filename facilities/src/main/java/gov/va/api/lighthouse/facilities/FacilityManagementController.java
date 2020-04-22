@@ -148,8 +148,8 @@ public class FacilityManagementController {
   /** Attempt to reload all facilities. */
   @GetMapping
   public ResponseEntity<ReloadResponse> reload() {
-    var response = ReloadResponse.start();
     var collectedFacilities = collector.collectFacilities();
+    var response = ReloadResponse.start().totalFacilities(collectedFacilities.facilities().size());
     return process(response, collectedFacilities);
   }
 

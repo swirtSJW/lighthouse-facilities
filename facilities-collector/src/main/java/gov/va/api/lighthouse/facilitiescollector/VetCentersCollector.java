@@ -1,14 +1,17 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import com.google.common.base.Stopwatch;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Builder
+@Slf4j
 final class VetCentersCollector {
   @NonNull final String baseUrl;
 
@@ -25,6 +29,7 @@ final class VetCentersCollector {
 
   @SneakyThrows
   private ArcGisVetCenters loadArcGis() {
+    final Stopwatch totalWatch = Stopwatch.createStarted();
     String url =
         UriComponentsBuilder.fromHttpUrl(
                 baseUrl
@@ -46,7 +51,13 @@ final class VetCentersCollector {
         restTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
-    return JacksonConfig.createMapper().readValue(response, ArcGisVetCenters.class);
+    ArcGisVetCenters vetCenters =
+        JacksonConfig.createMapper().readValue(response, ArcGisVetCenters.class);
+    log.info(
+        "Loading vet centers took {} millis for {} features",
+        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        vetCenters.features().size());
+    return vetCenters;
   }
 
   Collection<Facility> vetCenters() {

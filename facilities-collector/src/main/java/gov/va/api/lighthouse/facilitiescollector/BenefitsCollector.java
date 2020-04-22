@@ -1,12 +1,15 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import com.google.common.base.Stopwatch;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -14,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Builder
+@Slf4j
 public class BenefitsCollector {
   private final String arcgisUrl;
 
@@ -38,6 +42,7 @@ public class BenefitsCollector {
   /** Requests ArcGIS VA_Benefits_Facilities in application/json. */
   @SneakyThrows
   private ArcGisBenefits requestArcGisBenefits() {
+    final Stopwatch totalWatch = Stopwatch.createStarted();
     String url =
         UriComponentsBuilder.fromHttpUrl(
                 arcgisUrl
@@ -61,6 +66,12 @@ public class BenefitsCollector {
         restTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
-    return JacksonConfig.createMapper().readValue(arcgisResponse, ArcGisBenefits.class);
+    ArcGisBenefits benefits =
+        JacksonConfig.createMapper().readValue(arcgisResponse, ArcGisBenefits.class);
+    log.info(
+        "Loading benefits facilities took {} millis for {} features",
+        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        benefits.features().size());
+    return benefits;
   }
 }
