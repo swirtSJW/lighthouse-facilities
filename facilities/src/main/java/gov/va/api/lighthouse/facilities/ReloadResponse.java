@@ -16,7 +16,7 @@ public class ReloadResponse {
   private int totalFacilities;
   private List<String> facilitiesCreated;
   private List<String> facilitiesUpdated;
-  private List<String> facilitiesDeleted;
+  private List<String> facilitiesMissing;
   private List<Problem> problems;
   private Timing timing;
 
@@ -29,7 +29,7 @@ public class ReloadResponse {
         .timing(Timing.builder().start(Instant.now()).build())
         .facilitiesCreated(new CopyOnWriteArrayList<>())
         .facilitiesUpdated(new CopyOnWriteArrayList<>())
-        .facilitiesDeleted(new CopyOnWriteArrayList<>())
+        .facilitiesMissing(new CopyOnWriteArrayList<>())
         .problems(new CopyOnWriteArrayList<>())
         .build();
   }

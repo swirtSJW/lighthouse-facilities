@@ -76,6 +76,9 @@ public class FacilityEntity implements HasFacilityPayload {
 
   @Version private Integer version;
 
+  @Column(name = "missing_timestamp")
+  private Long missingTimestamp;
+
   /** Builder alternative that allows enums to be specified instead of strings. */
   @Builder(
       builderMethodName = "typeSafeBuilder",
@@ -89,7 +92,8 @@ public class FacilityEntity implements HasFacilityPayload {
       String facility,
       String cmsOverlay,
       Integer version,
-      Set<Facility.ServiceType> servicesTypes) {
+      Set<Facility.ServiceType> servicesTypes,
+      Long missingTimestamp) {
     this(
         id,
         zip,
@@ -99,7 +103,8 @@ public class FacilityEntity implements HasFacilityPayload {
         servicesTypes.stream().map(Object::toString).collect(Collectors.toSet()),
         facility,
         cmsOverlay,
-        version);
+        version,
+        missingTimestamp);
   }
 
   static Sort naturalOrder() {

@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
@@ -15,7 +17,9 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +93,7 @@ public class FacilityManagementControllerTest {
 
   @Test
   @SneakyThrows
-  public void collect_delete() {
+  public void collect_missing() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f1Old =
@@ -108,8 +112,35 @@ public class FacilityManagementControllerTest {
         .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
-    assertThat(response.facilitiesDeleted()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
-    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entity(f1)));
+    assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
+
+    List<FacilityEntity> findAll = ImmutableList.copyOf(facilityRepository.findAll());
+    assertThat(findAll).hasSize(4);
+    assertThat(findAll.get(0).missingTimestamp()).isNull();
+    assertThat(findAll.get(0).services()).isEqualTo(Set.of("MentalHealthCare"));
+    assertThat(findAll.get(1).missingTimestamp()).isNotNull();
+    assertThat(findAll.get(2).missingTimestamp()).isNotNull();
+    assertThat(findAll.get(3).missingTimestamp()).isNotNull();
+  }
+
+  @Test
+  @SneakyThrows
+  public void collect_missingComesBack() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+
+    Facility f1Old =
+        _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    facilityRepository.save(_entity(f1Old).missingTimestamp(Instant.now().toEpochMilli()));
+
+    when(collector.collectFacilities())
+        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
+
+    FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
+    assertThat(result.missingTimestamp()).isNull();
+    assertThat(result.services()).isEqualTo(Set.of("MentalHealthCare"));
   }
 
   @Test
@@ -216,7 +247,7 @@ public class FacilityManagementControllerTest {
         _facility("vha_f92", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
     CollectorFacilitiesResponse collected =
         CollectorFacilitiesResponse.builder().facilities(List.of(f1, f2)).build();
-    ReloadResponse response = _controller().upload(collected).getBody();
+    _controller().upload(collected);
     assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entity(f1), _entity(f2)));
   }
 

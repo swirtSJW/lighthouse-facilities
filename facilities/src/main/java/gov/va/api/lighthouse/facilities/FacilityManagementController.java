@@ -5,12 +5,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.google.common.collect.Sets;
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
 import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -52,6 +52,7 @@ public class FacilityManagementController {
     record.zip(zipOf(facility));
     record.servicesFromServiceTypes(serviceTypesOf(facility));
     record.facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(facility));
+    record.missingTimestamp(null);
     return record;
   }
 
@@ -100,34 +101,8 @@ public class FacilityManagementController {
   }
 
   @SneakyThrows
-  private void createNewEntity(ReloadResponse response, Pk pk, Facility facility) {
+  private void createNewEntity(ReloadResponse response, FacilityEntity.Pk pk, Facility facility) {
     updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
-  }
-
-  private void deleteStaleFacilities(
-      ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
-    Set<Pk> newIds =
-        collectedFacilities.facilities().stream()
-            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-    Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
-
-    Set<FacilityEntity.Pk> staleIds = Sets.difference(oldIds, newIds);
-
-    for (FacilityEntity.Pk id : staleIds) {
-      response.facilitiesDeleted().add(id.toIdString());
-      log.debug("Deleting facility {}", id.toIdString());
-      try {
-        facilityRepository.deleteById(id);
-      } catch (Exception e) {
-        log.error("Failed to delete facility record {}: {}", id.toIdString(), e.getMessage());
-        response
-            .problems()
-            .add(Problem.of(id.toIdString(), "Failed to delete record: " + e.getMessage()));
-        throw e;
-      }
-    }
   }
 
   private ResponseEntity<ReloadResponse> process(
@@ -136,13 +111,39 @@ public class FacilityManagementController {
     log.info("Facilities collected: {}", collectedFacilities.facilities().size());
     try {
       collectedFacilities.facilities().parallelStream().forEach(f -> updateFacility(response, f));
-      deleteStaleFacilities(response, collectedFacilities);
+      processMissingFacilities(response, collectedFacilities);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     } finally {
       response.timing().markComplete();
     }
     return ResponseEntity.ok(response);
+  }
+
+  private void processMissingFacilities(
+      ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
+    Set<FacilityEntity.Pk> newIds =
+        collectedFacilities.facilities().stream()
+            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+    Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
+    Set<FacilityEntity.Pk> staleIds = Sets.difference(oldIds, newIds);
+    for (FacilityEntity.Pk id : staleIds) {
+      response.facilitiesMissing().add(id.toIdString());
+      log.debug("Deleting facility {}", id.toIdString());
+      try {
+        FacilityEntity entity = facilityRepository.findById(id).get();
+        entity.missingTimestamp(Instant.now().toEpochMilli());
+        facilityRepository.save(entity);
+      } catch (Exception e) {
+        log.error("Failed to delete facility record {}: {}", id.toIdString(), e.getMessage());
+        response
+            .problems()
+            .add(Problem.of(id.toIdString(), "Failed to delete record: " + e.getMessage()));
+        throw e;
+      }
+    }
   }
 
   /** Attempt to reload all facilities. */

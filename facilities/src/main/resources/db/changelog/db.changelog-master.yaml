@@ -216,3 +216,16 @@ databaseChangeLog:
                   name: min_longitude
               - column:
                   name: max_longitude
+  - changeSet:
+      id: 6
+      author: shanktopus
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: missing_timestamp
+                type: bigint
+                constraints:
+                  nullable: true
