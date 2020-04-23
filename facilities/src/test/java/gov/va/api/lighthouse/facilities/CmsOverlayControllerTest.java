@@ -1,20 +1,22 @@
 package gov.va.api.lighthouse.facilities;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.lighthouse.facilities.ExceptionsV0.NotFound;
 import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class CmsOverlayControllerTest {
@@ -42,16 +44,18 @@ public class CmsOverlayControllerTest {
     FacilityEntity entity = FacilityEntity.builder().id(pk).build();
     when(repository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
-    controller().saveOverlay("vha_123", overlay);
+    ResponseEntity<Void> response = controller().saveOverlay("vha_123", overlay);
     entity.cmsOverlay(FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay));
     verify(repository).save(entity);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
-  void updateIsRejectedForUnknownStation() {
+  void updateIsSkippedForUnknownStation() {
     Pk pk = Pk.fromIdString("vha_666");
     when(repository.findById(pk)).thenReturn(Optional.empty());
-    Assertions.assertThatExceptionOfType(NotFound.class)
-        .isThrownBy(() -> controller().saveOverlay("vha_666", overlay()));
+    ResponseEntity<Void> response = controller().saveOverlay("vha_666", overlay());
+    verifyNoMoreInteractions(repository);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
   }
 }

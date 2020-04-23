@@ -54,6 +54,23 @@ public class CmsOverlayIT {
 
   @Test
   @Category(Cms.class)
+  public void badCmsFacility() {
+    var id = "vba_NOPE";
+    log.info("Updating invalid facility {} with cmsOverlay", id);
+    OperatingStatus ops =
+        OperatingStatus.builder().code(OperatingStatusCode.NOTICE).additionalInfo("Shrug").build();
+    TestClients.facilities()
+        .post(
+            TestClients.facilities().service().urlWithApiPath()
+                + "v0/facilities/"
+                + id
+                + "/cms-overlay",
+            CmsOverlay.builder().operatingStatus(ops).build())
+        .expect(202);
+  }
+
+  @Test
+  @Category(Cms.class)
   public void canApplyOverlay() {
     var message = getClass().getSimpleName() + " " + Instant.now();
     assertUpdate(OperatingStatusCode.CLOSED, message, ActiveStatus.T);

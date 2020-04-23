@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+
 import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import java.util.Optional;
@@ -7,7 +9,9 @@ import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @Builder
+@Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CmsOverlayController {
   private final FacilityRepository repository;
@@ -34,14 +39,17 @@ public class CmsOverlayController {
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows
-  public void saveOverlay(@PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
+  public ResponseEntity<Void> saveOverlay(
+      @PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
     Optional<FacilityEntity> existingEntity = repository.findById(Pk.fromIdString(id));
     if (existingEntity.isEmpty()) {
-      throw new ExceptionsV0.NotFound(id);
+      log.info("Received Unknown Facility ID ({}) for CMS Overlay", sanitize(id));
+      return ResponseEntity.accepted().build();
     }
     existingEntity
         .get()
         .cmsOverlay(FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay));
     repository.save(existingEntity.get());
+    return ResponseEntity.ok().build();
   }
 }
