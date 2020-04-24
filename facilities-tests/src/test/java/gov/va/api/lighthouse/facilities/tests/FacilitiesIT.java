@@ -38,6 +38,7 @@ public class FacilitiesIT {
   public void allAsJson() {
     final String request = "v0/facilities/all";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(GeoFacilitiesResponse.class);
   }
 
@@ -64,8 +65,8 @@ public class FacilitiesIT {
   public void readById() {
     final String facility = systemDefinition().facilitiesIds().facility();
     final String request = "v0/facilities/" + facility;
-    makeRequest("application/vnd.geo+json", request, 200)
-        .expectValid(GeoFacilityReadResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilityReadResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilityReadResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilityReadResponse.class);
   }
 
@@ -75,6 +76,7 @@ public class FacilitiesIT {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox;
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -86,6 +88,7 @@ public class FacilitiesIT {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&lat=" + latitude + "&long=" + longitude;
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
+    makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
   }
 
@@ -95,6 +98,7 @@ public class FacilitiesIT {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -104,6 +108,7 @@ public class FacilitiesIT {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&type=health";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -113,6 +118,7 @@ public class FacilitiesIT {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?" + bbox + "&type=health&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -122,6 +128,7 @@ public class FacilitiesIT {
     final String facilities = systemDefinition().facilitiesIds().facilitiesList();
     final String request = "v0/facilities?ids=" + facilities;
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -132,6 +139,7 @@ public class FacilitiesIT {
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/facilities?lat=" + latitude + "&long=" + longitude;
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -144,6 +152,7 @@ public class FacilitiesIT {
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&state=" + state;
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
+    makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
   }
 
@@ -156,6 +165,7 @@ public class FacilitiesIT {
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&ids=" + facilities;
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -167,6 +177,7 @@ public class FacilitiesIT {
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -177,6 +188,7 @@ public class FacilitiesIT {
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/facilities?lat=" + latitude + "&long=" + longitude + "&type=health";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -192,6 +204,7 @@ public class FacilitiesIT {
             + longitude
             + "&type=health&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -201,6 +214,7 @@ public class FacilitiesIT {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state;
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -211,6 +225,7 @@ public class FacilitiesIT {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?state=" + state + "&zip=" + zip;
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
+    makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
   }
 
@@ -220,6 +235,7 @@ public class FacilitiesIT {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -229,6 +245,7 @@ public class FacilitiesIT {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&type=health";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -238,6 +255,7 @@ public class FacilitiesIT {
     final String state = systemDefinition().facilitiesIds().state();
     final String request = "v0/facilities?state=" + state + "&type=health&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -247,6 +265,7 @@ public class FacilitiesIT {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip;
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -257,6 +276,7 @@ public class FacilitiesIT {
     final String bbox = systemDefinition().facilitiesIds().bbox();
     final String request = "v0/facilities?zip=" + zip + "&" + bbox;
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
+    makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
   }
 
@@ -266,6 +286,7 @@ public class FacilitiesIT {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -275,6 +296,7 @@ public class FacilitiesIT {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&type=health";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 
@@ -284,6 +306,7 @@ public class FacilitiesIT {
     final String zip = systemDefinition().facilitiesIds().zip();
     final String request = "v0/facilities?zip=" + zip + "&type=health&services[]=PrimaryCare";
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
   }
 }

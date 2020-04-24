@@ -118,7 +118,7 @@ public class FacilitiesController {
   @SneakyThrows
   @GetMapping(
       value = "/facilities/all",
-      produces = {"application/json", "application/vnd.geo+json"})
+      produces = {"application/json", "application/geo+json", "application/vnd.geo+json"})
   public String all() {
     StringBuilder sb = new StringBuilder();
     sb.append("{\"type\":\"FeatureCollection\",\"features\":[");
@@ -271,7 +271,7 @@ public class FacilitiesController {
   /** Get facilities by bounding box. */
   @GetMapping(
       value = "/facilities",
-      produces = "application/vnd.geo+json",
+      produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"bbox[]", "!lat", "!long", "!state", "!zip"})
   public GeoFacilitiesResponse geoFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
@@ -291,7 +291,7 @@ public class FacilitiesController {
   /** Get facilities by IDs. */
   @GetMapping(
       value = "/facilities",
-      produces = "application/vnd.geo+json",
+      produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!zip"})
   public GeoFacilitiesResponse geoFacilitiesByIds(
       @RequestParam(value = "ids") String ids,
@@ -309,7 +309,7 @@ public class FacilitiesController {
   /** Get facilities by coordinates. */
   @GetMapping(
       value = "/facilities",
-      produces = "application/vnd.geo+json",
+      produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "lat", "long", "!state", "!zip"})
   public GeoFacilitiesResponse geoFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
@@ -332,7 +332,7 @@ public class FacilitiesController {
   /** Get facilities by state. */
   @GetMapping(
       value = "/facilities",
-      produces = "application/vnd.geo+json",
+      produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "!lat", "!long", "state", "!zip"})
   public GeoFacilitiesResponse geoFacilitiesByState(
       @RequestParam(value = "state") String state,
@@ -354,7 +354,7 @@ public class FacilitiesController {
   /** Get facilities by zip. */
   @GetMapping(
       value = "/facilities",
-      produces = "application/vnd.geo+json",
+      produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "!lat", "!long", "!state", "zip"})
   public GeoFacilitiesResponse geoFacilitiesByZip(
       @RequestParam(value = "zip") String zip,
@@ -559,7 +559,9 @@ public class FacilitiesController {
   }
 
   /** Read geo facility. */
-  @GetMapping(value = "/facilities/{id}", produces = "application/vnd.geo+json")
+  @GetMapping(
+      value = "/facilities/{id}",
+      produces = {"application/geo+json", "application/vnd.geo+json"})
   public GeoFacilityReadResponse readGeoJson(@PathVariable("id") String id) {
     return GeoFacilityReadResponse.of(geoFacility(facility(entityById(id))));
   }

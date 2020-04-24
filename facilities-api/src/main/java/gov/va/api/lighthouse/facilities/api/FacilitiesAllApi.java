@@ -28,7 +28,13 @@ public interface FacilitiesAllApi {
         @Parameter(
             in = ParameterIn.HEADER,
             name = "Accept",
-            schema = @Schema(allowableValues = {"application/vnd.geo+json", "text/csv"}),
+            schema =
+                @Schema(
+                    allowableValues = {
+                      "application/geo+json",
+                      "application/vnd.geo+json",
+                      "text/csv"
+                    }),
             required = true)
       },
       security = @SecurityRequirement(name = "apikey"))
@@ -38,6 +44,9 @@ public interface FacilitiesAllApi {
       responseCode = "200",
       description = "Success",
       content = {
+        @Content(
+            mediaType = "application/geo+json",
+            schema = @Schema(implementation = GeoFacilitiesResponse.class)),
         @Content(
             mediaType = "application/vnd.geo+json",
             schema = @Schema(implementation = GeoFacilitiesResponse.class)),

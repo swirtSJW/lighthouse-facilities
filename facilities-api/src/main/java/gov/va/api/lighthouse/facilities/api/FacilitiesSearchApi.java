@@ -74,6 +74,9 @@ public interface FacilitiesSearchApi {
             mediaType = "application/json",
             schema = @Schema(implementation = FacilitiesResponse.class)),
         @Content(
+            mediaType = "application/geo+json",
+            schema = @Schema(implementation = GeoFacilitiesResponse.class)),
+        @Content(
             mediaType = "application/vnd.geo+json",
             schema = @Schema(implementation = GeoFacilitiesResponse.class))
       })

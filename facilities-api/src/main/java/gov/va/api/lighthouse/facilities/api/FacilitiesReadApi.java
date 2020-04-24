@@ -30,6 +30,9 @@ public interface FacilitiesReadApi {
             mediaType = "application/json",
             schema = @Schema(implementation = FacilityReadResponse.class)),
         @Content(
+            mediaType = "application/geo+json",
+            schema = @Schema(implementation = GeoFacilityReadResponse.class)),
+        @Content(
             mediaType = "application/vnd.geo+json",
             schema = @Schema(implementation = GeoFacilityReadResponse.class))
       })
