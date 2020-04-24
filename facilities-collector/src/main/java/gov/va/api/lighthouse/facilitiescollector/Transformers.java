@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,5 +64,9 @@ final class Transformers {
       return trimToNull(trim.substring(0, trim.length() - 1));
     }
     return trim;
+  }
+
+  static String withTrailingSlash(@NonNull String url) {
+    return url.endsWith("/") ? url : url + "/";
   }
 }

@@ -45,4 +45,10 @@ public class TransformersTest {
     assertThat(Transformers.phoneTrim("1 x")).isEqualTo("1");
     assertThat(Transformers.phoneTrim(" x ")).isNull();
   }
+
+  @Test
+  public void trailingSlash() {
+    assertThat(Transformers.withTrailingSlash("x/")).isEqualTo("x/");
+    assertThat(Transformers.withTrailingSlash("x")).isEqualTo("x/");
+  }
 }

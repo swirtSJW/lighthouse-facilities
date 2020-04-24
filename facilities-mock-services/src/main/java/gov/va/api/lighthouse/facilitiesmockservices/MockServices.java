@@ -19,6 +19,7 @@ import org.mockserver.mockserver.MockServer;
 import org.mockserver.model.Header;
 import org.mockserver.model.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,14 +34,39 @@ public class MockServices {
 
   @Autowired MockServicesOptions options;
 
+  /** Configurable health check statuses for the health collector. */
+  @Value("${mock.atc-status-code:200}")
+  int atcStatusCode;
+
+  @Value("${mock.atp-status-code:200}")
+  int atpStatusCode;
+
+  @Value("${mock.arcgis-status-code:200}")
+  int arcgisStatusCode;
+
+  @Value("${mock.va-arcgis-status-code:200}")
+  int vaArcgisStatusCode;
+
+  @Value("${mock.cems-status-code:200}")
+  int cemsStatusCode;
+
   /** The mock server itself. */
   private MockServer ms;
+
+  private void addAccessToCareHealthCheck(MockServerClient mock) {
+    mock.when(addQuery("/Shep/getRawData?location=FL"))
+        .respond(
+            response()
+                .withStatusCode(atpStatusCode)
+                .withHeader(contentApplicationJson())
+                .withBody(contentOf("/access-to-care-satisfaction.json")));
+  }
 
   private void addAccessToCareSatisfactionScores(MockServerClient mock) {
     mock.when(addQuery("/Shep/getRawData?location=*"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(atpStatusCode)
                 .withHeader(contentApplicationJson())
                 .withBody(contentOf("/access-to-care-satisfaction.json")));
   }
@@ -49,7 +75,7 @@ public class MockServices {
     mock.when(addQuery("/atcapis/v1.1/patientwaittimes"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(atcStatusCode)
                 .withHeader(contentApplicationJson())
                 .withBody(contentOf("/access-to-care-wait-times.json")));
   }
@@ -63,7 +89,7 @@ public class MockServices {
                     + "&returnDistinctValues=false&returnGeometry=true&where=1=1"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(arcgisStatusCode)
                 .withHeader(contentTextPlain())
                 .withBody(contentOf("/arcgis-benefits-facilities.json")));
   }
@@ -77,9 +103,19 @@ public class MockServices {
                     + "&returnGeometry=true&where=1=1"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(arcgisStatusCode)
                 .withHeader(contentTextPlain())
                 .withBody(contentOf("/arcgis-cemetaries.json")));
+  }
+
+  private void addArcGisHealthCheck(MockServerClient mock) {
+    mock.when(addQuery("/aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck?f=json"))
+        .respond(
+            response()
+                .withStatusCode(arcgisStatusCode)
+                .withHeader(contentTextPlain())
+                .withBody(
+                    "{\"currentVersion\":10.7,\"fullVersion\":\"10.7\",\"owningSystemUrl\":\"https://www.arcgis.com\",\"owningTenant\":\"aqgBd3l68G8hEFFE\",\"authInfo\":{\"isTokenBasedSecurity\":true,\"tokenServicesUrl\":\"https://www.arcgis.com/sharing/generateToken\"}}"));
   }
 
   private void addArcGisVetCentersFacilities(MockServerClient mock) {
@@ -91,7 +127,7 @@ public class MockServices {
                     + "&returnGeometry=true&where=1=1"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(arcgisStatusCode)
                 .withHeader(contentTextPlain())
                 .withBody(contentOf("/arcgis-vet-center-facilities.json")));
   }
@@ -163,9 +199,18 @@ public class MockServices {
     mock.when(addQuery("/cems/cems.xml"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(cemsStatusCode)
                 .withHeader(contentTextXml())
                 .withBody(contentOf("/cems.xml")));
+  }
+
+  private void addVaArcGisHealthCheck(MockServerClient mock) {
+    mock.when(addQuery("/server/rest/info/healthCheck?f=json"))
+        .respond(
+            response()
+                .withStatusCode(vaArcgisStatusCode)
+                .withHeader(contentApplicationJson())
+                .withBody("{\"success\":true}"));
   }
 
   private void addVaArcGisHealthFacilities(MockServerClient mock) {
@@ -178,7 +223,7 @@ public class MockServices {
                     + "&where=s_abbr!=%27VTCR%27%20AND%20s_abbr!=%27MVCTR%27"))
         .respond(
             response()
-                .withStatusCode(200)
+                .withStatusCode(vaArcgisStatusCode)
                 .withHeader(contentApplicationJson())
                 .withBody(contentOf("/va-arcgis-health-facilities.json")));
   }
@@ -208,12 +253,15 @@ public class MockServices {
     log.info("Starting mock services on port {}", options.getPort());
     ms = new MockServer(options.getPort());
     MockServerClient mock = new MockServerClient("localhost", options.getPort());
+    addAccessToCareHealthCheck(mock);
     addAccessToCareWaitTimes(mock);
     addAccessToCareSatisfactionScores(mock);
     addStateCemeteries(mock);
     addArcGisBenefitsFacilities(mock);
     addArcGisCemetaries(mock);
+    addArcGisHealthCheck(mock);
     addArcGisVetCentersFacilities(mock);
+    addVaArcGisHealthCheck(mock);
     addVaArcGisHealthFacilities(mock);
     addPssgDriveTimeBands(mock);
     addBing(mock);

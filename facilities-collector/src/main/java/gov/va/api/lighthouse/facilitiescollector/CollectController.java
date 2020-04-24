@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import static com.google.common.base.Preconditions.checkState;
+import static gov.va.api.lighthouse.facilitiescollector.Transformers.withTrailingSlash;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.google.common.base.Stopwatch;
@@ -69,11 +70,11 @@ public class CollectController {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
     this.restTemplate = restTemplate;
-    this.arcGisBaseUrl = trailingSlash(arcGisBaseUrl);
-    this.atcBaseUrl = trailingSlash(atcBaseUrl);
-    this.atpBaseUrl = trailingSlash(atpBaseUrl);
-    this.stateCemeteriesBaseUrl = trailingSlash(stateCemeteriesBaseUrl);
-    this.vaArcGisBaseUrl = trailingSlash(vaArcGisBaseUrl);
+    this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
+    this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
+    this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
+    this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
+    this.vaArcGisBaseUrl = withTrailingSlash(vaArcGisBaseUrl);
   }
 
   /** Loads the websites csv file. */
@@ -100,10 +101,6 @@ public class CollectController {
           websites.size());
       return websites;
     }
-  }
-
-  private static String trailingSlash(String url) {
-    return url.endsWith("/") ? url : url + "/";
   }
 
   /** Request Mapping for the /collect endpoint. */
