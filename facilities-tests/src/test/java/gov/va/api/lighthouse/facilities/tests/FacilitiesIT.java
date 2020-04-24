@@ -65,7 +65,8 @@ public class FacilitiesIT {
   public void readById() {
     final String facility = systemDefinition().facilitiesIds().facility();
     final String request = "v0/facilities/" + facility;
-    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilityReadResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200)
+        .expectValid(GeoFacilityReadResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilityReadResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilityReadResponse.class);
   }
