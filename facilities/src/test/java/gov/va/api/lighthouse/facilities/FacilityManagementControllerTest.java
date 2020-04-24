@@ -21,15 +21,16 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilityManagementControllerTest {
   @Autowired FacilityRepository facilityRepository;
 
@@ -67,11 +68,6 @@ public class FacilityManagementControllerTest {
   private FacilityEntity _entity(Facility fac) {
     return FacilityManagementController.populate(
         FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).build(), fac);
-  }
-
-  @Before
-  public void _resetDatabase() {
-    facilityRepository.deleteAll();
   }
 
   @Test

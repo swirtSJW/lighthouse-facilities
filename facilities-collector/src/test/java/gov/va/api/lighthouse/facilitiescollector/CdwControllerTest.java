@@ -12,10 +12,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class CdwControllerTest {
   @Autowired JdbcTemplate template;
 
@@ -27,8 +29,6 @@ public class CdwControllerTest {
 
   @Test
   public void mentalHealthContacts() {
-    template.execute("DROP TABLE IF EXISTS App.VHA_Mental_Health_Contact_Info");
-
     template.execute(
         "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
             + "StationNumber VARCHAR,"
@@ -41,9 +41,6 @@ public class CdwControllerTest {
 
   @Test
   public void stopCodes() {
-    template.execute("DROP ALIAS IF EXISTS App.VHA_Stop_Code_Wait_Times_Paginated");
-    template.execute("DROP TABLE IF EXISTS App.VHA_Stop_Code_Wait_Times");
-
     template.execute(
         "CREATE TABLE App.VHA_Stop_Code_Wait_Times ("
             + "Sta6a VARCHAR,"

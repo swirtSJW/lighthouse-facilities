@@ -29,11 +29,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class HealthsCollectorTest {
   @Autowired JdbcTemplate jdbcTemplate;
 
@@ -44,9 +46,6 @@ public class HealthsCollectorTest {
   }
 
   private void _initDatabase() {
-    jdbcTemplate.execute("DROP TABLE IF EXISTS App.VHA_Mental_Health_Contact_Info");
-    jdbcTemplate.execute("DROP ALIAS IF EXISTS App.VHA_Stop_Code_Wait_Times_Paginated");
-    jdbcTemplate.execute("DROP TABLE IF EXISTS App.VHA_Stop_Code_Wait_Times");
     jdbcTemplate.execute(
         "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
             + "StationNumber VARCHAR,"
