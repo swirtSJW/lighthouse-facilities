@@ -145,6 +145,7 @@ public class CollectorHealthController {
               .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
               .getStatusCode();
     } catch (ResourceAccessException e) {
+      log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
     return Health.status(new Status(statusCode.is2xxSuccessful() ? "UP" : "DOWN", name))
