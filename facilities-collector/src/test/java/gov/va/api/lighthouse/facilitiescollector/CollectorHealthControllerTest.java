@@ -29,6 +29,8 @@ import org.springframework.web.client.RestTemplate;
 @ExtendWith(MockitoExtension.class)
 public class CollectorHealthControllerTest {
 
+  @Mock InsecureRestTemplateProvider insecureRestTemplateProvider;
+
   @Mock RestTemplate restTemplate;
 
   static void assertStatus(Health overallStatus, ExpectedStatus expected) {
@@ -49,6 +51,7 @@ public class CollectorHealthControllerTest {
   @Test
   @SneakyThrows
   public void allHealthyBackendServicesReturns200AndHealthWithUpStatuses() {
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(ok());
@@ -94,6 +97,7 @@ public class CollectorHealthControllerTest {
 
   public CollectorHealthController controller() {
     return new CollectorHealthController(
+        insecureRestTemplateProvider,
         restTemplate,
         "http://arcgis",
         "http://atc",
@@ -113,6 +117,7 @@ public class CollectorHealthControllerTest {
   @Test
   @SneakyThrows
   public void oneOrMoreUnhealthyBackendServicesReturns503AndHealthWithDownStatuses() {
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(notOk());
@@ -153,6 +158,7 @@ public class CollectorHealthControllerTest {
   @Test
   @SneakyThrows
   public void servicesUnreachable() {
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenThrow(new ResourceAccessException("I/O error on GET request"));

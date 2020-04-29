@@ -5,6 +5,7 @@ import static gov.va.api.lighthouse.facilitiescollector.Transformers.withTrailin
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,6 +34,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 @RequestMapping(value = "/collector", produces = "application/json")
 public class CollectorHealthController {
+  private final InsecureRestTemplateProvider insecureRestTemplateProvider;
+
   private final RestTemplate restTemplate;
 
   private final String arcGisBaseUrl;
@@ -49,18 +51,33 @@ public class CollectorHealthController {
   private final AtomicBoolean hasCachedRecently = new AtomicBoolean(false);
 
   CollectorHealthController(
+      @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired RestTemplate restTemplate,
       @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
       @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
+    this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.restTemplate = restTemplate;
     this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
     this.vaArcGisBaseUrl = withTrailingSlash(vaArcGisBaseUrl);
+  }
+
+  private Supplier<Health> basicHealthCheck(String name, String url) {
+    return () -> testDownstreamHealth(restTemplate, name, url);
+  }
+
+  private Health buildHealthFromStatusCode(String name, HttpStatus statusCode) {
+    return Health.status(new Status(statusCode.is2xxSuccessful() ? "UP" : "DOWN", name))
+        .withDetail("name", name)
+        .withDetail("statusCode", statusCode.value())
+        .withDetail("status", statusCode)
+        .withDetail("time", Instant.now())
+        .build();
   }
 
   /** Clears the cache every 5 minutes. */
@@ -89,36 +106,35 @@ public class CollectorHealthController {
     restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     List<Health> downstreamServices =
         List.of(
-                Pair.of(
+                insecureHealthCheck(
                     "Access to Care",
                     UriComponentsBuilder.fromHttpUrl(atcBaseUrl + "atcapis/v1.1/patientwaittimes")
                         .toUriString()),
-                Pair.of(
+                basicHealthCheck(
                     "Access to PWT",
                     UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
                         .queryParam("location", "FL")
                         .build()
                         .toUriString()),
-                Pair.of(
+                basicHealthCheck(
                     "Public ArcGIS",
                     UriComponentsBuilder.fromHttpUrl(
                             arcGisBaseUrl + "aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck")
                         .queryParam("f", "json")
                         .toUriString()),
-                Pair.of(
+                insecureHealthCheck(
                     "State Cemeteries",
                     UriComponentsBuilder.fromHttpUrl(stateCemeteriesBaseUrl + "cems/cems.xml")
                         .toUriString()),
-                Pair.of(
+                insecureHealthCheck(
                     "VA ArcGIS",
                     UriComponentsBuilder.fromHttpUrl(
                             vaArcGisBaseUrl + "server/rest/info/healthCheck")
                         .queryParam("f", "json")
                         .toUriString()))
             .parallelStream()
-            .map(p -> testDownstreamHealth(p.getFirst(), p.getSecond()))
+            .map(Supplier::get)
             .collect(Collectors.toList());
-
     Health health =
         Health.status(
                 new Status(
@@ -137,22 +153,20 @@ public class CollectorHealthController {
     return ResponseEntity.ok(health);
   }
 
-  private Health testDownstreamHealth(String name, String url) {
+  private Supplier<Health> insecureHealthCheck(String name, String url) {
+    return () -> testDownstreamHealth(insecureRestTemplateProvider.restTemplate(), name, url);
+  }
+
+  private Health testDownstreamHealth(RestTemplate rt, String name, String url) {
     HttpStatus statusCode;
     try {
       statusCode =
-          restTemplate
-              .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
+          rt.exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
               .getStatusCode();
     } catch (ResourceAccessException e) {
       log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
-    return Health.status(new Status(statusCode.is2xxSuccessful() ? "UP" : "DOWN", name))
-        .withDetail("name", name)
-        .withDetail("statusCode", statusCode.value())
-        .withDetail("status", statusCode)
-        .withDetail("time", Instant.now())
-        .build();
+    return buildHealthFromStatusCode(name, statusCode);
   }
 }
