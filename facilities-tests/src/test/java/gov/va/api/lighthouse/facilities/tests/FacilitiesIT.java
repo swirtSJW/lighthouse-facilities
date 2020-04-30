@@ -17,6 +17,7 @@ import gov.va.api.lighthouse.facilities.tests.categories.SearchByLatLong;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByState;
 import gov.va.api.lighthouse.facilities.tests.categories.SearchByZip;
 import io.restassured.http.Method;
+import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,18 +29,13 @@ public class FacilitiesIT {
 
   @Test
   @Category({AllFacilities.class})
-  public void allAsCsv() {
+  public void all() {
     final String request = "v0/facilities/all";
-    makeRequest("text/csv", request, 200);
-  }
-
-  @Test
-  @Category({AllFacilities.class})
-  public void allAsJson() {
-    final String request = "v0/facilities/all";
-    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
+    makeRequest("text/csv", request, 200);
+    makeRequest(null, request, 200).expectValid(GeoFacilitiesResponse.class);
   }
 
   private ExpectedResponse makeRequest(
@@ -49,13 +45,16 @@ public class FacilitiesIT {
         TestClients.facilities().service().apiPath() + request,
         acceptHeader,
         expectedStatus);
+    RequestSpecification spec =
+        TestClients.facilities()
+            .service()
+            .requestSpecification()
+            .header(SystemDefinitions.systemDefinition().apikeyAsHeader());
+    if (acceptHeader != null) {
+      spec = spec.accept(acceptHeader);
+    }
     return ExpectedResponse.of(
-            TestClients.facilities()
-                .service()
-                .requestSpecification()
-                .accept(acceptHeader)
-                .header(SystemDefinitions.systemDefinition().apikeyAsHeader())
-                .request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request))
+            spec.request(Method.GET, TestClients.facilities().service().urlWithApiPath() + request))
         .logAction(logAllWithTruncatedBody(2000))
         .expect(expectedStatus);
   }
@@ -69,6 +68,7 @@ public class FacilitiesIT {
         .expectValid(GeoFacilityReadResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilityReadResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilityReadResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilityReadResponse.class);
   }
 
   @Test
@@ -79,6 +79,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -91,6 +92,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
+    makeRequest(null, request, 400).expectValid(ApiError.class);
   }
 
   @Test
@@ -101,6 +103,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -111,6 +114,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -121,6 +125,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -131,6 +136,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -142,6 +148,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -155,6 +162,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
+    makeRequest(null, request, 400).expectValid(ApiError.class);
   }
 
   @Test
@@ -168,6 +176,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -180,6 +189,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -191,6 +201,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -207,6 +218,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -217,6 +229,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -228,6 +241,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
+    makeRequest(null, request, 400).expectValid(ApiError.class);
   }
 
   @Test
@@ -238,6 +252,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -248,6 +263,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -258,6 +274,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -268,6 +285,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -279,6 +297,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/geo+json", request, 400).expectValid(ApiError.class);
     makeRequest("application/json", request, 400).expectValid(ApiError.class);
+    makeRequest(null, request, 400).expectValid(ApiError.class);
   }
 
   @Test
@@ -289,6 +308,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -299,6 +319,7 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 
   @Test
@@ -309,5 +330,6 @@ public class FacilitiesIT {
     makeRequest("application/vnd.geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/geo+json", request, 200).expectValid(GeoFacilitiesResponse.class);
     makeRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    makeRequest(null, request, 200).expectValid(FacilitiesResponse.class);
   }
 }
