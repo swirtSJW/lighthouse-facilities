@@ -1,12 +1,21 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static gov.va.api.lighthouse.facilitiescollector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilitiescollector.Transformers.isBlank;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.withTrailingSlash;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +28,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +50,8 @@ public class CollectorHealthController {
 
   private final String atcBaseUrl;
 
+  private final String atcCovidBaseUrl;
+
   private final String atpBaseUrl;
 
   private final String stateCemeteriesBaseUrl;
@@ -55,6 +65,7 @@ public class CollectorHealthController {
       @Autowired RestTemplate restTemplate,
       @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
+      @Value("${access-to-care.covid.url}") String atcCovidBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
       @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
@@ -62,13 +73,14 @@ public class CollectorHealthController {
     this.restTemplate = restTemplate;
     this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
+    this.atcCovidBaseUrl = withTrailingSlash(atcCovidBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
     this.vaArcGisBaseUrl = withTrailingSlash(vaArcGisBaseUrl);
   }
 
-  private Supplier<Health> basicHealthCheck(String name, String url) {
-    return () -> testDownstreamHealth(restTemplate, name, url);
+  private Supplier<Health> basicHealthCheck(HealthCheck healthCheck) {
+    return () -> testDownstreamHealth(healthCheck);
   }
 
   private Health buildHealthFromStatusCode(String name, HttpStatus statusCode) {
@@ -103,35 +115,58 @@ public class CollectorHealthController {
   public ResponseEntity<Health> collectorHealth() {
     hasCachedRecently.set(true);
     var now = Instant.now();
-    restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+    RestTemplate insecureTemplate = insecureRestTemplateProvider.restTemplate();
     List<Health> downstreamServices =
         List.of(
-                insecureHealthCheck(
-                    "Access to Care",
-                    UriComponentsBuilder.fromHttpUrl(atcBaseUrl + "atcapis/v1.1/patientwaittimes")
-                        .toUriString()),
                 basicHealthCheck(
-                    "Access to PWT",
-                    UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
-                        .queryParam("location", "FL")
-                        .build()
-                        .toUriString()),
+                    HealthCheck.builder()
+                        .restTemplate(insecureTemplate)
+                        .name("Access to Care")
+                        .url(
+                            UriComponentsBuilder.fromHttpUrl(
+                                    atcBaseUrl + "atcapis/v1.1/patientwaittimes")
+                                .toUriString())
+                        .build()),
                 basicHealthCheck(
-                    "Public ArcGIS",
-                    UriComponentsBuilder.fromHttpUrl(
-                            arcGisBaseUrl + "aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck")
-                        .queryParam("f", "json")
-                        .toUriString()),
-                insecureHealthCheck(
-                    "State Cemeteries",
-                    UriComponentsBuilder.fromHttpUrl(stateCemeteriesBaseUrl + "cems/cems.xml")
-                        .toUriString()),
-                insecureHealthCheck(
-                    "VA ArcGIS",
-                    UriComponentsBuilder.fromHttpUrl(
-                            vaArcGisBaseUrl + "server/rest/info/healthCheck")
-                        .queryParam("f", "json")
-                        .toUriString()))
+                    HealthCheck.builder()
+                        .restTemplate(insecureTemplate)
+                        .name("Access to PWT")
+                        .url(
+                            UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
+                                .queryParam("location", "FL")
+                                .build()
+                                .toUriString())
+                        .build()),
+                basicHealthCheck(
+                    HealthCheck.builder()
+                        .restTemplate(restTemplate)
+                        .name("Public ArcGIS")
+                        .url(
+                            UriComponentsBuilder.fromHttpUrl(
+                                    arcGisBaseUrl + "aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck")
+                                .queryParam("f", "json")
+                                .toUriString())
+                        .build()),
+                basicHealthCheck(
+                    HealthCheck.builder()
+                        .restTemplate(insecureTemplate)
+                        .name("State Cemeteries")
+                        .url(
+                            UriComponentsBuilder.fromHttpUrl(
+                                    stateCemeteriesBaseUrl + "cems/cems.xml")
+                                .toUriString())
+                        .build()),
+                basicHealthCheck(
+                    HealthCheck.builder()
+                        .restTemplate(insecureTemplate)
+                        .name("VA ArcGIS")
+                        .url(
+                            UriComponentsBuilder.fromHttpUrl(
+                                    vaArcGisBaseUrl + "server/rest/info/healthCheck")
+                                .queryParam("f", "json")
+                                .toUriString())
+                        .build()),
+                this::testAtcCovid19Health)
             .parallelStream()
             .map(Supplier::get)
             .collect(Collectors.toList());
@@ -153,20 +188,68 @@ public class CollectorHealthController {
     return ResponseEntity.ok(health);
   }
 
-  private Supplier<Health> insecureHealthCheck(String name, String url) {
-    return () -> testDownstreamHealth(insecureRestTemplateProvider.restTemplate(), name, url);
+  private ResponseEntity<String> requestHealth(RestTemplate rt, String url) {
+    return rt.exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
   }
 
-  private Health testDownstreamHealth(RestTemplate rt, String name, String url) {
+  /**
+   * For the covid-19 response, the code tests not only its ability to reach out and get a 200
+   * response from the endpoint, but also that it is able to deserialize the response to a
+   * AccessToCareCovid19Entry. This will allow us to respond faster if the response changes.
+   */
+  private Health testAtcCovid19Health() {
+    String url =
+        UriComponentsBuilder.fromHttpUrl(atcCovidBaseUrl + "vacovid19summary.json").toUriString();
     HttpStatus statusCode;
     try {
-      statusCode =
-          rt.exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
-              .getStatusCode();
-    } catch (ResourceAccessException e) {
+      ResponseEntity<String> response =
+          requestHealth(insecureRestTemplateProvider.restTemplate(), url);
+      statusCode = response.getStatusCode();
+      if (statusCode.value() == 200) {
+        // Do some custom validation here
+        List<AccessToCareCovid19Entry> covid =
+            JacksonConfig.createMapper()
+                .readValue(
+                    response.getBody(), new TypeReference<List<AccessToCareCovid19Entry>>() {})
+                .stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        for (AccessToCareCovid19Entry entry : covid) {
+          if (isBlank(entry.stationId()) || allBlank(entry.confirmedCases(), entry.deaths())) {
+            /*
+             * Not _technically_ the correct use,
+             * but it only gets printed as a string past this point
+             */
+            statusCode = HttpStatus.EXPECTATION_FAILED;
+          }
+        }
+      }
+    } catch (ResourceAccessException | JsonProcessingException e) {
       log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
-    return buildHealthFromStatusCode(name, statusCode);
+    return buildHealthFromStatusCode("Access to Care: COVID-19", statusCode);
+  }
+
+  private Health testDownstreamHealth(HealthCheck healthCheck) {
+    HttpStatus statusCode;
+    try {
+      statusCode = requestHealth(healthCheck.restTemplate(), healthCheck.url()).getStatusCode();
+    } catch (ResourceAccessException e) {
+      log.info("Exception occurred. GET {} message: {}", healthCheck.url(), e.getMessage());
+      statusCode = HttpStatus.SERVICE_UNAVAILABLE;
+    }
+    return buildHealthFromStatusCode(healthCheck.name(), statusCode);
+  }
+
+  @lombok.Value
+  @Builder
+  @AllArgsConstructor(access = AccessLevel.PRIVATE)
+  private static class HealthCheck {
+    RestTemplate restTemplate;
+
+    String name;
+
+    String url;
   }
 }

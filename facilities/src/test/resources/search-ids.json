@@ -276,7 +276,11 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "1"
+        "visn" : "1",
+        "covid19" : {
+          "confirmedCases" : 90,
+          "deaths" : 10
+        }
       }
     }
   ],

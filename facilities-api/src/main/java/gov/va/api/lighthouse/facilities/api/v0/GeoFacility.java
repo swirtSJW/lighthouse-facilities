@@ -98,5 +98,7 @@ public final class GeoFacility {
 
     @Schema(example = "20")
     String visn;
+
+    @Valid Facility.Covid19 covid19;
   }
 }

@@ -63,13 +63,23 @@ public class CollectContollerTest {
                         .writeValueAsString(ArcGisCemeteries.builder().build()))));
 
     when(insecureRestTemplate.exchange(
-            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+            startsWith("http://atc/atcapis"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
                 Optional.of(
                     JacksonConfig.createMapper()
                         .writeValueAsString(
                             List.of(AccessToCareEntry.builder().facilityId("x").build())))));
+
+    when(insecureRestTemplate.exchange(
+            startsWith("http://atc/covid"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(ResponseEntity.of(Optional.of("[{\"Facility\" : \"(x) Marks the spot\"}]")));
 
     when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
@@ -109,6 +119,7 @@ public class CollectContollerTest {
                     restTemplate,
                     "http://arcgis",
                     "http://atc",
+                    "http://atccovid",
                     "http://atp",
                     "http://statecems",
                     "http://vaarcgis")

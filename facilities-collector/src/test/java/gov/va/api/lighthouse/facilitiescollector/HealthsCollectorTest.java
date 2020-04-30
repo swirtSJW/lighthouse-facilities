@@ -127,6 +127,29 @@ public class HealthsCollectorTest {
                                     .build())))));
 
     when(insecureRestTemplate.exchange(
+            startsWith("http://covid"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    JacksonConfig.createMapper()
+                        .writeValueAsString(
+                            List.of(
+                                ImmutableMap.of(
+                                    "Facility Latitude",
+                                    "42.95122016",
+                                    "Facility Longitude",
+                                    "-78.81368285",
+                                    "VA Confirmed",
+                                    "56",
+                                    "VA Deaths",
+                                    "4",
+                                    "Facility Name",
+                                    "(666) UPSTATE NEW YORK HCS"))))));
+
+    when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
             ResponseEntity.of(
@@ -193,13 +216,18 @@ public class HealthsCollectorTest {
                                             .build()))
                                 .build()))));
 
+    /* Going straight to the collector doesnt add the trailing slash and
+     * causes issues with the mock responses. Therefore, these trailing slashes
+     * are necessary.
+     */
     assertThat(
             HealthsCollector.builder()
-                .atcBaseUrl("http://atc")
-                .atpBaseUrl("http://atp")
+                .atcBaseUrl("http://atc/")
+                .atcCovidBaseUrl("http://covid/")
+                .atpBaseUrl("http://atp/")
                 .jdbcTemplate(jdbcTemplate)
                 .insecureRestTemplate(insecureRestTemplate)
-                .vaArcGisBaseUrl("http://vaarcgis")
+                .vaArcGisBaseUrl("http://vaarcgis/")
                 .websites(ImmutableMap.of())
                 .build()
                 .healths())
@@ -282,6 +310,8 @@ public class HealthsCollectorTest {
                             .mobile(false)
                             .activeStatus(Facility.ActiveStatus.A)
                             .visn("21")
+                            .covid19(
+                                Facility.Covid19.builder().confirmedCases(56).deaths(4).build())
                             .build())
                     .build()));
   }

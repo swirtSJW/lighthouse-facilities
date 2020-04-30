@@ -38,6 +38,9 @@ public class MockServices {
   @Value("${mock.atc-status-code:200}")
   int atcStatusCode;
 
+  @Value("${mock.atc-covid-status-code:200}")
+  int atcCovid19StatusCode;
+
   @Value("${mock.atp-status-code:200}")
   int atpStatusCode;
 
@@ -52,6 +55,15 @@ public class MockServices {
 
   /** The mock server itself. */
   private MockServer ms;
+
+  private void addAccessToCareCovidSummary(MockServerClient mock) {
+    mock.when(addQuery("/vacovid19summary.json"))
+        .respond(
+            response()
+                .withStatusCode(atcCovid19StatusCode)
+                .withHeader(contentApplicationJson())
+                .withBody(contentOf("/access-to-care-covid19.json")));
+  }
 
   private void addAccessToCareHealthCheck(MockServerClient mock) {
     mock.when(addQuery("/Shep/getRawData?location=FL"))
@@ -254,6 +266,7 @@ public class MockServices {
     ms = new MockServer(options.getPort());
     MockServerClient mock = new MockServerClient("localhost", options.getPort());
     addAccessToCareHealthCheck(mock);
+    addAccessToCareCovidSummary(mock);
     addAccessToCareWaitTimes(mock);
     addAccessToCareSatisfactionScores(mock);
     addStateCemeteries(mock);

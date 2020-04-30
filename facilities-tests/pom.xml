@@ -145,6 +145,7 @@
                 <argument>-Dlogging.level.root=INFO</argument>
                 <argument>-Dloader=gov.va.api.lighthouse.facilitiescollector.Application</argument>
                 <argument>-Daccess-to-care.url=http://localhost:8666</argument>
+                <argument>-Daccess-to-care.covid.url=http://localhost:8666</argument>
                 <argument>-Daccess-to-pwt.url=http://localhost:8666</argument>
                 <argument>-Darc-gis.url=http://localhost:8666</argument>
                 <argument>-Dstate-cemeteries.url=http://localhost:8666</argument>

@@ -252,6 +252,7 @@ final class JacksonSerializersV0 {
       jgen.writeObjectField("active_status", value.activeStatus());
       jgen.writeObjectField("operating_status", value.operatingStatus());
       jgen.writeObjectField("visn", value.visn());
+      writeNonNull(jgen, "covid19", value.covid19());
       jgen.writeEndObject();
     }
   }
@@ -496,6 +497,7 @@ final class JacksonSerializersV0 {
       jgen.writeObjectField("active_status", value.activeStatus());
       jgen.writeObjectField("operating_status", value.operatingStatus());
       jgen.writeObjectField("visn", value.visn());
+      writeNonNull(jgen, "covid19", value.covid19());
       jgen.writeEndObject();
     }
   }

@@ -51,6 +51,8 @@ public class CollectController {
 
   private final String atcBaseUrl;
 
+  private final String atcCovidBaseUrl;
+
   private final String atpBaseUrl;
 
   private final String stateCemeteriesBaseUrl;
@@ -64,6 +66,7 @@ public class CollectController {
       @Autowired RestTemplate restTemplate,
       @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
+      @Value("${access-to-care.covid.url}") String atcCovidBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
       @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
@@ -72,6 +75,7 @@ public class CollectController {
     this.restTemplate = restTemplate;
     this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
+    this.atcCovidBaseUrl = withTrailingSlash(atcCovidBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
     this.vaArcGisBaseUrl = withTrailingSlash(vaArcGisBaseUrl);
@@ -112,6 +116,7 @@ public class CollectController {
     Collection<Facility> healths =
         HealthsCollector.builder()
             .atcBaseUrl(atcBaseUrl)
+            .atcCovidBaseUrl(atcCovidBaseUrl)
             .atpBaseUrl(atpBaseUrl)
             .jdbcTemplate(jdbcTemplate)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
