@@ -45,6 +45,10 @@ Additional documentation also available on
 * `PSSG Drive Band` documents are currently being used in place of the the PSSG Drive Time Bands
   service which is offline. This data has been extracted from the last successful PSSG collection
   process and manually uploaded to the `facilities` application through management APIs.
+* `Access to Care COVID-19 Scraper` extracts data from the public Access to Care COVID-19
+  national summary and stores it in an S3 bucket for usage by the `facilities-collector`.
+  Access to Care COVID-19 data has proven to be fluid and subject to change. The scraper
+  is extracted from Facilities to allow for very rapid updates.
 
 # Data Flow
 ![Data Flow](src/plantuml/data-flow.png)

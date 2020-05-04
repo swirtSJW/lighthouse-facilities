@@ -15,10 +15,18 @@ C -- WCSV : Faciliity website URLs
 C <-- ATC : Wait times and\nsatisfaction scores
 C <-- ARCGIS : Cemeteries,\nbenefit centers,\nand vet centers
 C <-- VAARC : Health facilities
-ETL --> CDW
+C <-- COVID19S3  : COVID 19 data
+
+ETL -up-> CDW
 ETL <-- CDW : Mental health\nphone numbers\nand Stop Codes
+SCRAPER <-up- ATC  : COVID 19 data
+SCRAPER -up-> COVID19S3 : COVID 19 data
+
 
 CMS -up-> F : Operating status
 CMS <-- F : Facility IDs
+
+CDW -[hidden]right- ATC
+
 
 @enduml
