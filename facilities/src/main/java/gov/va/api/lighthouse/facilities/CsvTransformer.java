@@ -46,7 +46,9 @@ final class CsvTransformer {
           "hours_thursday",
           "hours_friday",
           "hours_saturday",
-          "hours_sunday");
+          "hours_sunday",
+          "operating_status_code",
+          "operating_status_additional_info");
 
   @NonNull private final Facility facility;
 
@@ -68,6 +70,10 @@ final class CsvTransformer {
 
   private Optional<Facility.Hours> hours() {
     return attributes().map(a -> a.hours());
+  }
+
+  private Optional<Facility.OperatingStatus> operatingStatus() {
+    return attributes().map(a -> a.operatingStatus());
   }
 
   private Optional<Facility.Phone> phone() {
@@ -112,6 +118,8 @@ final class CsvTransformer {
         hours().map(h -> h.thursday()).orElse(""),
         hours().map(h -> h.friday()).orElse(""),
         hours().map(h -> h.saturday()).orElse(""),
-        hours().map(h -> h.sunday()).orElse(""));
+        hours().map(h -> h.sunday()).orElse(""),
+        operatingStatus().map(os -> os.code()).map(c -> c.toString()).orElse(""),
+        operatingStatus().map(os -> os.additionalInfo()).orElse(""));
   }
 }
