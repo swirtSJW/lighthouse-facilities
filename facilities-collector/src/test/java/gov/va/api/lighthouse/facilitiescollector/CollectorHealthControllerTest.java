@@ -62,9 +62,7 @@ public class CollectorHealthControllerTest {
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
-        .thenReturn(
-            ResponseEntity.ok(
-                "[{\"Facility\": \"(666) The Sixth Circle\", \"VA Confirmed\": \"96\", \"VA Deaths\": \"13\"}]"));
+        .thenReturn(notOk());
     when(restTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(ok());
@@ -166,7 +164,7 @@ public class CollectorHealthControllerTest {
         requireNonNull(response.getBody()),
         ExpectedStatus.builder()
             .accessToCare("DOWN")
-            .accessToCareCovid19("DOWN")
+            .accessToCareCovid19("UP")
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
@@ -215,7 +213,7 @@ public class CollectorHealthControllerTest {
         requireNonNull(response.getBody()),
         ExpectedStatus.builder()
             .accessToCare("DOWN")
-            .accessToCareCovid19("DOWN")
+            .accessToCareCovid19("UP")
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")

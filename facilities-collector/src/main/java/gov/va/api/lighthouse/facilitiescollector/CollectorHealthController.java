@@ -228,7 +228,12 @@ public class CollectorHealthController {
       log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
-    return buildHealthFromStatusCode("Access to Care: COVID-19", statusCode);
+    return Health.status(new Status("UP", "Access to Care: COVID-19"))
+        .withDetail("name", "Access to Care: COVID-19")
+        .withDetail("statusCode", statusCode.value())
+        .withDetail("status", statusCode)
+        .withDetail("time", Instant.now())
+        .build();
   }
 
   private Health testDownstreamHealth(HealthCheck healthCheck) {

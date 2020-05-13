@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
@@ -213,6 +214,7 @@ public final class Facility {
     @JsonProperty(value = "operating_status", required = true)
     OperatingStatus operatingStatus;
 
+    @JsonIgnore
     @Schema(description = "Status of COVID-19 cases and deaths.")
     @Valid
     Covid19 covid19;

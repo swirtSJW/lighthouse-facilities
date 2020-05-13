@@ -86,11 +86,7 @@
         "code" : "NORMAL",
         "additional_info" : "all day, every day"
       },
-      "visn" : "22",
-      "covid19" : {
-        "confirmedCases" : 10,
-        "deaths" : 2
-      }
+      "visn" : "22"
     }
   }
 }

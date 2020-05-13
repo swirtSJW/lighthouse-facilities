@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
@@ -99,6 +100,6 @@ public final class GeoFacility {
     @Schema(example = "20")
     String visn;
 
-    @Valid Facility.Covid19 covid19;
+    @JsonIgnore @Valid Facility.Covid19 covid19;
   }
 }
