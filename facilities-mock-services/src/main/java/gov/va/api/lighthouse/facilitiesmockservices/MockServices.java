@@ -217,12 +217,19 @@ public class MockServices {
   }
 
   private void addVaArcGisHealthCheck(MockServerClient mock) {
-    mock.when(addQuery("/server/rest/info/healthCheck?f=json"))
+    mock.when(
+            addQuery(
+                "/server/rest/services/VA/FacilitySitePoint_VHA/FeatureServer/0/query"
+                    + "?f=json&inSR=4326&outSR=4326&orderByFields=Sta_No&outFields=*"
+                    + "&resultOffset=0&returnCountOnly=false&returnDistinctValues=false"
+                    + "&returnGeometry=true"
+                    + "&where=s_abbr!=%27VTCR%27%20AND%20s_abbr!=%27MVCTR%27"
+                    + "&resultRecordCount=1"))
         .respond(
             response()
                 .withStatusCode(vaArcgisStatusCode)
                 .withHeader(contentApplicationJson())
-                .withBody("{\"success\":true}"));
+                .withBody(contentOf("/va-arcgis-health-facilities.json")));
   }
 
   private void addVaArcGisHealthFacilities(MockServerClient mock) {

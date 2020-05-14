@@ -156,17 +156,8 @@ public class CollectorHealthController {
                                     stateCemeteriesBaseUrl + "cems/cems.xml")
                                 .toUriString())
                         .build()),
-                basicHealthCheck(
-                    HealthCheck.builder()
-                        .restTemplate(insecureTemplate)
-                        .name("VA ArcGIS")
-                        .url(
-                            UriComponentsBuilder.fromHttpUrl(
-                                    vaArcGisBaseUrl + "server/rest/info/healthCheck")
-                                .queryParam("f", "json")
-                                .toUriString())
-                        .build()),
-                this::testAtcCovid19Health)
+                () -> testVaArcGisHealth(insecureTemplate),
+                () -> testAtcCovid19Health(insecureTemplate))
             .parallelStream()
             .map(Supplier::get)
             .collect(Collectors.toList());
@@ -197,13 +188,12 @@ public class CollectorHealthController {
    * response from the endpoint, but also that it is able to deserialize the response to a
    * AccessToCareCovid19Entry. This will allow us to respond faster if the response changes.
    */
-  private Health testAtcCovid19Health() {
+  private Health testAtcCovid19Health(RestTemplate insecureRestTemplate) {
     String url =
         UriComponentsBuilder.fromHttpUrl(atcCovidBaseUrl + "vacovid19summary.json").toUriString();
     HttpStatus statusCode;
     try {
-      ResponseEntity<String> response =
-          requestHealth(insecureRestTemplateProvider.restTemplate(), url);
+      ResponseEntity<String> response = requestHealth(insecureRestTemplate, url);
       statusCode = response.getStatusCode();
       if (statusCode.value() == 200) {
         // Do some custom validation here
@@ -245,6 +235,41 @@ public class CollectorHealthController {
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
     return buildHealthFromStatusCode(healthCheck.name(), statusCode);
+  }
+
+  private Health testVaArcGisHealth(RestTemplate insecureRestTemplate) {
+    String url =
+        UriComponentsBuilder.fromHttpUrl(
+                vaArcGisBaseUrl
+                    + "server/rest/services/VA/FacilitySitePoint_VHA/FeatureServer/0/query")
+            .queryParam("f", "json")
+            .queryParam("inSR", "4326")
+            .queryParam("outSR", "4326")
+            .queryParam("orderByFields", "Sta_No")
+            .queryParam("outFields", "*")
+            .queryParam("resultOffset", "0")
+            .queryParam("returnCountOnly", "false")
+            .queryParam("returnDistinctValues", "false")
+            .queryParam("returnGeometry", "true")
+            .queryParam("where", "s_abbr!='VTCR' AND s_abbr!='MVCTR'")
+            .queryParam("resultRecordCount", "1")
+            .build()
+            .toUriString();
+    HttpStatus statusCode;
+    try {
+      ResponseEntity<String> response = requestHealth(insecureRestTemplate, url);
+      statusCode = response.getStatusCode();
+      if (JacksonConfig.createMapper()
+          .readValue(response.getBody(), ArcGisHealths.class)
+          .features()
+          .isEmpty()) {
+        statusCode = HttpStatus.EXPECTATION_FAILED;
+      }
+    } catch (Exception e) {
+      log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
+      statusCode = HttpStatus.SERVICE_UNAVAILABLE;
+    }
+    return buildHealthFromStatusCode("VA ArcGIS", statusCode);
   }
 
   @lombok.Value

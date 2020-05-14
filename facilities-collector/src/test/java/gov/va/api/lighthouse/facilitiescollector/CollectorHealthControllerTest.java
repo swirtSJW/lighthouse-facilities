@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.when;
 
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -28,12 +29,12 @@ import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
 public class CollectorHealthControllerTest {
-
   @Mock InsecureRestTemplateProvider insecureRestTemplateProvider;
 
   @Mock RestTemplate restTemplate;
 
-  static void assertStatus(Health overallStatus, ExpectedStatus expected) {
+  @SuppressWarnings("unchecked")
+  private static void assertStatus(Health overallStatus, ExpectedStatus expected) {
     //noinspection unchecked
     Map<String, Status> serviceStatus =
         ((List<Health>) overallStatus.getDetails().get("downstreamServices"))
@@ -48,6 +49,14 @@ public class CollectorHealthControllerTest {
     assertThat(serviceStatus.get("State Cemeteries").getCode())
         .isEqualTo(expected.stateCemeteries());
     assertThat(serviceStatus.get("VA ArcGIS").getCode()).isEqualTo(expected.vaArcGis());
+  }
+
+  private static ResponseEntity<String> notOk() {
+    return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
+  }
+
+  private static ResponseEntity<String> ok() {
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @Test
@@ -83,7 +92,13 @@ public class CollectorHealthControllerTest {
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
-        .thenReturn(ok());
+        .thenReturn(
+            ResponseEntity.ok(
+                JacksonConfig.createMapper()
+                    .writeValueAsString(
+                        ArcGisHealths.builder()
+                            .features(List.of(ArcGisHealths.Feature.builder().build()))
+                            .build())));
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertStatus(
@@ -114,14 +129,6 @@ public class CollectorHealthControllerTest {
         "http://atp",
         "http://statecems",
         "http://vaarcgis");
-  }
-
-  private ResponseEntity<String> notOk() {
-    return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
-  }
-
-  private ResponseEntity<String> ok() {
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @Test
@@ -157,7 +164,7 @@ public class CollectorHealthControllerTest {
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
-        .thenReturn(ok());
+        .thenReturn(notOk());
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertStatus(
@@ -168,7 +175,7 @@ public class CollectorHealthControllerTest {
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
-            .vaArcGis("UP")
+            .vaArcGis("DOWN")
             .build());
   }
 
@@ -206,7 +213,10 @@ public class CollectorHealthControllerTest {
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
-        .thenReturn(ok());
+        .thenReturn(
+            ResponseEntity.ok(
+                JacksonConfig.createMapper().writeValueAsString(ArcGisHealths.builder().build())));
+
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertStatus(
@@ -217,7 +227,7 @@ public class CollectorHealthControllerTest {
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
-            .vaArcGis("UP")
+            .vaArcGis("DOWN")
             .build());
   }
 
