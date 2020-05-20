@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
+
 import com.google.common.base.Stopwatch;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -30,6 +32,7 @@ public class CemeteriesCollector {
   @SneakyThrows
   public Collection<Facility> collect() {
     return requestArcGisCemeteries().features().stream()
+        .filter(c -> !equalsIgnoreCase(c.attributes().siteType(), "office"))
         .map(
             facility ->
                 CemeteriesTransformer.builder()

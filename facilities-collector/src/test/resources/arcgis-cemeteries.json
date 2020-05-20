@@ -49,6 +49,56 @@
         "x" : -73.72356499999995,
         "y" : 42.703844900000036
       }
+    },
+    {
+      "attributes" : {
+        "OBJECTID" : 85029,
+        "SITE_ID" : "775",
+        "CEMETERY_I" : "775",
+        "FULL_NAME" : "Oakland",
+        "SHORT_NAME" : null,
+        "SITE_TYPE" : "Office",
+        "SITE_STATUS" : "Open",
+        "SITE_OWNER" : "NCA",
+        "SITE_ADDRESS1" : "1301 Clay Street",
+        "SITE_ADDRESS2" : "Suite 1230 North",
+        "SITE_CITY" : "Oakland",
+        "SITE_STATE" : "CA",
+        "SITE_ZIP" : "94612-5209",
+        "SITE_COUNTRY" : "USA",
+        "MAIL_ADDRESS1" : "1301 Clay Street",
+        "MAIL_ADDRESS2" : "Suite 1230 North",
+        "MAIL_CITY" : "Oakland",
+        "MAIL_STATE" : "CA",
+        "MAIL_ZIP" : "94612-5209",
+        "MAIL_COUNTRY" : "USA",
+        "PHONE" : null,
+        "FAX" : null,
+        "VISITATION_HOURS_WEEKDAY" : null,
+        "VISITATION_HOURS_WEEKEND" : null,
+        "VISITATION_HOURS_COMMENT" : null,
+        "OFFICE_HOURS_WEEKDAY" : null,
+        "OFFICE_HOURS_WEEKEND" : null,
+        "OFFICE_HOURS_COMMENT" : null,
+        "SITE_SQFT" : null,
+        "GOVERNING_SITE_ID" : null,
+        "DISTRICT" : "MSN5",
+        "LATITUDE_DD" : 37.8045569,
+        "LONGITUDE_DD" : -122.2749904,
+        "POSITION_SRC" : "Geocoded",
+        "COMMENT" : null,
+        "ACTIVE" : 1,
+        "GlobalID" : "f773d107-3510-4826-8be6-cec8041c9545",
+        "created_user" : "BISL_GIS_ETL",
+        "created_date" : 1584410468000,
+        "last_edited_user" : null,
+        "last_edited_date" : null,
+        "Website_URL" : ""
+      },
+      "geometry" : {
+        "x" : -122.27499039999998,
+        "y" : 37.80455690000008
+      }
     }
   ]
 }
