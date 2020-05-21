@@ -81,7 +81,7 @@ public class CdwController {
   @RequestMapping(value = "/vast", produces = "application/json", method = RequestMethod.GET)
   public List<Map<String, String>> vast() {
     try {
-      return allResults("SELECT * FROM Etl.Vast");
+      return allResults("SELECT * FROM App.Vast");
     } catch (Exception ex) {
       throw new CdwException(ex);
     }
