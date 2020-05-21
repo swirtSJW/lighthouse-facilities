@@ -76,6 +76,17 @@ public class CdwController {
     }
   }
 
+  /** Health facilities and vet centers for debugging. */
+  @SneakyThrows
+  @RequestMapping(value = "/vast", produces = "application/json", method = RequestMethod.GET)
+  public List<Map<String, String>> vast() {
+    try {
+      return allResults("SELECT * FROM Etl.Vast");
+    } catch (Exception ex) {
+      throw new CdwException(ex);
+    }
+  }
+
   static final class CdwException extends RuntimeException {
     public CdwException(Throwable cause) {
       super(cause);
