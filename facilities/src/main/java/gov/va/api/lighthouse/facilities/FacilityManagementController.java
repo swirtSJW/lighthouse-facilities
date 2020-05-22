@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
@@ -14,6 +15,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -24,7 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @RequestMapping(
-    value = {"/internal/management/reload"},
+    value = {"/internal/management"},
     produces = {"application/json"})
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Builder
@@ -105,6 +109,49 @@ public class FacilityManagementController {
     updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
   }
 
+  /** Delete the cmsOverlay column from a facility entity by id. */
+  @DeleteMapping(value = "/facilities/{id}/cms-overlay")
+  public ResponseEntity<Void> deleteCmsOverlayById(@PathVariable("id") String id) {
+    Optional<FacilityEntity> entity = entityById(id);
+    if (entity.isEmpty()) {
+      log.info("Facility {} does not exist, ignoring request.", sanitize(id));
+      return ResponseEntity.accepted().build();
+    }
+    log.info("Removing cmsOverlay from facility {}", sanitize(id));
+    facilityRepository.save(entity.get().cmsOverlay(null));
+    return ResponseEntity.ok().build();
+  }
+
+  /** Delete a facility by id unless it has a cmsOverlay. */
+  @DeleteMapping(value = "/facilities/{id}")
+  public ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
+    Optional<FacilityEntity> entity = entityById(id);
+    if (entity.isEmpty()) {
+      log.info("Facility {} does not exist, ignoring request.", sanitize(id));
+      return ResponseEntity.accepted().build();
+    }
+
+    if (entity.get().cmsOverlay() != null) {
+      log.info("Failed to delete facility {}. cmsOverlay is not null.", sanitize(id));
+      return ResponseEntity.status(409)
+          .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
+    }
+
+    log.info("Deleting facility {}", sanitize(id));
+    facilityRepository.delete(entity.get());
+    return ResponseEntity.ok().build();
+  }
+
+  private Optional<FacilityEntity> entityById(String id) {
+    FacilityEntity.Pk pk = null;
+    try {
+      pk = FacilityEntity.Pk.fromIdString(id);
+    } catch (IllegalArgumentException ex) {
+      return Optional.empty();
+    }
+    return facilityRepository.findById(pk);
+  }
+
   private ResponseEntity<ReloadResponse> process(
       ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
     response.timing().markCompleteCollection();
@@ -147,7 +194,7 @@ public class FacilityManagementController {
   }
 
   /** Attempt to reload all facilities. */
-  @GetMapping
+  @GetMapping(value = "/reload")
   public ResponseEntity<ReloadResponse> reload() {
     var collectedFacilities = collector.collectFacilities();
     var response = ReloadResponse.start().totalFacilities(collectedFacilities.facilities().size());
@@ -200,7 +247,7 @@ public class FacilityManagementController {
   }
 
   /** Force feed a collector response. */
-  @PostMapping
+  @PostMapping(value = "/reload")
   @Loggable(arguments = false)
   public ResponseEntity<ReloadResponse> upload(
       @RequestBody CollectorFacilitiesResponse collectedFacilities) {

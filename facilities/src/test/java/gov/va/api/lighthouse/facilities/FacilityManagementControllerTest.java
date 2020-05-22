@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
@@ -58,6 +60,16 @@ public class FacilityManagementControllerTest {
         .build();
   }
 
+  private static CmsOverlay _overlay() {
+    return CmsOverlay.builder()
+        .operatingStatus(
+            Facility.OperatingStatus.builder()
+                .code(Facility.OperatingStatusCode.LIMITED)
+                .additionalInfo("Limited")
+                .build())
+        .build();
+  }
+
   private FacilityManagementController _controller() {
     return FacilityManagementController.builder()
         .collector(collector)
@@ -66,8 +78,15 @@ public class FacilityManagementControllerTest {
   }
 
   private FacilityEntity _entity(Facility fac) {
+    return _entityWithOverlay(fac, null);
+  }
+
+  @SneakyThrows
+  private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
+    String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
     return FacilityManagementController.populate(
-        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).build(), fac);
+        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).cmsOverlay(o).build(),
+        fac);
   }
 
   @Test
@@ -109,7 +128,6 @@ public class FacilityManagementControllerTest {
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
     assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
-
     List<FacilityEntity> findAll = ImmutableList.copyOf(facilityRepository.findAll());
     assertThat(findAll).hasSize(4);
     assertThat(findAll.get(0).missingTimestamp()).isNull();
@@ -124,19 +142,51 @@ public class FacilityManagementControllerTest {
   public void collect_missingComesBack() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
-
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     facilityRepository.save(_entity(f1Old).missingTimestamp(Instant.now().toEpochMilli()));
-
     when(collector.collectFacilities())
         .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
-
     FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.services()).isEqualTo(Set.of("MentalHealthCare"));
+  }
+
+  @Test
+  public void deleteFacilityByIdWithOverlay() {
+    Facility f =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    facilityRepository.save(_entityWithOverlay(f, _overlay()));
+    Integer status = _controller().deleteFacilityById("vha_f1").getStatusCodeValue();
+    assertThat(status).isEqualTo(409);
+    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entityWithOverlay(f, _overlay())));
+  }
+
+  @Test
+  public void deleteFacilityByIdWithoutOverlay() {
+    Facility f =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    facilityRepository.save(_entity(f));
+    Integer status = _controller().deleteFacilityById("vha_f1").getStatusCodeValue();
+    assertThat(status).isEqualTo(200);
+    assertThat(facilityRepository.findAll()).isEmpty();
+  }
+
+  @Test
+  public void deleteFacilityOverlayById() {
+    Facility f =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    facilityRepository.save(_entityWithOverlay(f, _overlay()));
+    Integer status = _controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue();
+    assertThat(status).isEqualTo(200);
+    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entityWithOverlay(f, null)));
+  }
+
+  @Test
+  public void deleteNonExistingFacilityByIdReturnsAccepted() {
+    assertThat(_controller().deleteFacilityById("vha_f1").getStatusCodeValue()).isEqualTo(202);
   }
 
   @Test
