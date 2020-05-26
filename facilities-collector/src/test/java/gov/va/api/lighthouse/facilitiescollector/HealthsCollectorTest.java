@@ -164,59 +164,39 @@ public class HealthsCollectorTest {
                                     .sliceEndDate("2019-06-20T10:41:00")
                                     .build())))));
 
-    when(insecureRestTemplate.exchange(
-            startsWith("http://vaarcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.of(
-                Optional.of(
-                    JacksonConfig.createMapper()
-                        .writeValueAsString(
-                            ArcGisHealths.builder()
-                                .features(
-                                    List.of(
-                                        ArcGisHealths.Feature.builder()
-                                            .geometry(
-                                                ArcGisHealths.Geometry.builder()
-                                                    .latitude(new BigDecimal("14.544080000000065"))
-                                                    .longitude(new BigDecimal("120.99139000000002"))
-                                                    .build())
-                                            .attributes(
-                                                ArcGisHealths.Attributes.builder()
-                                                    .stationNum("666")
-                                                    .name("Manila VA Clinic")
-                                                    .featureCode("OOS")
-                                                    .cocClassificationId("5")
-                                                    .address1("NOX3 Seafront Compound")
-                                                    .address2("1501 Roxas Boulevard")
-                                                    .municipality("Pasay City")
-                                                    .state("PH")
-                                                    .zip("01302")
-                                                    .zip4("0000")
-                                                    .monday("730AM-430PM")
-                                                    .tuesday("730AM-430PM")
-                                                    .wednesday("730AM-430PM")
-                                                    .thursday("730AM-430PM")
-                                                    .friday("730AM-430PM")
-                                                    .saturday("-")
-                                                    .sunday("-")
-                                                    .staPhone("632-550-3888 x")
-                                                    .staFax("632-310-5962 x")
-                                                    .afterHoursPhone("000-000-0000 x")
-                                                    .patientAdvocatePhone("632-550-3888 x3716")
-                                                    .enrollmentCoordinatorPhone(
-                                                        "632-550-3888 x3780")
-                                                    .pharmacyPhone("632-550-3888 x5029")
-                                                    .pod("A")
-                                                    .mobile(0)
-                                                    .visn("21")
-                                                    .build())
-                                            .build()))
-                                .build()))));
+    VastEntity entity =
+        VastEntity.builder()
+            .latitude(new BigDecimal("14.544080000000065"))
+            .longitude(new BigDecimal("120.99139000000002"))
+            .stationNumber("666")
+            .stationName("Manila VA Clinic")
+            .abbreviation("OOS")
+            .cocClassificationId("5")
+            .address1("NOX3 Seafront Compound")
+            .address2("1501 Roxas Boulevard")
+            .city("Pasay City")
+            .state("PH")
+            .zip("01302")
+            .zip4("0000")
+            .monday("730AM-430PM")
+            .tuesday("730AM-430PM")
+            .wednesday("730AM-430PM")
+            .thursday("730AM-430PM")
+            .friday("730AM-430PM")
+            .saturday("-")
+            .sunday("-")
+            .staPhone("632-550-3888 x")
+            .staFax("632-310-5962 x")
+            .afterHoursPhone("000-000-0000 x")
+            .patientAdvocatePhone("632-550-3888 x3716")
+            .enrollmentCoordinatorPhone("632-550-3888 x3780")
+            .pharmacyPhone("632-550-3888 x5029")
+            .pod("A")
+            .mobile(false)
+            .visn("21")
+            .build();
 
-    /* Going straight to the collector doesnt add the trailing slash and
+    /* Going straight to the collector doesn't add the trailing slash and
      * causes issues with the mock responses. Therefore, these trailing slashes
      * are necessary.
      */
@@ -227,7 +207,7 @@ public class HealthsCollectorTest {
                 .atpBaseUrl("http://atp/")
                 .jdbcTemplate(jdbcTemplate)
                 .insecureRestTemplate(insecureRestTemplate)
-                .vaArcGisBaseUrl("http://vaarcgis/")
+                .vastEntities(List.of(entity))
                 .websites(ImmutableMap.of())
                 .build()
                 .healths())
@@ -376,7 +356,7 @@ public class HealthsCollectorTest {
         .isEqualTo(
             List.of(
                 StopCode.builder()
-                    .stationNum("x")
+                    .stationNumber("x")
                     .code("000")
                     .name("foo")
                     .waitTimeNew(new BigDecimal("1.23"))
@@ -427,6 +407,6 @@ public class HealthsCollectorTest {
     ListMultimap<String, StopCode> map = ArrayListMultimap.create();
     HealthsCollector.putStopCode(rs, map);
     assertThat(map.get("VHA_X"))
-        .isEqualTo(List.of(StopCode.builder().stationNum("x").code("000").name("foo").build()));
+        .isEqualTo(List.of(StopCode.builder().stationNumber("x").code("000").name("foo").build()));
   }
 }

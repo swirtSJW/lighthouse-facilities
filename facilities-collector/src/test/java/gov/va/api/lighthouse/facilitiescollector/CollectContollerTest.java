@@ -91,17 +91,6 @@ public class CollectContollerTest {
                             List.of(AccessToPwtEntry.builder().facilityId("x").build())))));
 
     when(insecureRestTemplate.exchange(
-            startsWith("http://vaarcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.of(
-                Optional.of(
-                    JacksonConfig.createMapper()
-                        .writeValueAsString(ArcGisHealths.builder().build()))));
-
-    when(insecureRestTemplate.exchange(
             startsWith("http://statecems"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
@@ -117,12 +106,12 @@ public class CollectContollerTest {
                     insecureRestTemplateProvider,
                     mock(JdbcTemplate.class),
                     restTemplate,
+                    mock(VastRepository.class),
                     "http://arcgis",
                     "http://atc",
                     "http://atccovid",
                     "http://atp",
-                    "http://statecems",
-                    "http://vaarcgis")
+                    "http://statecems")
                 .collectFacilities())
         .isExactlyInstanceOf(CollectorFacilitiesResponse.class);
   }

@@ -13,13 +13,10 @@ public class HealthTransformerTest {
   private void assertClassification(String classificationId, String featureCode, String expected) {
     assertThat(
             HealthTransformer.builder()
-                .gis(
-                    ArcGisHealths.Feature.builder()
-                        .attributes(
-                            ArcGisHealths.Attributes.builder()
-                                .cocClassificationId(classificationId)
-                                .featureCode(featureCode)
-                                .build())
+                .vast(
+                    VastEntity.builder()
+                        .cocClassificationId(classificationId)
+                        .abbreviation(featureCode)
                         .build())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToCareCovid19(emptyMap())
@@ -36,7 +33,7 @@ public class HealthTransformerTest {
   public void classification() {
     assertThat(
             HealthTransformer.builder()
-                .gis(ArcGisHealths.Feature.builder().build())
+                .vast(new VastEntity())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToCareCovid19(emptyMap())
                 .accessToPwt(ArrayListMultimap.create())
@@ -81,7 +78,7 @@ public class HealthTransformerTest {
   public void empty() {
     assertThat(
             HealthTransformer.builder()
-                .gis(ArcGisHealths.Feature.builder().build())
+                .vast(new VastEntity())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToCareCovid19(emptyMap())
                 .accessToPwt(ArrayListMultimap.create())
@@ -99,10 +96,7 @@ public class HealthTransformerTest {
     sc.put("VHA_X", StopCode.builder().build());
     assertThat(
             HealthTransformer.builder()
-                .gis(
-                    ArcGisHealths.Feature.builder()
-                        .attributes(ArcGisHealths.Attributes.builder().stationNum("x").build())
-                        .build())
+                .vast(VastEntity.builder().stationNumber("x").build())
                 .accessToCare(atc)
                 .accessToCareCovid19(emptyMap())
                 .accessToPwt(atp)
@@ -117,10 +111,7 @@ public class HealthTransformerTest {
   private Facility.Covid19 getCovid(AccessToCareCovid19Entry entry) {
     Map<String, AccessToCareCovid19Entry> covidAtc = ImmutableMap.of("VHA_666", entry);
     return HealthTransformer.builder()
-        .gis(
-            ArcGisHealths.Feature.builder()
-                .attributes(ArcGisHealths.Attributes.builder().stationNum("666").build())
-                .build())
+        .vast(VastEntity.builder().stationNumber("666").build())
         .accessToCare(ArrayListMultimap.create())
         .accessToCareCovid19(covidAtc)
         .accessToPwt(ArrayListMultimap.create())

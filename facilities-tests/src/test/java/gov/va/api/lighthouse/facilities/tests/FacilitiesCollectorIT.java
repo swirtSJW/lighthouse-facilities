@@ -54,4 +54,11 @@ public class FacilitiesCollectorIT {
     var items = makeRequest("stop-code", 200).expectListOf(Map.class);
     assertThat(items.size()).isGreaterThan(1000);
   }
+
+  @Test
+  @Category({Collector.class})
+  public void vast() {
+    var items = makeRequest("vast", 200).expectListOf(Map.class);
+    assertThat(items.size()).isGreaterThan(1000);
+  }
 }

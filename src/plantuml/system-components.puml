@@ -13,7 +13,6 @@ C .. CXML
 C .. WCSV
 C -(0- ATC
 C -(0- ARCGIS
-C -(0- VAARC
 C -(0- COVID19S3
 ETL -up-> CDW
 ETL <-down- CDW

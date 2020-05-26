@@ -34,7 +34,6 @@ database "COVID-19 S3" as COVID19S3 <<utility>>
 rectangle "Access to Care" as ATC <<dependency>>
 rectangle "Content Management System" as CMS <<partner>>
 rectangle ArcGIS as ARCGIS <<dependency>>
-rectangle "VA ArcGIS" as VAARC <<dependency>>
 rectangle "Cemetery XML" as CXML <<document>>
 rectangle "Website CSV" as WCSV <<document>>
 rectangle "PSSG Drive Band" as BANDS <<document>>

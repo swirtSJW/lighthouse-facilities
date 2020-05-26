@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,7 +47,6 @@ public class CollectorHealthControllerTest {
     assertThat(serviceStatus.get("Public ArcGIS").getCode()).isEqualTo(expected.publicArcGIS());
     assertThat(serviceStatus.get("State Cemeteries").getCode())
         .isEqualTo(expected.stateCemeteries());
-    assertThat(serviceStatus.get("VA ArcGIS").getCode()).isEqualTo(expected.vaArcGis());
   }
 
   private static ResponseEntity<String> notOk() {
@@ -87,18 +85,7 @@ public class CollectorHealthControllerTest {
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(ok());
-    when(restTemplate.exchange(
-            startsWith("http://vaarcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.ok(
-                JacksonConfig.createMapper()
-                    .writeValueAsString(
-                        ArcGisHealths.builder()
-                            .features(List.of(ArcGisHealths.Feature.builder().build()))
-                            .build())));
+
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertStatus(
@@ -109,7 +96,6 @@ public class CollectorHealthControllerTest {
             .accessToPWT("UP")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
-            .vaArcGis("UP")
             .build());
   }
 
@@ -127,8 +113,7 @@ public class CollectorHealthControllerTest {
         "http://atc",
         "http://covid",
         "http://atp",
-        "http://statecems",
-        "http://vaarcgis");
+        "http://statecems");
   }
 
   @Test
@@ -159,12 +144,7 @@ public class CollectorHealthControllerTest {
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(ok());
-    when(restTemplate.exchange(
-            startsWith("http://vaarcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(notOk());
+
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertStatus(
@@ -175,7 +155,6 @@ public class CollectorHealthControllerTest {
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
-            .vaArcGis("DOWN")
             .build());
   }
 
@@ -208,14 +187,6 @@ public class CollectorHealthControllerTest {
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(ok());
-    when(restTemplate.exchange(
-            startsWith("http://vaarcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.ok(
-                JacksonConfig.createMapper().writeValueAsString(ArcGisHealths.builder().build())));
 
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
@@ -227,7 +198,6 @@ public class CollectorHealthControllerTest {
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
-            .vaArcGis("DOWN")
             .build());
   }
 
@@ -239,6 +209,5 @@ public class CollectorHealthControllerTest {
     String accessToPWT;
     String publicArcGIS;
     String stateCemeteries;
-    String vaArcGis;
   }
 }

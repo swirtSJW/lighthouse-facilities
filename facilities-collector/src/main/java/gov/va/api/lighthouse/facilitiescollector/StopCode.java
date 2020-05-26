@@ -17,7 +17,7 @@ final class StopCode {
 
   static final Set<String> DENTISTRY = Set.of("180");
 
-  String stationNum;
+  String stationNumber;
 
   String code;
 

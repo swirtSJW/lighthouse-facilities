@@ -45,17 +45,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 final class HealthsCollector {
   @NonNull final String atcBaseUrl;
 
+  @NonNull final String atcCovidBaseUrl;
+
   @NonNull final String atpBaseUrl;
 
   @NonNull final JdbcTemplate jdbcTemplate;
 
   @NonNull final RestTemplate insecureRestTemplate;
 
-  @NonNull final String vaArcGisBaseUrl;
-
   @NonNull final Map<String, String> websites;
 
-  @NonNull private final String atcCovidBaseUrl;
+  @NonNull final Collection<VastEntity> vastEntities;
 
   @SneakyThrows
   static void putMentalHealthContact(ResultSet resultSet, Map<String, String> map) {
@@ -111,7 +111,7 @@ final class HealthsCollector {
     map.put(
         upperCase("vha_" + stationNumber, Locale.US),
         StopCode.builder()
-            .stationNum(stationNumber)
+            .stationNumber(stationNumber)
             .code(code)
             .name(name)
             .waitTimeNew(waitNum)
@@ -124,12 +124,13 @@ final class HealthsCollector {
     ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
     Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
     ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
-    return loadArcGis().features().stream()
+    return vastEntities.stream()
         .filter(Objects::nonNull)
+        .filter(v -> !v.isVetCenter())
         .map(
-            gis ->
+            v ->
                 HealthTransformer.builder()
-                    .gis(gis)
+                    .vast(v)
                     .accessToCare(accessToCareEntries)
                     .accessToCareCovid19(accessToCareCovid19Entries)
                     .accessToPwt(accessToPwtEntries)
@@ -200,37 +201,6 @@ final class HealthsCollector {
         watch.stop().elapsed(TimeUnit.MILLISECONDS),
         entries.size());
     return ImmutableListMultimap.copyOf(map);
-  }
-
-  @SneakyThrows
-  private ArcGisHealths loadArcGis() {
-    Stopwatch watch = Stopwatch.createStarted();
-    String url =
-        UriComponentsBuilder.fromHttpUrl(
-                vaArcGisBaseUrl
-                    + "server/rest/services/VA/FacilitySitePoint_VHA/FeatureServer/0/query")
-            .queryParam("f", "json")
-            .queryParam("inSR", "4326")
-            .queryParam("outSR", "4326")
-            .queryParam("orderByFields", "Sta_No")
-            .queryParam("outFields", "*")
-            .queryParam("resultOffset", "0")
-            .queryParam("returnCountOnly", "false")
-            .queryParam("returnDistinctValues", "false")
-            .queryParam("returnGeometry", "true")
-            .queryParam("where", "s_abbr!='VTCR' AND s_abbr!='MVCTR'")
-            .build()
-            .toUriString();
-    String response =
-        insecureRestTemplate
-            .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
-            .getBody();
-    ArcGisHealths result = JacksonConfig.createMapper().readValue(response, ArcGisHealths.class);
-    log.info(
-        "Loading health facilities took {} millis for {} features",
-        watch.stop().elapsed(TimeUnit.MILLISECONDS),
-        result.features().size());
-    return result;
   }
 
   private Map<String, AccessToCareCovid19Entry> loadCovid19AccessToCare() {

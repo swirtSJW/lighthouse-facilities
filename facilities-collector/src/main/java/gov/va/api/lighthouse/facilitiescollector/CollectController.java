@@ -5,6 +5,7 @@ import static gov.va.api.lighthouse.facilitiescollector.Transformers.withTrailin
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
@@ -13,6 +14,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -35,17 +37,19 @@ import org.springframework.web.client.RestTemplate;
  * Request Mapping to collect all facility information and output it in application/json format for
  * easy parsing.
  */
+@Slf4j
 @Validated
 @RestController
 @SuppressWarnings("WeakerAccess")
 @RequestMapping(value = "/collect", produces = "application/json")
-@Slf4j
 public class CollectController {
   private final InsecureRestTemplateProvider insecureRestTemplateProvider;
 
   private final JdbcTemplate jdbcTemplate;
 
   private final RestTemplate restTemplate;
+
+  private final VastRepository vastRepository;
 
   private final String arcGisBaseUrl;
 
@@ -57,28 +61,26 @@ public class CollectController {
 
   private final String stateCemeteriesBaseUrl;
 
-  private final String vaArcGisBaseUrl;
-
   /** Autowired constructor. */
   public CollectController(
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
       @Autowired RestTemplate restTemplate,
+      @Autowired VastRepository vastRepository,
       @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-care.covid.url}") String atcCovidBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
-      @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
-      @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
+      @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
     this.restTemplate = restTemplate;
+    this.vastRepository = vastRepository;
     this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atcCovidBaseUrl = withTrailingSlash(atcCovidBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
-    this.vaArcGisBaseUrl = withTrailingSlash(vaArcGisBaseUrl);
   }
 
   /** Loads the websites csv file. */
@@ -112,6 +114,7 @@ public class CollectController {
   @GetMapping(value = "/facilities")
   public CollectorFacilitiesResponse collectFacilities() {
     Map<String, String> websites = loadWebsites();
+    Collection<VastEntity> vastEntities = loadVast();
 
     Collection<Facility> healths =
         HealthsCollector.builder()
@@ -120,7 +123,7 @@ public class CollectController {
             .atpBaseUrl(atpBaseUrl)
             .jdbcTemplate(jdbcTemplate)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
-            .vaArcGisBaseUrl(vaArcGisBaseUrl)
+            .vastEntities(vastEntities)
             .websites(websites)
             .build()
             .healths();
@@ -171,6 +174,16 @@ public class CollectController {
                 .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
                 .collect(Collectors.toList()))
         .build();
+  }
+
+  private List<VastEntity> loadVast() {
+    final Stopwatch watch = Stopwatch.createStarted();
+    ImmutableList<VastEntity> entities = ImmutableList.copyOf(vastRepository.findAll());
+    log.info(
+        "Loading vast took {} millis for {} entries",
+        watch.stop().elapsed(TimeUnit.MILLISECONDS),
+        entities.size());
+    return entities;
   }
 
   private enum WebsiteCsvHeaders {

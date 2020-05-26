@@ -43,7 +43,6 @@ configValue facilities-collector $PROFILE spring.datasource.password '<YourStron
 configValue facilities-collector $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
 configValue facilities-collector $PROFILE spring.datasource.username 'SA'
 configValue facilities-collector $PROFILE state-cemeteries.url 'http://localhost:8666'
-configValue facilities-collector $PROFILE va-arc-gis.url 'http://localhost:8666'
 
 makeConfig facilities $PROFILE
 configValue facilities $PROFILE bing.key 'unused'

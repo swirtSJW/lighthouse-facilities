@@ -47,9 +47,6 @@ public class MockServices {
   @Value("${mock.arcgis-status-code:200}")
   int arcgisStatusCode;
 
-  @Value("${mock.va-arcgis-status-code:200}")
-  int vaArcgisStatusCode;
-
   @Value("${mock.cems-status-code:200}")
   int cemsStatusCode;
 
@@ -106,7 +103,7 @@ public class MockServices {
                 .withBody(contentOf("/arcgis-benefits-facilities.json")));
   }
 
-  private void addArcGisCemetaries(MockServerClient mock) {
+  private void addArcGisCemeteries(MockServerClient mock) {
     mock.when(
             addQuery(
                 "/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer/0/query"
@@ -117,7 +114,7 @@ public class MockServices {
             response()
                 .withStatusCode(arcgisStatusCode)
                 .withHeader(contentTextPlain())
-                .withBody(contentOf("/arcgis-cemetaries.json")));
+                .withBody(contentOf("/arcgis-cemeteries.json")));
   }
 
   private void addArcGisHealthCheck(MockServerClient mock) {
@@ -216,37 +213,6 @@ public class MockServices {
                 .withBody(contentOf("/cems.xml")));
   }
 
-  private void addVaArcGisHealthCheck(MockServerClient mock) {
-    mock.when(
-            addQuery(
-                "/server/rest/services/VA/FacilitySitePoint_VHA/FeatureServer/0/query"
-                    + "?f=json&inSR=4326&outSR=4326&orderByFields=Sta_No&outFields=*"
-                    + "&resultOffset=0&returnCountOnly=false&returnDistinctValues=false"
-                    + "&returnGeometry=true"
-                    + "&where=s_abbr!=%27VTCR%27%20AND%20s_abbr!=%27MVCTR%27"
-                    + "&resultRecordCount=1"))
-        .respond(
-            response()
-                .withStatusCode(vaArcgisStatusCode)
-                .withHeader(contentApplicationJson())
-                .withBody(contentOf("/va-arcgis-health-facilities.json")));
-  }
-
-  private void addVaArcGisHealthFacilities(MockServerClient mock) {
-    mock.when(
-            addQuery(
-                "/server/rest/services/VA/FacilitySitePoint_VHA/FeatureServer/0/query"
-                    + "?f=json&inSR=4326&outSR=4326&orderByFields=Sta_No&outFields=*"
-                    + "&resultOffset=0&returnCountOnly=false&returnDistinctValues=false"
-                    + "&returnGeometry=true"
-                    + "&where=s_abbr!=%27VTCR%27%20AND%20s_abbr!=%27MVCTR%27"))
-        .respond(
-            response()
-                .withStatusCode(vaArcgisStatusCode)
-                .withHeader(contentApplicationJson())
-                .withBody(contentOf("/va-arcgis-health-facilities.json")));
-  }
-
   private Header contentApplicationJson() {
     return new Header("Content-Type", "application/json");
   }
@@ -278,11 +244,9 @@ public class MockServices {
     addAccessToCareSatisfactionScores(mock);
     addStateCemeteries(mock);
     addArcGisBenefitsFacilities(mock);
-    addArcGisCemetaries(mock);
+    addArcGisCemeteries(mock);
     addArcGisHealthCheck(mock);
     addArcGisVetCentersFacilities(mock);
-    addVaArcGisHealthCheck(mock);
-    addVaArcGisHealthFacilities(mock);
     addPssgDriveTimeBands(mock);
     addBing(mock);
     addHelp(mock);

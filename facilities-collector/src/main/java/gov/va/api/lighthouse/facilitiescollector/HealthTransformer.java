@@ -35,7 +35,7 @@ final class HealthTransformer {
   private static final Map<String, Facility.HealthService> HEALTH_SERVICES =
       initHealthServicesMap();
 
-  @NonNull private final ArcGisHealths.Feature gis;
+  @NonNull private final VastEntity vast;
 
   @NonNull private final ListMultimap<String, AccessToCareEntry> accessToCare;
 
@@ -104,12 +104,10 @@ final class HealthTransformer {
   }
 
   private Facility.ActiveStatus activeStatus() {
-    if (gis.attributes() == null || allBlank(gis.attributes().pod())) {
+    if (allBlank(vast.pod())) {
       return null;
     }
-    return gis.attributes().pod().equalsIgnoreCase("A")
-        ? Facility.ActiveStatus.A
-        : Facility.ActiveStatus.T;
+    return vast.pod().equalsIgnoreCase("A") ? Facility.ActiveStatus.A : Facility.ActiveStatus.T;
   }
 
   private Facility.Addresses address() {
@@ -139,48 +137,45 @@ final class HealthTransformer {
 
   private Facility.FacilityAttributes attributes() {
     if (allBlank(
-        name(),
+        vast.stationName(),
         classification(),
         website(),
-        latitude(),
-        longitude(),
+        vast.latitude(),
+        vast.longitude(),
         address(),
         phone(),
         hours(),
         services(),
         satisfaction(),
         waitTimes(),
-        mobile(),
+        vast.mobile(),
         activeStatus(),
-        visn(),
+        vast.visn(),
         covid19())) {
       return null;
     }
     return Facility.FacilityAttributes.builder()
-        .name(name())
+        .name(vast.stationName())
         .facilityType(Facility.FacilityType.va_health_facility)
         .classification(classification())
         .website(website())
-        .latitude(latitude())
-        .longitude(longitude())
+        .latitude(vast.latitude())
+        .longitude(vast.longitude())
         .address(address())
         .phone(phone())
         .hours(hours())
         .services(services())
         .satisfaction(satisfaction())
         .waitTimes(waitTimes())
-        .mobile(mobile())
+        .mobile(vast.mobile())
         .activeStatus(activeStatus())
-        .visn(visn())
+        .visn(vast.visn())
         .covid19(covid19())
         .build();
   }
 
   String classification() {
-    if (gis.attributes() == null) {
-      return null;
-    }
-    switch (trimToEmpty(gis.attributes().cocClassificationId())) {
+    switch (trimToEmpty(vast.cocClassificationId())) {
       case "1":
         return "VA Medical Center (VAMC)";
       case "2":
@@ -196,10 +191,10 @@ final class HealthTransformer {
       case "8":
         return "Extended Care Site (Community Living Center) (Stand-Alone)";
       default:
-        if (isNotBlank(gis.attributes().cocClassificationId())) {
-          return gis.attributes().cocClassificationId();
+        if (isNotBlank(vast.cocClassificationId())) {
+          return vast.cocClassificationId();
         }
-        return gis.attributes().featureCode();
+        return vast.abbreviation();
     }
   }
 
@@ -218,17 +213,13 @@ final class HealthTransformer {
   }
 
   private Facility.Hours hours() {
-    ArcGisHealths.Attributes attr = gis.attributes();
-    if (attr == null) {
-      return null;
-    }
-    String mon = hoursToClosed(attr.monday());
-    String tue = hoursToClosed(attr.tuesday());
-    String wed = hoursToClosed(attr.wednesday());
-    String thu = hoursToClosed(attr.thursday());
-    String fri = hoursToClosed(attr.friday());
-    String sat = hoursToClosed(attr.saturday());
-    String sun = hoursToClosed(attr.sunday());
+    String mon = hoursToClosed(vast.monday());
+    String tue = hoursToClosed(vast.tuesday());
+    String wed = hoursToClosed(vast.wednesday());
+    String thu = hoursToClosed(vast.thursday());
+    String fri = hoursToClosed(vast.friday());
+    String sat = hoursToClosed(vast.saturday());
+    String sun = hoursToClosed(vast.sunday());
     if (allBlank(mon, tue, wed, thu, fri, sat, sun)) {
       return null;
     }
@@ -244,49 +235,20 @@ final class HealthTransformer {
   }
 
   private String id() {
-    if (gis.attributes() == null || allBlank(gis.attributes().stationNum())) {
+    if (allBlank(vast.stationNumber())) {
       return null;
     }
-    return "vha_" + gis.attributes().stationNum();
-  }
-
-  private BigDecimal latitude() {
-    if (gis.geometry() == null) {
-      return null;
-    }
-    return gis.geometry().latitude();
-  }
-
-  private BigDecimal longitude() {
-    if (gis.geometry() == null) {
-      return null;
-    }
-    return gis.geometry().longitude();
-  }
-
-  private Boolean mobile() {
-    if (gis.attributes() == null || allBlank(gis.attributes().mobile())) {
-      return null;
-    }
-    return gis.attributes().mobile() == 1;
-  }
-
-  private String name() {
-    return gis.attributes() == null ? null : gis.attributes().name();
+    return "vha_" + vast.stationNumber();
   }
 
   private Facility.Phone phone() {
-    ArcGisHealths.Attributes attr = gis.attributes();
-    if (attr == null) {
-      return null;
-    }
-    String fax = phoneTrim(attr.staFax());
-    String main = phoneTrim(attr.staPhone());
-    String pharmacy = phoneTrim(attr.pharmacyPhone());
-    String afterHours = phoneTrim(attr.afterHoursPhone());
-    String patientAdvocate = phoneTrim(attr.patientAdvocatePhone());
-    String mentalHealth = phoneMentalHealth();
-    String enrollmentCoordinator = phoneTrim(attr.enrollmentCoordinatorPhone());
+    String fax = phoneTrim(vast.staFax());
+    String main = phoneTrim(vast.staPhone());
+    String pharmacy = phoneTrim(vast.pharmacyPhone());
+    String afterHours = phoneTrim(vast.afterHoursPhone());
+    String patientAdvocate = phoneTrim(vast.patientAdvocatePhone());
+    String mentalHealth = phoneTrim(mentalHealthPhoneNumbers.get(id()));
+    String enrollmentCoordinator = phoneTrim(vast.enrollmentCoordinatorPhone());
     if (allBlank(
         fax, main, pharmacy, afterHours, patientAdvocate, mentalHealth, enrollmentCoordinator)) {
       return null;
@@ -302,32 +264,19 @@ final class HealthTransformer {
         .build();
   }
 
-  private String phoneMentalHealth() {
-    return gis.attributes() == null ? null : phoneTrim(mentalHealthPhoneNumbers.get(id()));
-  }
-
   private Facility.Address physical() {
-    ArcGisHealths.Attributes attr = gis.attributes();
-    if (attr == null) {
-      return null;
-    }
     if (allBlank(
-        zip(),
-        attr.municipality(),
-        attr.state(),
-        attr.address2(),
-        attr.address1(),
-        attr.address3())) {
+        zip(), vast.city(), vast.state(), vast.address2(), vast.address1(), vast.address3())) {
       return null;
     }
     // address1 and address2 swapped
     return Facility.Address.builder()
         .zip(zip())
-        .city(attr.municipality())
-        .state(upperCase(attr.state(), Locale.US))
-        .address1(attr.address2())
-        .address2(attr.address1())
-        .address3(attr.address3())
+        .city(vast.city())
+        .state(upperCase(vast.state(), Locale.US))
+        .address1(vast.address2())
+        .address2(vast.address1())
+        .address3(vast.address3())
         .build();
   }
 
@@ -415,10 +364,6 @@ final class HealthTransformer {
         .build();
   }
 
-  private String visn() {
-    return gis.attributes() == null ? null : gis.attributes().visn();
-  }
-
   private Facility.WaitTimes waitTimes() {
     if (allBlank(waitTimesHealth(), atcEffectiveDate())) {
       return null;
@@ -445,11 +390,8 @@ final class HealthTransformer {
   }
 
   private String zip() {
-    if (gis.attributes() == null) {
-      return null;
-    }
-    String zip = gis.attributes().zip();
-    String zipPlus4 = gis.attributes().zip4();
+    String zip = vast.zip();
+    String zipPlus4 = vast.zip4();
     if (isNotBlank(zip) && isNotBlank(zipPlus4) && !zipPlus4.matches("^[0]+$")) {
       return zip + "-" + zipPlus4;
     }

@@ -56,8 +56,6 @@ public class CollectorHealthController {
 
   private final String stateCemeteriesBaseUrl;
 
-  private final String vaArcGisBaseUrl;
-
   private final AtomicBoolean hasCachedRecently = new AtomicBoolean(false);
 
   CollectorHealthController(
@@ -67,8 +65,7 @@ public class CollectorHealthController {
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-care.covid.url}") String atcCovidBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
-      @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl,
-      @Value("${va-arc-gis.url}") String vaArcGisBaseUrl) {
+      @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.restTemplate = restTemplate;
     this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
@@ -76,7 +73,6 @@ public class CollectorHealthController {
     this.atcCovidBaseUrl = withTrailingSlash(atcCovidBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
-    this.vaArcGisBaseUrl = withTrailingSlash(vaArcGisBaseUrl);
   }
 
   private Supplier<Health> basicHealthCheck(HealthCheck healthCheck) {
@@ -156,7 +152,6 @@ public class CollectorHealthController {
                                     stateCemeteriesBaseUrl + "cems/cems.xml")
                                 .toUriString())
                         .build()),
-                () -> testVaArcGisHealth(insecureTemplate),
                 () -> testAtcCovid19Health(insecureTemplate))
             .parallelStream()
             .map(Supplier::get)
@@ -235,41 +230,6 @@ public class CollectorHealthController {
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
     return buildHealthFromStatusCode(healthCheck.name(), statusCode);
-  }
-
-  private Health testVaArcGisHealth(RestTemplate insecureRestTemplate) {
-    String url =
-        UriComponentsBuilder.fromHttpUrl(
-                vaArcGisBaseUrl
-                    + "server/rest/services/VA/FacilitySitePoint_VHA/FeatureServer/0/query")
-            .queryParam("f", "json")
-            .queryParam("inSR", "4326")
-            .queryParam("outSR", "4326")
-            .queryParam("orderByFields", "Sta_No")
-            .queryParam("outFields", "*")
-            .queryParam("resultOffset", "0")
-            .queryParam("returnCountOnly", "false")
-            .queryParam("returnDistinctValues", "false")
-            .queryParam("returnGeometry", "true")
-            .queryParam("where", "s_abbr!='VTCR' AND s_abbr!='MVCTR'")
-            .queryParam("resultRecordCount", "1")
-            .build()
-            .toUriString();
-    HttpStatus statusCode;
-    try {
-      ResponseEntity<String> response = requestHealth(insecureRestTemplate, url);
-      statusCode = response.getStatusCode();
-      if (JacksonConfig.createMapper()
-          .readValue(response.getBody(), ArcGisHealths.class)
-          .features()
-          .isEmpty()) {
-        statusCode = HttpStatus.EXPECTATION_FAILED;
-      }
-    } catch (Exception e) {
-      log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
-      statusCode = HttpStatus.SERVICE_UNAVAILABLE;
-    }
-    return buildHealthFromStatusCode("VA ArcGIS", statusCode);
   }
 
   @lombok.Value

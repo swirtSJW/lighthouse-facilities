@@ -1,5 +1,8 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import com.google.common.base.Joiner;
 import com.google.common.collect.Streams;
 import java.io.File;
 import java.io.FileReader;
@@ -9,6 +12,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -164,6 +168,7 @@ public final class Populaterator {
     createAppSchema(connection);
     mentalHealthContacts(connection);
     stopCodes(connection);
+    vast(connection);
     connection.commit();
     connection.close();
     log("Good bye.");
@@ -228,6 +233,45 @@ public final class Populaterator {
                   + " RETURNS TABLE AS RETURN ( SELECT * from App.VHA_Stop_Code_Wait_Times )")
           .execute();
     }
+  }
+
+  @SneakyThrows
+  private void vast(Connection connection) {
+    log("Populating VAST health facilities and vet centers");
+    try (InputStreamReader reader =
+        new FileReader(
+            new File(baseDir() + "/src/test/resources/vast.csv"), StandardCharsets.UTF_8)) {
+      Iterator<CSVRecord> rowIt = CSVFormat.DEFAULT.parse(reader).iterator();
+      checkState(rowIt.hasNext());
+      CSVRecord headers = rowIt.next();
+      connection
+          .prepareStatement(
+              "CREATE TABLE App.Vast_Source ("
+                  + Streams.stream(headers)
+                      .map(h -> h + " VARCHAR(MAX)")
+                      .collect(Collectors.joining(","))
+                  + ")")
+          .execute();
+      while (rowIt.hasNext()) {
+        CSVRecord row = rowIt.next();
+        try (PreparedStatement statement =
+            connection.prepareStatement(
+                "INSERT INTO App.Vast_Source ("
+                    + Joiner.on(",").join(headers)
+                    + ") VALUES ("
+                    + Streams.stream(headers).map(h -> "?").collect(Collectors.joining(","))
+                    + ")")) {
+          int paramIndex = 1;
+          for (Object val : row) {
+            statement.setObject(
+                paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
+            paramIndex++;
+          }
+          statement.execute();
+        }
+      }
+    }
+    connection.prepareStatement("CREATE VIEW App.Vast AS SELECT * FROM App.Vast_Source").execute();
   }
 
   /** Defines DB in terms the Populator will need. */
