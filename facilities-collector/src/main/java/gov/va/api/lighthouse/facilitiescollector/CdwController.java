@@ -61,7 +61,7 @@ public class CdwController {
     try {
       return allResults("SELECT * FROM App.VHA_Mental_Health_Contact_Info");
     } catch (Exception ex) {
-      throw new CdwException(ex);
+      throw new CollectorExceptions.CdwException(ex);
     }
   }
 
@@ -72,7 +72,7 @@ public class CdwController {
     try {
       return allResults("SELECT * FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 999999)");
     } catch (Exception ex) {
-      throw new CdwException(ex);
+      throw new CollectorExceptions.CdwException(ex);
     }
   }
 
@@ -83,13 +83,7 @@ public class CdwController {
     try {
       return allResults("SELECT * FROM App.Vast");
     } catch (Exception ex) {
-      throw new CdwException(ex);
-    }
-  }
-
-  static final class CdwException extends RuntimeException {
-    public CdwException(Throwable cause) {
-      super(cause);
+      throw new CollectorExceptions.CdwException(ex);
     }
   }
 }

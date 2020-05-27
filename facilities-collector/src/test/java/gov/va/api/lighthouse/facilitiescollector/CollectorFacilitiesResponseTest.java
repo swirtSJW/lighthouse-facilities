@@ -11,8 +11,8 @@ import lombok.SneakyThrows;
 import org.junit.Test;
 
 public class CollectorFacilitiesResponseTest {
-
-  public void assertReadable(String json) throws java.io.IOException {
+  @SneakyThrows
+  public void assertReadable(String json) {
     CollectorFacilitiesResponse dm =
         createMapper()
             .readValue(getClass().getResourceAsStream(json), CollectorFacilitiesResponse.class);

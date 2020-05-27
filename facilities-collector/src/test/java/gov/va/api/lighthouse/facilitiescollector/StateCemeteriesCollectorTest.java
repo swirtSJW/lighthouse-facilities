@@ -62,7 +62,7 @@ public class StateCemeteriesCollectorTest {
                 .insecureRestTemplate(insecureRestTemplate)
                 .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
                 .build()
-                .stateCemeteries())
+                .collect())
         .isEqualTo(
             List.of(
                 Facility.builder()
@@ -103,5 +103,16 @@ public class StateCemeteriesCollectorTest {
                                     .build())
                             .build())
                     .build()));
+  }
+
+  @Test(expected = CollectorExceptions.StateCemeteriesCollectorException.class)
+  public void exception() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    StateCemeteriesCollector.builder()
+        .baseUrl("http://wrong")
+        .insecureRestTemplate(insecureRestTemplate)
+        .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
+        .build()
+        .collect();
   }
 }

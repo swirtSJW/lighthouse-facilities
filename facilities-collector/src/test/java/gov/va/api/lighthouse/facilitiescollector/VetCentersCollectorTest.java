@@ -72,7 +72,7 @@ public class VetCentersCollectorTest {
                 .restTemplate(restTemplate)
                 .websites(ImmutableMap.of())
                 .build()
-                .vetCenters())
+                .collect())
         .isEqualTo(
             List.of(
                 Facility.builder()
@@ -107,5 +107,16 @@ public class VetCentersCollectorTest {
                                     .build())
                             .build())
                     .build()));
+  }
+
+  @Test(expected = CollectorExceptions.VetCentersCollectorException.class)
+  public void exception() {
+    RestTemplate restTemplate = mock(RestTemplate.class);
+    VetCentersCollector.builder()
+        .baseUrl("http://wrong")
+        .restTemplate(restTemplate)
+        .websites(ImmutableMap.of())
+        .build()
+        .collect();
   }
 }

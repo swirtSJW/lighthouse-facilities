@@ -91,4 +91,15 @@ public class CemeteriesCollectorTest {
                             .build())
                     .build()));
   }
+
+  @Test(expected = CollectorExceptions.CemeteriesCollectorException.class)
+  public void exception() {
+    RestTemplate restTemplate = mock(RestTemplate.class);
+    CemeteriesCollector.builder()
+        .arcgisUrl("http://wrong:8080")
+        .restTemplate(restTemplate)
+        .websites(new HashMap<>())
+        .build()
+        .collect();
+  }
 }

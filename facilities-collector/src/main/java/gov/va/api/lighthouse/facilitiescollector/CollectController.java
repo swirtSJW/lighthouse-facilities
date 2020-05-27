@@ -83,7 +83,7 @@ public class CollectController {
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
   }
 
-  /** Loads the websites csv file. */
+  /** Loads the websites CSV file. */
   @SneakyThrows
   private static Map<String, String> loadWebsites() {
     final Stopwatch totalWatch = Stopwatch.createStarted();
@@ -109,12 +109,18 @@ public class CollectController {
     }
   }
 
-  /** Request Mapping for the /collect endpoint. */
+  /** Request mapping for the /collect endpoint. */
   @SneakyThrows
   @GetMapping(value = "/facilities")
   public CollectorFacilitiesResponse collectFacilities() {
-    Map<String, String> websites = loadWebsites();
-    Collection<VastEntity> vastEntities = loadVast();
+    Map<String, String> websites;
+    Collection<VastEntity> vastEntities;
+    try {
+      websites = loadWebsites();
+      vastEntities = loadVast();
+    } catch (Exception e) {
+      throw new CollectorExceptions.CollectorException(e);
+    }
 
     Collection<Facility> healths =
         HealthsCollector.builder()
@@ -126,7 +132,7 @@ public class CollectController {
             .vastEntities(vastEntities)
             .websites(websites)
             .build()
-            .healths();
+            .collect();
 
     Collection<Facility> stateCems =
         StateCemeteriesCollector.builder()
@@ -134,7 +140,7 @@ public class CollectController {
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .websites(websites)
             .build()
-            .stateCemeteries();
+            .collect();
 
     Collection<Facility> vetCenters =
         VetCentersCollector.builder()
@@ -142,7 +148,7 @@ public class CollectController {
             .restTemplate(restTemplate)
             .websites(websites)
             .build()
-            .vetCenters();
+            .collect();
 
     Collection<Facility> benefits =
         BenefitsCollector.builder()
@@ -177,10 +183,10 @@ public class CollectController {
   }
 
   private List<VastEntity> loadVast() {
-    final Stopwatch watch = Stopwatch.createStarted();
-    ImmutableList<VastEntity> entities = ImmutableList.copyOf(vastRepository.findAll());
+    Stopwatch watch = Stopwatch.createStarted();
+    List<VastEntity> entities = ImmutableList.copyOf(vastRepository.findAll());
     log.info(
-        "Loading vast took {} millis for {} entries",
+        "Loading VAST took {} millis for {} entries",
         watch.stop().elapsed(TimeUnit.MILLISECONDS),
         entities.size());
     return entities;

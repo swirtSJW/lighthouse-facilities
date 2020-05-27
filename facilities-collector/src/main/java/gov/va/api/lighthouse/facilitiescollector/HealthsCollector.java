@@ -118,29 +118,33 @@ final class HealthsCollector {
             .build());
   }
 
-  Collection<Facility> healths() {
-    ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
-    Map<String, AccessToCareCovid19Entry> accessToCareCovid19Entries = loadCovid19AccessToCare();
-    ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
-    Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
-    ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
-    return vastEntities.stream()
-        .filter(Objects::nonNull)
-        .filter(v -> !v.isVetCenter())
-        .map(
-            v ->
-                HealthTransformer.builder()
-                    .vast(v)
-                    .accessToCare(accessToCareEntries)
-                    .accessToCareCovid19(accessToCareCovid19Entries)
-                    .accessToPwt(accessToPwtEntries)
-                    .mentalHealthPhoneNumbers(mentalHealthPhoneNumbers)
-                    .stopCodesMap(stopCodesMap)
-                    .websites(websites)
-                    .build()
-                    .toFacility())
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+  Collection<Facility> collect() {
+    try {
+      ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
+      Map<String, AccessToCareCovid19Entry> accessToCareCovid19Entries = loadCovid19AccessToCare();
+      ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
+      Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
+      ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
+      return vastEntities.stream()
+          .filter(Objects::nonNull)
+          .filter(v -> !v.isVetCenter())
+          .map(
+              v ->
+                  HealthTransformer.builder()
+                      .vast(v)
+                      .accessToCare(accessToCareEntries)
+                      .accessToCareCovid19(accessToCareCovid19Entries)
+                      .accessToPwt(accessToPwtEntries)
+                      .mentalHealthPhoneNumbers(mentalHealthPhoneNumbers)
+                      .stopCodesMap(stopCodesMap)
+                      .websites(websites)
+                      .build()
+                      .toFacility())
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.HealthsCollectorException(e);
+    }
   }
 
   @SneakyThrows

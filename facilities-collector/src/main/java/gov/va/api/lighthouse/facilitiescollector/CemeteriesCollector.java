@@ -28,19 +28,22 @@ public class CemeteriesCollector {
 
   @NonNull private final RestTemplate restTemplate;
 
-  /** Collects and transforms all benefits into a list of facilities. */
-  @SneakyThrows
+  /** Collects and transforms all national cemeteries into a list of facilities. */
   public Collection<Facility> collect() {
-    return requestArcGisCemeteries().features().stream()
-        .filter(c -> !equalsIgnoreCase(c.attributes().siteType(), "office"))
-        .map(
-            facility ->
-                CemeteriesTransformer.builder()
-                    .arcgisFacility(facility)
-                    .csvWebsite(websites.get("nca_" + facility.attributes().siteId()))
-                    .build()
-                    .toFacility())
-        .collect(Collectors.toList());
+    try {
+      return requestArcGisCemeteries().features().stream()
+          .filter(c -> !equalsIgnoreCase(c.attributes().siteType(), "office"))
+          .map(
+              facility ->
+                  CemeteriesTransformer.builder()
+                      .arcgisFacility(facility)
+                      .csvWebsite(websites.get("nca_" + facility.attributes().siteId()))
+                      .build()
+                      .toFacility())
+          .collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.CemeteriesCollectorException(e);
+    }
   }
 
   /** Requests ArcGIS VA_Cemeteries_Facilities in application/json. */

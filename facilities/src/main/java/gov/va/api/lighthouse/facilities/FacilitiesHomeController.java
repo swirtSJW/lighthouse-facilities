@@ -1,9 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,20 +24,22 @@ public class FacilitiesHomeController {
   }
 
   /** Load openapi.json content as a string value. */
+  @SneakyThrows
   @SuppressWarnings("WeakerAccess")
   @Bean
-  public String openapiContent() throws IOException {
+  public String openapiContent() {
     try (InputStream is = openapi.getInputStream()) {
       return StreamUtils.copyToString(is, Charset.defaultCharset());
     }
   }
 
   /** OpenAPI Json. */
+  @SneakyThrows
   @GetMapping(
       value = {"/", "/docs/v0/api", "/v0/facilities/openapi.json"},
       produces = "application/json")
   @ResponseBody
-  public Object openapiJson() throws IOException {
+  public Object openapiJson() {
     return JacksonConfig.createMapper().readValue(openapiContent(), Object.class);
   }
 }

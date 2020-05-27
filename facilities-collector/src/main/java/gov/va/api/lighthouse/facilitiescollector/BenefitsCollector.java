@@ -26,17 +26,20 @@ public class BenefitsCollector {
   private final RestTemplate restTemplate;
 
   /** Collects and transforms all benefits into a list of facilities. */
-  @SneakyThrows
   public Collection<Facility> collect() {
-    return requestArcGisBenefits().features().stream()
-        .map(
-            facility ->
-                BenefitsTransformer.builder()
-                    .arcgisFacility(facility)
-                    .csvWebsite(websites.get("vba_" + facility.attributes().facilityNumber()))
-                    .build()
-                    .toFacility())
-        .collect(Collectors.toList());
+    try {
+      return requestArcGisBenefits().features().stream()
+          .map(
+              facility ->
+                  BenefitsTransformer.builder()
+                      .arcgisFacility(facility)
+                      .csvWebsite(websites.get("vba_" + facility.attributes().facilityNumber()))
+                      .build()
+                      .toFacility())
+          .collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.BenefitsCollectorException(e);
+    }
   }
 
   /** Requests ArcGIS VA_Benefits_Facilities in application/json. */

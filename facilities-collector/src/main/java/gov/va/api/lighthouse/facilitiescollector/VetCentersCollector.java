@@ -27,6 +27,20 @@ final class VetCentersCollector {
 
   @NonNull final Map<String, String> websites;
 
+  Collection<Facility> collect() {
+    try {
+      return loadArcGis().features().stream()
+          .filter(Objects::nonNull)
+          .map(
+              gis ->
+                  VetCenterTransformer.builder().gis(gis).websites(websites).build().toFacility())
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.VetCentersCollectorException(e);
+    }
+  }
+
   @SneakyThrows
   private ArcGisVetCenters loadArcGis() {
     final Stopwatch totalWatch = Stopwatch.createStarted();
@@ -58,13 +72,5 @@ final class VetCentersCollector {
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
         vetCenters.features().size());
     return vetCenters;
-  }
-
-  Collection<Facility> vetCenters() {
-    return loadArcGis().features().stream()
-        .filter(Objects::nonNull)
-        .map(gis -> VetCenterTransformer.builder().gis(gis).websites(websites).build().toFacility())
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
   }
 }

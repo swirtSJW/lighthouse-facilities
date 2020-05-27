@@ -99,4 +99,15 @@ public class BenefitsCollectorTest {
                             .build())
                     .build()));
   }
+
+  @Test(expected = CollectorExceptions.BenefitsCollectorException.class)
+  public void exception() {
+    RestTemplate restTemplate = mock(RestTemplate.class);
+    BenefitsCollector.builder()
+        .arcgisUrl("http://wrong:8080")
+        .restTemplate(restTemplate)
+        .websites(new HashMap<>())
+        .build()
+        .collect();
+  }
 }

@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -31,6 +33,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @DataJpaTest
@@ -96,6 +99,24 @@ public class HealthsCollectorTest {
             stationNum, code, name, wait));
   }
 
+  @Test(expected = CollectorExceptions.HealthsCollectorException.class)
+  public void atcException() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    when(insecureRestTemplate.exchange(
+            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+        .thenThrow(new RestClientException("oh noez"));
+    HealthsCollector.builder()
+        .atcBaseUrl("http://atc/")
+        .atcCovidBaseUrl("http://covid/")
+        .atpBaseUrl("http://atp/")
+        .vastEntities(emptyList())
+        .jdbcTemplate(jdbcTemplate)
+        .insecureRestTemplate(insecureRestTemplate)
+        .websites(emptyMap())
+        .build()
+        .collect();
+  }
+
   @Test
   @SneakyThrows
   @SuppressWarnings("unchecked")
@@ -106,7 +127,6 @@ public class HealthsCollectorTest {
     _saveStopCode("666", "124", "", "20");
     _saveStopCode("666", "180", "", "30");
     _saveStopCode("666", "411", "", "40");
-
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
@@ -125,7 +145,6 @@ public class HealthsCollectorTest {
                                     .urgentCare(true)
                                     .sliceEndDate("2020-03-02T00:00:00")
                                     .build())))));
-
     when(insecureRestTemplate.exchange(
             startsWith("http://covid"),
             eq(HttpMethod.GET),
@@ -148,7 +167,6 @@ public class HealthsCollectorTest {
                                     "4",
                                     "Facility Name",
                                     "(666) UPSTATE NEW YORK HCS"))))));
-
     when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
@@ -163,7 +181,6 @@ public class HealthsCollectorTest {
                                     .shepScore(new BigDecimal("0.9100000262260437"))
                                     .sliceEndDate("2019-06-20T10:41:00")
                                     .build())))));
-
     VastEntity entity =
         VastEntity.builder()
             .latitude(new BigDecimal("14.544080000000065"))
@@ -195,7 +212,6 @@ public class HealthsCollectorTest {
             .mobile(false)
             .visn("21")
             .build();
-
     /* Going straight to the collector doesn't add the trailing slash and
      * causes issues with the mock responses. Therefore, these trailing slashes
      * are necessary.
@@ -208,9 +224,9 @@ public class HealthsCollectorTest {
                 .jdbcTemplate(jdbcTemplate)
                 .insecureRestTemplate(insecureRestTemplate)
                 .vastEntities(List.of(entity))
-                .websites(ImmutableMap.of())
+                .websites(emptyMap())
                 .build()
-                .healths())
+                .collect())
         .isEqualTo(
             List.of(
                 Facility.builder()

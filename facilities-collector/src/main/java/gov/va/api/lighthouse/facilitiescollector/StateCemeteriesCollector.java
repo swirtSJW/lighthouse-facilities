@@ -35,6 +35,31 @@ final class StateCemeteriesCollector {
 
   @NonNull final Map<String, String> websites;
 
+  Collection<Facility> collect() {
+    try {
+      final Stopwatch totalWatch = Stopwatch.createStarted();
+      List<Facility> cemeteries =
+          load().cem().stream()
+              .filter(Objects::nonNull)
+              .map(
+                  c ->
+                      StateCemeteryTransformer.builder()
+                          .xml(c)
+                          .websites(websites)
+                          .build()
+                          .toFacility())
+              .filter(Objects::nonNull)
+              .collect(Collectors.toList());
+      log.info(
+          "Loading state cemeteries took {} millis for {} features",
+          totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+          cemeteries.size());
+      return cemeteries;
+    } catch (Exception e) {
+      throw new CollectorExceptions.StateCemeteriesCollectorException(e);
+    }
+  }
+
   @SneakyThrows
   private StateCemeteries load() {
     String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "cems/cems.xml").build().toUriString();
@@ -46,27 +71,6 @@ final class StateCemeteriesCollector {
         .registerModule(new StringTrimModule())
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .readValue(response, StateCemeteries.class);
-  }
-
-  Collection<Facility> stateCemeteries() {
-    final Stopwatch totalWatch = Stopwatch.createStarted();
-    List<Facility> cemeteries =
-        load().cem().stream()
-            .filter(Objects::nonNull)
-            .map(
-                c ->
-                    StateCemeteryTransformer.builder()
-                        .xml(c)
-                        .websites(websites)
-                        .build()
-                        .toFacility())
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-    log.info(
-        "Loading state cemeteries took {} millis for {} features",
-        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
-        cemeteries.size());
-    return cemeteries;
   }
 
   private static final class StringTrimModule extends SimpleModule {
