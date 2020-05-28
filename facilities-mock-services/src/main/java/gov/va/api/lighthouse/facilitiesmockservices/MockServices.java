@@ -127,20 +127,6 @@ public class MockServices {
                     "{\"currentVersion\":10.7,\"fullVersion\":\"10.7\",\"owningSystemUrl\":\"https://www.arcgis.com\",\"owningTenant\":\"aqgBd3l68G8hEFFE\",\"authInfo\":{\"isTokenBasedSecurity\":true,\"tokenServicesUrl\":\"https://www.arcgis.com/sharing/generateToken\"}}"));
   }
 
-  private void addArcGisVetCentersFacilities(MockServerClient mock) {
-    mock.when(
-            addQuery(
-                "/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VHA_VetCenters/FeatureServer/0/query"
-                    + "?f=json&inSR=4326&orderByFields=stationno&outFields=*&outSR=4326"
-                    + "&resultOffset=0&returnCountOnly=false&returnDistinctValues=false"
-                    + "&returnGeometry=true&where=1=1"))
-        .respond(
-            response()
-                .withStatusCode(arcgisStatusCode)
-                .withHeader(contentTextPlain())
-                .withBody(contentOf("/arcgis-vet-center-facilities.json")));
-  }
-
   private void addBing(MockServerClient mock) {
     mock.when(addQuery("/REST/v1/Locations"))
         .respond(
@@ -246,7 +232,6 @@ public class MockServices {
     addArcGisBenefitsFacilities(mock);
     addArcGisCemeteries(mock);
     addArcGisHealthCheck(mock);
-    addArcGisVetCentersFacilities(mock);
     addPssgDriveTimeBands(mock);
     addBing(mock);
     addHelp(mock);

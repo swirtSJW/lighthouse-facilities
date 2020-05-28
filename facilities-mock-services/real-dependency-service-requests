@@ -26,8 +26,6 @@ snatch "arcgis-benefits-facilities" "https://services3.arcgis.com/aqgBd3l68G8hEF
 
 snatch "arcgis-cemeteries" "https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer/0/query?f=json&inSR=4326&orderByFields=SITE_ID&outFields=*&outSR=4326&resultOffset=0&returnCountOnly=false&returnDistinctValues=false&returnGeometry=true&where=1=1"
 
-snatch "arcgis-vet-center-facilities" "https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VHA_VetCenters/FeatureServer/0/query?f=json&inSR=4326&orderByFields=stationno&outFields=*&outSR=4326&resultOffset=0&returnCountOnly=false&returnDistinctValues=false&returnGeometry=true&where=1=1"
-
 #Drive-time bands:
 snatch "pssg-drive-time-bands-0" "https://vhanflwebgistst.v08.med.va.gov/arcgis2/rest/services/Portal/MonthlyVAST_TTB/FeatureServer/0/query?f=json&inSR=4326&outSR=4326&orderByFields=Name&outFields=*&resultOffset=0&returnCountOnly=false&returnDistinctValues=false&returnGeometry=true&where=1=1&resultRecordCount=30"
 

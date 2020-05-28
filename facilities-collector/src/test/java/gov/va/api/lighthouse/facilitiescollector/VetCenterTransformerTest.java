@@ -11,7 +11,7 @@ public class VetCenterTransformerTest {
   public void empty() {
     assertThat(
             VetCenterTransformer.builder()
-                .gis(ArcGisVetCenters.Feature.builder().build())
+                .vast(new VastEntity())
                 .websites(emptyMap())
                 .build()
                 .toFacility())
@@ -19,10 +19,7 @@ public class VetCenterTransformerTest {
 
     assertThat(
             VetCenterTransformer.builder()
-                .gis(
-                    ArcGisVetCenters.Feature.builder()
-                        .attributes(ArcGisVetCenters.Attributes.builder().stationNo("x").build())
-                        .build())
+                .vast(VastEntity.builder().stationNumber("x").build())
                 .websites(emptyMap())
                 .build()
                 .toFacility())

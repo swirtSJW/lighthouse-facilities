@@ -9,15 +9,15 @@ TIMER --> F <<internal>> : Reload request
 F <-- C : Facilities
 F <--> DB : Facilities,operating status,\nand drive time bands
 F <- BANDS : Drive time bands
-C <-- CDW : Mental health\nphone numbers\nand stop codes
+C <-- CDW : Health facilities\nVeteran centers\nMental health\nphone numbers\nand Stop codes
 C <-- CXML : State managed\ncemeteries
 C -- WCSV : Faciliity website URLs
 C <-- ATC : Wait times and\nsatisfaction scores
-C <-- ARCGIS : Cemeteries,\nbenefit centers,\nand vet centers
+C <-- ARCGIS : Cemeteries and\nbenefit centers
 C <-- COVID19S3  : COVID 19 data
 
 ETL -up-> CDW
-ETL <-- CDW : Mental health\nphone numbers\nand Stop Codes
+ETL <-- CDW : Health facilities\nVeteran centers\nMental health\nphone numbers\nand Stop codes
 SCRAPER <-up- ATC  : COVID 19 data
 SCRAPER -up-> COVID19S3 : COVID 19 data
 

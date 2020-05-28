@@ -6,7 +6,6 @@ import static gov.va.api.lighthouse.facilitiescollector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Map;
 import lombok.Builder;
@@ -14,39 +13,44 @@ import lombok.NonNull;
 
 @Builder
 final class VetCenterTransformer {
-  @NonNull private final ArcGisVetCenters.Feature gis;
+  @NonNull private final VastEntity vast;
 
   @NonNull private final Map<String, String> websites;
 
   private Facility.Addresses address() {
-    ArcGisVetCenters.Attributes attr = gis.attributes();
     // address1 is repeat of station name
-    if (attr == null
-        || allBlank(attr.zip(), attr.city(), attr.state(), attr.address2(), attr.address3())) {
+    if (allBlank(vast.zip(), vast.city(), vast.state(), vast.address2(), vast.address3())) {
       return null;
     }
     return Facility.Addresses.builder()
         .physical(
             Facility.Address.builder()
-                .zip(attr.zip())
-                .city(attr.city())
-                .state(upperCase(attr.state(), Locale.US))
-                .address1(attr.address2())
-                .address2(attr.address3())
+                .zip(vast.zip())
+                .city(vast.city())
+                .state(upperCase(vast.state(), Locale.US))
+                .address1(vast.address2())
+                .address2(vast.address3())
                 .build())
         .build();
   }
 
   private Facility.FacilityAttributes attributes() {
-    if (allBlank(name(), website(), latitude(), longitude(), address(), phone(), hours())) {
+    if (allBlank(
+        vast.stationName(),
+        website(),
+        vast.latitude(),
+        vast.longitude(),
+        address(),
+        phone(),
+        hours())) {
       return null;
     }
     return Facility.FacilityAttributes.builder()
-        .name(name())
+        .name(vast.stationName())
         .facilityType(Facility.FacilityType.vet_center)
         .website(website())
-        .latitude(latitude())
-        .longitude(longitude())
+        .latitude(vast.latitude())
+        .longitude(vast.longitude())
         .address(address())
         .phone(phone())
         .hours(hours())
@@ -54,17 +58,13 @@ final class VetCenterTransformer {
   }
 
   private Facility.Hours hours() {
-    ArcGisVetCenters.Attributes attr = gis.attributes();
-    if (attr == null) {
-      return null;
-    }
-    String mon = hoursToClosed(attr.monday());
-    String tue = hoursToClosed(attr.tuesday());
-    String wed = hoursToClosed(attr.wednesday());
-    String thu = hoursToClosed(attr.thursday());
-    String fri = hoursToClosed(attr.friday());
-    String sat = hoursToClosed(attr.saturday());
-    String sun = hoursToClosed(attr.sunday());
+    String mon = hoursToClosed(vast.monday());
+    String tue = hoursToClosed(vast.tuesday());
+    String wed = hoursToClosed(vast.wednesday());
+    String thu = hoursToClosed(vast.thursday());
+    String fri = hoursToClosed(vast.friday());
+    String sat = hoursToClosed(vast.saturday());
+    String sun = hoursToClosed(vast.sunday());
     if (allBlank(mon, tue, wed, thu, fri, sat, sun)) {
       return null;
     }
@@ -80,29 +80,14 @@ final class VetCenterTransformer {
   }
 
   private String id() {
-    if (gis.attributes() == null || allBlank(gis.attributes().stationNo())) {
+    if (allBlank(vast.stationNumber())) {
       return null;
     }
-    return "vc_" + gis.attributes().stationNo();
-  }
-
-  private BigDecimal latitude() {
-    return gis.geometry() == null ? null : gis.geometry().latitude();
-  }
-
-  private BigDecimal longitude() {
-    return gis.geometry() == null ? null : gis.geometry().longitude();
-  }
-
-  private String name() {
-    return gis.attributes() == null ? null : gis.attributes().stationName();
+    return "vc_" + vast.stationNumber();
   }
 
   private Facility.Phone phone() {
-    if (gis.attributes() == null) {
-      return null;
-    }
-    String main = phoneTrim(gis.attributes().staPhone());
+    String main = phoneTrim(vast.staPhone());
     if (allBlank(main)) {
       return null;
     }

@@ -20,12 +20,11 @@ services VA health facilities provide.
 
 ### ArcGIS
 Source for basic information for VA
-[cemeteries](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer),
-[benefits centers](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VBA_Facilities/FeatureServer),
-and [vet centers](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VHA_VetCenters/FeatureServer).
+[cemeteries](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer) and
+[benefits centers](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VBA_Facilities/FeatureServer).
 
 ### Corporate Data Warehouse (SQL52)
-Source for health facilities, stop codes, and mental health contact information.
+Source for health facilities, veteran centers, stop codes, and mental health contact information.
 Stop codes indicate services provided and wait times for VA health facilities.
 (More granular than Access to Care. Used only for dental, nutrition, and podiatry services.)
 VA Network only.

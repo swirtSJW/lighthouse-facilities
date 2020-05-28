@@ -144,8 +144,7 @@ public class CollectController {
 
     Collection<Facility> vetCenters =
         VetCentersCollector.builder()
-            .baseUrl(arcGisBaseUrl)
-            .restTemplate(restTemplate)
+            .vastEntities(vastEntities)
             .websites(websites)
             .build()
             .collect();

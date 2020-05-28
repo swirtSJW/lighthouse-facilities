@@ -30,17 +30,6 @@ public class CollectContollerTest {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
 
     when(restTemplate.exchange(
-            contains("VHA_VetCenters"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.of(
-                Optional.of(
-                    JacksonConfig.createMapper()
-                        .writeValueAsString(ArcGisVetCenters.builder().build()))));
-
-    when(restTemplate.exchange(
             contains("VBA_Facilities"),
             eq(HttpMethod.GET),
             Mockito.any(HttpEntity.class),
