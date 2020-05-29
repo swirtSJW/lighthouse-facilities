@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilitiescollector;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.hoursToClosed;
 import static gov.va.api.lighthouse.facilitiescollector.Transformers.phoneTrim;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -17,21 +18,41 @@ final class VetCenterTransformer {
 
   @NonNull private final Map<String, String> websites;
 
-  private Facility.Addresses address() {
-    // address1 is repeat of station name
-    if (allBlank(vast.zip(), vast.city(), vast.state(), vast.address2(), vast.address3())) {
+  private Facility.ActiveStatus activeStatus() {
+    if (allBlank(vast.pod())) {
       return null;
     }
-    return Facility.Addresses.builder()
-        .physical(
-            Facility.Address.builder()
-                .zip(vast.zip())
-                .city(vast.city())
-                .state(upperCase(vast.state(), Locale.US))
-                .address1(vast.address2())
-                .address2(vast.address3())
-                .build())
+    return vast.pod().equalsIgnoreCase("A") ? Facility.ActiveStatus.A : Facility.ActiveStatus.T;
+  }
+
+  private Facility.Addresses address() {
+    if (allBlank(addressPhysical())) {
+      return null;
+    }
+    return Facility.Addresses.builder().physical(addressPhysical()).build();
+  }
+
+  private Facility.Address addressPhysical() {
+    // address1 is repeat of station name
+    if (allBlank(addressZip(), vast.city(), vast.state(), vast.address2(), vast.address3())) {
+      return null;
+    }
+    return Facility.Address.builder()
+        .zip(addressZip())
+        .city(vast.city())
+        .state(upperCase(vast.state(), Locale.US))
+        .address1(vast.address2())
+        .address2(vast.address3())
         .build();
+  }
+
+  private String addressZip() {
+    String zip = vast.zip();
+    String zipPlus4 = vast.zip4();
+    if (isNotBlank(zip) && isNotBlank(zipPlus4) && !zipPlus4.matches("^[0]+$")) {
+      return zip + "-" + zipPlus4;
+    }
+    return zip;
   }
 
   private Facility.FacilityAttributes attributes() {
@@ -42,7 +63,10 @@ final class VetCenterTransformer {
         vast.longitude(),
         address(),
         phone(),
-        hours())) {
+        hours(),
+        vast.mobile(),
+        activeStatus(),
+        vast.visn())) {
       return null;
     }
     return Facility.FacilityAttributes.builder()
@@ -54,6 +78,9 @@ final class VetCenterTransformer {
         .address(address())
         .phone(phone())
         .hours(hours())
+        .mobile(vast.mobile())
+        .activeStatus(activeStatus())
+        .visn(vast.visn())
         .build();
   }
 
@@ -87,11 +114,12 @@ final class VetCenterTransformer {
   }
 
   private Facility.Phone phone() {
+    String fax = phoneTrim(vast.staFax());
     String main = phoneTrim(vast.staPhone());
-    if (allBlank(main)) {
+    if (allBlank(fax, main)) {
       return null;
     }
-    return Facility.Phone.builder().main(main).build();
+    return Facility.Phone.builder().fax(fax).main(main).build();
   }
 
   Facility toFacility() {

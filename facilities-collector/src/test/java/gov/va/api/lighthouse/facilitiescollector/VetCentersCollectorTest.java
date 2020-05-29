@@ -1,34 +1,33 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableMap;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.util.List;
-import lombok.SneakyThrows;
 import org.junit.Test;
-import org.springframework.web.client.RestTemplate;
 
 public class VetCentersCollectorTest {
   @Test
-  @SneakyThrows
-  @SuppressWarnings("unchecked")
   public void collect() {
-    RestTemplate restTemplate = mock(RestTemplate.class);
-
     VastEntity vastEntity =
         VastEntity.builder()
+            .vetCenter(true)
             .latitude(new BigDecimal("48.20065600000004"))
             .longitude(new BigDecimal("-101.29615999999999"))
             .stationNumber("0404V")
             .stationName("Minot Vet Center")
+            .abbreviation("VTCR")
+            .cocClassificationId("X")
+            .address1("Minot Vet Center")
             .address2("3300 South Broadway")
             .city("Minot")
             .state("ND")
+            .staFax("771-025-8107")
             .staPhone("701-852-0177 x")
             .zip("58701")
+            .zip4("9630")
             .monday("730AM-430PM")
             .tuesday("730AM-430PM")
             .wednesday("730AM-800PM")
@@ -36,14 +35,15 @@ public class VetCentersCollectorTest {
             .friday("730AM-430PM")
             .saturday("-")
             .sunday("-")
+            .pod("A")
             .mobile(false)
-            .vetCenter(true)
+            .visn("21")
             .build();
 
     assertThat(
             VetCentersCollector.builder()
                 .vastEntities(List.of(vastEntity))
-                .websites(ImmutableMap.of())
+                .websites(emptyMap())
                 .build()
                 .collect())
         .isEqualTo(
@@ -61,13 +61,17 @@ public class VetCentersCollectorTest {
                                 Facility.Addresses.builder()
                                     .physical(
                                         Facility.Address.builder()
-                                            .zip("58701")
+                                            .zip("58701-9630")
                                             .city("Minot")
                                             .state("ND")
                                             .address1("3300 South Broadway")
                                             .build())
                                     .build())
-                            .phone(Facility.Phone.builder().main("701-852-0177").build())
+                            .phone(
+                                Facility.Phone.builder()
+                                    .fax("771-025-8107")
+                                    .main("701-852-0177")
+                                    .build())
                             .hours(
                                 Facility.Hours.builder()
                                     .monday("730AM-430PM")
@@ -78,6 +82,9 @@ public class VetCentersCollectorTest {
                                     .saturday("Closed")
                                     .sunday("Closed")
                                     .build())
+                            .mobile(false)
+                            .activeStatus(Facility.ActiveStatus.A)
+                            .visn("21")
                             .build())
                     .build()));
   }
