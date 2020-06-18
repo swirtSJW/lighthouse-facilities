@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
@@ -9,15 +10,15 @@ import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.math.BigDecimal;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilitiesByBoundingBoxTest {
   @Autowired private FacilityRepository repo;
@@ -52,50 +53,59 @@ public class FacilitiesByBoundingBoxTest {
                 .build());
   }
 
-  @Test(expected = ExceptionsV0.InvalidParameter.class)
+  @Test
   public void json_invalidBBox() {
-    controller()
-        .jsonFacilitiesByBoundingBox(
-            List.of(
-                new BigDecimal("-80"),
-                new BigDecimal("20"),
-                new BigDecimal("-120"),
-                new BigDecimal("40"),
-                BigDecimal.ZERO),
-            null,
-            null,
-            1,
-            1);
+    assertThrows(
+        ExceptionsV0.InvalidParameter.class,
+        () ->
+            controller()
+                .jsonFacilitiesByBoundingBox(
+                    List.of(
+                        new BigDecimal("-80"),
+                        new BigDecimal("20"),
+                        new BigDecimal("-120"),
+                        new BigDecimal("40"),
+                        BigDecimal.ZERO),
+                    null,
+                    null,
+                    1,
+                    1));
   }
 
-  @Test(expected = ExceptionsV0.InvalidParameter.class)
+  @Test
   public void json_invalidService() {
-    controller()
-        .jsonFacilitiesByBoundingBox(
-            List.of(
-                new BigDecimal("-80"),
-                new BigDecimal("20"),
-                new BigDecimal("-120"),
-                new BigDecimal("40")),
-            null,
-            List.of("unknown"),
-            1,
-            1);
+    assertThrows(
+        ExceptionsV0.InvalidParameter.class,
+        () ->
+            controller()
+                .jsonFacilitiesByBoundingBox(
+                    List.of(
+                        new BigDecimal("-80"),
+                        new BigDecimal("20"),
+                        new BigDecimal("-120"),
+                        new BigDecimal("40")),
+                    null,
+                    List.of("unknown"),
+                    1,
+                    1));
   }
 
-  @Test(expected = ExceptionsV0.InvalidParameter.class)
+  @Test
   public void json_invalidType() {
-    controller()
-        .jsonFacilitiesByBoundingBox(
-            List.of(
-                new BigDecimal("-80"),
-                new BigDecimal("20"),
-                new BigDecimal("-120"),
-                new BigDecimal("40")),
-            "xxx",
-            null,
-            1,
-            1);
+    assertThrows(
+        ExceptionsV0.InvalidParameter.class,
+        () ->
+            controller()
+                .jsonFacilitiesByBoundingBox(
+                    List.of(
+                        new BigDecimal("-80"),
+                        new BigDecimal("20"),
+                        new BigDecimal("-120"),
+                        new BigDecimal("40")),
+                    "xxx",
+                    null,
+                    1,
+                    1));
   }
 
   @Test

@@ -23,15 +23,15 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilityManagementControllerTest {
   @Autowired FacilityRepository facilityRepository;
@@ -182,6 +182,11 @@ public class FacilityManagementControllerTest {
     Integer status = _controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue();
     assertThat(status).isEqualTo(200);
     assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entityWithOverlay(f, null)));
+  }
+
+  @Test
+  public void deleteFacilityOverlayNotFound() {
+    assertThat(_controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue()).isEqualTo(202);
   }
 
   @Test

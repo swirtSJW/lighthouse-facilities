@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Loggable
 public class CollectorRestClient implements CollectorApi {
-
   private final RestTemplate restTemplate;
 
   /** The base URL without the trailing slash. */
@@ -33,14 +32,10 @@ public class CollectorRestClient implements CollectorApi {
     headers.add("Accept", "application/json");
     return restTemplate
         .exchange(
-            collectorUrl("/collect/facilities"),
+            facilitiesCollectorUrl + "/collect/facilities",
             HttpMethod.GET,
             new HttpEntity<>(headers),
             CollectorFacilitiesResponse.class)
         .getBody();
-  }
-
-  private String collectorUrl(String path) {
-    return facilitiesCollectorUrl + path;
   }
 }

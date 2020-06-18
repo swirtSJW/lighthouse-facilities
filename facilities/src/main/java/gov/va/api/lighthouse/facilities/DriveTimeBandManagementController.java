@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Builder
 @Slf4j
 public class DriveTimeBandManagementController {
-
   private final DriveTimeBandRepository repository;
 
   /**

@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class FacilityOverlayTest {
-
   private static final ObjectMapper mapper = FacilitiesJacksonConfig.createMapper();
 
   @Test

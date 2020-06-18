@@ -1,10 +1,11 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.MultiValueMap;
 
 public class PageLinkerTest {
@@ -220,33 +221,42 @@ public class PageLinkerTest {
                 .build());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void validation_page() {
-    PageLinker.builder()
-        .url("unused")
-        .params(Parameters.builder().add("page", "0").add("per_page", "0").build())
-        .totalEntries(0)
-        .build()
-        .pagination();
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            PageLinker.builder()
+                .url("unused")
+                .params(Parameters.builder().add("page", "0").add("per_page", "0").build())
+                .totalEntries(0)
+                .build()
+                .pagination());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void validation_perPage() {
-    PageLinker.builder()
-        .url("unused")
-        .params(Parameters.builder().add("page", "1").add("per_page", "-1").build())
-        .totalEntries(0)
-        .build()
-        .pagination();
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            PageLinker.builder()
+                .url("unused")
+                .params(Parameters.builder().add("page", "1").add("per_page", "-1").build())
+                .totalEntries(0)
+                .build()
+                .pagination());
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void validation_totalEntries() {
-    PageLinker.builder()
-        .url("unused")
-        .params(Parameters.builder().add("page", "1").add("per_page", "0").build())
-        .totalEntries(-1)
-        .build()
-        .pagination();
+    assertThrows(
+        IllegalArgumentException.class,
+        () ->
+            PageLinker.builder()
+                .url("unused")
+                .params(Parameters.builder().add("page", "1").add("per_page", "0").build())
+                .totalEntries(-1)
+                .build()
+                .pagination());
   }
 }

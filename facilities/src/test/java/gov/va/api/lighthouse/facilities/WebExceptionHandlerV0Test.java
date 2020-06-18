@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

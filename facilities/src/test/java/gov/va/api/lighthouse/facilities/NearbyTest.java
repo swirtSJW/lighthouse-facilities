@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
@@ -19,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
 @DataJpaTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class NearbyTest {
   @Autowired FacilityRepository facilityRepository;
@@ -243,7 +244,7 @@ public class NearbyTest {
                 .build());
   }
 
-  @Test(expected = ExceptionsV0.BingException.class)
+  @Test
   public void address_bingException() {
     when(restTemplate.exchange(
             startsWith("http://bing"),
@@ -251,12 +252,16 @@ public class NearbyTest {
             Mockito.any(HttpEntity.class),
             eq(String.class)))
         .thenThrow(new IllegalStateException("Google instead?"));
-    _controller()
-        .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1);
+    assertThrows(
+        ExceptionsV0.BingException.class,
+        () ->
+            _controller()
+                .nearbyAddress(
+                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1));
   }
 
+  @Test
   @SneakyThrows
-  @Test(expected = ExceptionsV0.BingException.class)
   public void address_bingNoResults() {
     when(restTemplate.exchange(
             startsWith("http://bing"),
@@ -288,8 +293,12 @@ public class NearbyTest {
                                                         .build()))
                                             .build()))
                                 .build()))));
-    _controller()
-        .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1);
+    assertThrows(
+        ExceptionsV0.BingException.class,
+        () ->
+            _controller()
+                .nearbyAddress(
+                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1));
   }
 
   @Test

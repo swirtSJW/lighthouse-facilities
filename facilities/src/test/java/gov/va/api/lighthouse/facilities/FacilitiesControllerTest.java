@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +19,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FacilitiesControllerTest {
   FacilityRepository fr = mock(FacilityRepository.class);
@@ -202,13 +203,13 @@ public class FacilitiesControllerTest {
         .isEqualTo(FacilityReadResponse.builder().facility(facility).build());
   }
 
-  @Test(expected = ExceptionsV0.NotFound.class)
+  @Test
   public void readJson_malformed() {
-    controller().readJson("xxx");
+    assertThrows(ExceptionsV0.NotFound.class, () -> controller().readJson("xxx"));
   }
 
-  @Test(expected = ExceptionsV0.NotFound.class)
+  @Test
   public void readJson_notFound() {
-    controller().readJson("vha_691GB");
+    assertThrows(ExceptionsV0.NotFound.class, () -> controller().readJson("vha_691GB"));
   }
 }

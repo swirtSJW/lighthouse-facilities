@@ -2,21 +2,22 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.util.List;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilitiesByZipTest {
   @Autowired private FacilityRepository repo;
@@ -40,14 +41,18 @@ public class FacilitiesByZipTest {
                 .build());
   }
 
-  @Test(expected = ExceptionsV0.InvalidParameter.class)
+  @Test
   public void jsonFacilitiesByZip_invalidService() {
-    controller().jsonFacilitiesByZip("33333", null, List.of("unknown"), 1, 1);
+    assertThrows(
+        ExceptionsV0.InvalidParameter.class,
+        () -> controller().jsonFacilitiesByZip("33333", null, List.of("unknown"), 1, 1));
   }
 
-  @Test(expected = ExceptionsV0.InvalidParameter.class)
+  @Test
   public void jsonFacilitiesByZip_invalidType() {
-    controller().jsonFacilitiesByZip("33333", "xxx", null, 1, 1);
+    assertThrows(
+        ExceptionsV0.InvalidParameter.class,
+        () -> controller().jsonFacilitiesByZip("33333", "xxx", null, 1, 1));
   }
 
   @Test

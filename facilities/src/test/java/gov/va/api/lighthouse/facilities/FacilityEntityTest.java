@@ -11,7 +11,6 @@ import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 public class FacilityEntityTest {
-
   @Test
   void pkFromIdStringParsesId() {
     assertThat(FacilityEntity.Pk.fromIdString("vba_A1B2C3"))

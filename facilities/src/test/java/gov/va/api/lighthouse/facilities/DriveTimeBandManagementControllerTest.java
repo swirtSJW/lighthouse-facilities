@@ -21,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class DriveTimeBandManagementControllerTest {
-
   @Mock DriveTimeBandRepository repo;
 
   DriveTimeBandManagementController controller() {

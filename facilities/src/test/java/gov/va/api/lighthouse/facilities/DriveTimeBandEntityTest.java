@@ -7,7 +7,6 @@ import gov.va.api.lighthouse.facilities.DriveTimeBandEntity.Pk;
 import org.junit.jupiter.api.Test;
 
 public class DriveTimeBandEntityTest {
-
   @Test
   void pkNameConversion() {
     Pk pk = Pk.of("ABC", 10, 20);

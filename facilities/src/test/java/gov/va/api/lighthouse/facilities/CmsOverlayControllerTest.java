@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class CmsOverlayControllerTest {
-
   @Mock FacilityRepository repository;
 
   CmsOverlayController controller() {

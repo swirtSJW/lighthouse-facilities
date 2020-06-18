@@ -13,7 +13,7 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * These tests exercise round-trip deserialization and re-serialization of responses from the
