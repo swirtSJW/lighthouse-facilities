@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
@@ -13,7 +14,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -105,14 +106,17 @@ public class StateCemeteriesCollectorTest {
                     .build()));
   }
 
-  @Test(expected = CollectorExceptions.StateCemeteriesCollectorException.class)
+  @Test
   public void exception() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
-    StateCemeteriesCollector.builder()
-        .baseUrl("http://wrong")
-        .insecureRestTemplate(insecureRestTemplate)
-        .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
-        .build()
-        .collect();
+    assertThrows(
+        CollectorExceptions.StateCemeteriesCollectorException.class,
+        () ->
+            StateCemeteriesCollector.builder()
+                .baseUrl("http://wrong")
+                .insecureRestTemplate(insecureRestTemplate)
+                .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
+                .build()
+                .collect());
   }
 }

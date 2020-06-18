@@ -7,7 +7,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Map;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HealthTransformerTest {
   private void assertClassification(String classificationId, String featureCode, String expected) {

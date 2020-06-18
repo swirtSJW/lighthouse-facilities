@@ -2,10 +2,9 @@ package gov.va.api.lighthouse.facilitiescollector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CemeteriesTransformerTest {
-
   @Test
   public void toFacility() {
     assertThat(tx().toFacility())

@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccessToCareCovid19Entry {
-
   String stationId;
 
   Integer confirmedCases;
@@ -27,7 +26,6 @@ public class AccessToCareCovid19Entry {
    * that deals with this.
    */
   public static class AccessToCareCovid19EntryBuilder {
-
     /** Takes a facility of format "(station-id) facility-name" and pulls out the station_id. */
     private String determineStationIdFromFacilityString(String facility) {
       if (facility == null) {
@@ -60,7 +58,6 @@ public class AccessToCareCovid19Entry {
     /** Uses Jacksons JsonAnySetter annotation to map any unknown values to a map. */
     @JsonAnySetter
     public AccessToCareCovid19EntryBuilder saveUnknown(String key, String value) {
-
       if (containsIgnoreCase(key, "latitude") || containsIgnoreCase(key, "longitude")) {
         // Ignore Longitude and Latitude Nonsense
         return this;

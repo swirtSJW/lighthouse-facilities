@@ -13,7 +13,7 @@ import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesRespons
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;

@@ -8,7 +8,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CollectorFacilitiesResponseTest {
   @SneakyThrows

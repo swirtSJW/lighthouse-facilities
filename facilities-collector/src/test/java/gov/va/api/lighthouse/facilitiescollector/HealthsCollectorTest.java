@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilitiescollector;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
@@ -23,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.http.HttpEntity;
@@ -32,12 +33,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @DataJpaTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class HealthsCollectorTest {
   @Autowired JdbcTemplate jdbcTemplate;
@@ -99,22 +100,25 @@ public class HealthsCollectorTest {
             stationNum, code, name, wait));
   }
 
-  @Test(expected = CollectorExceptions.HealthsCollectorException.class)
+  @Test
   public void atcException() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenThrow(new RestClientException("oh noez"));
-    HealthsCollector.builder()
-        .atcBaseUrl("http://atc/")
-        .atcCovidBaseUrl("http://covid/")
-        .atpBaseUrl("http://atp/")
-        .vastEntities(emptyList())
-        .jdbcTemplate(jdbcTemplate)
-        .insecureRestTemplate(insecureRestTemplate)
-        .websites(emptyMap())
-        .build()
-        .collect();
+    assertThrows(
+        CollectorExceptions.HealthsCollectorException.class,
+        () ->
+            HealthsCollector.builder()
+                .atcBaseUrl("http://atc/")
+                .atcCovidBaseUrl("http://covid/")
+                .atpBaseUrl("http://atp/")
+                .vastEntities(emptyList())
+                .jdbcTemplate(jdbcTemplate)
+                .insecureRestTemplate(insecureRestTemplate)
+                .websites(emptyMap())
+                .build()
+                .collect());
   }
 
   @Test

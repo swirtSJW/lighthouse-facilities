@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
@@ -12,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -20,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 public class CemeteriesCollectorTest {
-
   @Test
   @SneakyThrows
   public void collect() {
@@ -92,14 +93,17 @@ public class CemeteriesCollectorTest {
                     .build()));
   }
 
-  @Test(expected = CollectorExceptions.CemeteriesCollectorException.class)
+  @Test
   public void exception() {
     RestTemplate restTemplate = mock(RestTemplate.class);
-    CemeteriesCollector.builder()
-        .arcgisUrl("http://wrong:8080")
-        .restTemplate(restTemplate)
-        .websites(new HashMap<>())
-        .build()
-        .collect();
+    assertThrows(
+        CollectorExceptions.CemeteriesCollectorException.class,
+        () ->
+            CemeteriesCollector.builder()
+                .arcgisUrl("http://wrong:8080")
+                .restTemplate(restTemplate)
+                .websites(emptyMap())
+                .build()
+                .collect());
   }
 }
