@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PssgDriveTimeBand {
-
   /** The two item lis of coordinates, this is the longitude (or x) value. */
   public static int INDEX_LONGITUDE = 0;
   /** The two item lis of coordinates, this is the lattitude (or x) value. */

@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class PathEncoderTest {
-
   @Test
   void roundTrip() {
     List<List<Double>> ring1 = PssgDriveTimeBand.newRing(6);

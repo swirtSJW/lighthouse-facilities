@@ -35,7 +35,6 @@ import lombok.SneakyThrows;
  */
 @AllArgsConstructor(staticName = "create")
 public class PathEncoder {
-
   /**
    * The amount of space required in a ByteBuffer for an integer value. This is used to determine
    * the required buffer size.
