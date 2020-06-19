@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class FacilitiesCollectorIT {
+public class CollectorIT {
   private static Header clientKey() {
     return new Header(
         "client-key", System.getProperty("facilities-collector.client-key", "not-supplied"));

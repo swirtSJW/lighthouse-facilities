@@ -1,6 +1,6 @@
 package gov.va.api.lighthouse.facilities.tests;
 
-import static gov.va.api.lighthouse.facilities.tests.FacilitiesRequest.makeRequest;
+import static gov.va.api.lighthouse.facilities.tests.FacilitiesRequest.facilitiesRequest;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
@@ -22,7 +22,7 @@ public class NearbyIT {
             + state
             + "&zip="
             + zip;
-    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
+    facilitiesRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -41,7 +41,7 @@ public class NearbyIT {
             + "&zip="
             + zip
             + "&drive_time=90";
-    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
+    facilitiesRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -49,7 +49,7 @@ public class NearbyIT {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude;
-    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
+    facilitiesRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
@@ -57,6 +57,6 @@ public class NearbyIT {
     final String latitude = systemDefinition().facilitiesIds().latitude();
     final String longitude = systemDefinition().facilitiesIds().longitude();
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude + "&drive_time=90";
-    makeRequest("application/json", request, 200).expectValid(NearbyResponse.class);
+    facilitiesRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 }

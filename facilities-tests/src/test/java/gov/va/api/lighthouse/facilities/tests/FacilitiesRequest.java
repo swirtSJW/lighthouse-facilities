@@ -11,7 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @UtilityClass
 final class FacilitiesRequest {
-  static ExpectedResponse makeRequest(String acceptHeader, String request, Integer expectedStatus) {
+  static ExpectedResponse facilitiesRequest(
+      String acceptHeader, String request, Integer expectedStatus) {
     log.info(
         "Expect {} with accept header ({}) is status code ({})",
         TestClients.facilities().service().apiPath() + request,

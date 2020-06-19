@@ -51,7 +51,7 @@ Commands
   test [--trust <host>] [-Dkey=value] <pattern> [...]
 
 Example
-  test --trust example.amazonaws.com -Dclient-key=12345 ".*FacilitiesReadIT"
+  test --trust example.amazonaws.com -Dclient-key=12345 ".*ReadIT"
 
 Docker Run Examples
   docker run --rm --init --network=host \
@@ -105,6 +105,7 @@ doTest() {
     --scan-classpath \
     -cp "$MAIN_JAR" -cp "$TESTS_JAR" \
     --include-classname=$pattern \
+    --disable-ansi-colors \
     --fail-if-no-tests \
     | grep -vE "^	at ($noise)"
 
@@ -122,7 +123,7 @@ doListTests() {
 
 doSmokeTest() {
   setupForAutomation
-  doTest ".*FacilitiesReadIT$"
+  doTest ".*ReadIT$"
 }
 
 doRegressionTest() {
@@ -130,34 +131,28 @@ doRegressionTest() {
   doTest
 }
 
-checkVariablesForAutomation() {
-  # Check out required deployment variables and data query specific variables.
+setupForAutomation() {
   for param in ${REQUIRED_ENV_VARIABLES[@]}; do
     [ -z ${!param} ] && usage "Variable $param must be specified."
   done
-}
-
-setupForAutomation() {
-  checkVariablesForAutomation
 
   trustServer $K8S_LOAD_BALANCER
 
-  SYSTEM_PROPERTIES+=( "-Dsentinel=$SENTINEL_ENV" )
-  SYSTEM_PROPERTIES+=( "-Dapikey=$API_KEY" )
-  SYSTEM_PROPERTIES+=( "-Dclient-key=$CLIENT_KEY" )
+  addSystemProperty apikey "$API_KEY"
+  addSystemProperty client-key "$CLIENT_KEY"
+  addSystemProperty sentinel "$SENTINEL_ENV"
+  addSystemProperty sentinel.facilities-collector.api-path "$FACILITIES_COLLECTOR_API_PATH"
+  addSystemProperty sentinel.facilities-collector.url "$FACILITIES_COLLECTOR_URL"
+  addSystemProperty sentinel.facilities-management.api-path "$FACILITIES_MANAGEMENT_API_PATH"
+  addSystemProperty sentinel.facilities-management.url "$FACILITIES_URL"
+  addSystemProperty sentinel.facilities.api-path "$FACILITIES_API_PATH"
+  addSystemProperty sentinel.facilities.url "$FACILITIES_URL"
+}
 
-  [ -n "$FACILITIES_URL" ] && \
-    SYSTEM_PROPERTIES+=("-Dsentinel.facilities.url=$FACILITIES_URL")
-  [ -n "$FACILITIES_API_PATH" ] && \
-    SYSTEM_PROPERTIES+=("-Dsentinel.facilities.api-path=$FACILITIES_API_PATH")
-  [ -n "$FACILITIES_URL" ] && \
-    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-management.url=$FACILITIES_URL")
-  [ -n "$FACILITIES_MANAGEMENT_API_PATH" ] && \
-    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-management.api-path=$FACILITIES_MANAGEMENT_API_PATH")
-  [ -n "$FACILITIES_COLLECTOR_URL" ] && \
-    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-collector.url=$FACILITIES_COLLECTOR_URL")
-  [ -n "$FACILITIES_COLLECTOR_API_PATH" ] && \
-    SYSTEM_PROPERTIES+=("-Dsentinel.facilities-collector.api-path=$FACILITIES_COLLECTOR_API_PATH")
+addSystemProperty() {
+  local property=${1:-}
+  local value=${2:-}
+  [ -n "$value" ] && SYSTEM_PROPERTIES+=("-D$property=$value")
 }
 
 ARGS=$(getopt -n $(basename ${0}) \
@@ -168,7 +163,7 @@ eval set -- "$ARGS"
 while true
 do
   case "$1" in
-    -D) SYSTEM_PROPERTIES+=( "-D$2");;
+    -D) SYSTEM_PROPERTIES+=("-D$2");;
     --debug) set -x;;
     -h|--help) usage "halp! what this do?";;
     --trust) trustServer $2;;
