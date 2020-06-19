@@ -5,7 +5,6 @@ set -o pipefail
 [ -z "$SENTINEL_BASE_DIR" ] && SENTINEL_BASE_DIR=/sentinel
 cd $SENTINEL_BASE_DIR
 
-
 #============================================================
 
 # The prefix used for modules, e.g. lighthouse or health-apis
@@ -14,26 +13,19 @@ MODULE_PREFIX=lighthouse
 # The name of the module containing tests (with out the prefix)
 TEST_MODULE_NAME=facilities-tests
 
-# The location of the categories defined within the test module
-TEST_MODULE_CATEGORIES_LOCATION=gov/va/api/lighthouse/facilities/tests/categories/
-
-# The name of module "main" jar, this is where categories and other reusable classes are defined
-MAIN_JAR=$(find -maxdepth 1 -name "${TEST_MODULE_NAME}-*.jar" -a -not -name "${TEST_MODULE_NAME}-*-tests.jar")
-
-# The name of the modules "tests" jar, this is where tests are actually defined
+# The name of the modules "tests" jar, where tests are actually defined
 TESTS_JAR=$(find -maxdepth 1 -name "${TEST_MODULE_NAME}-*-tests.jar")
 
-# Categories of tests to run for smoke tests (class name csv)
-SENTINEL_SMOKE_TEST_CATEGORY=gov.va.api.lighthouse.facilities.tests.categories.FacilityById
-
-# Categories of tests to run for regressin tests (class name csv)
-SENTINEL_REGRESSION_TEST_CATEGORY=
+# The name of module "main" jar, where all other classes are defined
+MAIN_JAR=$(find -maxdepth 1 -name "${TEST_MODULE_NAME}-*.jar" -a -not -name "${TEST_MODULE_NAME}-*-tests.jar")
 
 # Environment variables that are required to run
 REQUIRED_ENV_VARIABLES=(
-  "K8S_LOAD_BALANCER" "K8S_ENVIRONMENT" "SENTINEL_ENV" \
-  "SENTINEL_SMOKE_TEST_CATEGORY" \
-  "CLIENT_KEY" "API_KEY"
+  "API_KEY" \
+  "CLIENT_KEY" \
+  "K8S_ENVIRONMENT" \
+  "K8S_LOAD_BALANCER" \
+  "SENTINEL_ENV"
 )
 
 #
@@ -43,42 +35,9 @@ if [ -z "$SENTINEL_ENV" ]; then SENTINEL_ENV=$K8S_ENVIRONMENT; fi
 if [ -z "$FACILITIES_URL" ]; then FACILITIES_URL=https://$K8S_LOAD_BALANCER; fi
 if [ -z "$FACILITIES_COLLECTOR_URL" ]; then FACILITIES_COLLECTOR_URL=https://$K8S_LOAD_BALANCER; fi
 
-
 SYSTEM_PROPERTIES=()
-#
-# These may be optional set to reduce the tests that are ran (class name csv)
-# For regress or smoke tests, they will be set automatically based on sentinel categories.
-#
-if [ -z "${EXCLUDE_CATEGORY:-}" ]; then EXCLUDE_CATEGORY=; fi
-if [ -z "${INCLUDE_CATEGORY:-}" ]; then INCLUDE_CATEGORY=; fi
-
-alsoExclude() {
-  local category=$1
-  echo "Excluding $category"
-  if [ -n "$EXCLUDE_CATEGORY" ]; then EXCLUDE_CATEGORY+=","; fi
-  EXCLUDE_CATEGORY+="$category"
-}
-
-#
-# These drive time band management tests invent data that will not be cleaned up.
-# They should never be allowed to run in normal environments, since they will
-# pollute the database. They can run locally though.
-#
-if [ "${SENTINEL_ENV,,}" != "local" ]
-then
-  alsoExclude "gov.va.api.lighthouse.facilities.tests.categories.DriveTimeBandManagement"
-fi
-#
-# CMS overlay tests _alter_ data but do not infinitely create more. These can
-# run in lower environments, but not in SLA'd environments.
-#
-if [[ "${SENTINEL_ENV,,}" == prod* || "${SENTINEL_ENV,,}" == "lab" ]]
-then
-  alsoExclude "gov.va.api.lighthouse.facilities.tests.categories.Cms"
-fi
 
 #============================================================
-
 
 if [ ! -f "$MAIN_JAR" ]; then echo "Cannot find main jar: $MAIN_JAR"; exit 1; fi
 if [ ! -f "$TESTS_JAR" ]; then echo "Cannot find tests jar: $TESTS_JAR"; exit 1; fi
@@ -87,28 +46,22 @@ usage() {
 cat <<EOF
 Commands
   list-tests
-  list-categories
-  test [--include-category <category>] [--exclude-category <category>] [--trust <host>] [-Dkey=value] <name> [name] [...]
-  smoke-test
   regression-test
-
+  smoke-test
+  test [--trust <host>] [-Dkey=value] <pattern> [...]
 
 Example
-  test\
-    --exclude-category gov.va.api.health.sentinel.categories.Local \
-    --include-category gov.va.api.health.sentinel.categories.Manual \
-    --trust example.something.elb.amazonaws.com \
-    -Dclient-key=12345 \
-    gov.va.api.health.dataquery.tests.UsingMagicPatientCrawlerTest
+  test --trust example.amazonaws.com -Dclient-key=12345 ".*FacilitiesReadIT"
 
 Docker Run Examples
   docker run --rm --init --network=host \
-    --env-file qa.testvars --env K8S_LOAD_BALANCER=example.com --env K8S_ENVIRONMENT=qa \
-    vasdvp/${MODULE_PREFIX}-${TEST_MODULE_NAME}:latest smoke-test
+--env-file qa.testvars --env K8S_LOAD_BALANCER=example.com --env K8S_ENVIRONMENT=qa \
+vasdvp/${MODULE_PREFIX}-${TEST_MODULE_NAME}:latest smoke-test
 
   docker run --rm --init --network=host \
-    --env-file lab.testvars --env K8S_LOAD_BALANCER=example.com --env K8S_ENVIRONMENT=lab \
-    vasdvp/${MODULE_PREFIX}-${TEST_MODULE_NAME}:1.0.210 regression-test
+--env-file lab.testvars --env K8S_LOAD_BALANCER=example.com --env K8S_ENVIRONMENT=lab \
+vasdvp/${MODULE_PREFIX}-${TEST_MODULE_NAME}:1.0.210 regression-test
+
 $1
 EOF
 exit 1
@@ -131,16 +84,11 @@ trustServer() {
     -noprompt
 }
 
-defaultTests() {
-  doListTests | grep 'IT$'
-}
-
 doTest() {
-  local tests="$@"
-  [ -z "$tests" ] && tests=$(defaultTests)
-  local filter
-  [ -n "$EXCLUDE_CATEGORY" ] && filter+=" --filter=org.junit.experimental.categories.ExcludeCategories=$EXCLUDE_CATEGORY"
-  [ -n "$INCLUDE_CATEGORY" ] && filter+=" --filter=org.junit.experimental.categories.IncludeCategories=$INCLUDE_CATEGORY"
+  local pattern="$@"
+  [ -z "$pattern" ] && pattern=.*IT\$
+  echo "Executing tests for pattern: $pattern"
+
   local noise="org.junit"
   noise+="|groovy.lang.Meta"
   noise+="|io.restassured.filter"
@@ -150,7 +98,14 @@ doTest() {
   noise+="|org.apache.http"
   noise+="|org.codehaus.groovy"
   noise+="|sun.reflect"
-  java -cp "$(pwd)/*" ${SYSTEM_PROPERTIES[@]} org.junit.runner.JUnitCore $filter $tests \
+
+  java \
+    ${SYSTEM_PROPERTIES[@]} \
+    -jar junit-platform-console-standalone.jar \
+    --scan-classpath \
+    -cp "$MAIN_JAR" -cp "$TESTS_JAR" \
+    --include-classname=$pattern \
+    --fail-if-no-tests \
     | grep -vE "^	at ($noise)"
 
   # Exit on failure otherwise let other actions run.
@@ -165,29 +120,15 @@ doListTests() {
     | sort
 }
 
-doListCategories() {
-  jar -tf $MAIN_JAR \
-    | grep -E "gov/va/api/health/sentinel/categories/.*\.class|${TEST_MODULE_CATEGORIES_LOCATION}.*\.class" \
-    | sed 's/\.class//' \
-    | tr / . \
-    | sort
-}
-
 doSmokeTest() {
   setupForAutomation
-
-  INCLUDE_CATEGORY=$SENTINEL_SMOKE_TEST_CATEGORY
-  doTest
+  doTest ".*FacilitiesReadIT$"
 }
 
 doRegressionTest() {
   setupForAutomation
-
-  INCLUDE_CATEGORY=$SENTINEL_REGRESSION_TEST_CATEGORY
   doTest
-
 }
-
 
 checkVariablesForAutomation() {
   # Check out required deployment variables and data query specific variables.
@@ -220,15 +161,13 @@ setupForAutomation() {
 }
 
 ARGS=$(getopt -n $(basename ${0}) \
-    -l "exclude-category:,include-category:,debug,help,trust:,skip-crawler" \
-    -o "e:i:D:hs" -- "$@")
+    -l "debug,help,trust:" \
+    -o "D:h" -- "$@")
 [ $? != 0 ] && usage
 eval set -- "$ARGS"
 while true
 do
   case "$1" in
-    -e|--exclude-category) EXCLUDE_CATEGORY=$2;;
-    -i|--include-category) INCLUDE_CATEGORY=$2;;
     -D) SYSTEM_PROPERTIES+=( "-D$2");;
     --debug) set -x;;
     -h|--help) usage "halp! what this do?";;
@@ -244,7 +183,6 @@ shift
 
 case "$COMMAND" in
   t|test) doTest $@;;
-  lc|list-categories) doListCategories;;
   lt|list-tests) doListTests;;
   s|smoke-test) doSmokeTest;;
   r|regression-test) doRegressionTest;;

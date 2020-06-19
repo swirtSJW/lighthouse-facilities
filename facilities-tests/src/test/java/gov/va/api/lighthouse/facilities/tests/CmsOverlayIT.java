@@ -1,26 +1,26 @@
 package gov.va.api.lighthouse.facilities.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
+import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.tests.categories.Cms;
 import io.restassured.http.Method;
 import java.time.Instant;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @Slf4j
+@ExtendWith(RequiresFacilitiesExtension.class)
 public class CmsOverlayIT {
-  @Rule public RequiresFacilities precondition = new RequiresFacilities();
-
-  public void assertUpdate(
+  private static void assertUpdate(
       OperatingStatusCode code, String message, ActiveStatus expectedActiveStatus) {
     var id = SystemDefinitions.systemDefinition().facilitiesIds().facility();
     log.info("Updating facility {} operating status to be {}", id, code);
@@ -52,9 +52,17 @@ public class CmsOverlayIT {
     assertThat(facility.facility().attributes().activeStatus()).isEqualTo(expectedActiveStatus);
   }
 
+  @BeforeAll
+  static void assumeEnvironment() {
+    // CMS overlay tests alter data, but do not infinitely create more
+    // These can run in lower environments, but not SLA'd environments
+    String m = "Skipping CmsOverlayIT in " + Environment.get();
+    assumeThat(Environment.get()).overridingErrorMessage(m).isNotEqualTo(Environment.LAB);
+    assumeThat(Environment.get()).overridingErrorMessage(m).isNotEqualTo(Environment.PROD);
+  }
+
   @Test
-  @Category(Cms.class)
-  public void badCmsFacility() {
+  void badCmsFacility() {
     var id = "vba_NOPE";
     log.info("Updating invalid facility {} with cmsOverlay", id);
     OperatingStatus ops =
@@ -70,8 +78,7 @@ public class CmsOverlayIT {
   }
 
   @Test
-  @Category(Cms.class)
-  public void canApplyOverlay() {
+  void canApplyOverlay() {
     var message = getClass().getSimpleName() + " " + Instant.now();
     assertUpdate(OperatingStatusCode.CLOSED, message, ActiveStatus.T);
     assertUpdate(OperatingStatusCode.LIMITED, message, ActiveStatus.A);
@@ -80,8 +87,7 @@ public class CmsOverlayIT {
   }
 
   @Test
-  @Category(Cms.class)
-  public void validation() {
+  void validation() {
     var id = SystemDefinitions.systemDefinition().facilitiesIds().facility();
     StringBuilder longMessage = new StringBuilder();
     for (int i = 1; i <= 301; i++) {

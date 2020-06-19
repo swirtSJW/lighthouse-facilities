@@ -1,24 +1,32 @@
 package gov.va.api.lighthouse.facilities.tests;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assumptions.assumeThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.health.sentinel.Environment;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
-import gov.va.api.lighthouse.facilities.tests.categories.DriveTimeBandManagement;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import lombok.SneakyThrows;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-@Category(DriveTimeBandManagement.class)
 public class DriveTimeBandManagementIT {
+  @BeforeAll
+  static void assumeEnvironment() {
+    // These tests invent data that will not be cleaned up
+    // To avoid polluting the database, they should only run locally
+    assumeThat(Environment.get())
+        .overridingErrorMessage("Skipping DriveTimeBandManagementIT in " + Environment.get())
+        .isEqualTo(Environment.LOCAL);
+  }
 
   @Test
   @SneakyThrows
-  public void canUpdateRecords() {
+  void canUpdateRecords() {
     List<PssgDriveTimeBand> bands =
         JacksonConfig.createMapper()
             .readValue(

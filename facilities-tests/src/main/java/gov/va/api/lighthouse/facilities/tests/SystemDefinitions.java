@@ -70,7 +70,7 @@ class SystemDefinitions {
         .url(SentinelProperties.optionUrl(name, url))
         .port(port)
         .apiPath(SentinelProperties.optionApiPath(name, apiPath))
-        .accessToken(() -> Optional.ofNullable(null))
+        .accessToken(() -> Optional.empty())
         .build();
   }
 
