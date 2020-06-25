@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -79,6 +80,9 @@ public class FacilityEntity implements HasFacilityPayload {
   @Column(name = "missing_timestamp")
   private Long missingTimestamp;
 
+  @Column(name = "last_updated")
+  private Instant lastUpdated;
+
   /** Builder alternative that allows enums to be specified instead of strings. */
   @Builder(
       builderMethodName = "typeSafeBuilder",
@@ -93,7 +97,8 @@ public class FacilityEntity implements HasFacilityPayload {
       String cmsOverlay,
       Integer version,
       Set<Facility.ServiceType> servicesTypes,
-      Long missingTimestamp) {
+      Long missingTimestamp,
+      Instant lastUpdated) {
     this(
         id,
         zip,
@@ -104,7 +109,8 @@ public class FacilityEntity implements HasFacilityPayload {
         facility,
         cmsOverlay,
         version,
-        missingTimestamp);
+        missingTimestamp,
+        lastUpdated);
   }
 
   static Sort naturalOrder() {

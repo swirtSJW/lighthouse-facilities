@@ -86,6 +86,7 @@ public class FacilityManagementControllerTest {
     String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
     return FacilityManagementController.populate(
         FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).cmsOverlay(o).build(),
+        Instant.now(),
         fac);
   }
 

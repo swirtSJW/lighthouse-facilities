@@ -16,6 +16,7 @@ import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -130,7 +131,9 @@ public class NearbyTest {
 
   private FacilityEntity _facilityEntity(Facility fac) {
     return FacilityManagementController.populate(
-        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).build(), fac);
+        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).build(),
+        Instant.now(),
+        fac);
   }
 
   private Facility _facilityHealth(String id) {

@@ -6,6 +6,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +36,9 @@ public interface FacilityRepository
   List<HasFacilityPayload> findAllProjectedBy();
 
   List<FacilityEntity> findByIdIn(Collection<FacilityEntity.Pk> ids);
+
+  @Query("select max(e.lastUpdated) from #{#entityName} e")
+  Instant findLastUpdated();
 
   @Value
   @Builder

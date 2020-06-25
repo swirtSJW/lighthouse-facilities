@@ -49,7 +49,7 @@ public class FacilityManagementController {
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
-  static FacilityEntity populate(FacilityEntity record, Facility facility) {
+  static FacilityEntity populate(FacilityEntity record, Instant time, Facility facility) {
     record.latitude(facility.attributes().latitude().doubleValue());
     record.longitude(facility.attributes().longitude().doubleValue());
     record.state(stateOf(facility));
@@ -57,6 +57,7 @@ public class FacilityManagementController {
     record.servicesFromServiceTypes(serviceTypesOf(facility));
     record.facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(facility));
     record.missingTimestamp(null);
+    record.lastUpdated(time);
     return record;
   }
 
@@ -105,8 +106,9 @@ public class FacilityManagementController {
   }
 
   @SneakyThrows
-  private void createNewEntity(ReloadResponse response, FacilityEntity.Pk pk, Facility facility) {
-    updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
+  private void createNewEntity(
+      ReloadResponse response, Instant time, FacilityEntity.Pk pk, Facility facility) {
+    updateAndSave(response, time, FacilityEntity.builder().id(pk).build(), facility);
   }
 
   /** Delete the cmsOverlay column from a facility entity by id. */
@@ -157,7 +159,11 @@ public class FacilityManagementController {
     response.timing().markCompleteCollection();
     log.info("Facilities collected: {}", collectedFacilities.facilities().size());
     try {
-      collectedFacilities.facilities().parallelStream().forEach(f -> updateFacility(response, f));
+      Instant now = Instant.now();
+      collectedFacilities
+          .facilities()
+          .parallelStream()
+          .forEach(f -> updateFacility(response, now, f));
       processMissingFacilities(response, collectedFacilities);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -178,16 +184,18 @@ public class FacilityManagementController {
     Set<FacilityEntity.Pk> staleIds = Sets.difference(oldIds, newIds);
     for (FacilityEntity.Pk id : staleIds) {
       response.facilitiesMissing().add(id.toIdString());
-      log.debug("Deleting facility {}", id.toIdString());
+      log.debug("Marking facility {} as missing.", id.toIdString());
       try {
         FacilityEntity entity = facilityRepository.findById(id).get();
         entity.missingTimestamp(Instant.now().toEpochMilli());
         facilityRepository.save(entity);
       } catch (Exception e) {
-        log.error("Failed to delete facility record {}: {}", id.toIdString(), e.getMessage());
+        log.error(
+            "Failed to mark facility record {} as missing: {}", id.toIdString(), e.getMessage());
         response
             .problems()
-            .add(Problem.of(id.toIdString(), "Failed to delete record: " + e.getMessage()));
+            .add(
+                Problem.of(id.toIdString(), "Failed to mark record as missing: " + e.getMessage()));
         throw e;
       }
     }
@@ -202,8 +210,9 @@ public class FacilityManagementController {
   }
 
   @SneakyThrows
-  private void updateAndSave(ReloadResponse response, FacilityEntity record, Facility facility) {
-    populate(record, facility);
+  private void updateAndSave(
+      ReloadResponse response, Instant time, FacilityEntity record, Facility facility) {
+    populate(record, time, facility);
     /*
      * Determine if there is something wrong with the record, but it is still usable.
      */
@@ -225,7 +234,7 @@ public class FacilityManagementController {
     }
   }
 
-  private void updateFacility(ReloadResponse response, Facility facility) {
+  private void updateFacility(ReloadResponse response, Instant time, Facility facility) {
     FacilityEntity.Pk pk;
     try {
       pk = FacilityEntity.Pk.fromIdString(facility.id());
@@ -238,11 +247,11 @@ public class FacilityManagementController {
     if (existing.isEmpty()) {
       response.facilitiesCreated().add(facility.id());
       log.warn("Creating new facility {}", facility.id());
-      createNewEntity(response, pk, facility);
+      createNewEntity(response, time, pk, facility);
     } else {
       response.facilitiesUpdated().add(facility.id());
       log.warn("Updating old facility {}", facility.id());
-      updateAndSave(response, existing.get(), facility);
+      updateAndSave(response, time, existing.get(), facility);
     }
   }
 

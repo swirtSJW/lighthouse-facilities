@@ -229,3 +229,17 @@ databaseChangeLog:
                 type: bigint
                 constraints:
                   nullable: true
+
+  - changeSet:
+      id: 7
+      author: shanktopus
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: last_updated
+                type: smalldatetime
+                constraints:
+                  nullable: true
