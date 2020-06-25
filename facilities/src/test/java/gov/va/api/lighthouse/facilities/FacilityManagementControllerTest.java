@@ -21,6 +21,7 @@ import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -128,7 +129,8 @@ public class FacilityManagementControllerTest {
         .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
-    assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
+    assertThat(response.facilitiesMissing().keySet())
+        .isEqualTo(Set.of("vha_f2", "vha_f3", "vha_f4"));
     List<FacilityEntity> findAll = ImmutableList.copyOf(facilityRepository.findAll());
     assertThat(findAll).hasSize(4);
     assertThat(findAll.get(0).missingTimestamp()).isNull();
@@ -153,6 +155,21 @@ public class FacilityManagementControllerTest {
     FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.services()).isEqualTo(Set.of("MentalHealthCare"));
+  }
+
+  @Test
+  @SneakyThrows
+  public void collect_missingTimestampPreserved() {
+    Facility f1Old =
+        _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    long early = Instant.now().minusSeconds(60).toEpochMilli();
+    facilityRepository.save(_entity(f1Old).missingTimestamp(early));
+    when(collector.collectFacilities()).thenReturn(CollectorFacilitiesResponse.builder().build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilitiesMissing())
+        .isEqualTo(Map.of("vha_f1", Instant.ofEpochMilli(early)));
+    FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
+    assertThat(result.missingTimestamp()).isEqualTo(early);
   }
 
   @Test

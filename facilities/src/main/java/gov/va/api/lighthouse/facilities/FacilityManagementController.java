@@ -164,7 +164,7 @@ public class FacilityManagementController {
           .facilities()
           .parallelStream()
           .forEach(f -> updateFacility(response, now, f));
-      processMissingFacilities(response, collectedFacilities);
+      processMissingFacilities(response, now, collectedFacilities);
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     } finally {
@@ -174,28 +174,35 @@ public class FacilityManagementController {
   }
 
   private void processMissingFacilities(
-      ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
+      ReloadResponse response, Instant time, CollectorFacilitiesResponse collectedFacilities) {
     Set<FacilityEntity.Pk> newIds =
         collectedFacilities.facilities().stream()
             .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
-    Set<FacilityEntity.Pk> staleIds = Sets.difference(oldIds, newIds);
-    for (FacilityEntity.Pk id : staleIds) {
-      response.facilitiesMissing().add(id.toIdString());
-      log.debug("Marking facility {} as missing.", id.toIdString());
+    Set<FacilityEntity.Pk> missingIds = Sets.difference(oldIds, newIds);
+    for (FacilityEntity.Pk missing : missingIds) {
+      log.debug("Marking facility {} as missing.", missing.toIdString());
       try {
-        FacilityEntity entity = facilityRepository.findById(id).get();
-        entity.missingTimestamp(Instant.now().toEpochMilli());
+        FacilityEntity entity = facilityRepository.findById(missing).get();
+        if (entity.missingTimestamp() == null) {
+          entity.missingTimestamp(time.toEpochMilli());
+        }
         facilityRepository.save(entity);
+        response
+            .facilitiesMissing()
+            .put(missing.toIdString(), Instant.ofEpochMilli(entity.missingTimestamp()));
       } catch (Exception e) {
         log.error(
-            "Failed to mark facility record {} as missing: {}", id.toIdString(), e.getMessage());
+            "Failed to mark facility record {} as missing: {}",
+            missing.toIdString(),
+            e.getMessage());
         response
             .problems()
             .add(
-                Problem.of(id.toIdString(), "Failed to mark record as missing: " + e.getMessage()));
+                Problem.of(
+                    missing.toIdString(), "Failed to mark record as missing: " + e.getMessage()));
         throw e;
       }
     }
