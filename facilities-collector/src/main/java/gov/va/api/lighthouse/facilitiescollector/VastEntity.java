@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -94,6 +95,9 @@ public class VastEntity {
 
   private String visn;
 
+  @Column(name = "LastUpdated")
+  private Instant lastUpdated;
+
   boolean isVetCenter() {
     return BooleanUtils.isTrue(vetCenter()) || BooleanUtils.isTrue(mobileVetCenter());
   }
@@ -129,7 +133,6 @@ public class VastEntity {
   // URH
   // VA_SITE
   // OperationalHoursSpecialInstructions
-  // LastUpdated
   // CLC
   // District
   // DistrictName

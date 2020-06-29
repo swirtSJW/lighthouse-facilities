@@ -8,11 +8,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +48,8 @@ public class CollectorHealthController {
 
   private final RestTemplate restTemplate;
 
+  private final VastRepository vastRepository;
+
   private final String arcGisBaseUrl;
 
   private final String atcBaseUrl;
@@ -61,6 +65,7 @@ public class CollectorHealthController {
   CollectorHealthController(
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired RestTemplate restTemplate,
+      @Autowired VastRepository vastRepository,
       @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-care.covid.url}") String atcCovidBaseUrl,
@@ -68,6 +73,7 @@ public class CollectorHealthController {
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.restTemplate = restTemplate;
+    this.vastRepository = vastRepository;
     this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atcCovidBaseUrl = withTrailingSlash(atcCovidBaseUrl);
@@ -113,48 +119,51 @@ public class CollectorHealthController {
     var now = Instant.now();
     RestTemplate insecureTemplate = insecureRestTemplateProvider.restTemplate();
     List<Health> downstreamServices =
-        List.of(
-                basicHealthCheck(
-                    HealthCheck.builder()
-                        .restTemplate(insecureTemplate)
-                        .name("Access to Care")
-                        .url(
-                            UriComponentsBuilder.fromHttpUrl(
-                                    atcBaseUrl + "atcapis/v1.1/patientwaittimes")
-                                .toUriString())
-                        .build()),
-                basicHealthCheck(
-                    HealthCheck.builder()
-                        .restTemplate(insecureTemplate)
-                        .name("Access to PWT")
-                        .url(
-                            UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
-                                .queryParam("location", "FL")
-                                .build()
-                                .toUriString())
-                        .build()),
-                basicHealthCheck(
-                    HealthCheck.builder()
-                        .restTemplate(restTemplate)
-                        .name("Public ArcGIS")
-                        .url(
-                            UriComponentsBuilder.fromHttpUrl(
-                                    arcGisBaseUrl + "aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck")
-                                .queryParam("f", "json")
-                                .toUriString())
-                        .build()),
-                basicHealthCheck(
-                    HealthCheck.builder()
-                        .restTemplate(insecureTemplate)
-                        .name("State Cemeteries")
-                        .url(
-                            UriComponentsBuilder.fromHttpUrl(
-                                    stateCemeteriesBaseUrl + "cems/cems.xml")
-                                .toUriString())
-                        .build()),
-                () -> testAtcCovid19Health(insecureTemplate))
-            .parallelStream()
-            .map(Supplier::get)
+        Stream.concat(
+                Stream.of(testLastUpdated()),
+                List.of(
+                        basicHealthCheck(
+                            HealthCheck.builder()
+                                .restTemplate(insecureTemplate)
+                                .name("Access to Care")
+                                .url(
+                                    UriComponentsBuilder.fromHttpUrl(
+                                            atcBaseUrl + "atcapis/v1.1/patientwaittimes")
+                                        .toUriString())
+                                .build()),
+                        basicHealthCheck(
+                            HealthCheck.builder()
+                                .restTemplate(insecureTemplate)
+                                .name("Access to PWT")
+                                .url(
+                                    UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
+                                        .queryParam("location", "FL")
+                                        .build()
+                                        .toUriString())
+                                .build()),
+                        basicHealthCheck(
+                            HealthCheck.builder()
+                                .restTemplate(restTemplate)
+                                .name("Public ArcGIS")
+                                .url(
+                                    UriComponentsBuilder.fromHttpUrl(
+                                            arcGisBaseUrl
+                                                + "aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck")
+                                        .queryParam("f", "json")
+                                        .toUriString())
+                                .build()),
+                        basicHealthCheck(
+                            HealthCheck.builder()
+                                .restTemplate(insecureTemplate)
+                                .name("State Cemeteries")
+                                .url(
+                                    UriComponentsBuilder.fromHttpUrl(
+                                            stateCemeteriesBaseUrl + "cems/cems.xml")
+                                        .toUriString())
+                                .build()),
+                        () -> testAtcCovid19Health(insecureTemplate))
+                    .parallelStream()
+                    .map(Supplier::get))
             .collect(Collectors.toList());
     Health health =
         Health.status(
@@ -230,6 +239,22 @@ public class CollectorHealthController {
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
     return buildHealthFromStatusCode(healthCheck.name(), statusCode);
+  }
+
+  private Health testLastUpdated() {
+    String statusCode = "DOWN";
+    Instant lastUpdated = vastRepository.findLastUpdated();
+    Instant now = Instant.now();
+    Instant twentyFourHoursEarlier = now.minus(24, ChronoUnit.HOURS);
+    // if ETL occured within 24 hours, OK
+    if (!lastUpdated.isBefore(twentyFourHoursEarlier)) {
+      statusCode = "UP";
+    }
+    return Health.status(new Status(statusCode, "ETL process succeeded in the last 24 hours"))
+        .withDetail("name", "Facilities ETL process")
+        .withDetail("time", Instant.now())
+        .withDetail("lastUpdated", lastUpdated)
+        .build();
   }
 
   @lombok.Value

@@ -7,6 +7,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,6 +33,8 @@ public class CollectorHealthControllerTest {
   @Mock InsecureRestTemplateProvider insecureRestTemplateProvider;
 
   @Mock RestTemplate restTemplate;
+
+  @Mock VastRepository vastRepository;
 
   @SuppressWarnings("unchecked")
   private static void assertStatus(Health overallStatus, ExpectedStatus expected) {
@@ -86,6 +90,8 @@ public class CollectorHealthControllerTest {
             eq(String.class)))
         .thenReturn(ok());
 
+    when(vastRepository.findLastUpdated()).thenReturn(Instant.now());
+
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertStatus(
@@ -96,6 +102,7 @@ public class CollectorHealthControllerTest {
             .accessToPWT("UP")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
+            .lastUpdated("UP")
             .build());
   }
 
@@ -109,6 +116,7 @@ public class CollectorHealthControllerTest {
     return new CollectorHealthController(
         insecureRestTemplateProvider,
         restTemplate,
+        vastRepository,
         "http://arcgis",
         "http://atc",
         "http://covid",
@@ -145,6 +153,8 @@ public class CollectorHealthControllerTest {
             eq(String.class)))
         .thenReturn(ok());
 
+    when(vastRepository.findLastUpdated()).thenReturn(Instant.now().minus(48, ChronoUnit.HOURS));
+
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertStatus(
@@ -155,6 +165,7 @@ public class CollectorHealthControllerTest {
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
+            .lastUpdated("DOWN")
             .build());
   }
 
@@ -188,6 +199,8 @@ public class CollectorHealthControllerTest {
             eq(String.class)))
         .thenReturn(ok());
 
+    when(vastRepository.findLastUpdated()).thenReturn(Instant.now().minus(48, ChronoUnit.HOURS));
+
     ResponseEntity<Health> response = controller().collectorHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertStatus(
@@ -198,6 +211,7 @@ public class CollectorHealthControllerTest {
             .accessToPWT("DOWN")
             .publicArcGIS("UP")
             .stateCemeteries("UP")
+            .lastUpdated("DOWN")
             .build());
   }
 
@@ -209,5 +223,6 @@ public class CollectorHealthControllerTest {
     String accessToPWT;
     String publicArcGIS;
     String stateCemeteries;
+    String lastUpdated;
   }
 }

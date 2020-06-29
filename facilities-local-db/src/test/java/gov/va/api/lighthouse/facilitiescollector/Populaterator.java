@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Streams;
@@ -12,6 +13,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +28,7 @@ import lombok.SneakyThrows;
 import lombok.Value;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.StringUtils;
 
 @Value
 @AllArgsConstructor(staticName = "of")
@@ -248,7 +254,11 @@ public final class Populaterator {
           .prepareStatement(
               "CREATE TABLE App.Vast_Source ("
                   + Streams.stream(headers)
-                      .map(h -> h + " VARCHAR(MAX)")
+                      .map(
+                          h ->
+                              StringUtils.equals(h, "LastUpdated")
+                                  ? h + " smalldatetime"
+                                  : h + " VARCHAR(MAX)")
                       .collect(Collectors.joining(","))
                   + ")")
           .execute();
@@ -263,14 +273,32 @@ public final class Populaterator {
                     + ")")) {
           int paramIndex = 1;
           for (Object val : row) {
-            statement.setObject(
-                paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
+            // This is the LastUpdated Column in the CSV
+            // Use JDBC Mapping guidelines of java.sql.Timestamp <-> SQL's smalldatetime
+            if (paramIndex
+                == Streams.stream(headers).collect(toList()).indexOf("LastUpdated") + 1) {
+              statement.setObject(
+                  paramIndex,
+                  String.valueOf(val).equalsIgnoreCase("null")
+                      ? null
+                      : Timestamp.valueOf(val.toString()));
+            } else {
+              statement.setObject(
+                  paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
+            }
             paramIndex++;
           }
           statement.execute();
         }
       }
     }
+    DateTimeFormatter formatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S").withZone(ZoneOffset.UTC);
+    connection
+        .prepareStatement(
+            String.format(
+                "UPDATE App.Vast_Source SET LastUpdated='%s'", formatter.format(Instant.now())))
+        .execute();
     connection.prepareStatement("CREATE VIEW App.Vast AS SELECT * FROM App.Vast_Source").execute();
   }
 
