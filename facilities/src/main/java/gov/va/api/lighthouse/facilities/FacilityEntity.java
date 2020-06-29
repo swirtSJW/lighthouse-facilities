@@ -151,7 +151,7 @@ public class FacilityEntity implements HasFacilityPayload {
     public static Optional<Pk> optionalFromIdString(@NonNull String typeAndStationNumber) {
       try {
         return Optional.ofNullable(fromIdString(typeAndStationNumber));
-      } catch (Exception ex) {
+      } catch (IllegalArgumentException e) {
         return Optional.empty();
       }
     }

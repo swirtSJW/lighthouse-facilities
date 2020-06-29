@@ -137,7 +137,7 @@ public class FacilityManagementController {
     try {
       collectedFacilities.facilities().parallelStream().forEach(f -> updateFacility(response, f));
       deleteStaleFacilities(response, collectedFacilities);
-    } catch (Exception e) {
+    } catch (IllegalArgumentException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     } finally {
       response.timing().markComplete();
