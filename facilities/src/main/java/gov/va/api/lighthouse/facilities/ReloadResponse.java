@@ -3,8 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,9 +14,11 @@ import lombok.Value;
 @Data
 public class ReloadResponse {
   private int totalFacilities;
-  private List<String> facilitiesCreated;
   private List<String> facilitiesUpdated;
-  private Map<String, Instant> facilitiesMissing;
+  private List<String> facilitiesRevived;
+  private List<String> facilitiesCreated;
+  private List<String> facilitiesMissing;
+  private List<String> facilititesRemoved;
   private List<Problem> problems;
   private Timing timing;
 
@@ -29,9 +29,11 @@ public class ReloadResponse {
   public static ReloadResponse start() {
     return ReloadResponse.builder()
         .timing(Timing.builder().start(Instant.now()).build())
-        .facilitiesCreated(new CopyOnWriteArrayList<>())
         .facilitiesUpdated(new CopyOnWriteArrayList<>())
-        .facilitiesMissing(new ConcurrentHashMap<>())
+        .facilitiesRevived(new CopyOnWriteArrayList<>())
+        .facilitiesCreated(new CopyOnWriteArrayList<>())
+        .facilitiesMissing(new CopyOnWriteArrayList<>())
+        .facilititesRemoved(new CopyOnWriteArrayList<>())
         .problems(new CopyOnWriteArrayList<>())
         .build();
   }

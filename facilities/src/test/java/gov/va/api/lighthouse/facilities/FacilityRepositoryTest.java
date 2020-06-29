@@ -42,7 +42,7 @@ public class FacilityRepositoryTest {
     var aLongTimeAgo = Instant.parse("2020-01-20T02:20:00Z");
     repository.save(facilityEntity("1", aLongTimeAgo));
     assertThat(repository.findLastUpdated()).isEqualTo(aLongTimeAgo);
-    var now = Instant.now();
+    var now = Instant.ofEpochMilli(System.currentTimeMillis());
     repository.save(facilityEntity("2", now));
     assertThat(repository.findLastUpdated()).isEqualTo(now);
   }

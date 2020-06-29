@@ -43,8 +43,10 @@ public class FacilitySamples {
 
   FacilityEntity facilityEntity(String id) {
     return FacilityManagementController.populate(
-        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(id)).build(),
-        Instant.now(),
+        FacilityEntity.builder()
+            .id(FacilityEntity.Pk.fromIdString(id))
+            .lastUpdated(Instant.now())
+            .build(),
         facility(id));
   }
 

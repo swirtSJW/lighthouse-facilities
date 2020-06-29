@@ -1,15 +1,22 @@
 package gov.va.api.lighthouse.facilities;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
+import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.ServiceType;
 import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
 import java.time.Instant;
 import java.util.HashSet;
@@ -17,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -43,21 +50,24 @@ import org.springframework.web.bind.annotation.RestController;
 @Builder
 @Slf4j
 public class FacilityManagementController {
+  private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
+
   private final CollectorApi collector;
 
   private final FacilityRepository facilityRepository;
 
+  private final FacilityGraveyardRepository graveyardRepository;
+
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
-  static FacilityEntity populate(FacilityEntity record, Instant time, Facility facility) {
+  static FacilityEntity populate(FacilityEntity record, Facility facility) {
+    checkArgument(record.id() != null);
     record.latitude(facility.attributes().latitude().doubleValue());
     record.longitude(facility.attributes().longitude().doubleValue());
     record.state(stateOf(facility));
     record.zip(zipOf(facility));
     record.servicesFromServiceTypes(serviceTypesOf(facility));
-    record.facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(facility));
-    record.missingTimestamp(null);
-    record.lastUpdated(time);
+    record.facility(MAPPER.writeValueAsString(facility));
     return record;
   }
 
@@ -65,12 +75,12 @@ public class FacilityManagementController {
    * Determine the total collection of service types by combining health, benefits, and other
    * services types. This is guaranteed to return a non-null, but potentially empty collection.
    */
-  static Set<ServiceType> serviceTypesOf(Facility facility) {
+  static Set<Facility.ServiceType> serviceTypesOf(Facility facility) {
     var services = facility.attributes().services();
     if (services == null) {
       return Set.of();
     }
-    var allServices = new HashSet<ServiceType>();
+    var allServices = new HashSet<Facility.ServiceType>();
     if (services.health() != null) {
       allServices.addAll(services.health());
     }
@@ -105,13 +115,7 @@ public class FacilityManagementController {
     return null;
   }
 
-  @SneakyThrows
-  private void createNewEntity(
-      ReloadResponse response, Instant time, FacilityEntity.Pk pk, Facility facility) {
-    updateAndSave(response, time, FacilityEntity.builder().id(pk).build(), facility);
-  }
-
-  /** Delete the cmsOverlay column from a facility entity by id. */
+  /** Delete the CMS Overlay from a facility entity by ID. */
   @DeleteMapping(value = "/facilities/{id}/cms-overlay")
   public ResponseEntity<Void> deleteCmsOverlayById(@PathVariable("id") String id) {
     Optional<FacilityEntity> entity = entityById(id);
@@ -124,7 +128,7 @@ public class FacilityManagementController {
     return ResponseEntity.ok().build();
   }
 
-  /** Delete a facility by id unless it has a cmsOverlay. */
+  /** Delete a facility by ID unless it has a CMS Overlay. */
   @DeleteMapping(value = "/facilities/{id}")
   public ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
     Optional<FacilityEntity> entity = entityById(id);
@@ -144,6 +148,24 @@ public class FacilityManagementController {
     return ResponseEntity.ok().build();
   }
 
+  void deleteFromGraveyard(ReloadResponse response, FacilityGraveyardEntity entity) {
+    try {
+      graveyardRepository.delete(entity);
+    } catch (Exception e) {
+      log.error(
+          "Failed to delete facility {} from graveyard: {}",
+          entity.id().toIdString(),
+          e.getMessage());
+      response
+          .problems()
+          .add(
+              Problem.of(
+                  entity.id().toIdString(),
+                  "Failed to delete facility from graveyard: " + e.getMessage()));
+      throw e;
+    }
+  }
+
   private Optional<FacilityEntity> entityById(String id) {
     FacilityEntity.Pk pk = null;
     try {
@@ -154,17 +176,78 @@ public class FacilityManagementController {
     return facilityRepository.findById(pk);
   }
 
+  /** Get all facilities in the graveyard. */
+  @GetMapping("/graveyard")
+  public GraveyardResponse graveyardAll() {
+    return GraveyardResponse.builder()
+        .facilities(
+            Streams.stream(graveyardRepository.findAll())
+                .map(
+                    z ->
+                        GraveyardResponse.Item.builder()
+                            .facility(
+                                FacilitiesJacksonConfig.quietlyMap(
+                                    MAPPER, z.facility(), Facility.class))
+                            .cmsOverlay(
+                                z.cmsOverlay() == null
+                                    ? null
+                                    : FacilitiesJacksonConfig.quietlyMap(
+                                        MAPPER, z.cmsOverlay(), CmsOverlay.class))
+                            .missing(
+                                z.missingTimestamp() == null
+                                    ? null
+                                    : Instant.ofEpochMilli(z.missingTimestamp()))
+                            .lastUpdated(z.lastUpdated())
+                            .build())
+                .collect(toList()))
+        .build();
+  }
+
+  private Set<FacilityEntity.Pk> missingIds(CollectorFacilitiesResponse collectedFacilities) {
+    Set<FacilityEntity.Pk> newIds =
+        collectedFacilities.facilities().stream()
+            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
+            .filter(Objects::nonNull)
+            .collect(toCollection(LinkedHashSet::new));
+    Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
+    return ImmutableSet.copyOf(Sets.difference(oldIds, newIds));
+  }
+
+  private void moveToGraveyard(ReloadResponse response, FacilityEntity entity) {
+    FacilityEntity.Pk id = FacilityEntity.Pk.of(entity.id().type(), entity.id().stationNumber());
+    try {
+      Instant now = response.timing().completeCollection();
+      response.facilititesRemoved().add(id.toIdString());
+      log.warn("Moving facility {} to graveyard.", id.toIdString());
+      graveyardRepository.save(
+          FacilityGraveyardEntity.builder()
+              .id(id)
+              .facility(entity.facility())
+              .cmsOverlay(entity.cmsOverlay())
+              .missingTimestamp(entity.missingTimestamp())
+              .lastUpdated(now)
+              .build());
+      facilityRepository.delete(entity);
+    } catch (Exception e) {
+      log.error("Failed to move facility {} to graveyard: {}", id.toIdString(), e.getMessage());
+      response
+          .problems()
+          .add(
+              Problem.of(
+                  id.toIdString(), "Failed to move facility to graveyard: " + e.getMessage()));
+      throw e;
+    }
+  }
+
   private ResponseEntity<ReloadResponse> process(
       ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
     response.timing().markCompleteCollection();
     log.info("Facilities collected: {}", collectedFacilities.facilities().size());
     try {
-      Instant now = Instant.now();
-      collectedFacilities
-          .facilities()
-          .parallelStream()
-          .forEach(f -> updateFacility(response, now, f));
-      processMissingFacilities(response, now, collectedFacilities);
+      collectedFacilities.facilities().parallelStream().forEach(f -> updateFacility(response, f));
+      for (FacilityEntity.Pk missingId : missingIds(collectedFacilities)) {
+        processMissingFacility(response, missingId);
+      }
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     } finally {
@@ -173,53 +256,53 @@ public class FacilityManagementController {
     return ResponseEntity.ok(response);
   }
 
-  private void processMissingFacilities(
-      ReloadResponse response, Instant time, CollectorFacilitiesResponse collectedFacilities) {
-    Set<FacilityEntity.Pk> newIds =
-        collectedFacilities.facilities().stream()
-            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(LinkedHashSet::new));
-    Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
-    Set<FacilityEntity.Pk> missingIds = Sets.difference(oldIds, newIds);
-    for (FacilityEntity.Pk missing : missingIds) {
-      log.debug("Marking facility {} as missing.", missing.toIdString());
-      try {
-        FacilityEntity entity = facilityRepository.findById(missing).get();
-        if (entity.missingTimestamp() == null) {
-          entity.missingTimestamp(time.toEpochMilli());
-        }
-        facilityRepository.save(entity);
-        response
-            .facilitiesMissing()
-            .put(missing.toIdString(), Instant.ofEpochMilli(entity.missingTimestamp()));
-      } catch (Exception e) {
-        log.error(
-            "Failed to mark facility record {} as missing: {}",
-            missing.toIdString(),
-            e.getMessage());
-        response
-            .problems()
-            .add(
-                Problem.of(
-                    missing.toIdString(), "Failed to mark record as missing: " + e.getMessage()));
-        throw e;
-      }
+  private void processMissingFacility(ReloadResponse response, FacilityEntity.Pk id) {
+    Optional<FacilityEntity> optEntity = facilityRepository.findById(id);
+    checkState(optEntity.isPresent());
+    FacilityEntity entity = optEntity.get();
+    Instant now = response.timing().completeCollection();
+    if (entity.missingTimestamp() == null) {
+      entity.missingTimestamp(now.toEpochMilli());
     }
+    if (now.toEpochMilli() - entity.missingTimestamp() <= TimeUnit.HOURS.toMillis(48)) {
+      saveAsMissing(response, entity);
+      return;
+    }
+    moveToGraveyard(response, entity);
   }
 
   /** Attempt to reload all facilities. */
   @GetMapping(value = "/reload")
   public ResponseEntity<ReloadResponse> reload() {
+    var response = ReloadResponse.start();
     var collectedFacilities = collector.collectFacilities();
-    var response = ReloadResponse.start().totalFacilities(collectedFacilities.facilities().size());
+    response.totalFacilities(collectedFacilities.facilities().size());
     return process(response, collectedFacilities);
   }
 
+  private void saveAsMissing(ReloadResponse response, FacilityEntity entity) {
+    FacilityEntity.Pk id = entity.id();
+    try {
+      response.facilitiesMissing().add(id.toIdString());
+      log.warn("Marking facility {} as missing.", id.toIdString());
+      facilityRepository.save(entity);
+      return;
+    } catch (Exception e) {
+      log.error("Failed to mark facility {} as missing: {}", id.toIdString(), e.getMessage());
+      response
+          .problems()
+          .add(
+              Problem.of(id.toIdString(), "Failed to mark facility as missing: " + e.getMessage()));
+      throw e;
+    }
+  }
+
   @SneakyThrows
-  private void updateAndSave(
-      ReloadResponse response, Instant time, FacilityEntity record, Facility facility) {
-    populate(record, time, facility);
+  void updateAndSave(ReloadResponse response, FacilityEntity record, Facility facility) {
+    populate(record, facility);
+    record.missingTimestamp(null);
+    record.lastUpdated(response.timing().completeCollection());
+
     /*
      * Determine if there is something wrong with the record, but it is still usable.
      */
@@ -229,6 +312,7 @@ public class FacilityManagementController {
     if (isBlank(record.state())) {
       response.problems().add(Problem.of(facility.id(), "Missing state"));
     }
+
     try {
       facilityRepository.save(record);
     } catch (Exception e) {
@@ -241,7 +325,7 @@ public class FacilityManagementController {
     }
   }
 
-  private void updateFacility(ReloadResponse response, Instant time, Facility facility) {
+  private void updateFacility(ReloadResponse response, Facility facility) {
     FacilityEntity.Pk pk;
     try {
       pk = FacilityEntity.Pk.fromIdString(facility.id());
@@ -250,16 +334,32 @@ public class FacilityManagementController {
       response.problems().add(Problem.of(facility.id(), "Cannot parse ID"));
       return;
     }
+
     var existing = facilityRepository.findById(pk);
-    if (existing.isEmpty()) {
-      response.facilitiesCreated().add(facility.id());
-      log.warn("Creating new facility {}", facility.id());
-      createNewEntity(response, time, pk, facility);
-    } else {
+    if (existing.isPresent()) {
       response.facilitiesUpdated().add(facility.id());
-      log.warn("Updating old facility {}", facility.id());
-      updateAndSave(response, time, existing.get(), facility);
+      log.warn("Updating facility {}", facility.id());
+      updateAndSave(response, existing.get(), facility);
+      return;
     }
+
+    var zombie = graveyardRepository.findById(pk);
+    if (zombie.isPresent()) {
+      response.facilitiesRevived().add(facility.id());
+      log.warn("Reviving facility {}", facility.id());
+      FacilityGraveyardEntity zombieEntity = zombie.get();
+      // only thing to retain from graveyard is CMS overlay
+      // all other fields will be populated in updateAndSave()
+      FacilityEntity facilityEntity =
+          FacilityEntity.builder().id(pk).cmsOverlay(zombieEntity.cmsOverlay()).build();
+      updateAndSave(response, facilityEntity, facility);
+      deleteFromGraveyard(response, zombieEntity);
+      return;
+    }
+
+    response.facilitiesCreated().add(facility.id());
+    log.warn("Creating new facility {}", facility.id());
+    updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
   }
 
   /** Force feed a collector response. */

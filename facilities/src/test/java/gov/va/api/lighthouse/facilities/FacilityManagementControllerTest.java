@@ -1,6 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,8 +23,9 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -36,6 +40,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilityManagementControllerTest {
   @Autowired FacilityRepository facilityRepository;
+
+  @Autowired FacilityGraveyardRepository graveyardRepository;
 
   CollectorApi collector = mock(CollectorApi.class);
 
@@ -75,6 +81,7 @@ public class FacilityManagementControllerTest {
     return FacilityManagementController.builder()
         .collector(collector)
         .facilityRepository(facilityRepository)
+        .graveyardRepository(graveyardRepository)
         .build();
   }
 
@@ -86,14 +93,29 @@ public class FacilityManagementControllerTest {
   private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
     String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
     return FacilityManagementController.populate(
-        FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString(fac.id())).cmsOverlay(o).build(),
-        Instant.now(),
+        FacilityEntity.builder()
+            .id(FacilityEntity.Pk.fromIdString(fac.id()))
+            .cmsOverlay(o)
+            .lastUpdated(Instant.now())
+            .build(),
         fac);
+  }
+
+  @SneakyThrows
+  private FacilityGraveyardEntity _graveyardEntityWithOverlay(Facility fac, CmsOverlay overlay) {
+    String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
+    return FacilityGraveyardEntity.builder()
+        .id(FacilityEntity.Pk.fromIdString(fac.id()))
+        .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(fac))
+        .cmsOverlay(o)
+        .missingTimestamp(LocalDateTime.now().minusDays(4).toInstant(ZoneOffset.UTC).toEpochMilli())
+        .lastUpdated(Instant.now())
+        .build();
   }
 
   @Test
   @SneakyThrows
-  public void collect_createUpdate() {
+  void collect_createUpdate() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f2 = _facility("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
@@ -110,7 +132,30 @@ public class FacilityManagementControllerTest {
 
   @Test
   @SneakyThrows
-  public void collect_missing() {
+  void collect_fromTheGraveyard() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    Facility f1Old =
+        _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1Old, _overlay());
+    graveyardRepository.save(entity);
+    when(collector.collectFacilities())
+        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilitiesRevived()).isEqualTo(List.of("vha_f1"));
+    assertThat(graveyardRepository.findAll()).isEmpty();
+    FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
+    assertThat(result.id()).isEqualTo(entity.id());
+    assertThat(result.facility())
+        .isEqualTo(FacilitiesJacksonConfig.createMapper().writeValueAsString(f1));
+    assertThat(result.cmsOverlay()).isEqualTo(entity.cmsOverlay());
+    assertThat(result.missingTimestamp()).isNull();
+    assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
+  }
+
+  @Test
+  @SneakyThrows
+  void collect_missing() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f1Old =
@@ -129,8 +174,7 @@ public class FacilityManagementControllerTest {
         .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
-    assertThat(response.facilitiesMissing().keySet())
-        .isEqualTo(Set.of("vha_f2", "vha_f3", "vha_f4"));
+    assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
     List<FacilityEntity> findAll = ImmutableList.copyOf(facilityRepository.findAll());
     assertThat(findAll).hasSize(4);
     assertThat(findAll.get(0).missingTimestamp()).isNull();
@@ -142,7 +186,7 @@ public class FacilityManagementControllerTest {
 
   @Test
   @SneakyThrows
-  public void collect_missingComesBack() {
+  void collect_missingComesBack() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f1Old =
@@ -159,21 +203,58 @@ public class FacilityManagementControllerTest {
 
   @Test
   @SneakyThrows
-  public void collect_missingTimestampPreserved() {
+  void collect_missingTimestampPreserved() {
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     long early = Instant.now().minusSeconds(60).toEpochMilli();
     facilityRepository.save(_entity(f1Old).missingTimestamp(early));
     when(collector.collectFacilities()).thenReturn(CollectorFacilitiesResponse.builder().build());
     ReloadResponse response = _controller().reload().getBody();
-    assertThat(response.facilitiesMissing())
-        .isEqualTo(Map.of("vha_f1", Instant.ofEpochMilli(early)));
+    assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f1"));
     FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
     assertThat(result.missingTimestamp()).isEqualTo(early);
   }
 
   @Test
-  public void deleteFacilityByIdWithOverlay() {
+  @SneakyThrows
+  void collect_noStateOrZip() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    f1.attributes().address().physical().state(null);
+    f1.attributes().address().physical().zip(null);
+    when(collector.collectFacilities())
+        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
+    assertThat(response.problems())
+        .isEqualTo(
+            List.of(
+                ReloadResponse.Problem.of("vha_f1", "Missing zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing state")));
+  }
+
+  @Test
+  @SneakyThrows
+  void collect_toTheGraveyard() {
+    Facility f1Old =
+        _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    long threeDaysAgo = LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC).toEpochMilli();
+    FacilityEntity entity = _entityWithOverlay(f1Old, _overlay()).missingTimestamp(threeDaysAgo);
+    facilityRepository.save(entity);
+    when(collector.collectFacilities()).thenReturn(CollectorFacilitiesResponse.builder().build());
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.facilititesRemoved()).isEqualTo(List.of("vha_f1"));
+    assertThat(facilityRepository.findAllIds()).isEmpty();
+    FacilityGraveyardEntity result = Iterables.getOnlyElement(graveyardRepository.findAll());
+    assertThat(result.id()).isEqualTo(entity.id());
+    assertThat(result.facility()).isEqualTo(entity.facility());
+    assertThat(result.cmsOverlay()).isEqualTo(entity.cmsOverlay());
+    assertThat(result.missingTimestamp()).isEqualTo(threeDaysAgo);
+    assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
+  }
+
+  @Test
+  void deleteFacilityByIdWithOverlay() {
     Facility f =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     facilityRepository.save(_entityWithOverlay(f, _overlay()));
@@ -183,7 +264,7 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  public void deleteFacilityByIdWithoutOverlay() {
+  void deleteFacilityByIdWithoutOverlay() {
     Facility f =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     facilityRepository.save(_entity(f));
@@ -193,7 +274,7 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  public void deleteFacilityOverlayById() {
+  void deleteFacilityOverlayById() {
     Facility f =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     facilityRepository.save(_entityWithOverlay(f, _overlay()));
@@ -203,17 +284,62 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  public void deleteFacilityOverlayNotFound() {
+  void deleteFacilityOverlayNotFound() {
     assertThat(_controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue()).isEqualTo(202);
   }
 
   @Test
-  public void deleteNonExistingFacilityByIdReturnsAccepted() {
+  void deleteFromGraveyard_error() {
+    FacilityGraveyardRepository repo = mock(FacilityGraveyardRepository.class);
+    doThrow(new RuntimeException("oh noez")).when(repo).delete(any(FacilityGraveyardEntity.class));
+    FacilityManagementController controller =
+        FacilityManagementController.builder().graveyardRepository(repo).build();
+    ReloadResponse response = ReloadResponse.start();
+    assertThrows(
+        RuntimeException.class,
+        () ->
+            controller.deleteFromGraveyard(
+                response,
+                FacilityGraveyardEntity.builder()
+                    .id(FacilityEntity.Pk.fromIdString("vha_f1"))
+                    .build()));
+    assertThat(response.problems())
+        .isEqualTo(
+            List.of(
+                ReloadResponse.Problem.of(
+                    "vha_f1", "Failed to delete facility from graveyard: oh noez")));
+  }
+
+  @Test
+  void deleteNonExistingFacilityByIdReturnsAccepted() {
     assertThat(_controller().deleteFacilityById("vha_f1").getStatusCodeValue()).isEqualTo(202);
   }
 
   @Test
-  public void servicesOf() {
+  @SneakyThrows
+  void graveyardAll() {
+    Facility f1 = _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
+    CmsOverlay overlay = _overlay();
+    FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1, overlay);
+    graveyardRepository.save(entity);
+    assertThat(_controller().graveyardAll())
+        .isEqualTo(
+            GraveyardResponse.builder()
+                .facilities(
+                    List.of(
+                        GraveyardResponse.Item.builder()
+                            .facility(
+                                JacksonConfig.createMapper()
+                                    .readValue(entity.facility(), Facility.class))
+                            .cmsOverlay(overlay)
+                            .missing(Instant.ofEpochMilli(entity.missingTimestamp()))
+                            .lastUpdated(entity.lastUpdated())
+                            .build()))
+                .build());
+  }
+
+  @Test
+  void servicesOf() {
     assertThat(
             FacilityManagementController.serviceTypesOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
@@ -267,7 +393,7 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  public void stateOf() {
+  void stateOf() {
     // No address
     assertThat(
             FacilityManagementController.stateOf(
@@ -308,8 +434,28 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
+  void updateAndSave_error() {
+    FacilityRepository repo = mock(FacilityRepository.class);
+    when(repo.save(any(FacilityEntity.class))).thenThrow(new RuntimeException("oh noez"));
+    FacilityManagementController controller =
+        FacilityManagementController.builder().facilityRepository(repo).build();
+    Facility f1 =
+        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    ReloadResponse response = ReloadResponse.start();
+    assertThrows(
+        RuntimeException.class,
+        () ->
+            controller.updateAndSave(
+                response,
+                FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1")).build(),
+                f1));
+    assertThat(response.problems())
+        .isEqualTo(List.of(ReloadResponse.Problem.of("vha_f1", "Failed to save record: oh noez")));
+  }
+
+  @Test
   @SneakyThrows
-  public void upload() {
+  void upload() {
     Facility f1 =
         _facility("vha_f91", "FU", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f2 =
@@ -321,7 +467,7 @@ public class FacilityManagementControllerTest {
   }
 
   @Test
-  public void zipOf() {
+  void zipOf() {
     // No address
     assertThat(
             FacilityManagementController.zipOf(

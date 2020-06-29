@@ -243,3 +243,59 @@ databaseChangeLog:
                 type: smalldatetime
                 constraints:
                   nullable: true
+
+  - changeSet:
+      id: 8
+      author: shanktopus
+      changes:
+        - createTable:
+            tableName: facility_graveyard
+            schemaName: app
+            columns:
+              - column:
+                  name: station_number
+                  type: varchar(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(3)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: facility
+                  type: clob
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cms_overlay
+                  type: clob
+                  constraints:
+                    nullable: true
+              - column:
+                  name: missing_timestamp
+                  type: bigint
+                  constraints:
+                    nullable: true
+              - column:
+                  name: last_updated
+                  type: smalldatetime
+                  constraints:
+                    nullable: true
+        - createIndex:
+            tableName: facility_graveyard
+            schemaName: app
+            clustered: false
+            indexName: facility_graveyard_id_idx
+            columns:
+              - column:
+                  name: station_number
+              - column:
+                  name: type
