@@ -76,6 +76,20 @@ public class CdwController {
     }
   }
 
+  /** Stop codes for debugging. */
+  @SneakyThrows
+  @RequestMapping(
+      value = "/stop-code-etl",
+      produces = "application/json",
+      method = RequestMethod.GET)
+  public List<Map<String, String>> stopCodesEtl() {
+    try {
+      return allResults("SELECT * FROM App.VSSC_ClinicalServices");
+    } catch (Exception ex) {
+      throw new CollectorExceptions.CdwException(ex);
+    }
+  }
+
   /** Health facilities and vet centers for debugging. */
   @SneakyThrows
   @RequestMapping(value = "/vast", produces = "application/json", method = RequestMethod.GET)
