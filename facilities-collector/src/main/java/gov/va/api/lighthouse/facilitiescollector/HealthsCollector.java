@@ -53,9 +53,9 @@ final class HealthsCollector {
 
   @NonNull final RestTemplate insecureRestTemplate;
 
-  @NonNull final Map<String, String> websites;
-
   @NonNull final Collection<VastEntity> vastEntities;
+
+  @NonNull final Map<String, String> websites;
 
   @SneakyThrows
   static void putMentalHealthContact(ResultSet resultSet, Map<String, String> map) {
@@ -264,7 +264,7 @@ final class HealthsCollector {
     ListMultimap<String, StopCode> map = ArrayListMultimap.create();
     jdbcTemplate.query(
         "SELECT Sta6a, PrimaryStopCode, PrimaryStopCodeName, AvgWaitTimeNew"
-            + " FROM App.VHA_Stop_Code_Wait_Times_Paginated(1, 999999)",
+            + " FROM App.VSSC_ClinicalServices",
         (RowCallbackHandler) (rs) -> putStopCode(rs, map));
     log.info(
         "Loading stop codes took {} millis for {} entries",

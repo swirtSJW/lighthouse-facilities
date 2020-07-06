@@ -18,7 +18,7 @@ public class VastRepositoryTest {
     var aLongTimeAgo = Instant.parse("2020-01-20T02:20:00Z");
     repository.save(vastEntity(1L, aLongTimeAgo));
     assertThat(repository.findLastUpdated()).isEqualTo(aLongTimeAgo);
-    var now = Instant.now();
+    var now = Instant.ofEpochMilli(System.currentTimeMillis());
     repository.save(vastEntity(2L, now));
     assertThat(repository.findLastUpdated()).isEqualTo(now);
   }

@@ -6,9 +6,4 @@
     <Method name="mobile"/>
     <Bug pattern="NP_BOOLEAN_RETURN_NULL"/>
   </Match>
-  <!-- False positive: https://github.com/spotbugs/spotbugs/issues/756 -->
-  <Match>
-    <Class name="gov.va.api.lighthouse.facilitiescollector.CdwController"/>
-    <Bug pattern="RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE" />
-  </Match>
 </FindBugsFilter>

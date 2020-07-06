@@ -1,6 +1,6 @@
 package gov.va.api.lighthouse.facilitiescollector;
 
-import static com.google.common.base.Preconditions.checkState;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Joiner;
@@ -12,21 +12,18 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,7 +36,7 @@ public final class Populaterator {
     return System.getProperty("basedir", ".");
   }
 
-  /** Populate local database. */
+  /** Populate local databases. */
   @SneakyThrows
   public static void main(String[] args) {
     if (Boolean.parseBoolean(System.getProperty("populator.h2", "true"))) {
@@ -57,20 +54,6 @@ public final class Populaterator {
                   .build())
           .populate();
     }
-  }
-
-  /**
-   * Bind to H2 by executing the following SQL.
-   *
-   * <pre>
-   * CREATE ALIAS App.VHA_Stop_Code_Wait_Times_Paginated FOR
-   *    gov.va.api.lighthouse.facilitiescollector.Populaterator#stopCodeWaitTimesPaginated
-   * </pre>
-   */
-  @SneakyThrows
-  @SuppressWarnings("unused")
-  public static ResultSet stopCodeWaitTimesPaginated(Connection conn, int page, int count) {
-    return conn.prepareStatement("SELECT * FROM APP.VHA_Stop_Code_Wait_Times").executeQuery();
   }
 
   @SneakyThrows
@@ -104,7 +87,7 @@ public final class Populaterator {
     log("Populating mental health contacts");
     connection
         .prepareStatement(
-            "CREATE TABLE App.VHA_Mental_Health_Contact_Info_Source ("
+            "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
                 + "ID VARCHAR(MAX),"
                 + "Region FLOAT,"
                 + "VISN VARCHAR(MAX),"
@@ -129,7 +112,7 @@ public final class Populaterator {
       for (CSVRecord row : rows) {
         try (PreparedStatement statement =
             connection.prepareStatement(
-                "INSERT INTO App.VHA_Mental_Health_Contact_Info_Source ("
+                "INSERT INTO App.VHA_Mental_Health_Contact_Info ("
                     + "ID,"
                     + "Region,"
                     + "VISN,"
@@ -145,7 +128,7 @@ public final class Populaterator {
                     + "Created,"
                     + "AddedToOutbox"
                     + ") VALUES ("
-                    + IntStream.range(0, 14).mapToObj(v -> "?").collect(Collectors.joining(","))
+                    + IntStream.range(0, 14).mapToObj(v -> "?").collect(joining(","))
                     + ")")) {
           int paramIndex = 1;
           for (Object val : row) {
@@ -157,11 +140,6 @@ public final class Populaterator {
         }
       }
     }
-    connection
-        .prepareStatement(
-            "CREATE VIEW App.VHA_Mental_Health_Contact_Info AS"
-                + " SELECT * FROM App.VHA_Mental_Health_Contact_Info_Source")
-        .execute();
   }
 
   /** Populate the database. */
@@ -177,53 +155,47 @@ public final class Populaterator {
     vast(connection);
     connection.commit();
     connection.close();
-    log("Good bye.");
+    log("Finished " + db.name());
   }
 
   @SneakyThrows
   private void stopCodes(Connection connection) {
-    log("Populating codes");
+    log("Populating stop codes");
     connection
         .prepareStatement(
-            "CREATE TABLE App.VHA_Stop_Code_Wait_Times ("
+            "CREATE TABLE App.VSSC_ClinicalServices ("
                 + "DIVISION_FCDMD VARCHAR(MAX),"
                 + "CocClassification VARCHAR(MAX),"
                 + "Sta6a VARCHAR(MAX),"
                 + "PrimaryStopCode VARCHAR(MAX),"
                 + "PrimaryStopCodeName VARCHAR(MAX),"
-                + "NumberOfAppointmentsLinkedToConsult VARCHAR(MAX),"
-                + "NumberOfLocations VARCHAR(MAX),"
-                + "AvgWaitTimeNew VARCHAR(MAX)"
+                + "NumberOfAppointments INT,"
+                + "NumberOfAppointmentsLinkedToConsult INT,"
+                + "NumberOfLocations INT,"
+                + "AvgWaitTimeNew VARCHAR(MAX),"
+                + "AvgWaitTimeNew_Appointments INT"
                 + ")")
         .execute();
     try (InputStreamReader reader =
         new FileReader(
-            new File(baseDir() + "/src/test/resources/stop-code-wait-times.csv"),
+            new File(baseDir() + "/src/test/resources/clinical-services.csv"),
             StandardCharsets.UTF_8)) {
-      Iterable<CSVRecord> rows = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
-      Streams.stream(rows)
+      CSVParser parser = CSVFormat.DEFAULT.withHeader().withSkipHeaderRecord().parse(reader);
+      List<String> headers = parser.getHeaderNames();
+      Streams.stream(parser)
           .parallel()
           .forEach(
               row -> {
                 try (PreparedStatement statement =
                     connection.prepareStatement(
-                        "INSERT INTO App.VHA_Stop_Code_Wait_Times ("
-                            + "DIVISION_FCDMD,"
-                            + "CocClassification,"
-                            + "Sta6a,"
-                            + "PrimaryStopCode,"
-                            + "PrimaryStopCodeName,"
-                            + "NumberOfAppointmentsLinkedToConsult,"
-                            + "NumberOfLocations,"
-                            + "AvgWaitTimeNew"
-                            + ") VALUES ("
-                            + IntStream.range(0, 8)
-                                .mapToObj(v -> "?")
-                                .collect(Collectors.joining(","))
-                            + ")")) {
+                        String.format(
+                            "INSERT INTO App.VSSC_ClinicalServices (%s) VALUES (%s)",
+                            Joiner.on(",").join(headers),
+                            headers.stream().map(h -> "?").collect(joining(","))))) {
                   int paramIndex = 1;
                   for (Object val : row) {
-                    statement.setObject(paramIndex, val);
+                    statement.setObject(
+                        paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
                     paramIndex++;
                   }
                   statement.execute();
@@ -231,13 +203,6 @@ public final class Populaterator {
                   throw new RuntimeException(tr);
                 }
               });
-    }
-    if (db.supportFunctions()) {
-      connection
-          .prepareStatement(
-              "CREATE FUNCTION App.VHA_Stop_Code_Wait_Times_Paginated (@page int, @count int)"
-                  + " RETURNS TABLE AS RETURN ( SELECT * from App.VHA_Stop_Code_Wait_Times )")
-          .execute();
     }
   }
 
@@ -247,41 +212,33 @@ public final class Populaterator {
     try (InputStreamReader reader =
         new FileReader(
             new File(baseDir() + "/src/test/resources/vast.csv"), StandardCharsets.UTF_8)) {
-      Iterator<CSVRecord> rowIt = CSVFormat.DEFAULT.parse(reader).iterator();
-      checkState(rowIt.hasNext());
-      CSVRecord headers = rowIt.next();
+      CSVParser parser = CSVFormat.DEFAULT.withHeader().withSkipHeaderRecord().parse(reader);
+      List<String> headers = parser.getHeaderNames();
       connection
           .prepareStatement(
-              "CREATE TABLE App.Vast_Source ("
-                  + Streams.stream(headers)
+              "CREATE TABLE App.Vast ("
+                  + headers.stream()
                       .map(
                           h ->
                               StringUtils.equals(h, "LastUpdated")
                                   ? h + " smalldatetime"
                                   : h + " VARCHAR(MAX)")
-                      .collect(Collectors.joining(","))
+                      .collect(joining(","))
                   + ")")
           .execute();
-      while (rowIt.hasNext()) {
-        CSVRecord row = rowIt.next();
+      for (CSVRecord row : parser) {
         try (PreparedStatement statement =
             connection.prepareStatement(
-                "INSERT INTO App.Vast_Source ("
+                "INSERT INTO App.Vast ("
                     + Joiner.on(",").join(headers)
                     + ") VALUES ("
-                    + Streams.stream(headers).map(h -> "?").collect(Collectors.joining(","))
+                    + headers.stream().map(h -> "?").collect(joining(","))
                     + ")")) {
           int paramIndex = 1;
           for (Object val : row) {
-            // This is the LastUpdated Column in the CSV
-            // Use JDBC Mapping guidelines of java.sql.Timestamp <-> SQL's smalldatetime
-            if (paramIndex
-                == Streams.stream(headers).collect(toList()).indexOf("LastUpdated") + 1) {
-              statement.setObject(
-                  paramIndex,
-                  String.valueOf(val).equalsIgnoreCase("null")
-                      ? null
-                      : Timestamp.valueOf(val.toString()));
+            if (paramIndex == headers.stream().collect(toList()).indexOf("LastUpdated") + 1) {
+              // will be overwritten afterward with current time
+              statement.setObject(paramIndex, null);
             } else {
               statement.setObject(
                   paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
@@ -296,13 +253,11 @@ public final class Populaterator {
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S").withZone(ZoneOffset.UTC);
     connection
         .prepareStatement(
-            String.format(
-                "UPDATE App.Vast_Source SET LastUpdated='%s'", formatter.format(Instant.now())))
+            String.format("UPDATE App.Vast SET LastUpdated='%s'", formatter.format(Instant.now())))
         .execute();
-    connection.prepareStatement("CREATE VIEW App.Vast AS SELECT * FROM App.Vast_Source").execute();
   }
 
-  /** Defines DB in terms the Populator will need. */
+  /** Defines DB in terms the Populaterator will need. */
   public interface Db {
     /** If a bootstrap connection is provided, databases will be (re)created. */
     Optional<Connection> bootstrapConnection();
@@ -315,13 +270,10 @@ public final class Populaterator {
     /** A connection to the database. */
     Connection connection();
 
-    /** The name of this db configuration used for logging. */
+    /** The name of this DB configuration used for logging. */
     default String name() {
       return getClass().getSimpleName();
     }
-
-    /** If this instance supports the use of CREATE FUNCTION. */
-    boolean supportFunctions();
   }
 
   /** A definition for H2 instance. */
@@ -342,14 +294,9 @@ public final class Populaterator {
       new File(dbFile + ".trace.db").delete();
       return DriverManager.getConnection("jdbc:h2:" + dbFile, "sa", "sa");
     }
-
-    @Override
-    public boolean supportFunctions() {
-      return false;
-    }
   }
 
-  /** A defintion for SqlServer instance. */
+  /** A definition for SqlServer instance. */
   @Value
   @Builder
   public static class SqlServer implements Db {
@@ -385,11 +332,6 @@ public final class Populaterator {
           String.format(
               "jdbc:sqlserver://%s:%s;user=%S;password=%s;database=%s",
               host, port, user, password, collectorDatabase));
-    }
-
-    @Override
-    public boolean supportFunctions() {
-      return true;
     }
   }
 }
