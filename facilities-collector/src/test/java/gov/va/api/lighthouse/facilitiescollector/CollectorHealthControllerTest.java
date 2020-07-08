@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.web.context.request.RequestContextHolder.setRequestAttributes;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestAttributes;
 
 @ExtendWith(MockitoExtension.class)
 public class CollectorHealthControllerTest {
@@ -64,6 +67,7 @@ public class CollectorHealthControllerTest {
   @Test
   @SneakyThrows
   public void allHealthyBackendServicesReturns200AndHealthWithUpStatuses() {
+    setRequestAttributes(mock(RequestAttributes.class));
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
@@ -127,6 +131,7 @@ public class CollectorHealthControllerTest {
   @Test
   @SneakyThrows
   public void oneOrMoreUnhealthyBackendServicesReturns503AndHealthWithDownStatuses() {
+    setRequestAttributes(mock(RequestAttributes.class));
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
@@ -172,6 +177,7 @@ public class CollectorHealthControllerTest {
   @Test
   @SneakyThrows
   public void servicesUnreachable() {
+    setRequestAttributes(mock(RequestAttributes.class));
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))

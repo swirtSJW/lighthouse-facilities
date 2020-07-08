@@ -38,6 +38,11 @@ public class CollectorIT {
   }
 
   @Test
+  void collectHealth() {
+    makeRequest("collector/health", 200);
+  }
+
+  @Test
   void mentalHealth() {
     var items = makeRequest("mental-health-contact", 200).expectListOf(Map.class);
     assertThat(items.size()).isGreaterThan(500);
