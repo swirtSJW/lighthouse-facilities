@@ -6,13 +6,13 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 @Builder
 public class BenefitsTransformer {
-  @NotNull ArcGisBenefits.Feature arcgisFacility;
+  @NonNull ArcGisBenefits.Feature arcgisFacility;
 
   String csvWebsite;
 

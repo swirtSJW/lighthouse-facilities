@@ -4,12 +4,12 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Locale;
-import javax.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.NonNull;
 
 @Builder
 public class CemeteriesTransformer {
-  @NotNull ArcGisCemeteries.Feature arcgisFacility;
+  @NonNull ArcGisCemeteries.Feature arcgisFacility;
 
   String csvWebsite;
 
