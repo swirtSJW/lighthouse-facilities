@@ -13,12 +13,7 @@ class SystemDefinition {
   @NotNull ServiceDefinition facilities;
   @NotNull ServiceDefinition facilitiesManagement;
   @NotNull ServiceDefinition collector;
-  @NotNull String apikey;
   @NotNull String clientkey;
-
-  public Header apikeyAsHeader() {
-    return new Header("apikey", apikey());
-  }
 
   public Header clientkeyAsHeader() {
     return new Header("client-key", clientkey());

@@ -18,7 +18,6 @@ public class RequiresFacilitiesExtension implements BeforeAllCallback {
             .service()
             .requestSpecification()
             .accept("application/json")
-            .header(systemDefinition().apikeyAsHeader())
             .request(
                 Method.GET,
                 TestClients.facilities().service().urlWithApiPath()

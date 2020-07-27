@@ -40,7 +40,6 @@ public class CmsOverlayIT {
                     .service()
                     .requestSpecification()
                     .accept("application/json")
-                    .header(SystemDefinitions.systemDefinition().apikeyAsHeader())
                     .request(
                         Method.GET,
                         TestClients.facilities().service().urlWithApiPath()

@@ -21,7 +21,6 @@ MAIN_JAR=$(find -maxdepth 1 -name "${TEST_MODULE_NAME}-*.jar" -a -not -name "${T
 
 # Environment variables that are required to run
 REQUIRED_ENV_VARIABLES=(
-  "API_KEY" \
   "CLIENT_KEY" \
   "K8S_ENVIRONMENT" \
   "K8S_LOAD_BALANCER" \
@@ -138,7 +137,6 @@ setupForAutomation() {
 
   trustServer $K8S_LOAD_BALANCER
 
-  addSystemProperty apikey "$API_KEY"
   addSystemProperty client-key "$CLIENT_KEY"
   addSystemProperty sentinel "$SENTINEL_ENV"
   addSystemProperty sentinel.facilities-collector.api-path "$FACILITIES_COLLECTOR_API_PATH"

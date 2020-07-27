@@ -36,7 +36,6 @@ run() {
     -e K8S_ENVIRONMENT=${ENV:-qa} \
     -e SENTINEL_ENV=${ENV:-qa} \
     -e CLIENT_KEY=not-needed \
-    -e API_KEY=not-needed \
     -e FACILITIES_URL=http://$THIS_MACHINE:8085 \
     -e FACILITIES_API_PATH=/ \
     -e FACILITIES_MANAGEMENT_API_PATH=/ \

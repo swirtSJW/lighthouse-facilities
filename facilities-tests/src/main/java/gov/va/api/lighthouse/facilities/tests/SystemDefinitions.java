@@ -20,7 +20,6 @@ class SystemDefinitions {
         .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
         .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
         .facilitiesIds(facilitiesIds())
-        .apikey(System.getProperty("apikey", "not-specified"))
         .clientkey(System.getProperty("client-key", "not-specified"))
         .build();
   }
@@ -33,7 +32,6 @@ class SystemDefinitions {
         .facilitiesManagement(serviceDefinition("facilities-management", url, 8085, "/"))
         .collector(serviceDefinition("facilities-collector", url, 8080, "/"))
         .facilitiesIds(facilitiesIds())
-        .apikey(System.getProperty("apikey", "not-needed"))
         .clientkey(System.getProperty("client-key", "not-needed"))
         .build();
   }
@@ -46,7 +44,6 @@ class SystemDefinitions {
         .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
         .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
         .facilitiesIds(facilitiesIds())
-        .apikey(System.getProperty("apikey", "not-specified"))
         .clientkey(System.getProperty("client-key", "not-specified"))
         .build();
   }
@@ -59,7 +56,6 @@ class SystemDefinitions {
         .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
         .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
         .facilitiesIds(facilitiesIds())
-        .apikey(System.getProperty("apikey", "not-specified"))
         .clientkey(System.getProperty("client-key", "not-specified"))
         .build();
   }
@@ -82,7 +78,6 @@ class SystemDefinitions {
         .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
         .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
         .facilitiesIds(facilitiesIds())
-        .apikey(System.getProperty("apikey", "not-specified"))
         .clientkey(System.getProperty("client-key", "not-specified"))
         .build();
   }
@@ -95,7 +90,6 @@ class SystemDefinitions {
         .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
         .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
         .facilitiesIds(facilitiesIds())
-        .apikey(System.getProperty("apikey", "not-specified"))
         .clientkey(System.getProperty("client-key", "not-specified"))
         .build();
   }

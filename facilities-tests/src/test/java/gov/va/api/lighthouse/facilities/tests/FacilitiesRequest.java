@@ -18,11 +18,7 @@ final class FacilitiesRequest {
         TestClients.facilities().service().apiPath() + request,
         acceptHeader,
         expectedStatus);
-    RequestSpecification spec =
-        TestClients.facilities()
-            .service()
-            .requestSpecification()
-            .header(SystemDefinitions.systemDefinition().apikeyAsHeader());
+    RequestSpecification spec = TestClients.facilities().service().requestSpecification();
     if (acceptHeader != null) {
       spec = spec.accept(acceptHeader);
     }
