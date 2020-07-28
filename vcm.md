@@ -67,15 +67,15 @@ urgent-contact-2.json
 ID:
 
 * id is a *globally unique* string that uniquely identifies the record
-- In the examples above, this is locationSID
-- This name can be more specific if it will always correspond to a known field like locationSID
-- ID is expected be permanent; it should not change once a record is created
+* In the examples above, this is locationSID
+* This name can be more specific if it will always correspond to a known field like locationSID
+* ID is expected be permanent; it should not change once a record is created
 
 Facility ID:
 
 * facility_id refers to the facility with which this record is associated
-  * same facility ID the rest of Facilities API uses
-  * each facility may have zero, one, or many urgent contact records
+* same facility ID the rest of Facilities API uses
+* each facility may have zero, one, or many urgent contact records
 
 Misc:
 
@@ -83,7 +83,7 @@ Misc:
 * clinic name is the name within the facility, e.g. "what's posted on the door"
 * clinic specialty is freeform text (no taxonomy)
 * note corresponds to 'location specific emergency guidance' in the UI mock-ups
-  * note limited to 1000 characters
+* note limited to 1000 characters
 * at least one phone number is required
 
 ### Open Questions
