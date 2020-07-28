@@ -99,12 +99,12 @@ Misc:
 
 ### Save (or update) an individual record:
 
-`curl -s -X POST -HContent-Type:application/json -d @urgent-contact-1.json https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact`
+`curl -X POST -HContent-Type:application/json -d @urgent-contact-1.json https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact`
 
-`curl -s -X POST -HContent-Type:application/json -d @urgent-contact-2.json https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact`
+`curl -X POST -HContent-Type:application/json -d @urgent-contact-2.json https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact`
 
 ### Read (single record by ID): 
-`curl -s https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact/45815`
+`curl https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact/45815`
 
 response:
 
@@ -139,7 +139,7 @@ response:
 
 ### Search (all associated records for a facility ID):
 
-`curl -s https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact?facility_id=vha_534`
+`curl https://blue.qa.lighthouse.va.gov/va_facilities/v0/urgent-contact?facility_id=vha_534`
 
 response:
 
