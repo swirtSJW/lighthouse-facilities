@@ -2,7 +2,9 @@ package gov.va.api.lighthouse.facilities.tests;
 
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
+import io.restassured.RestAssured;
 import io.restassured.http.Method;
+import io.restassured.specification.RequestSpecification;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -14,15 +16,12 @@ public class RequiresFacilitiesExtension implements BeforeAllCallback {
 
   private static boolean isTestFacilityAvailable() {
     var response =
-        TestClients.facilities()
-            .service()
-            .requestSpecification()
-            .accept("application/json")
+        requestSpecification()
             .request(
                 Method.GET,
-                TestClients.facilities().service().urlWithApiPath()
+                systemDefinition().facilities().urlWithApiPath()
                     + "v0/facilities/"
-                    + systemDefinition().facilitiesIds().facility());
+                    + systemDefinition().ids().facility());
     return response.statusCode() == 200;
   }
 
@@ -40,23 +39,24 @@ public class RequiresFacilitiesExtension implements BeforeAllCallback {
   }
 
   private static void reloadFacilities() {
+    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
     var response =
-        TestClients.facilities()
-            .service()
-            .requestSpecification()
-            .header(systemDefinition().clientkeyAsHeader())
+        requestSpecification()
+            .header("client-key", System.getProperty("client-key", "unset"))
             .log()
             .uri()
-            .request(
-                Method.GET,
-                TestClients.facilitiesManagement().service().urlWithApiPath()
-                    + "internal/management/reload");
+            .request(Method.GET, svc.urlWithApiPath() + "internal/management/reload");
     if (response.statusCode() != 200) {
       log.warn(
           "Facility loading appears to have failed with status {}\n{}",
           response.statusCode(),
           response.getBody().prettyPrint());
     }
+  }
+
+  private static RequestSpecification requestSpecification() {
+    SystemDefinitions.Service svc = systemDefinition().facilities();
+    return RestAssured.given().baseUri(svc.url()).port(svc.port()).relaxedHTTPSValidation();
   }
 
   @Override

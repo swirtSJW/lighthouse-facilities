@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(RequiresFacilitiesExtension.class)
 public class ReadIT {
   private static String readPath() {
-    return "v0/facilities/" + systemDefinition().facilitiesIds().facility();
+    return "v0/facilities/" + systemDefinition().ids().facility();
   }
 
   @Test

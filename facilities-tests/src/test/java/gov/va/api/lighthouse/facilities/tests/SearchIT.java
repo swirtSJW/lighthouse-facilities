@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class SearchIT {
   @Test
   void searchByBoundingBox() {
-    final String bbox = systemDefinition().facilitiesIds().bbox();
+    final String bbox = systemDefinition().ids().bbox();
     final String request = "v0/facilities?" + bbox;
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -25,9 +25,9 @@ public class SearchIT {
 
   @Test
   void searchByBoundingBoxMutuallyExclusive() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
-    final String bbox = systemDefinition().facilitiesIds().bbox();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
+    final String bbox = systemDefinition().ids().bbox();
     final String request = "v0/facilities?" + bbox + "&lat=" + latitude + "&long=" + longitude;
     facilitiesRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     facilitiesRequest("application/geo+json", request, 400).expectValid(ApiError.class);
@@ -37,7 +37,7 @@ public class SearchIT {
 
   @Test
   void searchByBoundingBoxWithServices() {
-    final String bbox = systemDefinition().facilitiesIds().bbox();
+    final String bbox = systemDefinition().ids().bbox();
     final String request = "v0/facilities?" + bbox + "&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -49,7 +49,7 @@ public class SearchIT {
 
   @Test
   void searchByBoundingBoxWithType() {
-    final String bbox = systemDefinition().facilitiesIds().bbox();
+    final String bbox = systemDefinition().ids().bbox();
     final String request = "v0/facilities?" + bbox + "&type=health";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -61,7 +61,7 @@ public class SearchIT {
 
   @Test
   void searchByBoundingBoxWithTypeAndServices() {
-    final String bbox = systemDefinition().facilitiesIds().bbox();
+    final String bbox = systemDefinition().ids().bbox();
     final String request = "v0/facilities?" + bbox + "&type=health&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -73,8 +73,8 @@ public class SearchIT {
 
   @Test
   void searchByIds() {
-    final String facilities = systemDefinition().facilitiesIds().facilitiesList();
-    final String request = "v0/facilities?ids=" + facilities;
+    final String idsCsv = systemDefinition().ids().facilityIdsCsv();
+    final String request = "v0/facilities?ids=" + idsCsv;
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
     facilitiesRequest("application/geo+json", request, 200)
@@ -85,8 +85,8 @@ public class SearchIT {
 
   @Test
   void searchByLatLong() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
     final String request = "v0/facilities?lat=" + latitude + "&long=" + longitude;
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -98,9 +98,9 @@ public class SearchIT {
 
   @Test
   void searchByLatLongMutuallyExclusive() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
-    final String state = systemDefinition().facilitiesIds().state();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
+    final String state = systemDefinition().ids().state();
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&state=" + state;
     facilitiesRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
@@ -111,11 +111,11 @@ public class SearchIT {
 
   @Test
   void searchByLatLongWithIds() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
-    final String facilities = systemDefinition().facilitiesIds().facilitiesList();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
+    final String idsCsv = systemDefinition().ids().facilityIdsCsv();
     final String request =
-        "v0/facilities?lat=" + latitude + "&long=" + longitude + "&ids=" + facilities;
+        "v0/facilities?lat=" + latitude + "&long=" + longitude + "&ids=" + idsCsv;
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
     facilitiesRequest("application/geo+json", request, 200)
@@ -126,8 +126,8 @@ public class SearchIT {
 
   @Test
   void searchByLatLongWithServices() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
     final String request =
         "v0/facilities?lat=" + latitude + "&long=" + longitude + "&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
@@ -140,8 +140,8 @@ public class SearchIT {
 
   @Test
   void searchByLatLongWithType() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
     final String request = "v0/facilities?lat=" + latitude + "&long=" + longitude + "&type=health";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -153,8 +153,8 @@ public class SearchIT {
 
   @Test
   void searchByLatLongWithTypeAndServices() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
     final String request =
         "v0/facilities?lat="
             + latitude
@@ -171,7 +171,7 @@ public class SearchIT {
 
   @Test
   void searchByState() {
-    final String state = systemDefinition().facilitiesIds().state();
+    final String state = systemDefinition().ids().state();
     final String request = "v0/facilities?state=" + state;
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -183,8 +183,8 @@ public class SearchIT {
 
   @Test
   void searchByStateMutuallyExclusive() {
-    final String state = systemDefinition().facilitiesIds().state();
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String state = systemDefinition().ids().state();
+    final String zip = systemDefinition().ids().zip();
     final String request = "v0/facilities?state=" + state + "&zip=" + zip;
     facilitiesRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     facilitiesRequest("application/geo+json", request, 400).expectValid(ApiError.class);
@@ -194,7 +194,7 @@ public class SearchIT {
 
   @Test
   void searchByStateWithServices() {
-    final String state = systemDefinition().facilitiesIds().state();
+    final String state = systemDefinition().ids().state();
     final String request = "v0/facilities?state=" + state + "&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -206,7 +206,7 @@ public class SearchIT {
 
   @Test
   void searchByStateWithType() {
-    final String state = systemDefinition().facilitiesIds().state();
+    final String state = systemDefinition().ids().state();
     final String request = "v0/facilities?state=" + state + "&type=health";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -218,7 +218,7 @@ public class SearchIT {
 
   @Test
   void searchByStateWithTypeAndServices() {
-    final String state = systemDefinition().facilitiesIds().state();
+    final String state = systemDefinition().ids().state();
     final String request = "v0/facilities?state=" + state + "&type=health&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -230,7 +230,7 @@ public class SearchIT {
 
   @Test
   void searchByZip() {
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String zip = systemDefinition().ids().zip();
     final String request = "v0/facilities?zip=" + zip;
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -242,8 +242,8 @@ public class SearchIT {
 
   @Test
   void searchByZipMutuallyExclusive() {
-    final String zip = systemDefinition().facilitiesIds().zip();
-    final String bbox = systemDefinition().facilitiesIds().bbox();
+    final String zip = systemDefinition().ids().zip();
+    final String bbox = systemDefinition().ids().bbox();
     final String request = "v0/facilities?zip=" + zip + "&" + bbox;
     facilitiesRequest("application/vnd.geo+json", request, 400).expectValid(ApiError.class);
     facilitiesRequest("application/geo+json", request, 400).expectValid(ApiError.class);
@@ -253,7 +253,7 @@ public class SearchIT {
 
   @Test
   void searchByZipWithServices() {
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String zip = systemDefinition().ids().zip();
     final String request = "v0/facilities?zip=" + zip + "&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -265,7 +265,7 @@ public class SearchIT {
 
   @Test
   void searchByZipWithType() {
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String zip = systemDefinition().ids().zip();
     final String request = "v0/facilities?zip=" + zip + "&type=health";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);
@@ -277,7 +277,7 @@ public class SearchIT {
 
   @Test
   void searchByZipWithTypeAndServices() {
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String zip = systemDefinition().ids().zip();
     final String request = "v0/facilities?zip=" + zip + "&type=health&services[]=PrimaryCare";
     facilitiesRequest("application/vnd.geo+json", request, 200)
         .expectValid(GeoFacilitiesResponse.class);

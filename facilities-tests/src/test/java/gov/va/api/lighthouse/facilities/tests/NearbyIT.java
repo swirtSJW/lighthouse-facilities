@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 public class NearbyIT {
   @Test
   void searchByAddress() {
-    final String streetAddress = systemDefinition().facilitiesIds().streetAddress();
-    final String city = systemDefinition().facilitiesIds().city();
-    final String state = systemDefinition().facilitiesIds().state();
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String streetAddress = systemDefinition().ids().streetAddress();
+    final String city = systemDefinition().ids().city();
+    final String state = systemDefinition().ids().state();
+    final String zip = systemDefinition().ids().zip();
     final String request =
         "v0/nearby?street_address="
             + streetAddress
@@ -27,10 +27,10 @@ public class NearbyIT {
 
   @Test
   void searchByAddressWithDriveTime() {
-    final String streetAddress = systemDefinition().facilitiesIds().streetAddress();
-    final String city = systemDefinition().facilitiesIds().city();
-    final String state = systemDefinition().facilitiesIds().state();
-    final String zip = systemDefinition().facilitiesIds().zip();
+    final String streetAddress = systemDefinition().ids().streetAddress();
+    final String city = systemDefinition().ids().city();
+    final String state = systemDefinition().ids().state();
+    final String zip = systemDefinition().ids().zip();
     final String request =
         "v0/nearby?street_address="
             + streetAddress
@@ -46,16 +46,16 @@ public class NearbyIT {
 
   @Test
   void searchByLatLong() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude;
     facilitiesRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
 
   @Test
   void searchByLatLongWithDriveTime() {
-    final String latitude = systemDefinition().facilitiesIds().latitude();
-    final String longitude = systemDefinition().facilitiesIds().longitude();
+    final String latitude = systemDefinition().ids().latitude();
+    final String longitude = systemDefinition().ids().longitude();
     final String request = "v0/nearby?lat=" + latitude + "&lng=" + longitude + "&drive_time=90";
     facilitiesRequest("application/json", request, 200).expectValid(NearbyResponse.class);
   }
