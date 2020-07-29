@@ -30,7 +30,7 @@ OpenAPI documentation on the
   through the facilities collection process.
   Operating status may be updated at any time by CMS.
   Drive time band data is currently refreshed on an as-needed basis.
-* `facilities-timer` is a Kubernetes Cron pod that fires nightly to trigger the facilities
+* `facilities-timer` is a AWS Lambda Cron pod that fires nightly to trigger the facilities
   collection/data reload process.
 * `Access to Care` and `ArcGIS` are services used to provide different aspects
   of facilities. This data is aggregated by the `facility-collector`.
