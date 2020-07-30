@@ -9,6 +9,8 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 class SystemDefinitions {
+  static final String CLIENT_KEY_DEFAULT = "axolotl";
+
   private static Ids ids() {
     return Ids.builder()
         .facility("vba_322b")

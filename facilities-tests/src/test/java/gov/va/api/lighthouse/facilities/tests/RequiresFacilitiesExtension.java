@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.tests;
 
+import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.CLIENT_KEY_DEFAULT;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 
 import io.restassured.RestAssured;
@@ -42,7 +43,7 @@ public class RequiresFacilitiesExtension implements BeforeAllCallback {
     SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
     var response =
         requestSpecification()
-            .header("client-key", System.getProperty("client-key", "unset"))
+            .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
             .log()
             .uri()
             .request(Method.GET, svc.urlWithApiPath() + "internal/management/reload");

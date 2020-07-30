@@ -12,12 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class InternalProtectionIT {
-  @BeforeAll
-  static void assumeNotLocal() {
-    // These tests require Kong
-    assumeEnvironmentNotIn(Environment.LOCAL);
-  }
-
   private static RequestSpecification requestSpecification() {
     SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
     return RestAssured.given().baseUri(svc.url()).port(svc.port()).relaxedHTTPSValidation();
@@ -30,7 +24,7 @@ public class InternalProtectionIT {
             requestSpecification()
                 .request(
                     Method.DELETE,
-                    svc.urlWithApiPath() + "/internal/management/facilities/{id}/cms-overlay",
+                    svc.urlWithApiPath() + "internal/management/facilities/{id}/cms-overlay",
                     "vba_NOPE"))
         .expect(401);
   }
@@ -42,7 +36,7 @@ public class InternalProtectionIT {
             requestSpecification()
                 .request(
                     Method.DELETE,
-                    svc.urlWithApiPath() + "/internal/management/facilities/{id}",
+                    svc.urlWithApiPath() + "internal/management/facilities/{id}",
                     "xxx_NOPE"))
         .expect(401);
   }
@@ -52,7 +46,7 @@ public class InternalProtectionIT {
     SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
     ExpectedResponse.of(
             requestSpecification()
-                .request(Method.GET, svc.urlWithApiPath() + "/internal/management/bands"))
+                .request(Method.GET, svc.urlWithApiPath() + "internal/management/bands"))
         .expect(401);
   }
 
@@ -62,7 +56,7 @@ public class InternalProtectionIT {
     ExpectedResponse.of(
             requestSpecification()
                 .request(
-                    Method.GET, svc.urlWithApiPath() + "/internal/management/bands/{name}", "NOPE"))
+                    Method.GET, svc.urlWithApiPath() + "internal/management/bands/{name}", "NOPE"))
         .expect(401);
   }
 
@@ -71,7 +65,7 @@ public class InternalProtectionIT {
     SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
     ExpectedResponse.of(
             requestSpecification()
-                .request(Method.GET, svc.urlWithApiPath() + "/internal/management/graveyard"))
+                .request(Method.GET, svc.urlWithApiPath() + "internal/management/graveyard"))
         .expect(401);
   }
 
@@ -83,7 +77,7 @@ public class InternalProtectionIT {
     SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
     ExpectedResponse.of(
             requestSpecification()
-                .request(Method.GET, svc.urlWithApiPath() + "/internal/management/reload"))
+                .request(Method.GET, svc.urlWithApiPath() + "internal/management/reload"))
         .expect(401);
   }
 }

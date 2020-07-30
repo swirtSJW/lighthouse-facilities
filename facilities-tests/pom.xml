@@ -162,6 +162,7 @@
                 <argument>-Dloader=gov.va.api.lighthouse.facilities.Application</argument>
                 <argument>-Dbing.url=http://localhost:8666</argument>
                 <argument>-Dfacilities-collector.url=http://localhost:8080</argument>
+                <argument>-Dinternal.client-key=axolotl</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
                 <argument>-Dspring.datasource.url=jdbc:h2:mem:facilities</argument>
                 <argument>-Dspring.datasource.username=sa</argument>

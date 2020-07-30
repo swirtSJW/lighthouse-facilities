@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.tests;
 
 import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
+import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.CLIENT_KEY_DEFAULT;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,7 +33,11 @@ public class DriveTimeBandManagementIT {
 
   private static RequestSpecification requestSpecification() {
     SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
-    return RestAssured.given().baseUri(svc.url()).port(svc.port()).relaxedHTTPSValidation();
+    return RestAssured.given()
+        .baseUri(svc.url())
+        .port(svc.port())
+        .relaxedHTTPSValidation()
+        .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT));
   }
 
   @Test

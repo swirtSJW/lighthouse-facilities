@@ -42,15 +42,16 @@ configValue facilities-collector $PROFILE spring.datasource.password '<YourStron
 configValue facilities-collector $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
 configValue facilities-collector $PROFILE spring.datasource.username 'SA'
 configValue facilities-collector $PROFILE state-cemeteries.url 'http://localhost:8666'
+checkForUnsetValues facilities-collector $PROFILE
 
 makeConfig facilities $PROFILE
 configValue facilities $PROFILE bing.key 'unused'
 configValue facilities $PROFILE bing.url 'http://localhost:8666'
 configValue facilities $PROFILE facilities-collector.url 'http://localhost:8080'
-configValue facilities $PROFILE facilities.url 'http://localhost:8085'
 configValue facilities $PROFILE facilities.base-path '/'
+configValue facilities $PROFILE facilities.url 'http://localhost:8085'
+configValue facilities $PROFILE internal.client-key 'axolotl'
 configValue facilities $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
 configValue facilities $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=facility;sendStringParametersAsUnicode=false'
 configValue facilities $PROFILE spring.datasource.username 'SA'
-
-checkForUnsetValues facilities-collector $PROFILE
+checkForUnsetValues facilities $PROFILE
