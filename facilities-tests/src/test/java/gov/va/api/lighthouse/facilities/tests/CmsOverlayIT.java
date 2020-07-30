@@ -66,8 +66,17 @@ public class CmsOverlayIT {
   }
 
   @Test
+  void canApplyOverlay() {
+    var message = getClass().getSimpleName() + " " + Instant.now();
+    assertUpdate(OperatingStatusCode.CLOSED, message, ActiveStatus.T);
+    assertUpdate(OperatingStatusCode.LIMITED, message, ActiveStatus.A);
+    assertUpdate(OperatingStatusCode.NOTICE, message, ActiveStatus.A);
+    assertUpdate(OperatingStatusCode.NORMAL, message, ActiveStatus.A);
+  }
+
+  @Test
   @SneakyThrows
-  void badCmsFacility() {
+  void saveForUnknownFacility() {
     var id = "vba_NOPE";
     log.info("Updating invalid facility {} with cmsOverlay", id);
     OperatingStatus ops =
@@ -80,15 +89,6 @@ public class CmsOverlayIT {
                 .request(
                     Method.POST, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
         .expect(202);
-  }
-
-  @Test
-  void canApplyOverlay() {
-    var message = getClass().getSimpleName() + " " + Instant.now();
-    assertUpdate(OperatingStatusCode.CLOSED, message, ActiveStatus.T);
-    assertUpdate(OperatingStatusCode.LIMITED, message, ActiveStatus.A);
-    assertUpdate(OperatingStatusCode.NOTICE, message, ActiveStatus.A);
-    assertUpdate(OperatingStatusCode.NORMAL, message, ActiveStatus.A);
   }
 
   @Test
