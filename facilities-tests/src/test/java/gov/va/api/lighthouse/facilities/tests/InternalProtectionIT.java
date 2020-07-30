@@ -8,7 +8,6 @@ import gov.va.api.health.sentinel.ExpectedResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.specification.RequestSpecification;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class InternalProtectionIT {
