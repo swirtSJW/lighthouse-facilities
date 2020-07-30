@@ -180,10 +180,7 @@ public class NearbyController {
     }
 
     Point2D point = new Point2D.Double(longitude.doubleValue(), latitude.doubleValue());
-    return bandsForStation
-        .asMap()
-        .entrySet()
-        .parallelStream()
+    return bandsForStation.asMap().entrySet().parallelStream()
         .map(
             entry -> {
               List<DriveTimeBandEntity> sortedEntities =
