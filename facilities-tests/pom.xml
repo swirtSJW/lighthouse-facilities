@@ -96,6 +96,7 @@
               <skip>${sentinel.skipLaunch}</skip>
               <processLogFile>${project.build.directory}/mock-services.log</processLogFile>
               <waitForInterrupt>false</waitForInterrupt>
+              <waitAfterLaunch>60</waitAfterLaunch>
               <arguments>
                 <argument>java</argument>
                 <argument>-jar</argument>
@@ -150,6 +151,7 @@
               <name>facilities</name>
               <healthcheckUrl>http://localhost:8085/actuator/health</healthcheckUrl>
               <skip>${sentinel.skipLaunch}</skip>
+              <waitAfterLaunch>60</waitAfterLaunch>
               <!--
               <processLogFile>${project.build.directory}/facilities.log</processLogFile>
               -->
