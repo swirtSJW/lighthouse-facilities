@@ -1,4 +1,4 @@
-# Facilities API for VCM and VA Mobile
+# New endpoints to support VCM
 
 Two sample records to save:
 
