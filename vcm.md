@@ -1,4 +1,4 @@
-# New endpoints to support VCM
+# Urgent Contact API for VCM
 
 Two sample records to save:
 
