@@ -89,7 +89,7 @@ Misc:
 
 * Should `id` be renamed? This can be more specific if it will always correspond to a specific field like clinic `locationSID`
 * Naming: `clinic_service` vs `clinic_specialty`? (This will ultimately be clinician-facing, not veteran-facing.)
-* Should `note` have a more specific name? (Closer to `location specific emergency guidance'?)
+* Should `note` have a more specific name? (Closer to `location specific emergency guidance`?)
 * Is the phone `label` field necessary?
 * Does each facility have only one administrator responsible for all its urgent contact numbers?
     If so, it is redundant it to specify it on every record; we may want to manage administrator data separately
