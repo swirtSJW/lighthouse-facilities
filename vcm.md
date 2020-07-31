@@ -2,7 +2,7 @@
 
 Two sample records to save:
 
-urgent-contact-1.json
+`urgent-contact-1.json`
 
 ```
 {
@@ -32,7 +32,7 @@ urgent-contact-1.json
 }
 ```
 
-urgent-contact-2.json
+`urgent-contact-2.json`
 
 ```
 {
@@ -66,31 +66,31 @@ urgent-contact-2.json
 
 ID:
 
-* id is a *globally unique* string that uniquely identifies the record
-* In the examples above, this is locationSID
-* This name can be more specific if it will always correspond to a known field like locationSID
+* `id` is a *globally unique* string that uniquely identifies the record
+* This is clinic `locationSID` in the examples above
 * ID is expected be permanent; it should not change once a record is created
 
 Facility ID:
 
-* facility_id refers to the facility with which this record is associated
-* same facility ID the rest of Facilities API uses
-* each facility may have zero, one, or many urgent contact records
+* `facility_id` refers to the facility with which this record is associated
+* This is the same facility ID the rest of Facilities API uses
+* Each facility may have zero, one, or many urgent contact records
 
 Misc:
 
-* optional fields: clinic_name, clinic_specialty, phone.label, phone.extension
-* clinic name is the name within the facility, e.g. "what's posted on the door"
-* clinic specialty is freeform text (no taxonomy)
-* note corresponds to 'location specific emergency guidance' in the UI mock-ups
-* note limited to 1000 characters
-* at least one phone number is required
+* Optional fields: `clinic_name`, `clinic_specialty`, `phone.label`, `phone.extension`
+* `clinic_name` is the name within the facility, e.g. "what's posted on the door"
+* `clinic_specialty` is freeform text (no taxonomy)
+* `note` corresponds to `location specific emergency guidance` in the UI mock-ups
+* `note` is limited to 1000 characters
+* At least one phone number is required
 
 ### Open Questions
 
-* Is 'clinic_service' a more appropriate name than 'clinic_specialty'? (Note this is clinician-facing, not veteran-facing.)
-* Should 'note' have a more specific name? (Closer to `location specific emergency guidance'?)
-* Is the phone label field necessary?
+* Should `id` be renamed? This can be more specific if it will always correspond to a specific field like clinic `locationSID`
+* Naming: `clinic_service` vs `clinic_specialty`? (This will ultimately be clinician-facing, not veteran-facing.)
+* Should `note` have a more specific name? (Closer to `location specific emergency guidance'?)
+* Is the phone `label` field necessary?
 * Does each facility have only one administrator responsible for all its urgent contact numbers?
     If so, it is redundant it to specify it on every record; we may want to manage administrator data separately
 * Administrator is PII. We would prefer not to store that in Facilities API. Could administrator be managed in VCM instead?
