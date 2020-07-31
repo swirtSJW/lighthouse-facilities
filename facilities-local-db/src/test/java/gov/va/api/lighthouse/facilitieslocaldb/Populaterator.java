@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilitiescollector;
+package gov.va.api.lighthouse.facilitieslocaldb;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;

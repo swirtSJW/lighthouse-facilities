@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilitiescollector;
+package gov.va.api.lighthouse.facilitieslocaldb;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;

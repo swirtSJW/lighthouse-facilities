@@ -5,18 +5,9 @@ set -o pipefail
 [ -z "$SENTINEL_BASE_DIR" ] && SENTINEL_BASE_DIR=/sentinel
 cd $SENTINEL_BASE_DIR
 
-#============================================================
-
-# The prefix used for modules, e.g. lighthouse or health-apis
 MODULE_PREFIX=lighthouse
-
-# The name of the module containing tests (with out the prefix)
 TEST_MODULE_NAME=facilities-tests
-
-# The name of the modules "tests" jar, where tests are actually defined
 TESTS_JAR=$(find -maxdepth 1 -name "${TEST_MODULE_NAME}-*-tests.jar")
-
-# The name of module "main" jar, where all other classes are defined
 MAIN_JAR=$(find -maxdepth 1 -name "${TEST_MODULE_NAME}-*.jar" -a -not -name "${TEST_MODULE_NAME}-*-tests.jar")
 
 # Environment variables that are required to run

@@ -80,7 +80,7 @@
               <goal>java</goal>
             </goals>
             <configuration>
-              <mainClass>gov.va.api.lighthouse.facilitiescollector.Populaterator</mainClass>
+              <mainClass>gov.va.api.lighthouse.facilitieslocaldb.Populaterator</mainClass>
               <systemProperties>
                 <systemProperty>
                   <key>basedir</key>

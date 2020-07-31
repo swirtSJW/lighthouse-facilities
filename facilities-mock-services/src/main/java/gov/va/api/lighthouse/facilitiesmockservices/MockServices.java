@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * Creates a mock server that can support requests needed by facilities collector. This also
- * includes a /help endpoint to allow humans to see what requests are supported.
+ * Mock server for backend requests. Includes a /help endpoint to allow humans to see what requests
+ * are supported.
  */
 @Component
 @Slf4j
@@ -34,7 +34,6 @@ public class MockServices {
 
   @Autowired MockServicesOptions options;
 
-  /** Configurable health check statuses for the health collector. */
   @Value("${mock.atc-status-code:200}")
   int atcStatusCode;
 
@@ -47,7 +46,6 @@ public class MockServices {
   @Value("${mock.cems-status-code:200}")
   int cemsStatusCode;
 
-  /** The mock server itself. */
   private MockServer ms;
 
   private void addAccessToCareHealthCheck(MockServerClient mock) {
@@ -194,7 +192,6 @@ public class MockServices {
   @SneakyThrows
   private String contentOf(String resource) {
     log.info("Loading resource {}", resource);
-    // noinspection UnstableApiUsage
     return Resources.toString(getClass().getResource(resource), StandardCharsets.UTF_8);
   }
 
