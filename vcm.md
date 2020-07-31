@@ -85,7 +85,7 @@ Misc:
 * `note` is limited to 1000 characters
 * At least one phone number is required
 
-### Open Questions
+## Open Questions
 
 * Should `id` be renamed? This can be more specific if it will always correspond to a specific field like clinic `locationSID`
 * Naming: `clinic_service` vs `clinic_specialty`? (This will ultimately be clinician-facing, not veteran-facing.)
