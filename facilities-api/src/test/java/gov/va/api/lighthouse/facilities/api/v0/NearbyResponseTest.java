@@ -22,39 +22,11 @@ public class NearbyResponseTest {
         .type(NearbyResponse.Type.NearbyFacility)
         .attributes(
             NearbyResponse.NearbyAttributes.builder().minTime(minTime).maxTime(maxTime).build())
-        .relationships(
-            NearbyResponse.Relationships.builder()
-                .vaFacility(
-                    NearbyResponse.VaFacility.builder()
-                        .links(NearbyResponse.Links.builder().related(related).build())
-                        .build())
-                .build())
         .build();
   }
 
   private NearbyResponse sample() {
     return NearbyResponse.builder()
-        .links(
-            PageLinks.builder()
-                .related(
-                    "/services/va_facilities/v0/facilities?ids=vha_548GC,vha_548GF,vha_548QA,vha_548GA,vha_548GE,vha_675,vha_675GA,vha_675GB,vha_675GD,vha_675GF,vha_675GG,vha_675QB,vha_675QC,vha_675QD,vha_675QE,vha_675GC")
-                .self(
-                    "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994")
-                .first(
-                    "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994&page=1&per_page=20")
-                .last(
-                    "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994&page=1&per_page=20")
-                .build())
-        .meta(
-            NearbyResponse.NearbyMetadata.builder()
-                .pagination(
-                    Pagination.builder()
-                        .currentPage(1)
-                        .entriesPerPage(20)
-                        .totalPages(1)
-                        .totalEntries(16)
-                        .build())
-                .build())
         .data(
             List.of(
                 nearbyFacility(

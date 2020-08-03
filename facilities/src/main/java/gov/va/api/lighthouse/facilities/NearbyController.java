@@ -2,12 +2,10 @@ package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static gov.va.api.lighthouse.facilities.Controllers.page;
 import static gov.va.api.lighthouse.facilities.Controllers.validateFacilityType;
 import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
 import static java.util.stream.Collectors.toList;
 import static org.apache.logging.log4j.util.Strings.isBlank;
-import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
@@ -32,7 +30,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -42,7 +39,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,8 +64,6 @@ public class NearbyController {
 
   private final String bingUrl;
 
-  private final String linkerUrl;
-
   private final DeprecatedPssgDriveTimeBandSupport deprecatedPssgDriveTimeBandSupport =
       new DeprecatedPssgDriveTimeBandSupport();
 
@@ -79,19 +73,12 @@ public class NearbyController {
       @Autowired DriveTimeBandRepository driveTimeBandRepository,
       @Autowired RestTemplate restTemplate,
       @Value("${bing.key}") String bingKey,
-      @Value("${bing.url}") String bingUrl,
-      @Value("${facilities.url}") String baseUrl,
-      @Value("${facilities.base-path}") String basePath) {
+      @Value("${bing.url}") String bingUrl) {
     this.facilityRepository = facilityRepository;
     this.driveTimeBandRepository = driveTimeBandRepository;
     this.restTemplate = restTemplate;
     this.bingKey = bingKey;
     this.bingUrl = bingUrl.endsWith("/") ? bingUrl : bingUrl + "/";
-
-    String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-    String path = basePath.replaceAll("/$", "");
-    path = path.isEmpty() ? path : path + "/";
-    linkerUrl = url + path + "v0/";
   }
 
   private static Integer validateDriveTime(Integer val) {
@@ -204,34 +191,12 @@ public class NearbyController {
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
-      @RequestParam(value = "drive_time", required = false) Integer maxDriveTime,
-      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
-      @RequestParam(value = "per_page", defaultValue = "20") @Min(0) int perPage) {
+      @RequestParam(value = "drive_time", required = false) Integer maxDriveTime) {
     Coordinates coor = geocodeAddress(street, city, state, zip);
     List<NearbyId> ids = nearbyIds(coor.longitude(), coor.latitude(), type, services, maxDriveTime);
-    MultiValueMap<String, String> parameters =
-        Parameters.builder()
-            .add("street_address", street)
-            .add("city", city)
-            .add("state", state)
-            .add("zip", zip)
-            .addIgnoreNull("type", type)
-            .addAll("services[]", services)
-            .addIgnoreNull("drive_time", maxDriveTime)
-            .add("page", page)
-            .add("per_page", perPage)
-            .build();
-    PageLinker linker =
-        PageLinker.builder()
-            .url(linkerUrl + "nearby")
-            .params(parameters)
-            .totalEntries(ids.size())
-            .build();
-    List<NearbyId> idsPage = page(ids, page, perPage);
+
     return NearbyResponse.builder()
-        .data(idsPage.stream().map(this::nearbyFacility).collect(toList()))
-        .links(linker.links().toBuilder().related(nearbyRelatedLink(ids)).build())
-        .meta(NearbyResponse.NearbyMetadata.builder().pagination(linker.pagination()).build())
+        .data(ids.stream().map(this::nearbyFacility).collect(toList()))
         .build();
   }
 
@@ -243,16 +208,6 @@ public class NearbyController {
             NearbyResponse.NearbyAttributes.builder()
                 .minTime(entity.bandId().fromMinutes())
                 .maxTime(entity.bandId().toMinutes())
-                .build())
-        .relationships(
-            NearbyResponse.Relationships.builder()
-                .vaFacility(
-                    NearbyResponse.VaFacility.builder()
-                        .links(
-                            NearbyResponse.Links.builder()
-                                .related(linkerUrl + "facilities/" + entity.facilityId())
-                                .build())
-                        .build())
                 .build())
         .build();
   }
@@ -311,40 +266,12 @@ public class NearbyController {
       @RequestParam(value = "lng") BigDecimal longitude,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
-      @RequestParam(value = "drive_time", required = false) Integer maxDriveTime,
-      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
-      @RequestParam(value = "per_page", defaultValue = "20") @Min(0) int perPage) {
+      @RequestParam(value = "drive_time", required = false) Integer maxDriveTime) {
     List<NearbyId> ids = nearbyIds(longitude, latitude, type, services, maxDriveTime);
-    MultiValueMap<String, String> parameters =
-        Parameters.builder()
-            .add("lat", latitude)
-            .add("lng", longitude)
-            .addIgnoreNull("type", type)
-            .addAll("services[]", services)
-            .addIgnoreNull("drive_time", maxDriveTime)
-            .add("page", page)
-            .add("per_page", perPage)
-            .build();
-    PageLinker linker =
-        PageLinker.builder()
-            .url(linkerUrl + "nearby")
-            .params(parameters)
-            .totalEntries(ids.size())
-            .build();
-    List<NearbyId> idsPage = page(ids, page, perPage);
-    return NearbyResponse.builder()
-        .data(idsPage.stream().map(this::nearbyFacility).collect(toList()))
-        .links(linker.links().toBuilder().related(nearbyRelatedLink(idsPage)).build())
-        .meta(NearbyResponse.NearbyMetadata.builder().pagination(linker.pagination()).build())
-        .build();
-  }
 
-  private String nearbyRelatedLink(List<NearbyId> ids) {
-    return isEmpty(ids)
-        ? null
-        : linkerUrl
-            + "facilities?ids="
-            + ids.stream().map(NearbyId::facilityId).collect(Collectors.joining(","));
+    return NearbyResponse.builder()
+        .data(ids.stream().map(this::nearbyFacility).collect(toList()))
+        .build();
   }
 
   @SneakyThrows

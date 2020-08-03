@@ -13,8 +13,6 @@ import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
-import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
-import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -51,8 +49,6 @@ public class NearbyTest {
         .restTemplate(restTemplate)
         .bingKey("bingKey")
         .bingUrl("http://bing")
-        .baseUrl("http://foo")
-        .basePath("bp")
         .build();
   }
 
@@ -201,8 +197,7 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
         _controller()
-            .nearbyAddress(
-                "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1);
+            .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null);
     String linkBase =
         "http://foo/bp/v0/nearby?city=Melbourne&state=FL&street_address=505+N+John+Rodes+Blvd&zip=32934";
     assertThat(response)
@@ -218,34 +213,7 @@ public class NearbyTest {
                                     .minTime(0)
                                     .maxTime(10)
                                     .build())
-                            .relationships(
-                                NearbyResponse.Relationships.builder()
-                                    .vaFacility(
-                                        NearbyResponse.VaFacility.builder()
-                                            .links(
-                                                NearbyResponse.Links.builder()
-                                                    .related("http://foo/bp/v0/facilities/vha_666")
-                                                    .build())
-                                            .build())
-                                    .build())
                             .build()))
-                .links(
-                    PageLinks.builder()
-                        .related("http://foo/bp/v0/facilities?ids=vha_666")
-                        .self(linkBase + "&page=1&per_page=1")
-                        .first(linkBase + "&page=1&per_page=1")
-                        .last(linkBase + "&page=1&per_page=1")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(1)
-                                .totalPages(1)
-                                .totalEntries(1)
-                                .build())
-                        .build())
                 .build());
   }
 
@@ -262,7 +230,7 @@ public class NearbyTest {
         () ->
             _controller()
                 .nearbyAddress(
-                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1));
+                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null));
   }
 
   @Test
@@ -303,35 +271,15 @@ public class NearbyTest {
         () ->
             _controller()
                 .nearbyAddress(
-                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null, 1, 1));
+                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null));
   }
 
   @Test
   public void empty() {
     facilityRepository.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 1, 1);
-    assertThat(response)
-        .isEqualTo(
-            NearbyResponse.builder()
-                .data(emptyList())
-                .links(
-                    PageLinks.builder()
-                        .self("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .first("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .last("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(1)
-                                .totalPages(1)
-                                .totalEntries(0)
-                                .build())
-                        .build())
-                .build());
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
+    assertThat(response).isEqualTo(NearbyResponse.builder().data(emptyList()).build());
   }
 
   @Test
@@ -342,29 +290,8 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("666", 50, 60, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, 50, 1, 1);
-    assertThat(response)
-        .isEqualTo(
-            NearbyResponse.builder()
-                .data(emptyList())
-                .links(
-                    PageLinks.builder()
-                        .self("http://foo/bp/v0/nearby?drive_time=50&lat=0&lng=0&page=1&per_page=1")
-                        .first(
-                            "http://foo/bp/v0/nearby?drive_time=50&lat=0&lng=0&page=1&per_page=1")
-                        .last("http://foo/bp/v0/nearby?drive_time=50&lat=0&lng=0&page=1&per_page=1")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(1)
-                                .totalPages(1)
-                                .totalEntries(0)
-                                .build())
-                        .build())
-                .build());
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, 50);
+    assertThat(response).isEqualTo(NearbyResponse.builder().data(emptyList()).build());
   }
 
   @Test
@@ -376,8 +303,7 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
         _controller()
-            .nearbyLatLong(
-                BigDecimal.ZERO, BigDecimal.ZERO, null, List.of("primarycare"), null, 1, 1);
+            .nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, List.of("primarycare"), null);
     assertThat(response)
         .isEqualTo(
             NearbyResponse.builder()
@@ -391,37 +317,7 @@ public class NearbyTest {
                                     .minTime(0)
                                     .maxTime(10)
                                     .build())
-                            .relationships(
-                                NearbyResponse.Relationships.builder()
-                                    .vaFacility(
-                                        NearbyResponse.VaFacility.builder()
-                                            .links(
-                                                NearbyResponse.Links.builder()
-                                                    .related("http://foo/bp/v0/facilities/vha_666")
-                                                    .build())
-                                            .build())
-                                    .build())
                             .build()))
-                .links(
-                    PageLinks.builder()
-                        .related("http://foo/bp/v0/facilities?ids=vha_666")
-                        .self(
-                            "http://foo/bp/v0/nearby?lat=0&lng=0&services%5B%5D=primarycare&page=1&per_page=1")
-                        .first(
-                            "http://foo/bp/v0/nearby?lat=0&lng=0&services%5B%5D=primarycare&page=1&per_page=1")
-                        .last(
-                            "http://foo/bp/v0/nearby?lat=0&lng=0&services%5B%5D=primarycare&page=1&per_page=1")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(1)
-                                .totalPages(1)
-                                .totalEntries(1)
-                                .build())
-                        .build())
                 .build());
   }
 
@@ -433,7 +329,7 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, "benefits", null, null, 1, 1);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, "benefits", null, null);
     assertThat(response)
         .isEqualTo(
             NearbyResponse.builder()
@@ -447,35 +343,7 @@ public class NearbyTest {
                                     .minTime(0)
                                     .maxTime(10)
                                     .build())
-                            .relationships(
-                                NearbyResponse.Relationships.builder()
-                                    .vaFacility(
-                                        NearbyResponse.VaFacility.builder()
-                                            .links(
-                                                NearbyResponse.Links.builder()
-                                                    .related("http://foo/bp/v0/facilities/vba_666")
-                                                    .build())
-                                            .build())
-                                    .build())
                             .build()))
-                .links(
-                    PageLinks.builder()
-                        .related("http://foo/bp/v0/facilities?ids=vba_666")
-                        .self("http://foo/bp/v0/nearby?lat=0&lng=0&type=benefits&page=1&per_page=1")
-                        .first(
-                            "http://foo/bp/v0/nearby?lat=0&lng=0&type=benefits&page=1&per_page=1")
-                        .last("http://foo/bp/v0/nearby?lat=0&lng=0&type=benefits&page=1&per_page=1")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(1)
-                                .totalPages(1)
-                                .totalEntries(1)
-                                .build())
-                        .build())
                 .build());
   }
 
@@ -486,7 +354,7 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 1, 1);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
     assertThat(response).isEqualTo(hitVha666());
   }
 
@@ -499,34 +367,7 @@ public class NearbyTest {
                     .type(NearbyResponse.Type.NearbyFacility)
                     .attributes(
                         NearbyResponse.NearbyAttributes.builder().minTime(0).maxTime(10).build())
-                    .relationships(
-                        NearbyResponse.Relationships.builder()
-                            .vaFacility(
-                                NearbyResponse.VaFacility.builder()
-                                    .links(
-                                        NearbyResponse.Links.builder()
-                                            .related("http://foo/bp/v0/facilities/vha_666")
-                                            .build())
-                                    .build())
-                            .build())
                     .build()))
-        .links(
-            PageLinks.builder()
-                .related("http://foo/bp/v0/facilities?ids=vha_666")
-                .self("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                .first("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                .last("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                .build())
-        .meta(
-            NearbyResponse.NearbyMetadata.builder()
-                .pagination(
-                    Pagination.builder()
-                        .currentPage(1)
-                        .entriesPerPage(1)
-                        .totalPages(1)
-                        .totalEntries(1)
-                        .build())
-                .build())
         .build();
   }
 
@@ -538,37 +379,8 @@ public class NearbyTest {
     driveTimeBandRepository.save(
         _deprecatedPssgDriveTimeBandEntity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 1, 1);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
     assertThat(response).isEqualTo(hitVha666());
-  }
-
-  @Test
-  public void perPageZero() {
-    facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
-    facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
-    driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
-    driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
-    NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 1, 0);
-    assertThat(response)
-        .isEqualTo(
-            NearbyResponse.builder()
-                .data(emptyList())
-                .links(
-                    PageLinks.builder()
-                        .self("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=0")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(1)
-                                .entriesPerPage(0)
-                                .totalPages(0)
-                                .totalEntries(2)
-                                .build())
-                        .build())
-                .build());
   }
 
   @Test
@@ -578,12 +390,21 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null, 2, 1);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
     assertThat(response)
         .isEqualTo(
             NearbyResponse.builder()
                 .data(
                     List.of(
+                        NearbyResponse.Nearby.builder()
+                            .id("vba_666")
+                            .type(NearbyResponse.Type.NearbyFacility)
+                            .attributes(
+                                NearbyResponse.NearbyAttributes.builder()
+                                    .minTime(0)
+                                    .maxTime(10)
+                                    .build())
+                            .build(),
                         NearbyResponse.Nearby.builder()
                             .id("vha_666")
                             .type(NearbyResponse.Type.NearbyFacility)
@@ -592,35 +413,7 @@ public class NearbyTest {
                                     .minTime(0)
                                     .maxTime(10)
                                     .build())
-                            .relationships(
-                                NearbyResponse.Relationships.builder()
-                                    .vaFacility(
-                                        NearbyResponse.VaFacility.builder()
-                                            .links(
-                                                NearbyResponse.Links.builder()
-                                                    .related("http://foo/bp/v0/facilities/vha_666")
-                                                    .build())
-                                            .build())
-                                    .build())
                             .build()))
-                .links(
-                    PageLinks.builder()
-                        .related("http://foo/bp/v0/facilities?ids=vha_666")
-                        .self("http://foo/bp/v0/nearby?lat=0&lng=0&page=2&per_page=1")
-                        .first("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .prev("http://foo/bp/v0/nearby?lat=0&lng=0&page=1&per_page=1")
-                        .last("http://foo/bp/v0/nearby?lat=0&lng=0&page=2&per_page=1")
-                        .build())
-                .meta(
-                    NearbyResponse.NearbyMetadata.builder()
-                        .pagination(
-                            Pagination.builder()
-                                .currentPage(2)
-                                .entriesPerPage(1)
-                                .totalPages(2)
-                                .totalEntries(2)
-                                .build())
-                        .build())
                 .build());
   }
 }

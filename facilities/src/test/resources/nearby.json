@@ -6,13 +6,6 @@
       "attributes" : {
         "min_time" : 70,
         "max_time" : 80
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_548GC"
-          }
-        }
       }
     },
     {
@@ -21,13 +14,6 @@
       "attributes" : {
         "min_time" : 80,
         "max_time" : 90
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_548GF"
-          }
-        }
       }
     },
     {
@@ -36,13 +22,6 @@
       "attributes" : {
         "min_time" : 60,
         "max_time" : 70
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_548QA"
-          }
-        }
       }
     },
     {
@@ -51,13 +30,6 @@
       "attributes" : {
         "min_time" : 50,
         "max_time" : 60
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_548GA"
-          }
-        }
       }
     },
     {
@@ -66,13 +38,6 @@
       "attributes" : {
         "min_time" : 50,
         "max_time" : 60
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_548GE"
-          }
-        }
       }
     },
     {
@@ -81,13 +46,6 @@
       "attributes" : {
         "min_time" : 50,
         "max_time" : 60
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675"
-          }
-        }
       }
     },
     {
@@ -96,13 +54,6 @@
       "attributes" : {
         "min_time" : 10,
         "max_time" : 20
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675GA"
-          }
-        }
       }
     },
     {
@@ -111,13 +62,6 @@
       "attributes" : {
         "min_time" : 70,
         "max_time" : 80
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675GB"
-          }
-        }
       }
     },
     {
@@ -126,13 +70,6 @@
       "attributes" : {
         "min_time" : 80,
         "max_time" : 90
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675GD"
-          }
-        }
       }
     },
     {
@@ -141,13 +78,6 @@
       "attributes" : {
         "min_time" : 80,
         "max_time" : 90
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675GF"
-          }
-        }
       }
     },
     {
@@ -156,13 +86,6 @@
       "attributes" : {
         "min_time" : 60,
         "max_time" : 70
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675GG"
-          }
-        }
       }
     },
     {
@@ -171,13 +94,6 @@
       "attributes" : {
         "min_time" : 70,
         "max_time" : 80
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675QB"
-          }
-        }
       }
     },
     {
@@ -186,13 +102,6 @@
       "attributes" : {
         "min_time" : 70,
         "max_time" : 80
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675QC"
-          }
-        }
       }
     },
     {
@@ -201,13 +110,6 @@
       "attributes" : {
         "min_time" : 60,
         "max_time" : 70
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675QD"
-          }
-        }
       }
     },
     {
@@ -216,13 +118,6 @@
       "attributes" : {
         "min_time" : 60,
         "max_time" : 70
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675QE"
-          }
-        }
       }
     },
     {
@@ -231,30 +126,7 @@
       "attributes" : {
         "min_time" : 60,
         "max_time" : 70
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "/services/va_facilities/v0/facilities/vha_675GC"
-          }
-        }
       }
     }
-  ],
-  "links" : {
-    "related" : "/services/va_facilities/v0/facilities?ids=vha_548GC,vha_548GF,vha_548QA,vha_548GA,vha_548GE,vha_675,vha_675GA,vha_675GB,vha_675GD,vha_675GF,vha_675GG,vha_675QB,vha_675QC,vha_675QD,vha_675QE,vha_675GC",
-    "self" : "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994",
-    "first" : "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994&page=1&per_page=20",
-    "prev" : null,
-    "next" : null,
-    "last" : "https://dev-api.vets.gov/services/va_facilities/v0/nearby?drive_time=100&lat=28.112464&lng=-80.7015994&page=1&per_page=20"
-  },
-  "meta" : {
-    "pagination" : {
-      "current_page" : 1,
-      "per_page" : 20,
-      "total_pages" : 1,
-      "total_entries" : 16
-    }
-  }
+  ]
 }

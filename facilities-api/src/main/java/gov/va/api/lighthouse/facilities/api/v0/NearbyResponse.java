@@ -15,10 +15,6 @@ import lombok.Value;
 public final class NearbyResponse {
   @Valid @NotNull List<Nearby> data;
 
-  @Valid @NotNull PageLinks links;
-
-  @Valid @NotNull NearbyMetadata meta;
-
   public enum Type {
     @JsonProperty("nearby_facility")
     NearbyFacility
@@ -42,22 +38,6 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  public static final class Links {
-    @Schema(example = "/services/va_facilities/v0/facilities/vha_688")
-    @NotNull
-    String related;
-  }
-
-  @Value
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  public static final class NearbyMetadata {
-    @Valid @NotNull Pagination pagination;
-  }
-
-  @Value
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(description = "JSON API-compliant object describing a nearby VA facility")
   public static final class Nearby {
     @Schema(example = "vha_688")
@@ -69,24 +49,5 @@ public final class NearbyResponse {
     Type type;
 
     @Valid @NotNull NearbyAttributes attributes;
-
-    @Valid @NotNull Relationships relationships;
-  }
-
-  @Value
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  public static final class Relationships {
-    @Valid
-    @NotNull
-    @JsonProperty("va_facility")
-    VaFacility vaFacility;
-  }
-
-  @Value
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  public static final class VaFacility {
-    @Valid @NotNull Links links;
   }
 }

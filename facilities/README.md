@@ -350,32 +350,9 @@ Example:
       "attributes" : {
         "min_time" : 10,
         "max_time" : 20
-      },
-      "relationships" : {
-        "va_facility" : {
-          "links" : {
-            "related" : "http://localhost:8085/v0/facilities/vha_675GA"
-          }
-        }
       }
     }
-  ],
-  "links" : {
-    "related" : "http://localhost:8085/v0/facilities?ids=vha_675GA",
-    "self" : "http://localhost:8085/v0/nearby?drive_time=30&lat=28.112464&lng=-80.7015994&page=1&per_page=20",
-    "first" : "http://localhost:8085/v0/nearby?drive_time=30&lat=28.112464&lng=-80.7015994&page=1&per_page=20",
-    "prev" : null,
-    "next" : null,
-    "last" : "http://localhost:8085/v0/nearby?drive_time=30&lat=28.112464&lng=-80.7015994&page=1&per_page=20"
-  },
-  "meta" : {
-    "pagination" : {
-      "current_page" : 1,
-      "per_page" : 20,
-      "total_pages" : 1,
-      "total_entries" : 1
-    }
-  }
+  ]
 }
 ```
 

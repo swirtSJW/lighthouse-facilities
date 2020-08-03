@@ -209,17 +209,6 @@ public class ModelTest {
                                 .minTime(10)
                                 .maxTime(20)
                                 .build())
-                        .relationships(
-                            NearbyResponse.Relationships.builder()
-                                .vaFacility(
-                                    NearbyResponse.VaFacility.builder()
-                                        .links(
-                                            NearbyResponse.Links.builder()
-                                                .related(
-                                                    "/services/va_facilities/v0/facilities/vha_688")
-                                                .build())
-                                        .build())
-                                .build())
                         .build()))
             .build());
   }
