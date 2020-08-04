@@ -124,7 +124,7 @@
                 <argument>-cp</argument>
                 <argument>facilities-collector.jar${path.separator}h2.jar${path.separator}facilities-local-db-tests.jar</argument>
                 <argument>-Dlogging.level.root=INFO</argument>
-                <argument>-Dloader=gov.va.api.lighthouse.facilitiescollector.Application</argument>
+                <argument>-Dloader=gov.va.api.lighthouse.facilities.collector.Application</argument>
                 <argument>-Daccess-to-care.url=http://localhost:8666</argument>
                 <argument>-Daccess-to-pwt.url=http://localhost:8666</argument>
                 <argument>-Darc-gis.url=http://localhost:8666</argument>
