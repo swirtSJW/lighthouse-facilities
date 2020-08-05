@@ -19,7 +19,7 @@ public class FacilitySamples {
 
   @SneakyThrows
   @Builder
-  public FacilitySamples(List<String> resources) {
+  FacilitySamples(List<String> resources) {
     var mapper = FacilitiesJacksonConfig.createMapper();
     facilities =
         resources.stream()
@@ -29,7 +29,7 @@ public class FacilitySamples {
             .collect(toMap(Facility::id, Function.identity()));
   }
 
-  public static FacilitySamples defaultSamples() {
+  static FacilitySamples defaultSamples() {
     return FacilitySamples.builder()
         .resources(List.of("/vha_691GB.json", "/vha_740GA.json", "/vha_757.json"))
         .build();

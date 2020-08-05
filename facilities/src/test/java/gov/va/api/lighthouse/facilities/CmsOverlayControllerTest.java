@@ -5,7 +5,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
@@ -39,7 +38,7 @@ public class CmsOverlayControllerTest {
   @Test
   @SneakyThrows
   void updateIsAcceptedForKnownStation() {
-    Pk pk = Pk.fromIdString("vha_123");
+    var pk = FacilityEntity.Pk.fromIdString("vha_123");
     FacilityEntity entity = FacilityEntity.builder().id(pk).build();
     when(repository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
@@ -51,7 +50,7 @@ public class CmsOverlayControllerTest {
 
   @Test
   void updateIsSkippedForUnknownStation() {
-    Pk pk = Pk.fromIdString("vha_666");
+    var pk = FacilityEntity.Pk.fromIdString("vha_666");
     when(repository.findById(pk)).thenReturn(Optional.empty());
     ResponseEntity<Void> response = controller().saveOverlay("vha_666", overlay());
     verifyNoMoreInteractions(repository);

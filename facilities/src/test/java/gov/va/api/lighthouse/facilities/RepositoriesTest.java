@@ -2,7 +2,6 @@ package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gov.va.api.lighthouse.facilities.DriveTimeBandEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -24,7 +23,7 @@ public class RepositoriesTest {
   void addDriveTimeBandEntities() {
     DriveTimeBandEntity b1230to10 =
         DriveTimeBandEntity.builder()
-            .id(Pk.of("123", 0, 10))
+            .id(DriveTimeBandEntity.Pk.of("123", 0, 10))
             .maxLatitude(80)
             .maxLongitude(50)
             .minLatitude(40)

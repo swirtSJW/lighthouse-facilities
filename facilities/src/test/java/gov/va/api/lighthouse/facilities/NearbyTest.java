@@ -354,7 +354,7 @@ public class NearbyTest {
     assertThat(response).isEqualTo(hitVha666());
   }
 
-  public NearbyResponse hitVha666() {
+  NearbyResponse hitVha666() {
     return NearbyResponse.builder()
         .data(
             List.of(

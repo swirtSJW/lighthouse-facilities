@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-public class InternalClientKeyFilterConfigurationTest {
+class InternalClientKeyFilterConfigurationTest {
   @Test
   @SneakyThrows
   void match() {
