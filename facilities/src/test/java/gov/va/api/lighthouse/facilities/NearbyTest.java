@@ -124,7 +124,7 @@ public class NearbyTest {
   }
 
   private FacilityEntity _facilityEntity(Facility fac) {
-    return FacilityManagementController.populate(
+    return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
             .lastUpdated(Instant.now())

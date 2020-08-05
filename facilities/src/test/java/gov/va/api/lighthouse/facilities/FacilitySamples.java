@@ -42,7 +42,7 @@ public class FacilitySamples {
   }
 
   FacilityEntity facilityEntity(String id) {
-    return FacilityManagementController.populate(
+    return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(id))
             .lastUpdated(Instant.now())

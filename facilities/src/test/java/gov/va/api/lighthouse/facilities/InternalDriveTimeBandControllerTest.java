@@ -6,7 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.lighthouse.facilities.DriveTimeBandEntity.Pk;
-import gov.va.api.lighthouse.facilities.DriveTimeBandManagementController.BandResult;
+import gov.va.api.lighthouse.facilities.InternalDriveTimeBandController.BandResult;
 import gov.va.api.lighthouse.facilities.ExceptionsV0.NotFound;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class DriveTimeBandManagementControllerTest {
+public class InternalDriveTimeBandControllerTest {
   @Mock DriveTimeBandRepository repo;
 
-  DriveTimeBandManagementController controller() {
-    return DriveTimeBandManagementController.builder().repository(repo).build();
+  InternalDriveTimeBandController controller() {
+    return InternalDriveTimeBandController.builder().repository(repo).build();
   }
 
   @Test

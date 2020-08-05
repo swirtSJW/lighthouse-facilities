@@ -38,7 +38,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class FacilityManagementControllerTest {
+public class InternalFacilitiesControllerTest {
   @Autowired FacilityRepository facilityRepository;
 
   @Autowired FacilityGraveyardRepository graveyardRepository;
@@ -77,8 +77,8 @@ public class FacilityManagementControllerTest {
         .build();
   }
 
-  private FacilityManagementController _controller() {
-    return FacilityManagementController.builder()
+  private InternalFacilitiesController _controller() {
+    return InternalFacilitiesController.builder()
         .collector(collector)
         .facilityRepository(facilityRepository)
         .graveyardRepository(graveyardRepository)
@@ -92,7 +92,7 @@ public class FacilityManagementControllerTest {
   @SneakyThrows
   private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
     String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
-    return FacilityManagementController.populate(
+    return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
             .cmsOverlay(o)
@@ -292,8 +292,8 @@ public class FacilityManagementControllerTest {
   void deleteFromGraveyard_error() {
     FacilityGraveyardRepository repo = mock(FacilityGraveyardRepository.class);
     doThrow(new RuntimeException("oh noez")).when(repo).delete(any(FacilityGraveyardEntity.class));
-    FacilityManagementController controller =
-        FacilityManagementController.builder().graveyardRepository(repo).build();
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder().graveyardRepository(repo).build();
     ReloadResponse response = ReloadResponse.start();
     assertThrows(
         RuntimeException.class,
@@ -341,18 +341,18 @@ public class FacilityManagementControllerTest {
   @Test
   void servicesOf() {
     assertThat(
-            FacilityManagementController.serviceTypesOf(
+            InternalFacilitiesController.serviceTypesOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isEmpty();
     assertThat(
-            FacilityManagementController.serviceTypesOf(
+            InternalFacilitiesController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder().services(Services.builder().build()).build())
                     .build()))
         .isEmpty();
     assertThat(
-            FacilityManagementController.serviceTypesOf(
+            InternalFacilitiesController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -366,7 +366,7 @@ public class FacilityManagementControllerTest {
                     .build()))
         .isEmpty();
     assertThat(
-            FacilityManagementController.serviceTypesOf(
+            InternalFacilitiesController.serviceTypesOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -396,12 +396,12 @@ public class FacilityManagementControllerTest {
   void stateOf() {
     // No address
     assertThat(
-            FacilityManagementController.stateOf(
+            InternalFacilitiesController.stateOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isNull();
     // No physical or mailing
     assertThat(
-            FacilityManagementController.stateOf(
+            InternalFacilitiesController.stateOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder().address(Addresses.builder().build()).build())
@@ -409,7 +409,7 @@ public class FacilityManagementControllerTest {
         .isNull();
     // No Physical zip
     assertThat(
-            FacilityManagementController.stateOf(
+            InternalFacilitiesController.stateOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -420,7 +420,7 @@ public class FacilityManagementControllerTest {
         .isNull();
     // Physical zip
     assertThat(
-            FacilityManagementController.stateOf(
+            InternalFacilitiesController.stateOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -437,8 +437,8 @@ public class FacilityManagementControllerTest {
   void updateAndSave_error() {
     FacilityRepository repo = mock(FacilityRepository.class);
     when(repo.save(any(FacilityEntity.class))).thenThrow(new RuntimeException("oh noez"));
-    FacilityManagementController controller =
-        FacilityManagementController.builder().facilityRepository(repo).build();
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder().facilityRepository(repo).build();
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     ReloadResponse response = ReloadResponse.start();
@@ -470,12 +470,12 @@ public class FacilityManagementControllerTest {
   void zipOf() {
     // No address
     assertThat(
-            FacilityManagementController.zipOf(
+            InternalFacilitiesController.zipOf(
                 Facility.builder().attributes(FacilityAttributes.builder().build()).build()))
         .isNull();
     // No physical or mailing
     assertThat(
-            FacilityManagementController.zipOf(
+            InternalFacilitiesController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder().address(Addresses.builder().build()).build())
@@ -483,7 +483,7 @@ public class FacilityManagementControllerTest {
         .isNull();
     // No Physical zip
     assertThat(
-            FacilityManagementController.zipOf(
+            InternalFacilitiesController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -494,7 +494,7 @@ public class FacilityManagementControllerTest {
         .isNull();
     // Physical zip
     assertThat(
-            FacilityManagementController.zipOf(
+            InternalFacilitiesController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()
@@ -507,7 +507,7 @@ public class FacilityManagementControllerTest {
         .isEqualTo("12345");
     // Physical zip that is long
     assertThat(
-            FacilityManagementController.zipOf(
+            InternalFacilitiesController.zipOf(
                 Facility.builder()
                     .attributes(
                         FacilityAttributes.builder()

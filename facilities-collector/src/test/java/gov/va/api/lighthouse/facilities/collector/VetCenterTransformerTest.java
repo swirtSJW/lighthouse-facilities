@@ -11,7 +11,7 @@ public class VetCenterTransformerTest {
   void empty() {
     assertThat(
             VetCenterTransformer.builder()
-                .vast(new VastEntity())
+                .vast(VastEntity.builder().build())
                 .websites(emptyMap())
                 .build()
                 .toFacility())

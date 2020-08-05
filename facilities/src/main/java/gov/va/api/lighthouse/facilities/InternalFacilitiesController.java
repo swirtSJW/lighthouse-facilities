@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Builder
 @Slf4j
-public class FacilityManagementController {
+public class InternalFacilitiesController {
   private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
 
   private final CollectorApi collector;

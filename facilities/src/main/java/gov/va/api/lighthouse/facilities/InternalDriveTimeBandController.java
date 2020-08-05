@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @Builder
 @Slf4j
-public class DriveTimeBandManagementController {
+public class InternalDriveTimeBandController {
   private final DriveTimeBandRepository repository;
 
   /** Get band based on internal name: {stationNumber}-{fromMinutes}-{toMinutes}. */

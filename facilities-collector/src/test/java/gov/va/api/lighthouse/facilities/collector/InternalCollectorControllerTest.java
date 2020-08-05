@@ -16,7 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class CdwControllerTest {
+public class InternalCollectorControllerTest {
   @Autowired JdbcTemplate template;
 
   @Autowired TestEntityManager testEntityManager;
@@ -41,7 +41,7 @@ public class CdwControllerTest {
             + "'1234'"
             + ")");
 
-    assertThat(new CdwController(template).mentalHealthContacts())
+    assertThat(new InternalCollectorController(template).mentalHealthContacts())
         .isEqualTo(
             List.of(
                 Map.of("STATIONNUMBER", "999", "MHPHONE", "800-867-5309", "EXTENSION", "1234")));
@@ -71,7 +71,7 @@ public class CdwControllerTest {
             + "'14.15'"
             + ")");
 
-    assertThat(new CdwController(template).stopCodes())
+    assertThat(new InternalCollectorController(template).stopCodes())
         .isEqualTo(
             List.of(
                 Map.of(
@@ -90,7 +90,7 @@ public class CdwControllerTest {
   void vast() {
     testEntityManager.persistAndFlush(
         VastEntity.builder().vastId(1L).stationNumber("123").stationName("Some VAMC").build());
-    assertThat(Iterables.getOnlyElement(new CdwController(template).vast()))
+    assertThat(Iterables.getOnlyElement(new InternalCollectorController(template).vast()))
         .containsAllEntriesOf(Map.of("VAST_ID", "1", "STA_NO", "123", "STATION_NAME", "Some VAMC"));
   }
 }

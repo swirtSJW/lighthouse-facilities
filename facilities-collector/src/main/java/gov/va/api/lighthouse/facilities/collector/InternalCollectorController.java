@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/")
 @AllArgsConstructor(onConstructor = @__({@Autowired}))
-public class CdwController {
+public class InternalCollectorController {
   private final JdbcTemplate jdbc;
 
   @SneakyThrows

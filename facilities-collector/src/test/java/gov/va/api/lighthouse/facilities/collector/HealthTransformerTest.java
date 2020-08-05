@@ -30,7 +30,7 @@ public class HealthTransformerTest {
   void classification() {
     assertThat(
             HealthTransformer.builder()
-                .vast(new VastEntity())
+                .vast(VastEntity.builder().build())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToPwt(ArrayListMultimap.create())
                 .mentalHealthPhoneNumbers(emptyMap())
@@ -55,7 +55,7 @@ public class HealthTransformerTest {
   void empty() {
     assertThat(
             HealthTransformer.builder()
-                .vast(new VastEntity())
+                .vast(VastEntity.builder().build())
                 .accessToCare(ArrayListMultimap.create())
                 .accessToPwt(ArrayListMultimap.create())
                 .mentalHealthPhoneNumbers(emptyMap())
