@@ -1,12 +1,13 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static java.util.stream.Collectors.toList;
+
 import com.google.common.base.Stopwatch;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class BenefitsCollector {
                       .csvWebsite(websites.get("vba_" + facility.attributes().facilityNumber()))
                       .build()
                       .toFacility())
-          .collect(Collectors.toList());
+          .collect(toList());
     } catch (Exception e) {
       throw new CollectorExceptions.BenefitsCollectorException(e);
     }

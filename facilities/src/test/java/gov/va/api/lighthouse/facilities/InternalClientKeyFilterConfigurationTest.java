@@ -10,12 +10,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class InternalClientKeyFilterConfigurationTest {
   @Test
   @SneakyThrows
-  public void match() {
+  void match() {
     HttpServletRequest request = mock(HttpServletRequest.class);
     when(request.getHeader("client-key")).thenReturn("topsecret");
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -31,7 +31,7 @@ public class InternalClientKeyFilterConfigurationTest {
 
   @Test
   @SneakyThrows
-  public void mismatch() {
+  void mismatch() {
     HttpServletRequest request = mock(HttpServletRequest.class);
     when(request.getHeader("client-key")).thenReturn("wrong");
     HttpServletResponse response = mock(HttpServletResponse.class);
@@ -49,7 +49,7 @@ public class InternalClientKeyFilterConfigurationTest {
 
   @Test
   @SneakyThrows
-  public void noHeader() {
+  void noHeader() {
     HttpServletRequest request = mock(HttpServletRequest.class);
     HttpServletResponse response = mock(HttpServletResponse.class);
     when(response.getOutputStream()).thenReturn(mock(ServletOutputStream.class));

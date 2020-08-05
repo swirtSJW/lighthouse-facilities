@@ -20,7 +20,7 @@ public class ValidationV0Test {
       Validation.buildDefaultValidatorFactory().getValidator();
 
   @Test
-  public void all() {
+  void all() {
     String path = "/all.json";
     assertValid(path, GeoFacilitiesResponse.class);
   }
@@ -33,133 +33,133 @@ public class ValidationV0Test {
   }
 
   @Test
-  public void nearby() {
+  void nearby() {
     String path = "/nearby.json";
     assertValid(path, NearbyResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readBenefits() {
+  void readBenefits() {
     String path = "/read-benefits.json";
     assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readBenefitsGeoJson() {
+  void readBenefitsGeoJson() {
     String path = "/read-benefits-geojson.json";
     assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readCemetery() {
+  void readCemetery() {
     String path = "/read-cemetery.json";
     assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readCemeteryGeoJson() {
+  void readCemeteryGeoJson() {
     String path = "/read-cemetery-geojson.json";
     assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
-  public void readHealth() {
+  void readHealth() {
     String path = "/read-health.json";
     assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
-  public void readHealthGeoJson() {
+  void readHealthGeoJson() {
     String path = "/read-health-geojson.json";
     assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readStateCemetery() {
+  void readStateCemetery() {
     String path = "/read-state-cemetery.json";
     assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readStateCemeteryGeoJson() {
+  void readStateCemeteryGeoJson() {
     String path = "/read-state-cemetery-geojson.json";
     assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
-  public void readVetCenter() {
+  void readVetCenter() {
     String path = "/read-vet-center.json";
     assertValid(path, FacilityReadResponse.class);
   }
 
   @Test
-  public void readVetCenterGeoJson() {
+  void readVetCenterGeoJson() {
     String path = "/read-vet-center-geojson.json";
     assertValid(path, GeoFacilityReadResponse.class);
   }
 
   @Test
-  public void searchByBbox() {
+  void searchByBbox() {
     String path = "/search-bbox.json";
     assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
-  public void searchByBboxGeoJson() {
+  void searchByBboxGeoJson() {
     String path = "/search-bbox-geojson.json";
     assertValid(path, GeoFacilitiesResponse.class);
   }
 
   @Test
-  public void searchByIds() {
+  void searchByIds() {
     String path = "/search-ids.json";
     assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
-  public void searchByIdsGeoJson() {
+  void searchByIdsGeoJson() {
     String path = "/search-ids-geojson.json";
     assertValid(path, GeoFacilitiesResponse.class);
   }
 
   @Test
-  public void searchByLatLong() {
+  void searchByLatLong() {
     String path = "/search-lat-long.json";
     assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
-  public void searchByLatLongGeoJson() {
+  void searchByLatLongGeoJson() {
     String path = "/search-lat-long-geojson.json";
     assertValid(path, GeoFacilitiesResponse.class);
   }
 
   @Test
-  public void searchByState() {
+  void searchByState() {
     String path = "/search-state.json";
     assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
-  public void searchByStateGeoJson() {
+  void searchByStateGeoJson() {
     String path = "/search-state-geojson.json";
     assertValid(path, GeoFacilitiesResponse.class);
   }
 
   @Test
-  public void searchByZip() {
+  void searchByZip() {
     String path = "/search-zip.json";
     assertValid(path, FacilitiesResponse.class);
   }
 
   @Test
-  public void searchByZipGeoJson() {
+  void searchByZipGeoJson() {
     String path = "/search-zip-geojson.json";
     assertValid(path, GeoFacilitiesResponse.class);
   }

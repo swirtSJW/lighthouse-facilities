@@ -20,7 +20,7 @@ public class FacilitiesHomeControllerTest {
 
   @Test
   @SneakyThrows
-  public void openapiJson() {
+  void openapiJson() {
     mvc.perform(get("/v0/facilities/openapi.json"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.openapi", equalTo("3.0.1")));

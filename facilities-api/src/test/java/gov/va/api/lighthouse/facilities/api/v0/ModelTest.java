@@ -37,7 +37,7 @@ public class ModelTest {
   }
 
   @Test
-  public void apiError() {
+  void apiError() {
     roundTrip(
         ApiError.builder()
             .errors(
@@ -52,12 +52,12 @@ public class ModelTest {
   }
 
   @Test
-  public void collectorFacilitiesResponse() {
+  void collectorFacilitiesResponse() {
     roundTrip(CollectorFacilitiesResponse.builder().facilities(List.of(facility())).build());
   }
 
   @Test
-  public void facilitiesReadResponse() {
+  void facilitiesReadResponse() {
     roundTrip(
         FacilityReadResponse.builder()
             .facility(
@@ -87,7 +87,7 @@ public class ModelTest {
   }
 
   @Test
-  public void facilitiesSearchResponse() {
+  void facilitiesSearchResponse() {
     roundTrip(
         FacilitiesResponse.builder()
             .meta(
@@ -130,12 +130,12 @@ public class ModelTest {
   }
 
   @Test
-  public void genericError() {
+  void genericError() {
     roundTrip(GenericError.builder().message("First Try Baby").build());
   }
 
   @Test
-  public void geoFacilitiesResponse() {
+  void geoFacilitiesResponse() {
     roundTrip(
         GeoFacilitiesResponse.builder()
             .type(GeoFacilitiesResponse.Type.FeatureCollection)
@@ -174,12 +174,12 @@ public class ModelTest {
   }
 
   @Test
-  public void geoFacilityReadResponse() {
+  void geoFacilityReadResponse() {
     roundTrip(GeoFacilityReadResponse.of(geoFacility()));
   }
 
   @Test
-  public void geoFacilityRoundTrip() {
+  void geoFacilityRoundTrip() {
     roundTrip(geoFacility());
   }
 
@@ -196,7 +196,7 @@ public class ModelTest {
   }
 
   @Test
-  public void nearbyFacility() {
+  void nearbyFacility() {
     roundTrip(
         NearbyResponse.builder()
             .data(
@@ -233,7 +233,7 @@ public class ModelTest {
   }
 
   @Test
-  public void pssgDriveTimeBand() {
+  void pssgDriveTimeBand() {
     List<List<Double>> ring1 = PssgDriveTimeBand.newRing(2);
     ring1.add(PssgDriveTimeBand.coord(1, 2));
     ring1.add(PssgDriveTimeBand.coord(3, 4));

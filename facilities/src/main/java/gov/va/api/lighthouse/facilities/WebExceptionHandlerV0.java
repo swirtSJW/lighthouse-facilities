@@ -1,10 +1,11 @@
 package gov.va.api.lighthouse.facilities;
 
+import static java.util.stream.Collectors.joining;
+
 import com.google.common.collect.Iterables;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.validation.ConstraintViolationException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -169,7 +170,7 @@ public final class WebExceptionHandlerV0 {
     String violations =
         ex.getConstraintViolations().stream()
             .map(v -> Iterables.getLast(v.getPropertyPath()) + " " + v.getMessage())
-            .collect(Collectors.joining(", "));
+            .collect(joining(", "));
     ApiError response =
         ApiError.builder()
             .errors(

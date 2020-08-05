@@ -1,13 +1,13 @@
 package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.stream.Collectors.toSet;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -105,7 +105,7 @@ public class FacilityEntity implements HasFacilityPayload {
         state,
         latitude,
         longitude,
-        servicesTypes.stream().map(Object::toString).collect(Collectors.toSet()),
+        servicesTypes.stream().map(Object::toString).collect(toSet()),
         facility,
         cmsOverlay,
         version,
@@ -119,7 +119,7 @@ public class FacilityEntity implements HasFacilityPayload {
 
   /** Populate services from a type safe collection. */
   public void servicesFromServiceTypes(Set<Facility.ServiceType> serviceTypes) {
-    services(serviceTypes.stream().map(Object::toString).collect(Collectors.toSet()));
+    services(serviceTypes.stream().map(Object::toString).collect(toSet()));
   }
 
   public enum Type {

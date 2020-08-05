@@ -1,10 +1,11 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static java.util.stream.Collectors.toList;
+
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -23,7 +24,7 @@ final class VetCentersCollector {
               vast ->
                   VetCenterTransformer.builder().vast(vast).websites(websites).build().toFacility())
           .filter(Objects::nonNull)
-          .collect(Collectors.toList());
+          .collect(toList());
     } catch (Exception e) {
       throw new CollectorExceptions.VetCentersCollectorException(e);
     }

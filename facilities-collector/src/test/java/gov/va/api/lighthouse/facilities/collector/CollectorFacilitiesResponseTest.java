@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 public class CollectorFacilitiesResponseTest {
   @SneakyThrows
-  public void assertReadable(String json) {
+  void assertReadable(String json) {
     CollectorFacilitiesResponse dm =
         createMapper()
             .readValue(getClass().getResourceAsStream(json), CollectorFacilitiesResponse.class);
@@ -65,7 +65,7 @@ public class CollectorFacilitiesResponseTest {
 
   @Test
   @SneakyThrows
-  public void unmarshallFacilitiesCollectorResponse() {
+  void unmarshallFacilitiesCollectorResponse() {
     assertReadable("/facilities-collect-response.json");
   }
 }

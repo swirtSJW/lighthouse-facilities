@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilitiesmockservices;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.stream.Collectors.joining;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -10,7 +11,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -128,7 +128,7 @@ public class MockServices {
             response()
                 .withStatusCode(200)
                 .withHeader(contentTextPlain())
-                .withBody(supportedQueries.stream().sorted().collect(Collectors.joining("\n"))));
+                .withBody(supportedQueries.stream().sorted().collect(joining("\n"))));
     log.info("List of supported queries available at http://localhost:{}/help", options.getPort());
   }
 

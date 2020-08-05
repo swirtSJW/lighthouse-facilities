@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -25,7 +26,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -135,7 +135,7 @@ final class HealthsCollector {
                       .build()
                       .toFacility())
           .filter(Objects::nonNull)
-          .collect(Collectors.toList());
+          .collect(toList());
     } catch (Exception e) {
       throw new CollectorExceptions.HealthsCollectorException(e);
     }

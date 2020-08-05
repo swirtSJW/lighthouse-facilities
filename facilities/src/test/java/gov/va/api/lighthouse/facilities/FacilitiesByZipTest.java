@@ -29,7 +29,7 @@ public class FacilitiesByZipTest {
   }
 
   @Test
-  public void geoFacilitiesByZip() {
+  void geoFacilitiesByZip() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().geoFacilitiesByZip("43219", "HEALTH", List.of("urology"), 1, 1))
         .isEqualTo(
@@ -40,28 +40,28 @@ public class FacilitiesByZipTest {
   }
 
   @Test
-  public void jsonFacilitiesByZip_invalidService() {
+  void jsonFacilitiesByZip_invalidService() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () -> controller().jsonFacilitiesByZip("33333", null, List.of("unknown"), 1, 1));
   }
 
   @Test
-  public void jsonFacilitiesByZip_invalidType() {
+  void jsonFacilitiesByZip_invalidType() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () -> controller().jsonFacilitiesByZip("33333", "xxx", null, 1, 1));
   }
 
   @Test
-  public void jsonFacilitiesByZip_noFilter() {
+  void jsonFacilitiesByZip_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", null, null, 1, 1).data())
         .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
   }
 
   @Test
-  public void jsonFacilitiesByZip_perPageZero() {
+  void jsonFacilitiesByZip_perPageZero() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", null, null, 100, 0))
         .isEqualTo(
@@ -85,14 +85,14 @@ public class FacilitiesByZipTest {
   }
 
   @Test
-  public void jsonFacilitiesByZip_serviceOnly() {
+  void jsonFacilitiesByZip_serviceOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", null, List.of("urology"), 1, 1).data())
         .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
   }
 
   @Test
-  public void jsonFacilitiesByZip_typeAndService() {
+  void jsonFacilitiesByZip_typeAndService() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", "HEALTH", List.of("primarycare"), 1, 1))
         .isEqualTo(
@@ -121,7 +121,7 @@ public class FacilitiesByZipTest {
   }
 
   @Test
-  public void jsonFacilitiesByZip_typeOnly() {
+  void jsonFacilitiesByZip_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", "HEALTH", emptyList(), 1, 1).data())
         .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));

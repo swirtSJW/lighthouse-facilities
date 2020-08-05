@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class StateCemeteryTransformerTest {
   @Test
-  public void asAddress_parseLine1() {
+  void asAddress_parseLine1() {
     assertThat(StateCemeteryTransformer.asAddress("AL", "Spanish Fort, AL, 36577-1234", "", ""))
         .isEqualTo(
             Facility.Address.builder().zip("36577-1234").city("Spanish Fort").state("AL").build());
@@ -21,7 +21,7 @@ public class StateCemeteryTransformerTest {
   }
 
   @Test
-  public void asAddress_parseLine2() {
+  void asAddress_parseLine2() {
     assertThat(
             StateCemeteryTransformer.asAddress(
                 "AL", "34904 State Highway 225", "Spanish Fort, AL, 365771234", ""))
@@ -41,7 +41,7 @@ public class StateCemeteryTransformerTest {
   }
 
   @Test
-  public void asAddress_parseLine3() {
+  void asAddress_parseLine3() {
     assertThat(
             StateCemeteryTransformer.asAddress(
                 "AL", "34904 State Highway 225", "blah", "Spanish Fort, AL 36577"))
@@ -67,7 +67,7 @@ public class StateCemeteryTransformerTest {
   }
 
   @Test
-  public void empty() {
+  void empty() {
     assertThat(
             StateCemeteryTransformer.builder()
                 .xml(StateCemeteries.StateCemetery.builder().build())
@@ -85,7 +85,7 @@ public class StateCemeteryTransformerTest {
   }
 
   @Test
-  public void website() {
+  void website() {
     assertThat(
             StateCemeteryTransformer.builder()
                 .xml(

@@ -15,7 +15,7 @@ public class FacilitiesHealthControllerTest {
   private final FacilityRepository repository = mock(FacilityRepository.class);
 
   @Test
-  public void clearCache() {
+  void clearCache() {
     controller().clearCacheScheduler();
   }
 
@@ -24,7 +24,7 @@ public class FacilitiesHealthControllerTest {
   }
 
   @Test
-  public void healthy() {
+  void healthy() {
     when(repository.findLastUpdated()).thenReturn(Instant.now());
     ResponseEntity<Health> actual = controller().collectionStatus();
     assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -32,7 +32,7 @@ public class FacilitiesHealthControllerTest {
   }
 
   @Test
-  public void unhealthy() {
+  void unhealthy() {
     when(repository.findLastUpdated()).thenReturn(Instant.parse("2020-01-20T02:20:00Z"));
     ResponseEntity<Health> actual = controller().collectionStatus();
     assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);

@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 
 public class CemeteriesTransformerTest {
   @Test
-  public void toFacility() {
+  void toFacility() {
     assertThat(tx().toFacility())
         .isEqualTo(CemeteriesSamples.Facilities.create().cemeteriesFacilities().get(0));
   }
 
   @Test
-  public void transformerPrioritizesWebsiteFromArcGis() {
+  void transformerPrioritizesWebsiteFromArcGis() {
     String arcgis = "https://shanktopus.com/vha/facility";
     String csv = "https://shanktofake.com/nope";
     assertThat(tx().website(null)).isNull();
@@ -31,7 +31,7 @@ public class CemeteriesTransformerTest {
   }
 
   @Test
-  public void websiteInCsvReturnsValueWhenArcGisIsNull() {
+  void websiteInCsvReturnsValueWhenArcGisIsNull() {
     String url = "https://shanktopus.com/vha/facility";
     assertThat(tx(url).toFacility().attributes().website()).isEqualTo(url);
   }

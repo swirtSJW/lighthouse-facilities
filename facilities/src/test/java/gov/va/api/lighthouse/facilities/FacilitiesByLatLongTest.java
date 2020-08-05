@@ -30,7 +30,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void geoFacilities() {
+  void geoFacilities() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -56,7 +56,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void geoFacilities_ids() {
+  void geoFacilities_ids() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -78,7 +78,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_ids() {
+  void json_ids() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -97,7 +97,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_invalidService() {
+  void json_invalidService() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () ->
@@ -113,7 +113,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_invalidType() {
+  void json_invalidType() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () ->
@@ -129,7 +129,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_noFilter() {
+  void json_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -152,7 +152,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_perPageZero() {
+  void json_perPageZero() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -189,7 +189,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_serviceOnly() {
+  void json_serviceOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -212,7 +212,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_typeAndService() {
+  void json_typeAndService() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
@@ -269,7 +269,7 @@ public class FacilitiesByLatLongTest {
   }
 
   @Test
-  public void json_typeOnly() {
+  void json_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));

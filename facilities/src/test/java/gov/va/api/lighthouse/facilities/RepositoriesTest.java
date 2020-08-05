@@ -21,7 +21,7 @@ public class RepositoriesTest {
   @PersistenceContext private EntityManager entityManager;
 
   @Test
-  public void addDriveTimeBandEntities() {
+  void addDriveTimeBandEntities() {
     DriveTimeBandEntity b1230to10 =
         DriveTimeBandEntity.builder()
             .id(Pk.of("123", 0, 10))
@@ -39,7 +39,7 @@ public class RepositoriesTest {
   }
 
   @Test
-  public void addFacilityEntities() {
+  void addFacilityEntities() {
     FacilityEntity f123Vha =
         FacilityEntity.typeSafeBuilder()
             .id(FacilityEntity.Pk.of(FacilityEntity.Type.vha, "123"))

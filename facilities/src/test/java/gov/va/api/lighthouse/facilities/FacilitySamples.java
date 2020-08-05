@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfig.quietlyMap;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -10,7 +11,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.SneakyThrows;
 
@@ -26,7 +26,7 @@ public class FacilitySamples {
             .map(r -> getClass().getResourceAsStream(r))
             .map(in -> quietlyMap(mapper, in, FacilityReadResponse.class))
             .map(FacilityReadResponse::facility)
-            .collect(Collectors.toMap(Facility::id, Function.identity()));
+            .collect(toMap(Facility::id, Function.identity()));
   }
 
   public static FacilitySamples defaultSamples() {

@@ -24,7 +24,7 @@ public class StateCemeteriesCollectorTest {
   @Test
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public void collect() {
+  void collect() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
 
     ResponseEntity<String> arcGisResponse = mock(ResponseEntity.class);
@@ -107,7 +107,7 @@ public class StateCemeteriesCollectorTest {
   }
 
   @Test
-  public void exception() {
+  void exception() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     assertThrows(
         CollectorExceptions.StateCemeteriesCollectorException.class,

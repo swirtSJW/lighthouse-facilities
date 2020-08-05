@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class BenefitsTransformerTest {
   @Test
-  public void benefitsServices() {
+  void benefitsServices() {
     assertThat(
             tx().services(ArcGisBenefits.Attributes.builder().burialClaimAssistance("YES").build()))
         .isEqualTo(facilityService(Facility.BenefitsService.BurialClaimAssistance));
@@ -67,13 +67,13 @@ public class BenefitsTransformerTest {
   }
 
   @Test
-  public void toFacility() {
+  void toFacility() {
     assertThat(tx().toFacility())
         .isEqualTo(BenefitsSamples.Facilities.create().benefitsFacilities().get(0));
   }
 
   @Test
-  public void transformerPrioritizesWebsiteFromArcGis() {
+  void transformerPrioritizesWebsiteFromArcGis() {
     String arcgis = "https://shanktopus.com/vha/facility";
     String csv = "https://shanktofake.com/nope";
     assertThat(tx().website(null)).isNull();
@@ -92,7 +92,7 @@ public class BenefitsTransformerTest {
   }
 
   @Test
-  public void websiteInCsvReturnsValueWhenArcGisIsNull() {
+  void websiteInCsvReturnsValueWhenArcGisIsNull() {
     String url = "https://shanktopus.com/vha/facility";
     assertThat(tx(url).toFacility().attributes().website()).isEqualTo(url);
   }

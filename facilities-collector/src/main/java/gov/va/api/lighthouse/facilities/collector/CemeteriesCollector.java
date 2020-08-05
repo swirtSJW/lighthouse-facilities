@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import com.google.common.base.Stopwatch;
@@ -8,7 +9,6 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -40,7 +40,7 @@ public class CemeteriesCollector {
                       .csvWebsite(websites.get("nca_" + facility.attributes().siteId()))
                       .build()
                       .toFacility())
-          .collect(Collectors.toList());
+          .collect(toList());
     } catch (Exception e) {
       throw new CollectorExceptions.CemeteriesCollectorException(e);
     }

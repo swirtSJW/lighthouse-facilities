@@ -22,7 +22,7 @@ public class CdwControllerTest {
   @Autowired TestEntityManager testEntityManager;
 
   @Test
-  public void mentalHealthContacts() {
+  void mentalHealthContacts() {
     template.execute(
         "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
             + "StationNumber VARCHAR,"
@@ -49,7 +49,7 @@ public class CdwControllerTest {
 
   @Test
   @SneakyThrows
-  public void stopCodes() {
+  void stopCodes() {
     template.execute(
         "CREATE TABLE App.VSSC_ClinicalServices ("
             + "Sta6a VARCHAR,"
@@ -87,7 +87,7 @@ public class CdwControllerTest {
 
   @Test
   @SneakyThrows
-  public void vast() {
+  void vast() {
     testEntityManager.persistAndFlush(
         VastEntity.builder().vastId(1L).stationNumber("123").stationName("Some VAMC").build());
     assertThat(Iterables.getOnlyElement(new CdwController(template).vast()))

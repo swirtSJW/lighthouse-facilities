@@ -9,7 +9,7 @@ import org.springframework.boot.info.BuildProperties;
 
 public class MetadataControllerTest {
   @Test
-  public void metadata() {
+  void metadata() {
     Properties properties = new Properties();
     properties.put("version", "3.14");
     assertThat(

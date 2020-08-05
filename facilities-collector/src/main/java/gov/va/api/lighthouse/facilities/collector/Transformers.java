@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.endsWithIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
@@ -10,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +30,7 @@ final class Transformers {
     if (isEmpty(items)) {
       return null;
     }
-    List<T> filtered = items.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    List<T> filtered = items.stream().filter(Objects::nonNull).collect(toList());
     return filtered.isEmpty() ? null : filtered;
   }
 

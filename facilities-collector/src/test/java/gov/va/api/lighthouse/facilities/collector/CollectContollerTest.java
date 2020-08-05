@@ -25,7 +25,7 @@ public class CollectContollerTest {
   @Test
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public void verifyResponse() {
+  void verifyResponse() {
     RestTemplate restTemplate = mock(RestTemplate.class);
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
 

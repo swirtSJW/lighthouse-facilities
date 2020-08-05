@@ -22,7 +22,7 @@ public class FacilityRepositoryTest {
   }
 
   @Test
-  public void findAllIds() {
+  void findAllIds() {
     List<FacilityEntity.Pk> expected = new ArrayList<>();
     FacilityEntity entity;
     var now = Instant.now();
@@ -35,7 +35,7 @@ public class FacilityRepositoryTest {
   }
 
   @Test
-  public void lastUpdated() {
+  void lastUpdated() {
     var aLongTimeAgo = Instant.parse("2020-01-20T02:20:00Z");
     repository.save(facilityEntity("1", aLongTimeAgo));
     assertThat(repository.findLastUpdated()).isEqualTo(aLongTimeAgo);

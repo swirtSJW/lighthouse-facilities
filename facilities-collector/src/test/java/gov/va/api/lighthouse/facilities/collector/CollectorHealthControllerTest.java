@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -13,7 +14,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
@@ -44,8 +44,7 @@ public class CollectorHealthControllerTest {
     //noinspection unchecked
     Map<String, Status> serviceStatus =
         ((List<Health>) overallStatus.getDetails().get("downstreamServices"))
-            .stream()
-                .collect(Collectors.toMap(h -> h.getStatus().getDescription(), Health::getStatus));
+            .stream().collect(toMap(h -> h.getStatus().getDescription(), Health::getStatus));
     System.out.println(serviceStatus);
     assertThat(serviceStatus.get("Access to Care").getCode()).isEqualTo(expected.accessToCare());
     assertThat(serviceStatus.get("Access to PWT").getCode()).isEqualTo(expected.accessToPWT());
@@ -64,7 +63,7 @@ public class CollectorHealthControllerTest {
 
   @Test
   @SneakyThrows
-  public void allHealthyBackendServicesReturns200AndHealthWithUpStatuses() {
+  void allHealthyBackendServicesReturns200AndHealthWithUpStatuses() {
     setRequestAttributes(mock(RequestAttributes.class));
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
@@ -103,7 +102,7 @@ public class CollectorHealthControllerTest {
 
   @Test
   @SneakyThrows
-  public void cacheClearing() {
+  void cacheClearing() {
     controller().clearCacheScheduler();
   }
 
@@ -120,7 +119,7 @@ public class CollectorHealthControllerTest {
 
   @Test
   @SneakyThrows
-  public void oneOrMoreUnhealthyBackendServicesReturns503AndHealthWithDownStatuses() {
+  void oneOrMoreUnhealthyBackendServicesReturns503AndHealthWithDownStatuses() {
     setRequestAttributes(mock(RequestAttributes.class));
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(
@@ -159,7 +158,7 @@ public class CollectorHealthControllerTest {
 
   @Test
   @SneakyThrows
-  public void servicesUnreachable() {
+  void servicesUnreachable() {
     setRequestAttributes(mock(RequestAttributes.class));
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
     when(restTemplate.exchange(

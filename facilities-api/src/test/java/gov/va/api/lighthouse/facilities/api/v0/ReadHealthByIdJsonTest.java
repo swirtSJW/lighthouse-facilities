@@ -129,7 +129,7 @@ public class ReadHealthByIdJsonTest {
 
   @Test
   @SneakyThrows
-  public void unmarshallSample() {
+  void unmarshallSample() {
     assertReadable("/read-health.json");
   }
 }

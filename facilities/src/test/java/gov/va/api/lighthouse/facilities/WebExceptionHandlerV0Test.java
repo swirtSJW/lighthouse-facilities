@@ -34,7 +34,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void bing() {
+  void bing() {
     assertThat(new WebExceptionHandlerV0().handleBing(new ExceptionsV0.BingException("foo")))
         .isEqualTo(
             ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
@@ -53,7 +53,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void invalidParameter() {
+  void invalidParameter() {
     assertThat(
             new WebExceptionHandlerV0()
                 .handleInvalidParameter(new ExceptionsV0.InvalidParameter("services", "x")))
@@ -75,7 +75,7 @@ public class WebExceptionHandlerV0Test {
 
   @Test
   @SneakyThrows
-  public void methodArgumentNotValid() {
+  void methodArgumentNotValid() {
     assertThat(
             new WebExceptionHandlerV0()
                 .handleMethodArgumentNotValidException(
@@ -100,7 +100,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void methodArgumentTypeMismatch() {
+  void methodArgumentTypeMismatch() {
     assertThat(
             new WebExceptionHandlerV0()
                 .handleMethodArgumentTypeMismatch(
@@ -123,7 +123,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void notAcceptable() {
+  void notAcceptable() {
     assertThat(
             new WebExceptionHandlerV0()
                 .handleNotAcceptable(
@@ -146,7 +146,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void notFound() {
+  void notFound() {
     assertThat(new WebExceptionHandlerV0().handleNotFound(new ExceptionsV0.NotFound("vha_555")))
         .isEqualTo(
             ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -165,7 +165,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void snafu() {
+  void snafu() {
     assertThat(new WebExceptionHandlerV0().handleSnafu(new IllegalStateException("oh noez")))
         .isEqualTo(
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -184,7 +184,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void unsatisfiedServletRequestParameter() {
+  void unsatisfiedServletRequestParameter() {
     assertThat(
             new WebExceptionHandlerV0()
                 .handleUnsatisfiedServletRequestParameter(
@@ -208,7 +208,7 @@ public class WebExceptionHandlerV0Test {
   }
 
   @Test
-  public void validationException() {
+  void validationException() {
     Set<ConstraintViolation<Foo>> violations =
         Validation.buildDefaultValidatorFactory().getValidator().validate(Foo.builder().build());
     assertThat(

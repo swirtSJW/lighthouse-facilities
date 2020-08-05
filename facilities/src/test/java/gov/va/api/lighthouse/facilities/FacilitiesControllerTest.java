@@ -28,7 +28,7 @@ public class FacilitiesControllerTest {
 
   @Test
   @SneakyThrows
-  public void all() {
+  void all() {
     FacilitySamples samples = FacilitySamples.defaultSamples();
     when(fr.findAllProjectedBy())
         .thenReturn(
@@ -45,7 +45,7 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void allCsv() {
+  void allCsv() {
     FacilitySamples samples = FacilitySamples.defaultSamples();
     when(fr.findAllProjectedBy())
         .thenReturn(
@@ -89,7 +89,7 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void geoFacilitiesByIds() {
+  void geoFacilitiesByIds() {
     when(fr.findByIdIn(
             List.of(
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB"),
@@ -109,7 +109,7 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void jsonFacilitiesByIds() {
+  void jsonFacilitiesByIds() {
     when(fr.findByIdIn(
             List.of(
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB"),
@@ -151,7 +151,7 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void jsonFacilitiesByIds_perPageZero() {
+  void jsonFacilitiesByIds_perPageZero() {
     when(fr.findByIdIn(
             List.of(
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB"),
@@ -185,7 +185,7 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void readGeoJson() {
+  void readGeoJson() {
     GeoFacility geo = FacilitySamples.defaultSamples().geoFacility("vha_691GB");
     FacilityEntity entity = FacilitySamples.defaultSamples().facilityEntity("vha_691GB");
     when(fr.findById(FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB")))
@@ -194,7 +194,7 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void readJson() {
+  void readJson() {
     Facility facility = FacilitySamples.defaultSamples().facility("vha_691GB");
     FacilityEntity entity = FacilitySamples.defaultSamples().facilityEntity("vha_691GB");
     when(fr.findById(FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB")))
@@ -204,12 +204,12 @@ public class FacilitiesControllerTest {
   }
 
   @Test
-  public void readJson_malformed() {
+  void readJson_malformed() {
     assertThrows(ExceptionsV0.NotFound.class, () -> controller().readJson("xxx"));
   }
 
   @Test
-  public void readJson_notFound() {
+  void readJson_notFound() {
     assertThrows(ExceptionsV0.NotFound.class, () -> controller().readJson("vha_691GB"));
   }
 }

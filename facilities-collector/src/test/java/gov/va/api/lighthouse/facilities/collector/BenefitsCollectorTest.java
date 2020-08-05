@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 public class BenefitsCollectorTest {
   @Test
   @SneakyThrows
-  public void collect() {
+  void collect() {
     RestTemplate restTemplate = mock(RestTemplate.class);
 
     ResponseEntity<String> body =
@@ -102,7 +102,7 @@ public class BenefitsCollectorTest {
   }
 
   @Test
-  public void exception() {
+  void exception() {
     RestTemplate restTemplate = mock(RestTemplate.class);
     assertThrows(
         CollectorExceptions.BenefitsCollectorException.class,

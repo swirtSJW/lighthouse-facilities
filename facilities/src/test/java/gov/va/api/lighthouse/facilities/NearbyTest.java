@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
@@ -17,7 +18,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +53,7 @@ public class NearbyTest {
   @SneakyThrows
   private DriveTimeBandEntity _deprecatedPssgDriveTimeBandEntity(PssgDriveTimeBand band) {
     List<List<Double>> flatRings =
-        band.geometry().rings().stream().flatMap(r -> r.stream()).collect(Collectors.toList());
+        band.geometry().rings().stream().flatMap(r -> r.stream()).collect(toList());
     return DriveTimeBandEntity.builder()
         .id(
             DriveTimeBandEntity.Pk.of(
@@ -93,7 +93,7 @@ public class NearbyTest {
   @SneakyThrows
   private DriveTimeBandEntity _entity(PssgDriveTimeBand band) {
     List<List<Double>> flatRings =
-        band.geometry().rings().stream().flatMap(r -> r.stream()).collect(Collectors.toList());
+        band.geometry().rings().stream().flatMap(r -> r.stream()).collect(toList());
     return DriveTimeBandEntity.builder()
         .id(
             DriveTimeBandEntity.Pk.of(
@@ -149,7 +149,7 @@ public class NearbyTest {
 
   @Test
   @SneakyThrows
-  public void address() {
+  void address() {
     when(restTemplate.exchange(
             startsWith("http://bing"),
             eq(HttpMethod.GET),
@@ -216,7 +216,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void address_bingException() {
+  void address_bingException() {
     when(restTemplate.exchange(
             startsWith("http://bing"),
             eq(HttpMethod.GET),
@@ -233,7 +233,7 @@ public class NearbyTest {
 
   @Test
   @SneakyThrows
-  public void address_bingNoResults() {
+  void address_bingNoResults() {
     when(restTemplate.exchange(
             startsWith("http://bing"),
             eq(HttpMethod.GET),
@@ -273,7 +273,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void empty() {
+  void empty() {
     facilityRepository.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     NearbyResponse response =
         _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
@@ -281,7 +281,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void filterMaxDriveTime() {
+  void filterMaxDriveTime() {
     facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
@@ -293,7 +293,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void filterServices() {
+  void filterServices() {
     facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
@@ -320,7 +320,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void filterType() {
+  void filterType() {
     facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
@@ -346,7 +346,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void hit() {
+  void hit() {
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
@@ -370,7 +370,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void hitWithDeprecatedPssgDriveBands() {
+  void hitWithDeprecatedPssgDriveBands() {
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
     driveTimeBandRepository.save(_deprecatedPssgDriveTimeBandEntity(_diamondBand("666", 0, 10, 0)));
@@ -382,7 +382,7 @@ public class NearbyTest {
   }
 
   @Test
-  public void sameStationNumber() {
+  void sameStationNumber() {
     facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));

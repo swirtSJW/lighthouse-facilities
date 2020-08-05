@@ -30,7 +30,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void geoFacilities() {
+  void geoFacilities() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller()
@@ -52,7 +52,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_invalidBBox() {
+  void json_invalidBBox() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () ->
@@ -71,7 +71,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_invalidService() {
+  void json_invalidService() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () ->
@@ -89,7 +89,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_invalidType() {
+  void json_invalidType() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
         () ->
@@ -107,7 +107,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_noFilter() {
+  void json_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller()
@@ -126,7 +126,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_perPageZero() {
+  void json_perPageZero() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller()
@@ -162,7 +162,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_serviceOnly() {
+  void json_serviceOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller()
@@ -181,7 +181,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_typeAndService() {
+  void json_typeAndService() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     String linkBase =
@@ -222,7 +222,7 @@ public class FacilitiesByBoundingBoxTest {
   }
 
   @Test
-  public void json_typeOnly() {
+  void json_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller()

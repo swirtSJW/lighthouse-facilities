@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap;
 
 public class PageLinkerTest {
   @Test
-  public void links_afterAfterLastPage() {
+  void links_afterAfterLastPage() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -32,7 +32,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_afterLastPage() {
+  void links_afterLastPage() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -55,7 +55,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_firstPage() {
+  void links_firstPage() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -78,7 +78,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_lastPage() {
+  void links_lastPage() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -101,7 +101,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_middlePage() {
+  void links_middlePage() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -125,7 +125,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_singlePage() {
+  void links_singlePage() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -147,7 +147,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void links_zeroEntries() {
+  void links_zeroEntries() {
     assertThat(
             PageLinker.builder()
                 .url("http://foo")
@@ -169,7 +169,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void pagination() {
+  void pagination() {
     assertThat(
             PageLinker.builder()
                 .url("unused")
@@ -187,7 +187,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void pagination_zeroEntries() {
+  void pagination_zeroEntries() {
     assertThat(
             PageLinker.builder()
                 .url("unused")
@@ -205,7 +205,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void perPageZero() {
+  void perPageZero() {
     String url = "http://foo";
     MultiValueMap<String, String> params =
         Parameters.builder().add("foo", "bar").add("page", "5").add("per_page", "0").build();
@@ -222,7 +222,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void validation_page() {
+  void validation_page() {
     assertThrows(
         IllegalArgumentException.class,
         () ->
@@ -235,7 +235,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void validation_perPage() {
+  void validation_perPage() {
     assertThrows(
         IllegalArgumentException.class,
         () ->
@@ -248,7 +248,7 @@ public class PageLinkerTest {
   }
 
   @Test
-  public void validation_totalEntries() {
+  void validation_totalEntries() {
     assertThrows(
         IllegalArgumentException.class,
         () ->

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 public class TransformersTest {
   @Test
-  public void allBlank() {
+  void allBlank() {
     assertThat(Transformers.allBlank()).isTrue();
     assertThat(Transformers.allBlank(null, null, null, null)).isTrue();
     assertThat(Transformers.allBlank(null, "", " ")).isTrue();
@@ -21,7 +21,7 @@ public class TransformersTest {
   }
 
   @Test
-  public void emptyToNull() {
+  void emptyToNull() {
     List<Object> list = new ArrayList<>();
     assertThat(Transformers.emptyToNull(list)).isNull();
     list.add(null);
@@ -31,7 +31,7 @@ public class TransformersTest {
   }
 
   @Test
-  public void hoursToClosed() {
+  void hoursToClosed() {
     assertThat(Transformers.hoursToClosed(null)).isNull();
     assertThat(Transformers.hoursToClosed("")).isNull();
     assertThat(Transformers.hoursToClosed(" - ")).isEqualTo("Closed");
@@ -39,7 +39,7 @@ public class TransformersTest {
   }
 
   @Test
-  public void phoneTrim() {
+  void phoneTrim() {
     assertThat(Transformers.phoneTrim(null)).isNull();
     assertThat(Transformers.phoneTrim("")).isEqualTo(null);
     assertThat(Transformers.phoneTrim("1 x")).isEqualTo("1");
@@ -47,7 +47,7 @@ public class TransformersTest {
   }
 
   @Test
-  public void trailingSlash() {
+  void trailingSlash() {
     assertThat(Transformers.withTrailingSlash("x/")).isEqualTo("x/");
     assertThat(Transformers.withTrailingSlash("x")).isEqualTo("x/");
   }

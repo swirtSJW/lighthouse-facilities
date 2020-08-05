@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
 public class CemeteriesCollectorTest {
   @Test
   @SneakyThrows
-  public void collect() {
+  void collect() {
     RestTemplate restTemplate = mock(RestTemplate.class);
 
     ResponseEntity<String> body =
@@ -94,7 +94,7 @@ public class CemeteriesCollectorTest {
   }
 
   @Test
-  public void exception() {
+  void exception() {
     RestTemplate restTemplate = mock(RestTemplate.class);
     assertThrows(
         CollectorExceptions.CemeteriesCollectorException.class,

@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.collector;
 
 import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.withTrailingSlash;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.google.common.base.Stopwatch;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
@@ -172,7 +172,7 @@ public class CollectController {
         .facilities(
             Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
                 .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
-                .collect(Collectors.toList()))
+                .collect(toList()))
         .build();
   }
 

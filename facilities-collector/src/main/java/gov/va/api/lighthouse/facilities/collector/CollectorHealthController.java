@@ -1,13 +1,13 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.lighthouse.facilities.collector.Transformers.withTrailingSlash;
+import static java.util.stream.Collectors.toList;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -154,7 +154,7 @@ public class CollectorHealthController {
                 () -> testLastUpdated())
             .parallelStream()
             .map(Supplier::get)
-            .collect(Collectors.toList());
+            .collect(toList());
 
     Health health =
         Health.status(

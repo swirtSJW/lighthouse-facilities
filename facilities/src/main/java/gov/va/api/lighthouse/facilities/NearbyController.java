@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.lighthouse.facilities.Controllers.validateFacilityType;
 import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -177,7 +177,7 @@ public class NearbyController {
               return firstIntersection(point, sortedEntities).orElse(null);
             })
         .filter(Objects::nonNull)
-        .collect(Collectors.toMap(b -> b.id().stationNumber(), Function.identity()));
+        .collect(toMap(b -> b.id().stationNumber(), Function.identity()));
   }
 
   /** Nearby facilities by address. */

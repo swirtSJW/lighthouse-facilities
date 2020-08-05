@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 public class WebExceptionHandlerTest {
   @Test
-  public void handleSnafu() {
+  void handleSnafu() {
     ErrorResponse response = new WebExceptionHandler().handleSnafu(new RuntimeException("oh noez"));
     assertThat(Instant.now().toEpochMilli() - response.timestamp()).isLessThan(2000);
     assertThat(response)

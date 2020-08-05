@@ -27,7 +27,7 @@ public class HealthTransformerTest {
   }
 
   @Test
-  public void classification() {
+  void classification() {
     assertThat(
             HealthTransformer.builder()
                 .vast(new VastEntity())
@@ -52,7 +52,7 @@ public class HealthTransformerTest {
   }
 
   @Test
-  public void empty() {
+  void empty() {
     assertThat(
             HealthTransformer.builder()
                 .vast(new VastEntity())

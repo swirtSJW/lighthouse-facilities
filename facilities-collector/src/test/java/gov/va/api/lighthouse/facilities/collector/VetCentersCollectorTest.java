@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 public class VetCentersCollectorTest {
   @Test
-  public void collect() {
+  void collect() {
     VastEntity vastEntity =
         VastEntity.builder()
             .vetCenter(true)

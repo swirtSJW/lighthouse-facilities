@@ -12,7 +12,7 @@ public class VastRepositoryTest {
   @Autowired VastRepository repository;
 
   @Test
-  public void lastUpdated() {
+  void lastUpdated() {
     var aLongTimeAgo = Instant.parse("2020-01-20T02:20:00Z");
     repository.save(vastEntity(1L, aLongTimeAgo));
     assertThat(repository.findLastUpdated()).isEqualTo(aLongTimeAgo);

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 public class VetCenterTransformerTest {
   @Test
-  public void empty() {
+  void empty() {
     assertThat(
             VetCenterTransformer.builder()
                 .vast(new VastEntity())

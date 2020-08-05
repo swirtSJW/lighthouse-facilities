@@ -144,7 +144,7 @@ public final class Populaterator {
 
   /** Populate the database. */
   @SneakyThrows
-  public void populate() {
+  void populate() {
     log("Populating " + db.name() + " database");
     bootstrap();
     log("Initializing facility collector database.");

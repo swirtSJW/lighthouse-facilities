@@ -5,6 +5,7 @@ import static gov.va.api.lighthouse.facilities.collector.Transformers.emptyToNul
 import static gov.va.api.lighthouse.facilities.collector.Transformers.hoursToClosed;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.isBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
+import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.StringUtils.compareIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -25,7 +26,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import org.apache.commons.lang3.BooleanUtils;
@@ -311,7 +311,7 @@ final class HealthTransformer {
         accessToCareEntries().stream()
             .map(ace -> serviceName(ace))
             .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(toCollection(ArrayList::new));
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.emergencyCare()))) {
       services.add(Facility.HealthService.EmergencyCare);
     }
@@ -361,7 +361,7 @@ final class HealthTransformer {
         accessToCareEntries().stream()
             .map(ace -> waitTime(ace))
             .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(toCollection(ArrayList::new));
     Collections.sort(
         results, (left, right) -> compareIgnoreCase(left.service().name(), right.service().name()));
     return emptyToNull(results);

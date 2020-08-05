@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 public class SerializationV0Test {
   @Test
   @SneakyThrows
-  public void all() {
+  void all() {
     GeoFacilitiesResponse actual =
         createMapper()
             .readValue(getClass().getResourceAsStream("/all.json"), GeoFacilitiesResponse.class);
@@ -46,77 +46,77 @@ public class SerializationV0Test {
 
   @Test
   @SneakyThrows
-  public void nearby() {
+  void nearby() {
     String path = "/nearby.json";
     roundTrip(path, NearbyResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readBenefits() {
+  void readBenefits() {
     String path = "/read-benefits.json";
     roundTrip(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readBenefitsGeoJson() {
+  void readBenefitsGeoJson() {
     String path = "/read-benefits-geojson.json";
     roundTrip(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readCemetery() {
+  void readCemetery() {
     String path = "/read-cemetery.json";
     roundTrip(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readCemeteryGeoJson() {
+  void readCemeteryGeoJson() {
     String path = "/read-cemetery-geojson.json";
     roundTrip(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readHealth() {
+  void readHealth() {
     String path = "/read-health.json";
     roundTrip(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readHealthGeoJson() {
+  void readHealthGeoJson() {
     String path = "/read-health-geojson.json";
     roundTrip(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readStateCemetery() {
+  void readStateCemetery() {
     String path = "/read-state-cemetery.json";
     roundTrip(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readStateCemeteryGeoJson() {
+  void readStateCemeteryGeoJson() {
     String path = "/read-state-cemetery-geojson.json";
     roundTrip(path, GeoFacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readVetCenter() {
+  void readVetCenter() {
     String path = "/read-vet-center.json";
     roundTrip(path, FacilityReadResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void readVetCenterGeoJson() {
+  void readVetCenterGeoJson() {
     String path = "/read-vet-center-geojson.json";
     roundTrip(path, GeoFacilityReadResponse.class);
   }
@@ -135,70 +135,70 @@ public class SerializationV0Test {
 
   @Test
   @SneakyThrows
-  public void searchByBbox() {
+  void searchByBbox() {
     String path = "/search-bbox.json";
     roundTrip(path, FacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByBboxGeoJson() {
+  void searchByBboxGeoJson() {
     String path = "/search-bbox-geojson.json";
     roundTrip(path, GeoFacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByIds() {
+  void searchByIds() {
     String path = "/search-ids.json";
     roundTrip(path, FacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByIdsGeoJson() {
+  void searchByIdsGeoJson() {
     String path = "/search-ids-geojson.json";
     roundTrip(path, GeoFacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByLatLong() {
+  void searchByLatLong() {
     String path = "/search-lat-long.json";
     roundTrip(path, FacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByLatLongGeoJson() {
+  void searchByLatLongGeoJson() {
     String path = "/search-lat-long-geojson.json";
     roundTrip(path, GeoFacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByState() {
+  void searchByState() {
     String path = "/search-state.json";
     roundTrip(path, FacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByStateGeoJson() {
+  void searchByStateGeoJson() {
     String path = "/search-state-geojson.json";
     roundTrip(path, GeoFacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByZip() {
+  void searchByZip() {
     String path = "/search-zip.json";
     roundTrip(path, FacilitiesResponse.class);
   }
 
   @Test
   @SneakyThrows
-  public void searchByZipGeoJson() {
+  void searchByZipGeoJson() {
     String path = "/search-zip-geojson.json";
     roundTrip(path, GeoFacilitiesResponse.class);
   }

@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.stream.Collectors.joining;
 
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
@@ -9,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
@@ -91,7 +91,7 @@ final class PageLinker {
         mutableParams.entrySet().stream()
             .sorted(Comparator.comparing(Map.Entry::getKey))
             .flatMap(PageLinker::toKeyValueString)
-            .collect(Collectors.joining("&"));
+            .collect(joining("&"));
     if (!joinedParams.isEmpty()) {
       sb.append(joinedParams).append('&');
     }

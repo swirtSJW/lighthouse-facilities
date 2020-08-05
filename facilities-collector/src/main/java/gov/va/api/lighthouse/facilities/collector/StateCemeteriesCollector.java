@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -15,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -49,7 +49,7 @@ final class StateCemeteriesCollector {
                           .build()
                           .toFacility())
               .filter(Objects::nonNull)
-              .collect(Collectors.toList());
+              .collect(toList());
       log.info(
           "Loading state cemeteries took {} millis for {} features",
           totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
