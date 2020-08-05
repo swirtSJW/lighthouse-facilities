@@ -24,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 public class CollectContollerTest {
   @Test
   @SneakyThrows
-  @SuppressWarnings("unchecked")
   void verifyResponse() {
     RestTemplate restTemplate = mock(RestTemplate.class);
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);

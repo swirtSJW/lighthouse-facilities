@@ -196,8 +196,6 @@ public class NearbyTest {
     NearbyResponse response =
         _controller()
             .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null);
-    String linkBase =
-        "http://foo/bp/v0/nearby?city=Melbourne&state=FL&street_address=505+N+John+Rodes+Blvd&zip=32934";
     assertThat(response)
         .isEqualTo(
             NearbyResponse.builder()
