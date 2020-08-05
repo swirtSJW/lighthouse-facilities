@@ -62,7 +62,7 @@ public class DriveTimeBandEntity {
   @NoArgsConstructor(access = AccessLevel.PUBLIC)
   @AllArgsConstructor(staticName = "of")
   @Embeddable
-  public static class Pk implements Serializable {
+  static final class Pk implements Serializable {
     @Column(name = "station_number", nullable = false)
     private String stationNumber;
 
@@ -73,7 +73,7 @@ public class DriveTimeBandEntity {
     private int toMinutes;
 
     /** Parse a 'name' into a PK. Name format is {stationNumber}-{fromMinutes}-{toMinutes}. */
-    public static Pk fromName(@NonNull String name) {
+    static Pk fromName(@NonNull String name) {
       var parts = Splitter.on('-').splitToList(name);
       checkArgument(
           parts.size() == 3,

@@ -171,7 +171,6 @@ public class SearchByZipGeoJsonTest {
   }
 
   @Test
-  @SneakyThrows
   void unmarshallSample() {
     assertReadable("/search-zip-geojson.json");
   }

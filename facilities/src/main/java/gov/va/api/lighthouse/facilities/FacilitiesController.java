@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping(value = {"/v0"})
+@RequestMapping(value = "/v0")
 public class FacilitiesController {
   private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
 
@@ -119,7 +119,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities/all",
       produces = {"application/json", "application/geo+json", "application/vnd.geo+json"})
-  public String all() {
+  String all() {
     StringBuilder sb = new StringBuilder();
     sb.append("{\"type\":\"FeatureCollection\",\"features\":[");
     List<HasFacilityPayload> all = facilityRepository.findAllProjectedBy();
@@ -139,7 +139,7 @@ public class FacilitiesController {
   /** Get all facilities as CSV. */
   @SneakyThrows
   @GetMapping(value = "/facilities/all", produces = "text/csv")
-  public String allCsv() {
+  String allCsv() {
     List<List<String>> rows =
         facilityRepository.findAllProjectedBy().stream()
             .parallel()
@@ -273,7 +273,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"bbox[]", "!lat", "!long", "!state", "!zip"})
-  public GeoFacilitiesResponse geoFacilitiesByBoundingBox(
+  GeoFacilitiesResponse geoFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
@@ -293,7 +293,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!zip"})
-  public GeoFacilitiesResponse geoFacilitiesByIds(
+  GeoFacilitiesResponse geoFacilitiesByIds(
       @RequestParam(value = "ids") String ids,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
@@ -311,7 +311,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "lat", "long", "!state", "!zip"})
-  public GeoFacilitiesResponse geoFacilitiesByLatLong(
+  GeoFacilitiesResponse geoFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "long") BigDecimal longitude,
       @RequestParam(value = "ids", required = false) String ids,
@@ -334,7 +334,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "!lat", "!long", "state", "!zip"})
-  public GeoFacilitiesResponse geoFacilitiesByState(
+  GeoFacilitiesResponse geoFacilitiesByState(
       @RequestParam(value = "state") String state,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
@@ -356,7 +356,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
       params = {"!bbox[]", "!lat", "!long", "!state", "zip"})
-  public GeoFacilitiesResponse geoFacilitiesByZip(
+  GeoFacilitiesResponse geoFacilitiesByZip(
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
@@ -378,7 +378,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = "application/json",
       params = {"bbox[]", "!lat", "!long", "!state", "!zip"})
-  public FacilitiesResponse jsonFacilitiesByBoundingBox(
+  FacilitiesResponse jsonFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
@@ -411,7 +411,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = "application/json",
       params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!zip"})
-  public FacilitiesResponse jsonFacilitiesByIds(
+  FacilitiesResponse jsonFacilitiesByIds(
       @RequestParam(value = "ids") String ids,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
@@ -440,7 +440,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = "application/json",
       params = {"!bbox[]", "lat", "long", "!state", "!zip"})
-  public FacilitiesResponse jsonFacilitiesByLatLong(
+  FacilitiesResponse jsonFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "long") BigDecimal longitude,
       @RequestParam(value = "ids", required = false) String ids,
@@ -489,7 +489,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = "application/json",
       params = {"!bbox[]", "!lat", "!long", "state", "!zip"})
-  public FacilitiesResponse jsonFacilitiesByState(
+  FacilitiesResponse jsonFacilitiesByState(
       @RequestParam(value = "state") String state,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
@@ -526,7 +526,7 @@ public class FacilitiesController {
       value = "/facilities",
       produces = "application/json",
       params = {"!bbox[]", "!lat", "!long", "!state", "zip"})
-  public FacilitiesResponse jsonFacilitiesByZip(
+  FacilitiesResponse jsonFacilitiesByZip(
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
@@ -562,13 +562,13 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities/{id}",
       produces = {"application/geo+json", "application/vnd.geo+json"})
-  public GeoFacilityReadResponse readGeoJson(@PathVariable("id") String id) {
+  GeoFacilityReadResponse readGeoJson(@PathVariable("id") String id) {
     return GeoFacilityReadResponse.of(geoFacility(facility(entityById(id))));
   }
 
   /** Read facility. */
   @GetMapping(value = "/facilities/{id}", produces = "application/json")
-  public FacilityReadResponse readJson(@PathVariable("id") String id) {
+  FacilityReadResponse readJson(@PathVariable("id") String id) {
     return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
   }
 

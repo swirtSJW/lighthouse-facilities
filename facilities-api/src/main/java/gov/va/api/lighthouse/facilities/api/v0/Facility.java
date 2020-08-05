@@ -272,7 +272,7 @@ public final class Facility {
               + " Limited Hours and/or Services,"
               + " or Closed."
               + " This field replaces active_status.")
-  public static class OperatingStatus {
+  public static final class OperatingStatus {
     @NotNull
     @JsonProperty(required = true)
     @Schema(

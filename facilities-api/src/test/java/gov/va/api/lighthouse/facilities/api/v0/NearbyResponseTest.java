@@ -64,7 +64,6 @@ public class NearbyResponseTest {
   }
 
   @Test
-  @SneakyThrows
   void unmarshallSample() {
     assertReadable("/nearby.json");
   }

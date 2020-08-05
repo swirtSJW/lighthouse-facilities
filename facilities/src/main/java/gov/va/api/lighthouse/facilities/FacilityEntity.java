@@ -137,7 +137,7 @@ public class FacilityEntity implements HasFacilityPayload {
   @NoArgsConstructor
   @AllArgsConstructor(staticName = "of")
   @Embeddable
-  public static class Pk implements Serializable {
+  static final class Pk implements Serializable {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
@@ -146,7 +146,7 @@ public class FacilityEntity implements HasFacilityPayload {
     private String stationNumber;
 
     /** Create a Pk from the {type}_{id} style used in the Facilities API ID. */
-    public static Pk fromIdString(@NonNull String typeAndStationNumber) {
+    static Pk fromIdString(@NonNull String typeAndStationNumber) {
       int separator = typeAndStationNumber.indexOf('_');
       checkArgument(separator > 0, typeAndStationNumber);
       checkArgument(separator + 1 < typeAndStationNumber.length() - 1, typeAndStationNumber);
@@ -159,7 +159,7 @@ public class FacilityEntity implements HasFacilityPayload {
     /**
      * Create a Pk from the {type}_{id} style used in the Facilities API ID, suppressing exceptions.
      */
-    public static Optional<Pk> optionalFromIdString(@NonNull String typeAndStationNumber) {
+    static Optional<Pk> optionalFromIdString(@NonNull String typeAndStationNumber) {
       try {
         return Optional.ofNullable(fromIdString(typeAndStationNumber));
       } catch (Exception ex) {

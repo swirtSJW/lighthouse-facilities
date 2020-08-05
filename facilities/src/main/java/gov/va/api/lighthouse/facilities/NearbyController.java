@@ -13,8 +13,6 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import gov.va.api.lighthouse.facilities.BingResponse.Point;
-import gov.va.api.lighthouse.facilities.BingResponse.Resource;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -139,9 +137,9 @@ public class NearbyController {
     Optional<List<BigDecimal>> coordinates =
         response.resourceSets().stream()
             .flatMap(rs -> rs.resources().stream())
-            .map(Resource::point)
+            .map(BingResponse.Resource::point)
             .filter(Objects::nonNull)
-            .map(Point::coordinates)
+            .map(BingResponse.Point::coordinates)
             .filter(c -> c.size() >= 2)
             .findFirst();
 
@@ -184,7 +182,7 @@ public class NearbyController {
   @GetMapping(
       produces = "application/json",
       params = {"street_address", "city", "state", "zip"})
-  public NearbyResponse nearbyAddress(
+  NearbyResponse nearbyAddress(
       @RequestParam(value = "street_address") String street,
       @RequestParam(value = "city") String city,
       @RequestParam(value = "state") String state,
@@ -261,7 +259,7 @@ public class NearbyController {
   @GetMapping(
       produces = "application/json",
       params = {"lat", "lng"})
-  public NearbyResponse nearbyLatLong(
+  NearbyResponse nearbyLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "lng") BigDecimal longitude,
       @RequestParam(value = "type", required = false) String type,
@@ -289,7 +287,7 @@ public class NearbyController {
 
   @Builder
   @lombok.Value
-  private static class Coordinates {
+  private static final class Coordinates {
     BigDecimal latitude;
 
     BigDecimal longitude;
@@ -301,7 +299,7 @@ public class NearbyController {
    * records that have not be converted yet, this class allows for a graceful transition. It can
    * deleted once all databases have been upgraded.
    */
-  private static class DeprecatedPssgDriveTimeBandSupport {
+  private static final class DeprecatedPssgDriveTimeBandSupport {
     private final ObjectMapper mapper = JacksonConfig.createMapper();
 
     boolean isPssgDriveTimeBand(DriveTimeBandEntity entity) {
@@ -340,7 +338,7 @@ public class NearbyController {
 
   @Builder
   @lombok.Value
-  private static class NearbyId {
+  private static final class NearbyId {
     DriveTimeBandEntity.Pk bandId;
 
     String facilityId;

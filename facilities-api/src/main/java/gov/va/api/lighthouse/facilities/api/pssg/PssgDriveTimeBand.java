@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class PssgDriveTimeBand {
   /** The two item list of coordinates, this is the longitude (or x) value. */
   public static int INDEX_LONGITUDE = 0;
 
-  /** The two item list of coordinates, this is the lattitude (or x) value. */
+  /** The two item list of coordinates, this is the latitude (or y) value. */
   public static int INDEX_LATITUDE = 1;
 
   Attributes attributes;
@@ -51,7 +51,7 @@ public class PssgDriveTimeBand {
   @JsonIgnoreProperties(ignoreUnknown = true)
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class Attributes {
+  public static final class Attributes {
     @JsonProperty("Sta_No")
     String stationNumber;
 
@@ -67,7 +67,7 @@ public class PssgDriveTimeBand {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @AllArgsConstructor
   @NoArgsConstructor
-  public static class Geometry {
+  public static final class Geometry {
     /**
      * Oh lawdy.
      *

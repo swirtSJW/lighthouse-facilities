@@ -2,7 +2,6 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 
-import gov.va.api.lighthouse.facilities.FacilityEntity.Pk;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -20,10 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
+@Builder
 @Validated
 @RestController
-@Builder
-@Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CmsOverlayController {
   private final FacilityRepository repository;
@@ -33,15 +32,15 @@ public class CmsOverlayController {
     dataBinder.initDirectFieldAccess();
   }
 
-  /** Saves CMS overlay data for known stations. */
   @PostMapping(
       value = "/v0/facilities/{id}/cms-overlay",
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows
-  public ResponseEntity<Void> saveOverlay(
+  ResponseEntity<Void> saveOverlay(
       @PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
-    Optional<FacilityEntity> existingEntity = repository.findById(Pk.fromIdString(id));
+    Optional<FacilityEntity> existingEntity =
+        repository.findById(FacilityEntity.Pk.fromIdString(id));
     if (existingEntity.isEmpty()) {
       log.info("Received Unknown Facility ID ({}) for CMS Overlay", sanitize(id));
       return ResponseEntity.accepted().build();

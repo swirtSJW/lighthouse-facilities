@@ -26,7 +26,7 @@ public class ReloadResponse {
    * Create an instance that is has thread safe collections that can be added to when processing
    * records simultaneously and has timing initialized to start now.
    */
-  public static ReloadResponse start() {
+  static ReloadResponse start() {
     return ReloadResponse.builder()
         .timing(Timing.builder().start(Instant.now()).build())
         .facilitiesUpdated(new CopyOnWriteArrayList<>())
@@ -40,14 +40,14 @@ public class ReloadResponse {
 
   @Value
   @AllArgsConstructor(staticName = "of")
-  public static class Problem {
+  static final class Problem {
     String facilityId;
     String description;
   }
 
   @Builder
   @Data
-  public static class Timing {
+  static final class Timing {
     /** The time we started the reload process. */
     private Instant start;
 

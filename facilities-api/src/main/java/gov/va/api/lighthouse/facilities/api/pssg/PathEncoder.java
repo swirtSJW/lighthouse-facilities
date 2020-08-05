@@ -168,19 +168,17 @@ public class PathEncoder {
   /** Compute the amount of uncompressed space that will be required to serialize the band. */
   private int sizeOf(PssgDriveTimeBand band) {
     int sizeOfRings = band.geometry().rings().stream().mapToInt(this::sizeOfRing).sum();
-    return BYTES_PER_INT /* magic-token */
-        + BYTES_PER_INT /* version */
-        + BYTES_PER_INT /* number-rings */
-        + sizeOfRings;
+    // magic-token + version +  number-rings + sizeOfRings
+    return BYTES_PER_INT + BYTES_PER_INT + BYTES_PER_INT + sizeOfRings;
   }
 
   private int sizeOfRing(List<List<Double>> ring) {
-    return BYTES_PER_INT /* number-coords */
-        + BYTES_PER_INT * ring.size() * 2; /* coords lat and long */
+    // number-coords + (coords lat and long)
+    return BYTES_PER_INT + BYTES_PER_INT * ring.size() * 2;
   }
 
   /** Should something go wrong ... you get this. */
-  public static class PathEncodingException extends RuntimeException {
+  public static final class PathEncodingException extends RuntimeException {
     public PathEncodingException(String message) {
       super(message);
     }

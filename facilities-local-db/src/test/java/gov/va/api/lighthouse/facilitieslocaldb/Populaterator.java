@@ -257,29 +257,24 @@ public final class Populaterator {
         .execute();
   }
 
-  /** Defines DB in terms the Populaterator will need. */
-  public interface Db {
+  interface Db {
     /** If a bootstrap connection is provided, databases will be (re)created. */
     Optional<Connection> bootstrapConnection();
 
-    /** The list of databases to create. */
     default List<String> bootstrapDatabases() {
       return List.of();
     }
 
-    /** A connection to the database. */
     Connection connection();
 
-    /** The name of this DB configuration used for logging. */
     default String name() {
       return getClass().getSimpleName();
     }
   }
 
-  /** A definition for H2 instance. */
   @Value
   @Builder
-  public static class H2 implements Db {
+  static final class H2 implements Db {
     String dbFile;
 
     @Override
@@ -296,10 +291,9 @@ public final class Populaterator {
     }
   }
 
-  /** A definition for SqlServer instance. */
   @Value
   @Builder
-  public static class SqlServer implements Db {
+  static final class SqlServer implements Db {
     String host;
 
     String port;

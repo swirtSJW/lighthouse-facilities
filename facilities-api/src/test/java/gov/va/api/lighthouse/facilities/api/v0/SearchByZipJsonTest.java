@@ -183,7 +183,6 @@ public class SearchByZipJsonTest {
   }
 
   @Test
-  @SneakyThrows
   void unmarshallSample() {
     assertReadable("/search-zip.json");
   }
