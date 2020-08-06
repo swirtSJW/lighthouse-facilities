@@ -13,7 +13,6 @@
   <modules>
     <module>facilities</module>
     <module>facilities-api</module>
-    <module>facilities-collector</module>
     <module>facilities-local-db</module>
     <module>facilities-mock-services</module>
     <module>facilities-tests</module>

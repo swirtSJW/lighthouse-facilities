@@ -40,7 +40,7 @@ public class RequiresFacilitiesExtension implements BeforeAllCallback {
   }
 
   private static void reloadFacilities() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     var response =
         requestSpecification()
             .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))

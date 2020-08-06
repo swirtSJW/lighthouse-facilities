@@ -13,14 +13,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.ReloadResponse.Problem;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
+import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -41,18 +40,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
+@Builder
 @Validated
 @RestController
-@RequestMapping(
-    value = {"/internal/management"},
-    produces = {"application/json"})
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-@Builder
-@Slf4j
+@RequestMapping(value = "/internal/management", produces = "application/json")
 public class InternalFacilitiesController {
   private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
 
-  private final CollectorApi collector;
+  private final FacilitiesCollector collector;
 
   private final FacilityRepository facilityRepository;
 
@@ -115,9 +112,8 @@ public class InternalFacilitiesController {
     return null;
   }
 
-  /** Delete the CMS Overlay from a facility entity by ID. */
   @DeleteMapping(value = "/facilities/{id}/cms-overlay")
-  public ResponseEntity<Void> deleteCmsOverlayById(@PathVariable("id") String id) {
+  ResponseEntity<Void> deleteCmsOverlayById(@PathVariable("id") String id) {
     Optional<FacilityEntity> entity = entityById(id);
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
@@ -128,9 +124,8 @@ public class InternalFacilitiesController {
     return ResponseEntity.ok().build();
   }
 
-  /** Delete a facility by ID unless it has a CMS Overlay. */
   @DeleteMapping(value = "/facilities/{id}")
-  public ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
+  ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
     Optional<FacilityEntity> entity = entityById(id);
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
@@ -159,7 +154,7 @@ public class InternalFacilitiesController {
       response
           .problems()
           .add(
-              Problem.of(
+              ReloadResponse.Problem.of(
                   entity.id().toIdString(),
                   "Failed to delete facility from graveyard: " + e.getMessage()));
       throw e;
@@ -176,9 +171,8 @@ public class InternalFacilitiesController {
     return facilityRepository.findById(pk);
   }
 
-  /** Get all facilities in the graveyard. */
   @GetMapping("/graveyard")
-  public GraveyardResponse graveyardAll() {
+  GraveyardResponse graveyardAll() {
     return GraveyardResponse.builder()
         .facilities(
             Streams.stream(graveyardRepository.findAll())
@@ -203,9 +197,9 @@ public class InternalFacilitiesController {
         .build();
   }
 
-  private Set<FacilityEntity.Pk> missingIds(CollectorFacilitiesResponse collectedFacilities) {
+  private Set<FacilityEntity.Pk> missingIds(List<Facility> collectedFacilities) {
     Set<FacilityEntity.Pk> newIds =
-        collectedFacilities.facilities().stream()
+        collectedFacilities.stream()
             .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(toCollection(LinkedHashSet::new));
@@ -233,18 +227,18 @@ public class InternalFacilitiesController {
       response
           .problems()
           .add(
-              Problem.of(
+              ReloadResponse.Problem.of(
                   id.toIdString(), "Failed to move facility to graveyard: " + e.getMessage()));
       throw e;
     }
   }
 
   private ResponseEntity<ReloadResponse> process(
-      ReloadResponse response, CollectorFacilitiesResponse collectedFacilities) {
+      ReloadResponse response, List<Facility> collectedFacilities) {
     response.timing().markCompleteCollection();
-    log.info("Facilities collected: {}", collectedFacilities.facilities().size());
+    log.info("Facilities collected: {}", collectedFacilities.size());
     try {
-      collectedFacilities.facilities().parallelStream().forEach(f -> updateFacility(response, f));
+      collectedFacilities.parallelStream().forEach(f -> updateFacility(response, f));
       for (FacilityEntity.Pk missingId : missingIds(collectedFacilities)) {
         processMissingFacility(response, missingId);
       }
@@ -271,12 +265,11 @@ public class InternalFacilitiesController {
     moveToGraveyard(response, entity);
   }
 
-  /** Attempt to reload all facilities. */
   @GetMapping(value = "/reload")
-  public ResponseEntity<ReloadResponse> reload() {
+  ResponseEntity<ReloadResponse> reload() {
     var response = ReloadResponse.start();
     var collectedFacilities = collector.collectFacilities();
-    response.totalFacilities(collectedFacilities.facilities().size());
+    response.totalFacilities(collectedFacilities.size());
     return process(response, collectedFacilities);
   }
 
@@ -292,7 +285,8 @@ public class InternalFacilitiesController {
       response
           .problems()
           .add(
-              Problem.of(id.toIdString(), "Failed to mark facility as missing: " + e.getMessage()));
+              ReloadResponse.Problem.of(
+                  id.toIdString(), "Failed to mark facility as missing: " + e.getMessage()));
       throw e;
     }
   }
@@ -307,10 +301,10 @@ public class InternalFacilitiesController {
      * Determine if there is something wrong with the record, but it is still usable.
      */
     if (isBlank(record.zip())) {
-      response.problems().add(Problem.of(facility.id(), "Missing zip"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing zip"));
     }
     if (isBlank(record.state())) {
-      response.problems().add(Problem.of(facility.id(), "Missing state"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing state"));
     }
 
     try {
@@ -320,7 +314,8 @@ public class InternalFacilitiesController {
       log.error("{}", record);
       response
           .problems()
-          .add(Problem.of(facility.id(), "Failed to save record: " + e.getMessage()));
+          .add(
+              ReloadResponse.Problem.of(facility.id(), "Failed to save record: " + e.getMessage()));
       throw e;
     }
   }
@@ -331,7 +326,7 @@ public class InternalFacilitiesController {
       pk = FacilityEntity.Pk.fromIdString(facility.id());
     } catch (IllegalArgumentException e) {
       log.error("Cannot process facility {}, ID not understood", facility.id(), e);
-      response.problems().add(Problem.of(facility.id(), "Cannot parse ID"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Cannot parse ID"));
       return;
     }
 
@@ -356,17 +351,14 @@ public class InternalFacilitiesController {
       deleteFromGraveyard(response, zombieEntity);
       return;
     }
-
     response.facilitiesCreated().add(facility.id());
     log.warn("Creating new facility {}", facility.id());
     updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
   }
 
-  /** Force feed a collector response. */
   @PostMapping(value = "/reload")
   @Loggable(arguments = false)
-  public ResponseEntity<ReloadResponse> upload(
-      @RequestBody CollectorFacilitiesResponse collectedFacilities) {
+  ResponseEntity<ReloadResponse> upload(@RequestBody List<Facility> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
   }

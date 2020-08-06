@@ -23,7 +23,6 @@ REQUIRED_ENV_VARIABLES=(
 #
 if [ -z "$SENTINEL_ENV" ]; then SENTINEL_ENV=$K8S_ENVIRONMENT; fi
 if [ -z "$FACILITIES_URL" ]; then FACILITIES_URL=https://$K8S_LOAD_BALANCER; fi
-if [ -z "$FACILITIES_COLLECTOR_URL" ]; then FACILITIES_COLLECTOR_URL=https://$K8S_LOAD_BALANCER; fi
 
 SYSTEM_PROPERTIES=()
 
@@ -130,10 +129,8 @@ setupForAutomation() {
 
   addSystemProperty client-key "$CLIENT_KEY"
   addSystemProperty sentinel "$SENTINEL_ENV"
-  addSystemProperty sentinel.facilities-collector.api-path "$FACILITIES_COLLECTOR_API_PATH"
-  addSystemProperty sentinel.facilities-collector.url "$FACILITIES_COLLECTOR_URL"
-  addSystemProperty sentinel.facilities-management.api-path "$FACILITIES_MANAGEMENT_API_PATH"
-  addSystemProperty sentinel.facilities-management.url "$FACILITIES_URL"
+  addSystemProperty sentinel.facilities-internal.api-path "$FACILITIES_INTERNAL_API_PATH"
+  addSystemProperty sentinel.facilities-internal.url "$FACILITIES_URL"
   addSystemProperty sentinel.facilities.api-path "$FACILITIES_API_PATH"
   addSystemProperty sentinel.facilities.url "$FACILITIES_URL"
 }

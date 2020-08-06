@@ -3,7 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.ExceptionsV0.NotFound;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import java.awt.geom.Rectangle2D;
@@ -26,24 +25,21 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
+@Builder
 @Validated
 @RestController
-@RequestMapping(
-    value = {"/internal/management/bands"},
-    produces = {"application/json"})
+@RequestMapping(value = "/internal/management/bands", produces = "application/json")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-@Builder
-@Slf4j
 public class InternalDriveTimeBandController {
   private final DriveTimeBandRepository repository;
 
-  /** Get band based on internal name: {stationNumber}-{fromMinutes}-{toMinutes}. */
   @GetMapping("/{name}")
-  public BandResult band(@PathVariable("name") String name) {
+  BandResult band(@PathVariable("name") String name) {
     return repository
         .findById(DriveTimeBandEntity.Pk.fromName(name))
         .map(BandResult::new)
-        .orElseThrow(() -> new NotFound(name));
+        .orElseThrow(() -> new ExceptionsV0.NotFound(name));
   }
 
   private Rectangle2D boundsOf(PssgDriveTimeBand band) {
@@ -67,16 +63,14 @@ public class InternalDriveTimeBandController {
     return rect.get();
   }
 
-  /** Get all band internal names: {stationNumber}-{fromMinutes}-{toMinutes}. */
   @GetMapping
-  public List<String> driveTimeBandIds() {
+  List<String> driveTimeBandIds() {
     return repository.findAllIds().stream().map(DriveTimeBandEntity.Pk::name).collect(toList());
   }
 
-  /** Create or update a band. */
   @Loggable(arguments = false)
   @PostMapping(consumes = "application/json")
-  public void update(@Valid @NotEmpty @Size(max = 250) @RequestBody List<PssgDriveTimeBand> bands) {
+  void update(@Valid @NotEmpty @Size(max = 250) @RequestBody List<PssgDriveTimeBand> bands) {
     log.info("Updating {} bands", bands.size());
     bands.stream().forEach(this::updateBand);
   }
@@ -103,7 +97,7 @@ public class InternalDriveTimeBandController {
 
   @Data
   @AllArgsConstructor
-  public static class BandResult {
+  static final class BandResult {
     String stationNumber;
     int fromMinutes;
     int toMinutes;

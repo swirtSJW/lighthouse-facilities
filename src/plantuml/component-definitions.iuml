@@ -3,7 +3,6 @@
 
 skinparam shadowing false
 
-
 skinparam {
  ArrowColor<<public>> $PrimaryBlue
  ArrowColor<<internal>> $Red
@@ -25,7 +24,6 @@ skinparam {
 actor "API Consumer" as CONSUMER <<consumer>>
 actor "API Admin" as ADMIN <<facilities>>
 rectangle facilties as F <<facilities>>
-rectangle "facilities-collector" as C <<facilities>>
 rectangle "facilities-timer" as TIMER <<AWS Lambda cron>>
 database "facilities-operational-db" as DB <<facilities>>
 database "Corporate Data Warehouse" as CDW <<dependency>>

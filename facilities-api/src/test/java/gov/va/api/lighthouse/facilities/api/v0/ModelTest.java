@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Attributes;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Geometry;
@@ -49,11 +48,6 @@ public class ModelTest {
                         .status("Error")
                         .build()))
             .build());
-  }
-
-  @Test
-  void collectorFacilitiesResponse() {
-    roundTrip(CollectorFacilitiesResponse.builder().facilities(List.of(facility())).build());
   }
 
   @Test

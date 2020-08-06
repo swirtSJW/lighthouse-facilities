@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
@@ -11,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.collector.CollectorFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
@@ -20,7 +20,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
-import gov.va.api.lighthouse.facilities.collectorapi.CollectorApi;
+import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -43,7 +43,7 @@ public class InternalFacilitiesControllerTest {
 
   @Autowired FacilityGraveyardRepository graveyardRepository;
 
-  CollectorApi collector = mock(CollectorApi.class);
+  FacilitiesCollector collector = mock(FacilitiesCollector.class);
 
   private static Facility _facility(
       String id,
@@ -122,8 +122,7 @@ public class InternalFacilitiesControllerTest {
     Facility f2Old =
         _facility("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     facilityRepository.save(_entity(f2Old));
-    when(collector.collectFacilities())
-        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1, f2)).build());
+    when(collector.collectFacilities()).thenReturn(List.of(f1, f2));
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f2"));
@@ -139,8 +138,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1Old, _overlay());
     graveyardRepository.save(entity);
-    when(collector.collectFacilities())
-        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    when(collector.collectFacilities()).thenReturn(List.of(f1));
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesRevived()).isEqualTo(List.of("vha_f1"));
     assertThat(graveyardRepository.findAll()).isEmpty();
@@ -170,8 +168,7 @@ public class InternalFacilitiesControllerTest {
     facilityRepository.save(_entity(f2Old));
     facilityRepository.save(_entity(f3Old));
     facilityRepository.save(_entity(f4Old));
-    when(collector.collectFacilities())
-        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    when(collector.collectFacilities()).thenReturn(List.of(f1));
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
     assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f2", "vha_f3", "vha_f4"));
@@ -192,8 +189,7 @@ public class InternalFacilitiesControllerTest {
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     facilityRepository.save(_entity(f1Old).missingTimestamp(Instant.now().toEpochMilli()));
-    when(collector.collectFacilities())
-        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    when(collector.collectFacilities()).thenReturn(List.of(f1));
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
     FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
@@ -208,7 +204,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     long early = Instant.now().minusSeconds(60).toEpochMilli();
     facilityRepository.save(_entity(f1Old).missingTimestamp(early));
-    when(collector.collectFacilities()).thenReturn(CollectorFacilitiesResponse.builder().build());
+    when(collector.collectFacilities()).thenReturn(emptyList());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f1"));
     FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
@@ -222,8 +218,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     f1.attributes().address().physical().state(null);
     f1.attributes().address().physical().zip(null);
-    when(collector.collectFacilities())
-        .thenReturn(CollectorFacilitiesResponse.builder().facilities(List.of(f1)).build());
+    when(collector.collectFacilities()).thenReturn(List.of(f1));
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
     assertThat(response.problems())
@@ -241,7 +236,7 @@ public class InternalFacilitiesControllerTest {
     long threeDaysAgo = LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC).toEpochMilli();
     FacilityEntity entity = _entityWithOverlay(f1Old, _overlay()).missingTimestamp(threeDaysAgo);
     facilityRepository.save(entity);
-    when(collector.collectFacilities()).thenReturn(CollectorFacilitiesResponse.builder().build());
+    when(collector.collectFacilities()).thenReturn(emptyList());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilititesRemoved()).isEqualTo(List.of("vha_f1"));
     assertThat(facilityRepository.findAllIds()).isEmpty();
@@ -460,9 +455,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f91", "FU", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f2 =
         _facility("vha_f92", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
-    CollectorFacilitiesResponse collected =
-        CollectorFacilitiesResponse.builder().facilities(List.of(f1, f2)).build();
-    _controller().upload(collected);
+    _controller().upload(List.of(f1, f2));
     assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entity(f1), _entity(f2)));
   }
 

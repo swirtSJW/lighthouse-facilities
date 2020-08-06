@@ -29,8 +29,7 @@ class SystemDefinitions {
     String url = "https://blue.lab.lighthouse.va.gov";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
-        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
-        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesInternal(serviceDefinition("facilities-internal", url, 443, "/facilities/"))
         .ids(ids())
         .build();
   }
@@ -39,8 +38,7 @@ class SystemDefinitions {
     String url = "http://localhost";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 8085, "/"))
-        .facilitiesManagement(serviceDefinition("facilities-management", url, 8085, "/"))
-        .collector(serviceDefinition("facilities-collector", url, 8080, "/"))
+        .facilitiesInternal(serviceDefinition("facilities-internal", url, 8085, "/"))
         .ids(ids())
         .build();
   }
@@ -49,8 +47,7 @@ class SystemDefinitions {
     String url = "https://blue.production.lighthouse.va.gov";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
-        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
-        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesInternal(serviceDefinition("facilities-internal", url, 443, "/facilities/"))
         .ids(ids())
         .build();
   }
@@ -59,8 +56,7 @@ class SystemDefinitions {
     String url = "https://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
-        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
-        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesInternal(serviceDefinition("facilities-internal", url, 443, "/facilities/"))
         .ids(ids())
         .build();
   }
@@ -77,8 +73,7 @@ class SystemDefinitions {
     String url = "https://blue.staging.lighthouse.va.gov";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
-        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
-        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesInternal(serviceDefinition("facilities-internal", url, 443, "/facilities/"))
         .ids(ids())
         .build();
   }
@@ -87,8 +82,7 @@ class SystemDefinitions {
     String url = "https://blue.staging-lab.lighthouse.va.gov";
     return SystemDefinition.builder()
         .facilities(serviceDefinition("facilities", url, 443, "/va_facilities/"))
-        .facilitiesManagement(serviceDefinition("facilities-management", url, 443, "/facilities/"))
-        .collector(serviceDefinition("facilities-collector", url, 443, "/facilities-collector/"))
+        .facilitiesInternal(serviceDefinition("facilities-internal", url, 443, "/facilities/"))
         .ids(ids())
         .build();
   }
@@ -162,9 +156,7 @@ class SystemDefinitions {
   static final class SystemDefinition {
     @NonNull Service facilities;
 
-    @NonNull Service facilitiesManagement;
-
-    @NonNull Service collector;
+    @NonNull Service facilitiesInternal;
 
     @NonNull Ids ids;
   }

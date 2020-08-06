@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Test;
 
 public class InternalProtectionIT {
   private static RequestSpecification requestSpecification() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     return RestAssured.given().baseUri(svc.url()).port(svc.port()).relaxedHTTPSValidation();
   }
 
   @Test
   void deleteCmsOverlay() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(
@@ -30,7 +30,7 @@ public class InternalProtectionIT {
 
   @Test
   void deleteFacility() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(
@@ -42,7 +42,7 @@ public class InternalProtectionIT {
 
   @Test
   void getAllBandNames() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(Method.GET, svc.urlWithApiPath() + "internal/management/bands"))
@@ -51,7 +51,7 @@ public class InternalProtectionIT {
 
   @Test
   void getBand() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(
@@ -61,7 +61,7 @@ public class InternalProtectionIT {
 
   @Test
   void graveyard() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(Method.GET, svc.urlWithApiPath() + "internal/management/graveyard"))
@@ -73,7 +73,7 @@ public class InternalProtectionIT {
     // In case endpoint is not secure
     // Don't reload in SLA'd environments
     assumeEnvironmentNotIn(Environment.LAB, Environment.PROD);
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(Method.GET, svc.urlWithApiPath() + "internal/management/reload"))

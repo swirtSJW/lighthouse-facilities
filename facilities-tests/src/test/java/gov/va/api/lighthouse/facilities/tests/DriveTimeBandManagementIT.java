@@ -32,7 +32,7 @@ public class DriveTimeBandManagementIT {
   }
 
   private static RequestSpecification requestSpecification() {
-    SystemDefinitions.Service svc = systemDefinition().facilitiesManagement();
+    SystemDefinitions.Service svc = systemDefinition().facilitiesInternal();
     return RestAssured.given()
         .baseUri(svc.url())
         .port(svc.port())

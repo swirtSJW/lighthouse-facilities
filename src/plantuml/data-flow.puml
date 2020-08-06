@@ -1,28 +1,24 @@
 @startuml
 !include component-definitions.iuml!0
 
-
 CONSUMER <-- F <<public>> : Facilities
 ADMIN --> F <<internal>> : Data loading
 ADMIN <-- F <<internal>> : Internal data\nrepresentation\nand metrics
 TIMER --> F <<internal>> : Reload request
-F <-- C : Facilities
-F <--> DB : Facilities,operating status,\nand drive time bands
-F <- BANDS : Drive time bands
-C <-- CDW : Health facilities\nVeteran centers\nMental health\nphone numbers\nand Stop codes
-C <-- CXML : Non-National\ncemeteries
-C -- WCSV : Facility website URLs
-C <-- ATC : Wait times and\nsatisfaction scores
-C <-- ARCGIS : National cemeteries\nand benefit centers
+F <--> DB : Facilities\nOperating status\nDrive-time bands
+F <- BANDS : Drive-time bands
+F <-- CDW : Health facilities\nVeteran centers\nMental health contact\nStop codes
+F <-- CXML : Non-National\ncemeteries
+F -- WCSV : Facility website URLs
+F <-- ATC : Wait times and\nsatisfaction scores
+F <-- ARCGIS : National cemeteries\nand benefit centers
 
 ETL -up-> CDW
-ETL <-- CDW : Health facilities\nVeteran centers\nMental health\nphone numbers\nand Stop codes
-
+ETL <-- CDW : Health facilities\nVeteran centers\nMental health contact\nStop codes
 
 CMS -up-> F : Operating status
 CMS <-- F : Facility IDs
 
 CDW -[hidden]right- ATC
-
 
 @enduml

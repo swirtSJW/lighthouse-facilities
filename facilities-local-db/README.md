@@ -1,10 +1,9 @@
 # facilities-local-db
 
 This project builds a SQL Server Docker image
-for local development. This is the database for the main Facilities
-application, and also a mock instance of the Corporate Data Warehouse for
-Facilities Collector. An H2 database instance is also built for use by
-integration tests.
+for local development. This is the operational database for the Facilities
+application, and also a mock instance of the Corporate Data Warehouse.
+An H2 database instance is also built for use by integration tests.
 
 ## Local Development
 

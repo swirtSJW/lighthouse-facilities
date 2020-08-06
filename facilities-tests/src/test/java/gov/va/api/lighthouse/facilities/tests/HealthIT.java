@@ -17,22 +17,20 @@ import org.junit.jupiter.api.Test;
 public class HealthIT {
   @Test
   void collectorBackendHealth() {
-    SystemDefinitions.Service svc = systemDefinition().collector();
     String path = "collector/health";
-    Set<Instant> times = ImmutableSet.of(timeOf(svc, path), timeOf(svc, path), timeOf(svc, path));
+    Set<Instant> times = ImmutableSet.of(timeOf(path), timeOf(path), timeOf(path));
     assertThat(times.size()).isLessThan(3);
   }
 
   @Test
   void reloadHealth() {
-    SystemDefinitions.Service svc = systemDefinition().facilities();
     String path = "collection/status";
-    Set<Instant> times = ImmutableSet.of(timeOf(svc, path), timeOf(svc, path), timeOf(svc, path));
-    // FIXME
-    // assertThat(times.size()).isLessThan(3);
+    Set<Instant> times = ImmutableSet.of(timeOf(path), timeOf(path), timeOf(path));
+    assertThat(times.size()).isLessThan(3);
   }
 
-  private Instant timeOf(@NonNull SystemDefinitions.Service svc, @NonNull String path) {
+  private Instant timeOf(@NonNull String path) {
+    SystemDefinitions.Service svc = systemDefinition().facilities();
     Health health =
         ExpectedResponse.of(
                 RestAssured.given()

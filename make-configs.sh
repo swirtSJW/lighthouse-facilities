@@ -34,24 +34,20 @@ checkForUnsetValues() {
   [ $? == 0 ] && rm -v $target.$MARKER
 }
 
-makeConfig facilities-collector $PROFILE
-configValue facilities-collector $PROFILE access-to-care.url 'http://localhost:8666'
-configValue facilities-collector $PROFILE access-to-pwt.url 'http://localhost:8666'
-configValue facilities-collector $PROFILE arc-gis.url 'http://localhost:8666'
-configValue facilities-collector $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
-configValue facilities-collector $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
-configValue facilities-collector $PROFILE spring.datasource.username 'SA'
-configValue facilities-collector $PROFILE state-cemeteries.url 'http://localhost:8666'
-checkForUnsetValues facilities-collector $PROFILE
-
 makeConfig facilities $PROFILE
+configValue facilities $PROFILE access-to-care.url 'http://localhost:8666'
+configValue facilities $PROFILE access-to-pwt.url 'http://localhost:8666'
+configValue facilities $PROFILE arc-gis.url 'http://localhost:8666'
 configValue facilities $PROFILE bing.key 'unused'
 configValue facilities $PROFILE bing.url 'http://localhost:8666'
-configValue facilities $PROFILE facilities-collector.url 'http://localhost:8080'
 configValue facilities $PROFILE facilities.base-path '/'
 configValue facilities $PROFILE facilities.url 'http://localhost:8085'
 configValue facilities $PROFILE internal.client-key 'axolotl'
 configValue facilities $PROFILE spring.datasource.password '<YourStrong!Passw0rd>'
 configValue facilities $PROFILE spring.datasource.url 'jdbc:sqlserver://localhost:1533;database=facility;sendStringParametersAsUnicode=false'
 configValue facilities $PROFILE spring.datasource.username 'SA'
+configValue facilities $PROFILE spring.fc-datasource.password '<YourStrong!Passw0rd>'
+configValue facilities $PROFILE spring.fc-datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
+configValue facilities $PROFILE spring.fc-datasource.username 'SA'
+configValue facilities $PROFILE state-cemeteries.url 'http://localhost:8666'
 checkForUnsetValues facilities $PROFILE
