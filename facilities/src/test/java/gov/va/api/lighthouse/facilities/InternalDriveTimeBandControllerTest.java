@@ -7,6 +7,8 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgResponse;
+
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -63,10 +65,13 @@ public class InternalDriveTimeBandControllerTest {
 
     controller()
         .update(
-            List.of(
-                Entities.diamondBand("a-1-2", 100),
-                Entities.diamondBand("a-2-3", 200),
-                Entities.diamondBand("a-3-4", 300)));
+            PssgResponse.builder()
+                .features(
+                    List.of(
+                        Entities.diamondBand("a-1-2", 100),
+                        Entities.diamondBand("a-2-3", 200),
+                        Entities.diamondBand("a-3-4", 300)))
+                .build());
 
     verify(repo).save(a12);
     verify(repo).save(a23);

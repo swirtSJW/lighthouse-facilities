@@ -1,19 +1,23 @@
 package gov.va.api.lighthouse.facilities;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
+import gov.va.api.lighthouse.facilities.api.pssg.BandUpdateResponse;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgResponse;
+
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,22 +74,33 @@ public class InternalDriveTimeBandController {
 
   @Loggable(arguments = false)
   @PostMapping(consumes = "application/json")
-  void update(@Valid @NotEmpty @Size(max = 250) @RequestBody List<PssgDriveTimeBand> bands) {
+  BandUpdateResponse update(@RequestBody PssgResponse pssg) {
+    List<PssgDriveTimeBand> bands = Optional.ofNullable(pssg.features()).orElse(emptyList());
     log.info("Updating {} bands", bands.size());
-    bands.stream().forEach(this::updateBand);
+    BandUpdateResponse response =
+        BandUpdateResponse.builder()
+            .bandsCreated(new CopyOnWriteArrayList<>())
+            .bandsUpdated(new CopyOnWriteArrayList<>())
+            .build();
+    bands.parallelStream().forEach(f -> updateBand(f, response));
+    return response;
   }
 
   @SneakyThrows
-  private void updateBand(PssgDriveTimeBand band) {
+  private void updateBand(@NonNull PssgDriveTimeBand band, @NonNull BandUpdateResponse response) {
     var pk =
         DriveTimeBandEntity.Pk.of(
             band.attributes().stationNumber(),
             band.attributes().fromBreak(),
             band.attributes().toBreak());
-    DriveTimeBandEntity entity = repository.findById(pk).orElse(null);
+    var entity = repository.findById(pk).orElse(null);
     if (entity == null) {
       entity = DriveTimeBandEntity.builder().id(pk).build();
+      response.bandsCreated().add(pk.name());
+    } else {
+      response.bandsUpdated().add(pk.name());
     }
+
     var bounds = boundsOf(band);
     entity.minLongitude(bounds.getMinX());
     entity.minLatitude(bounds.getMinY());

@@ -7,10 +7,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
+
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
+import gov.va.api.lighthouse.facilities.api.pssg.BandUpdateResponse;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
+import gov.va.api.lighthouse.facilities.api.pssg.PssgResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.specification.RequestSpecification;
@@ -47,7 +51,7 @@ public class DriveTimeBandManagementIT {
         MAPPER.readValue(
             getClass().getResource("/pssg-drive-time-bands-0.json"),
             new TypeReference<List<PssgDriveTimeBand>>() {});
-    PssgDriveTimeBand favorite = bands.get(0);
+    PssgDriveTimeBand favorite = Iterables.getOnlyElement(bands);
     favorite.attributes().stationNumber("tmp" + Instant.now().getEpochSecond());
     String name =
         favorite.attributes().stationNumber()
@@ -59,12 +63,15 @@ public class DriveTimeBandManagementIT {
     ExpectedResponse.of(
             requestSpecification().request(Method.GET, "internal/management/bands/{name}", name))
         .expect(404);
-    ExpectedResponse.of(
+    var updateResponse = ExpectedResponse.of(
             requestSpecification()
                 .contentType("application/json")
-                .body(MAPPER.writeValueAsString(bands))
+                .body(PssgResponse.builder().features(bands).build())
                 .request(Method.POST, "internal/management/bands"))
-        .expect(200);
+        .expect(200)
+        .expectValid(BandUpdateResponse.class);
+    assertThat(updateResponse.bandsUpdated()).isEmpty();
+    assertThat(updateResponse.bandsCreated()).containsExactly(name);
 
     var actual =
         ExpectedResponse.of(
