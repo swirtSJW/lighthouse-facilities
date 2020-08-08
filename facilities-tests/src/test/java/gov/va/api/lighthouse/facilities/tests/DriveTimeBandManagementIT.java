@@ -8,7 +8,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
-
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
@@ -63,13 +62,14 @@ public class DriveTimeBandManagementIT {
     ExpectedResponse.of(
             requestSpecification().request(Method.GET, "internal/management/bands/{name}", name))
         .expect(404);
-    var updateResponse = ExpectedResponse.of(
-            requestSpecification()
-                .contentType("application/json")
-                .body(PssgResponse.builder().features(bands).build())
-                .request(Method.POST, "internal/management/bands"))
-        .expect(200)
-        .expectValid(BandUpdateResponse.class);
+    var updateResponse =
+        ExpectedResponse.of(
+                requestSpecification()
+                    .contentType("application/json")
+                    .body(PssgResponse.builder().features(bands).build())
+                    .request(Method.POST, "internal/management/bands"))
+            .expect(200)
+            .expectValid(BandUpdateResponse.class);
     assertThat(updateResponse.bandsUpdated()).isEmpty();
     assertThat(updateResponse.bandsCreated()).containsExactly(name);
 

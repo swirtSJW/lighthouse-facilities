@@ -1,9 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.pssg;
 
-import java.util.List;
-import javax.validation.Valid;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.List;
+import javax.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
