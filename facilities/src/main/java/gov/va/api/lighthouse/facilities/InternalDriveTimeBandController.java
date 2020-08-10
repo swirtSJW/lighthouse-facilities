@@ -81,7 +81,7 @@ public class InternalDriveTimeBandController {
             .bandsCreated(new CopyOnWriteArrayList<>())
             .bandsUpdated(new CopyOnWriteArrayList<>())
             .build();
-    bands.parallelStream().forEach(f -> updateBand(f, response));
+    bands.stream().forEach(f -> updateBand(f, response));
     return response;
   }
 
