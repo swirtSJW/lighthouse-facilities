@@ -82,6 +82,15 @@ public class InternalCollectorController {
     }
   }
 
+  @GetMapping(value = "/vast-new")
+  List<Map<String, String>> vastNew() {
+    try {
+      return allResults("SELECT * FROM App.Vast_New");
+    } catch (Exception ex) {
+      throw new CdwException(ex);
+    }
+  }
+
   static final class CdwException extends RuntimeException {
     public CdwException(Throwable cause) {
       super(cause);
