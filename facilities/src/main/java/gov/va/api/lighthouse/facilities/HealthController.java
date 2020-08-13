@@ -208,14 +208,22 @@ public class HealthController {
                     "SELECT MAX(LASTUPDATED) FROM App.Vast", Timestamp.class))
             .map(t -> t.toInstant())
             .orElse(null);
-    Instant twentyFourHoursEarlier = now.minus(24, ChronoUnit.HOURS);
-    String statusCode =
-        lastUpdated != null && !lastUpdated.isBefore(twentyFourHoursEarlier) ? "UP" : "DOWN";
-    return Health.status(new Status(statusCode, "ETL process succeeded in the last 24 hours"))
-        .withDetail("name", "Facilities ETL process")
-        .withDetail("time", now)
-        .withDetail("lastUpdated", lastUpdated)
-        .build();
+
+    if (lastUpdated == null) {
+      return Health.status(new Status("DOWN", "ETL process succeeded in the last 24 hours"))
+          .withDetail("name", "Facilities ETL process")
+          .withDetail("time", now)
+          .build();
+    } else {
+      Instant twentyFourHoursEarlier = now.minus(24, ChronoUnit.HOURS);
+      String statusCode = !lastUpdated.isBefore(twentyFourHoursEarlier) ? "UP" : "DOWN";
+
+      return Health.status(new Status(statusCode, "ETL process succeeded in the last 24 hours"))
+          .withDetail("name", "Facilities ETL process")
+          .withDetail("time", now)
+          .withDetail("lastUpdated", lastUpdated)
+          .build();
+    }
   }
 
   private Health testReloadLastUpdated(@NonNull Instant now) {
