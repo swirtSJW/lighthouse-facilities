@@ -64,6 +64,15 @@ public class InternalCollectorController {
     }
   }
 
+  @GetMapping(value = "/nca")
+  List<Map<String, String>> nca() {
+    try {
+      return allResults("SELECT * FROM App.FacilityLocator_NCA");
+    } catch (Exception ex) {
+      throw new CdwException(ex);
+    }
+  }
+
   @GetMapping(value = "/stop-code")
   List<Map<String, String>> stopCodes() {
     try {
@@ -82,10 +91,10 @@ public class InternalCollectorController {
     }
   }
 
-  @GetMapping(value = "/vast-new")
-  List<Map<String, String>> vastNew() {
+  @GetMapping(value = "/vba")
+  List<Map<String, String>> vba() {
     try {
-      return allResults("SELECT * FROM App.Vast_New");
+      return allResults("SELECT * FROM App.FacilityLocator_VBA");
     } catch (Exception ex) {
       throw new CdwException(ex);
     }
