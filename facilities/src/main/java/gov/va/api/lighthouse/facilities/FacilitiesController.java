@@ -11,6 +11,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Splitter;
+import gov.va.api.lighthouse.facilities.api.v0.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
@@ -266,6 +267,22 @@ public class FacilitiesController {
       throw new ExceptionsV0.NotFound(id);
     }
     return opt.get();
+  }
+
+  /** Get all facility IDs as a list by Type. */
+  @GetMapping(
+      value = "/ids",
+      produces = {"application/json"})
+  FacilitiesIdsResponse facilityIdsByType(
+      @RequestParam(value = "type", required = false) String type) {
+    FacilityEntity.Type facilityType = validateFacilityType(type);
+    return FacilitiesIdsResponse.builder()
+        .data(
+            facilityRepository.findAllIds().stream()
+                .filter(id -> facilityType == null || id.type() == facilityType)
+                .map(id -> id.toIdString())
+                .collect(toList()))
+        .build();
   }
 
   /** Get facilities by bounding box. */
