@@ -211,7 +211,7 @@ public class InternalFacilitiesController {
     FacilityEntity.Pk id = FacilityEntity.Pk.of(entity.id().type(), entity.id().stationNumber());
     try {
       Instant now = response.timing().completeCollection();
-      response.facilititesRemoved().add(id.toIdString());
+      response.facilitiesRemoved().add(id.toIdString());
       log.warn("Moving facility {} to graveyard.", id.toIdString());
       graveyardRepository.save(
           FacilityGraveyardEntity.builder()
@@ -258,7 +258,7 @@ public class InternalFacilitiesController {
     if (entity.missingTimestamp() == null) {
       entity.missingTimestamp(now.toEpochMilli());
     }
-    if (now.toEpochMilli() - entity.missingTimestamp() <= TimeUnit.HOURS.toMillis(48)) {
+    if (now.toEpochMilli() - entity.missingTimestamp() <= TimeUnit.HOURS.toMillis(24)) {
       saveAsMissing(response, entity);
       return;
     }

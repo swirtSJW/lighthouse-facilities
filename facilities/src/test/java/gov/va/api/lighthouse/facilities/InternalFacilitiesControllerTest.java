@@ -238,7 +238,7 @@ public class InternalFacilitiesControllerTest {
     facilityRepository.save(entity);
     when(collector.collectFacilities()).thenReturn(emptyList());
     ReloadResponse response = _controller().reload().getBody();
-    assertThat(response.facilititesRemoved()).isEqualTo(List.of("vha_f1"));
+    assertThat(response.facilitiesRemoved()).isEqualTo(List.of("vha_f1"));
     assertThat(facilityRepository.findAllIds()).isEmpty();
     FacilityGraveyardEntity result = Iterables.getOnlyElement(graveyardRepository.findAll());
     assertThat(result.id()).isEqualTo(entity.id());

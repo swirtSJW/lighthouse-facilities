@@ -18,7 +18,7 @@ public class ReloadResponse {
   private List<String> facilitiesRevived;
   private List<String> facilitiesCreated;
   private List<String> facilitiesMissing;
-  private List<String> facilititesRemoved;
+  private List<String> facilitiesRemoved;
   private List<Problem> problems;
   private Timing timing;
 
@@ -33,7 +33,7 @@ public class ReloadResponse {
         .facilitiesRevived(new CopyOnWriteArrayList<>())
         .facilitiesCreated(new CopyOnWriteArrayList<>())
         .facilitiesMissing(new CopyOnWriteArrayList<>())
-        .facilititesRemoved(new CopyOnWriteArrayList<>())
+        .facilitiesRemoved(new CopyOnWriteArrayList<>())
         .problems(new CopyOnWriteArrayList<>())
         .build();
   }
