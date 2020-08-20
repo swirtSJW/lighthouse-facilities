@@ -3,48 +3,62 @@ package gov.va.api.lighthouse.facilities.collector;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 public class BenefitsCollectorTest {
+
   @Test
   @SneakyThrows
   void collect() {
-    RestTemplate restTemplate = mock(RestTemplate.class);
+    JdbcTemplate jdbcTemplate = mock(JdbcTemplate.class);
 
-    ResponseEntity<String> body =
-        ResponseEntity.of(
-            Optional.of(
-                new String(
-                    getClass().getResourceAsStream("/arcgis-benefits.json").readAllBytes())));
-
-    when(restTemplate.exchange(
-            startsWith("http://localhost:8080"),
-            eq(HttpMethod.GET),
-            Mockito.any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(body);
+    when(jdbcTemplate.query(any(String.class), any(RowMapper.class)))
+        .thenReturn(
+            List.of(
+                CdwBenefits.builder()
+                    .facilityNumber("306e")
+                    .facilityName("New York Regional Office at Albany VAMC")
+                    .facilityType("va_benefits_facility")
+                    .latitude(new BigDecimal("42.651408840000045"))
+                    .longitude(new BigDecimal("-73.77623284999999"))
+                    .address1("113 Holland Avenue")
+                    .zip("12208")
+                    .city("Albany")
+                    .state("NY")
+                    .phone("518-626-5524")
+                    .fax("518-626-5695")
+                    .monday("7:30AM-4:00PM")
+                    .tuesday("7:30AM-4:00PM")
+                    .wednesday("7:30AM-4:00PM")
+                    .thursday("7:30AM-4:00PM")
+                    .friday("7:30AM-4:00PM")
+                    .saturday("Closed")
+                    .sunday("Closed")
+                    .applyingForBenefits("YES")
+                    .burialClaimAssistance("YES")
+                    .disabilityClaimAssistance("YES")
+                    .ebenefitsRegistration("YES")
+                    .familyMemberClaimAssistance("YES")
+                    .updatingDirectDepositInformation("YES")
+                    .build()));
 
     assertThat(
             BenefitsCollector.builder()
-                .arcgisUrl("http://localhost:8080")
-                .restTemplate(restTemplate)
                 .websites(new HashMap<>())
+                .jdbcTemplate(jdbcTemplate)
                 .build()
                 .collect())
         .isEqualTo(
@@ -56,7 +70,7 @@ public class BenefitsCollectorTest {
                         Facility.FacilityAttributes.builder()
                             .name("New York Regional Office at Albany VAMC")
                             .facilityType(Facility.FacilityType.va_benefits_facility)
-                            .classification("Outbased")
+                            .classification("va_benefits_facility")
                             .latitude(new BigDecimal("42.651408840000045"))
                             .longitude(new BigDecimal("-73.77623284999999"))
                             .address(
@@ -103,15 +117,16 @@ public class BenefitsCollectorTest {
 
   @Test
   void exception() {
-    RestTemplate restTemplate = mock(RestTemplate.class);
     assertThrows(
         CollectorExceptions.BenefitsCollectorException.class,
-        () ->
-            BenefitsCollector.builder()
-                .arcgisUrl("http://wrong:8080")
-                .restTemplate(restTemplate)
-                .websites(emptyMap())
-                .build()
-                .collect());
+        () -> BenefitsCollector.builder().websites(emptyMap()).build().collect());
+  }
+
+  @Test
+  @SneakyThrows
+  void toCdwBenefits() throws SQLException {
+    ResultSet resultSet = mock(ResultSet.class);
+
+    assertThat(BenefitsCollector.toCdwBenefits(resultSet)).isEqualTo(CdwBenefits.builder().build());
   }
 }

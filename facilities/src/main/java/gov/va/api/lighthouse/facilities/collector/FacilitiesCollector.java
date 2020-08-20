@@ -175,12 +175,7 @@ public class FacilitiesCollector {
             .collect();
 
     Collection<Facility> benefits =
-        BenefitsCollector.builder()
-            .arcgisUrl(arcGisBaseUrl)
-            .restTemplate(restTemplate)
-            .websites(websites)
-            .build()
-            .collect();
+        BenefitsCollector.builder().websites(websites).jdbcTemplate(jdbcTemplate).build().collect();
 
     Collection<Facility> cemeteries =
         CemeteriesCollector.builder()
@@ -191,7 +186,8 @@ public class FacilitiesCollector {
             .collect();
 
     log.info(
-        "Collected: Health {},  Benefits {},  Vet Centers {}, State Cemeteries {}, Cemeteries {}",
+        "Collected: Health {},  Benefits {},  Vet Centers {}, "
+            + "State Cemeteries {}, Cemeteries {}",
         healths.size(),
         benefits.size(),
         vetCenters.size(),

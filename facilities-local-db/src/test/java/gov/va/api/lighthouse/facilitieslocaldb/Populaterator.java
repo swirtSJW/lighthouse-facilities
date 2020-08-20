@@ -153,6 +153,7 @@ public final class Populaterator {
     mentalHealthContacts(connection);
     stopCodes(connection);
     vast(connection);
+    vba(connection);
     connection.commit();
     connection.close();
     log("Finished " + db.name());
@@ -255,6 +256,39 @@ public final class Populaterator {
         .prepareStatement(
             String.format("UPDATE App.Vast SET LastUpdated='%s'", formatter.format(Instant.now())))
         .execute();
+  }
+
+  @SneakyThrows
+  private void vba(Connection connection) {
+    log("Populating Benefit Centers");
+    try (InputStreamReader reader =
+        new FileReader(
+            new File(baseDir() + "/src/test/resources/vba.csv"), StandardCharsets.UTF_8)) {
+      CSVParser parser = CSVFormat.DEFAULT.withHeader().withSkipHeaderRecord().parse(reader);
+      List<String> headers = parser.getHeaderNames();
+      connection
+          .prepareStatement(
+              "CREATE TABLE App.FacilityLocator_VBA ("
+                  + headers.stream().map(h -> h + " VARCHAR(MAX)").collect(joining(","))
+                  + ")")
+          .execute();
+      for (CSVRecord row : parser) {
+        try (PreparedStatement statement =
+            connection.prepareStatement(
+                String.format(
+                    "INSERT INTO App.FacilityLocator_VBA (%s) VALUES (%s)",
+                    Joiner.on(",").join(headers),
+                    headers.stream().map(h -> "?").collect(joining(","))))) {
+          int paramIndex = 1;
+          for (Object val : row) {
+            statement.setObject(
+                paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
+            paramIndex++;
+          }
+          statement.execute();
+        }
+      }
+    }
   }
 
   interface Db {

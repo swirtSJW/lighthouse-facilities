@@ -12,93 +12,93 @@ import org.apache.commons.lang3.StringUtils;
 
 @Builder
 final class BenefitsTransformer {
-  @NonNull ArcGisBenefits.Feature arcgisFacility;
+  @NonNull CdwBenefits cdwFacility;
 
   String csvWebsite;
 
-  private Facility.FacilityAttributes attributes(ArcGisBenefits.Attributes attributes) {
+  private Facility.FacilityAttributes attributes() {
     return Facility.FacilityAttributes.builder()
-        .name(attributes.facilityName())
+        .name(cdwFacility.facilityName())
         .facilityType(Facility.FacilityType.va_benefits_facility)
-        .classification(attributes.facilityType())
-        .latitude(arcgisFacility.geometry().latitude())
-        .longitude(arcgisFacility.geometry().longitude())
-        .website(website(arcgisFacility.attributes().websiteUrl()))
+        .classification(cdwFacility.facilityType())
+        .latitude(cdwFacility.latitude())
+        .longitude(cdwFacility.longitude())
+        .website(website(cdwFacility.websiteUrl()))
         .address(
             Facility.Addresses.builder()
                 .physical(
                     Facility.Address.builder()
-                        .address1(attributes.address1())
-                        .address2(attributes.address2())
-                        .city(attributes.city())
-                        .state(upperCase(attributes.state(), Locale.US))
-                        .zip(attributes.zip())
+                        .address1(cdwFacility.address1())
+                        .address2(cdwFacility.address2())
+                        .city(cdwFacility.city())
+                        .state(upperCase(cdwFacility.state(), Locale.US))
+                        .zip(cdwFacility.zip())
                         .build())
                 .build())
-        .phone(Facility.Phone.builder().main(attributes.phone()).fax(attributes.fax()).build())
+        .phone(Facility.Phone.builder().main(cdwFacility.phone()).fax(cdwFacility.fax()).build())
         .hours(
             Facility.Hours.builder()
-                .monday(attributes.monday())
-                .tuesday(attributes.tuesday())
-                .wednesday(attributes.wednesday())
-                .thursday(attributes.thursday())
-                .friday(attributes.friday())
-                .saturday(attributes.saturday())
-                .sunday(attributes.sunday())
+                .monday(cdwFacility.monday())
+                .tuesday(cdwFacility.tuesday())
+                .wednesday(cdwFacility.wednesday())
+                .thursday(cdwFacility.thursday())
+                .friday(cdwFacility.friday())
+                .saturday(cdwFacility.saturday())
+                .sunday(cdwFacility.sunday())
                 .build())
-        .services(services(attributes))
+        .services(services())
         .build();
   }
 
-  Facility.Services services(ArcGisBenefits.Attributes attributes) {
+  Facility.Services services() {
     List<Facility.BenefitsService> benefitsServices = new ArrayList<>();
-    if (yesnoToBoolean(attributes.applyingForBenefits())) {
+    if (yesNoToBoolean(cdwFacility.applyingForBenefits())) {
       benefitsServices.add(Facility.BenefitsService.ApplyingForBenefits);
     }
-    if (yesnoToBoolean(attributes.burialClaimAssistance())) {
+    if (yesNoToBoolean(cdwFacility.burialClaimAssistance())) {
       benefitsServices.add(Facility.BenefitsService.BurialClaimAssistance);
     }
-    if (yesnoToBoolean(attributes.disabilityClaimAssistance())) {
+    if (yesNoToBoolean(cdwFacility.disabilityClaimAssistance())) {
       benefitsServices.add(Facility.BenefitsService.DisabilityClaimAssistance);
     }
-    if (yesnoToBoolean(attributes.ebenefitsRegistration())) {
+    if (yesNoToBoolean(cdwFacility.ebenefitsRegistration())) {
       benefitsServices.add(Facility.BenefitsService.eBenefitsRegistrationAssistance);
     }
-    if (yesnoToBoolean(attributes.educationAndCareerCounseling())) {
+    if (yesNoToBoolean(cdwFacility.educationAndCareerCounseling())) {
       benefitsServices.add(Facility.BenefitsService.EducationAndCareerCounseling);
     }
-    if (yesnoToBoolean(attributes.educationClaimAssistance())) {
+    if (yesNoToBoolean(cdwFacility.educationClaimAssistance())) {
       benefitsServices.add(Facility.BenefitsService.EducationClaimAssistance);
     }
-    if (yesnoToBoolean(attributes.familyMemberClaimAssistance())) {
+    if (yesNoToBoolean(cdwFacility.familyMemberClaimAssistance())) {
       benefitsServices.add(Facility.BenefitsService.FamilyMemberClaimAssistance);
     }
-    if (yesnoToBoolean(attributes.homelessAssistance())) {
+    if (yesNoToBoolean(cdwFacility.homelessAssistance())) {
       benefitsServices.add(Facility.BenefitsService.HomelessAssistance);
     }
-    if (yesnoToBoolean(attributes.vaHomeLoanAssistance())) {
+    if (yesNoToBoolean(cdwFacility.vaHomeLoanAssistance())) {
       benefitsServices.add(Facility.BenefitsService.VAHomeLoanAssistance);
     }
-    if (yesnoToBoolean(attributes.insuranceClaimAssistance())) {
+    if (yesNoToBoolean(cdwFacility.insuranceClaimAssistance())) {
       benefitsServices.add(Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling);
     }
-    if (yesnoToBoolean(attributes.integratedDisabilityEvaluationSystem())) {
+    if (yesNoToBoolean(cdwFacility.integratedDisabilityEvaluationSystem())) {
       benefitsServices.add(Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance);
     }
-    if (yesnoToBoolean(attributes.preDischargeClaimAssistance())) {
+    if (yesNoToBoolean(cdwFacility.preDischargeClaimAssistance())) {
       benefitsServices.add(Facility.BenefitsService.PreDischargeClaimAssistance);
     }
-    if (yesnoToBoolean(attributes.transitionAssistance())) {
+    if (yesNoToBoolean(cdwFacility.transitionAssistance())) {
       benefitsServices.add(Facility.BenefitsService.TransitionAssistance);
     }
-    if (yesnoToBoolean(attributes.updatingDirectDepositInformation())) {
+    if (yesNoToBoolean(cdwFacility.updatingDirectDepositInformation())) {
       benefitsServices.add(Facility.BenefitsService.UpdatingDirectDepositInformation);
     }
-    if (yesnoToBoolean(attributes.vocationalRehabilitationEmplo())) {
+    if (yesNoToBoolean(cdwFacility.vocationalRehabilitationEmplo())) {
       benefitsServices.add(
           Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance);
     }
-    if (StringUtils.containsIgnoreCase(attributes.otherServices(), "PENSION")) {
+    if (StringUtils.containsIgnoreCase(cdwFacility.otherServices(), "PENSION")) {
       benefitsServices.add(Facility.BenefitsService.Pensions);
     }
     return Facility.Services.builder().benefits(benefitsServices).build();
@@ -106,21 +106,19 @@ final class BenefitsTransformer {
 
   Facility toFacility() {
     return Facility.builder()
-        .id("vba_" + arcgisFacility.attributes().facilityNumber())
+        .id("vba_" + cdwFacility.facilityNumber())
         .type(Facility.Type.va_facilities)
-        .attributes(attributes(arcgisFacility.attributes()))
+        .attributes(attributes())
         .build();
   }
 
-  String website(String arcgisWebsite) {
-    /* ArcGIS returns a string NULL... We don't want to return that.*/
-    return arcgisWebsite == null || arcgisWebsite.equalsIgnoreCase("NULL")
-        ? csvWebsite
-        : arcgisWebsite;
+  String website(String website) {
+    /* CDW returns a string NULL... We don't want to return that.*/
+    return website == null || website.equalsIgnoreCase("NULL") ? csvWebsite : website;
   }
 
-  private boolean yesnoToBoolean(String yesNo) {
-    /* Assume no if the answer is not an emphatic yes. */
-    return yesNo.equalsIgnoreCase("YES");
+  private boolean yesNoToBoolean(String yesNo) {
+    /* Assume no if the answer is not an emphatic yes or the string is null. */
+    return "YES".equalsIgnoreCase(yesNo);
   }
 }

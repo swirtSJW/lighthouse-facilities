@@ -7,63 +7,35 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class BenefitsTransformerTest {
+
   @Test
   void benefitsServices() {
-    assertThat(
-            tx().services(ArcGisBenefits.Attributes.builder().burialClaimAssistance("YES").build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.BurialClaimAssistance));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder().educationClaimAssistance("YES").build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.EducationClaimAssistance));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder().familyMemberClaimAssistance("YES").build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.FamilyMemberClaimAssistance));
-    assertThat(
-            tx().services(ArcGisBenefits.Attributes.builder().vaHomeLoanAssistance("YES").build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.VAHomeLoanAssistance));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder().insuranceClaimAssistance("YES").build()))
+
+    // Note the BenefitsSamples class defines the valid facility services for this test. AND WE GET
+    // THEM ALL!!!
+    assertThat(tx().services())
         .isEqualTo(
             facilityService(
-                Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder()
-                        .integratedDisabilityEvaluationSystem("YES")
-                        .build()))
-        .isEqualTo(
-            facilityService(
-                Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance));
-    assertThat(
-            tx().services(ArcGisBenefits.Attributes.builder().transitionAssistance("YES").build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.TransitionAssistance));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder()
-                        .updatingDirectDepositInformation("YES")
-                        .build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.UpdatingDirectDepositInformation));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder()
-                        .vocationalRehabilitationEmplo("YES")
-                        .build()))
-        .isEqualTo(
-            facilityService(
-                Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance));
-    assertThat(
-            tx().services(
-                    ArcGisBenefits.Attributes.builder()
-                        .otherServices("You want pensions? We got em!")
-                        .build()))
-        .isEqualTo(facilityService(Facility.BenefitsService.Pensions));
+                List.of(
+                    Facility.BenefitsService.ApplyingForBenefits,
+                    Facility.BenefitsService.DisabilityClaimAssistance,
+                    Facility.BenefitsService.eBenefitsRegistrationAssistance,
+                    Facility.BenefitsService.EducationAndCareerCounseling,
+                    Facility.BenefitsService.EducationClaimAssistance,
+                    Facility.BenefitsService.FamilyMemberClaimAssistance,
+                    Facility.BenefitsService.HomelessAssistance,
+                    Facility.BenefitsService.VAHomeLoanAssistance,
+                    Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
+                    Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
+                    Facility.BenefitsService.PreDischargeClaimAssistance,
+                    Facility.BenefitsService.TransitionAssistance,
+                    Facility.BenefitsService.UpdatingDirectDepositInformation,
+                    Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
+                    Facility.BenefitsService.Pensions)));
   }
 
-  private Facility.Services facilityService(Facility.BenefitsService service) {
-    return Facility.Services.builder().benefits(List.of(service)).build();
+  private Facility.Services facilityService(List<Facility.BenefitsService> services) {
+    return Facility.Services.builder().benefits(services).build();
   }
 
   @Test
@@ -73,11 +45,11 @@ public class BenefitsTransformerTest {
   }
 
   @Test
-  void transformerPrioritizesWebsiteFromArcGis() {
-    String arcgis = "https://shanktopus.com/vha/facility";
+  void transformerPrioritizesWebsiteFromCdw() {
+    String cdw = "https://shanktopus.com/vha/facility";
     String csv = "https://shanktofake.com/nope";
     assertThat(tx().website(null)).isNull();
-    assertThat(tx(csv).website(arcgis)).isEqualTo(arcgis);
+    assertThat(tx(csv).website(cdw)).isEqualTo(cdw);
   }
 
   private BenefitsTransformer tx() {
@@ -86,13 +58,13 @@ public class BenefitsTransformerTest {
 
   private BenefitsTransformer tx(String csvWebsite) {
     return BenefitsTransformer.builder()
-        .arcgisFacility(BenefitsSamples.ArcGis.create().arcgisBenefits().features().get(0))
+        .cdwFacility(BenefitsSamples.Cdw.create().cdwBenefits())
         .csvWebsite(csvWebsite)
         .build();
   }
 
   @Test
-  void websiteInCsvReturnsValueWhenArcGisIsNull() {
+  void websiteInCsvReturnsValueWhenCdwIsNull() {
     String url = "https://shanktopus.com/vha/facility";
     assertThat(tx(url).toFacility().attributes().website()).isEqualTo(url);
   }

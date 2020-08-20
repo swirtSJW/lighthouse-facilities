@@ -92,6 +92,14 @@ public class HealthControllerTest {
   }
 
   @Test
+  void collectionStatusHealth_nullLastUpdate() {
+    when(repository.findLastUpdated()).thenReturn(null);
+    ResponseEntity<Health> actual = _controller().collectionStatusHealth();
+    assertThat(actual.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+    assertThat(actual.getBody().getStatus()).isEqualTo(Status.DOWN);
+  }
+
+  @Test
   void collectionStatusHealth_unhealthy() {
     when(repository.findLastUpdated()).thenReturn(Instant.parse("2020-01-20T02:20:00Z"));
     ResponseEntity<Health> actual = _controller().collectionStatusHealth();

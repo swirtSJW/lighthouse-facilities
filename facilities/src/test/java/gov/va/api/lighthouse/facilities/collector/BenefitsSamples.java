@@ -8,25 +8,11 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 class BenefitsSamples {
-  @AllArgsConstructor(staticName = "create")
-  static final class ArcGis {
-    ArcGisBenefits arcgisBenefits() {
-      return ArcGisBenefits.builder()
-          .features(
-              List.of(
-                  ArcGisBenefits.Feature.builder()
-                      .attributes(attributes())
-                      .geometry(
-                          ArcGisBenefits.Geometry.builder()
-                              .latitude(new BigDecimal("-73.776232849999985"))
-                              .longitude(new BigDecimal("42.651408840000045"))
-                              .build())
-                      .build()))
-          .build();
-    }
 
-    private ArcGisBenefits.Attributes attributes() {
-      return ArcGisBenefits.Attributes.builder()
+  @AllArgsConstructor(staticName = "create")
+  static final class Cdw {
+    CdwBenefits cdwBenefits() {
+      return CdwBenefits.builder()
           .facilityName("Shanktopus VAMC")
           .facilityNumber("306e")
           .facilityType("VAMC")
@@ -45,22 +31,23 @@ class BenefitsSamples {
           .saturday("Closed")
           .sunday("Closed")
           .applyingForBenefits("YES")
-          .burialClaimAssistance("NO")
           .disabilityClaimAssistance("YES")
           .ebenefitsRegistration("YES")
           .educationAndCareerCounseling("YES")
-          .educationClaimAssistance("NO")
-          .familyMemberClaimAssistance("NO")
+          .educationClaimAssistance("YES")
+          .familyMemberClaimAssistance("YES")
           .homelessAssistance("YES")
-          .vaHomeLoanAssistance("NO")
-          .insuranceClaimAssistance("NO")
-          .integratedDisabilityEvaluationSystem("NO")
+          .vaHomeLoanAssistance("YES")
+          .insuranceClaimAssistance("YES")
+          .integratedDisabilityEvaluationSystem("YES")
           .preDischargeClaimAssistance("YES")
-          .transitionAssistance("NO")
-          .updatingDirectDepositInformation("NO")
-          .vocationalRehabilitationEmplo("NO")
+          .transitionAssistance("YES")
+          .updatingDirectDepositInformation("YES")
+          .vocationalRehabilitationEmplo("YES")
           .otherServices("We got pensions for days.")
           .websiteUrl("NULL")
+          .latitude(new BigDecimal("-73.776232849999985"))
+          .longitude(new BigDecimal("42.651408840000045"))
           .build();
     }
   }
@@ -104,8 +91,16 @@ class BenefitsSamples {
                           Facility.BenefitsService.DisabilityClaimAssistance,
                           Facility.BenefitsService.eBenefitsRegistrationAssistance,
                           Facility.BenefitsService.EducationAndCareerCounseling,
+                          Facility.BenefitsService.EducationClaimAssistance,
+                          Facility.BenefitsService.FamilyMemberClaimAssistance,
                           Facility.BenefitsService.HomelessAssistance,
+                          Facility.BenefitsService.VAHomeLoanAssistance,
+                          Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
+                          Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
                           Facility.BenefitsService.PreDischargeClaimAssistance,
+                          Facility.BenefitsService.TransitionAssistance,
+                          Facility.BenefitsService.UpdatingDirectDepositInformation,
+                          Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
                           Facility.BenefitsService.Pensions))
                   .build())
           .build();
