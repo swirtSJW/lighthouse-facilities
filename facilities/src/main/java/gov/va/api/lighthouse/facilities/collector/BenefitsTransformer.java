@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -35,7 +37,7 @@ final class BenefitsTransformer {
                         .zip(cdwFacility.zip())
                         .build())
                 .build())
-        .phone(Facility.Phone.builder().main(cdwFacility.phone()).fax(cdwFacility.fax()).build())
+        .phone(phone())
         .hours(
             Facility.Hours.builder()
                 .monday(cdwFacility.monday())
@@ -48,6 +50,18 @@ final class BenefitsTransformer {
                 .build())
         .services(services())
         .build();
+  }
+
+  private Facility.Phone phone() {
+
+    String main = phoneTrim(cdwFacility.phone());
+    String fax = phoneTrim(cdwFacility.fax());
+
+    if (allBlank(main, fax)) {
+      return null;
+    } else {
+      return Facility.Phone.builder().main(main).fax(fax).build();
+    }
   }
 
   Facility.Services services() {

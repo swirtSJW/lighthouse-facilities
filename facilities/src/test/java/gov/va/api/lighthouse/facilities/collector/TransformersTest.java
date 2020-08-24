@@ -44,5 +44,7 @@ public class TransformersTest {
     assertThat(Transformers.phoneTrim("")).isEqualTo(null);
     assertThat(Transformers.phoneTrim("1 x")).isEqualTo("1");
     assertThat(Transformers.phoneTrim(" x ")).isNull();
+    assertThat(Transformers.phoneTrim("000-000-0000")).isNull();
+    assertThat(Transformers.phoneTrim("000-000-0000 x")).isNull();
   }
 }

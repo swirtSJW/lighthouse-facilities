@@ -59,9 +59,15 @@ final class Transformers {
 
   static String phoneTrim(String phone) {
     String trim = trimToNull(phone);
+
     if (endsWithIgnoreCase(trim, "x")) {
-      return trimToNull(trim.substring(0, trim.length() - 1));
+      trim = trimToNull(trim.substring(0, trim.length() - 1));
     }
+
+    if ("000-000-0000".equalsIgnoreCase(trim)) {
+      return null;
+    }
+
     return trim;
   }
 }
