@@ -51,16 +51,16 @@ import javax.ws.rs.Path;
                     + "\n\n"
                     + "Clients may request several response formats "
                     + "by setting the `Accept` header.\n"
-                    + "- application/json "
+                    + "- `application/json` "
                     + "- The default JSON response format complies with JSON API. "
                     + "This media type is *not* available for bulk requests using the "
                     + "`/facilities/all` endpoint. It will return `406 Not Acceptable`.\n"
-                    + "- application/geo+json "
+                    + "- `application/geo+json` "
                     + "- GeoJSON-compliant format, representing each facility as a "
                     + "feature with a point geometry.\n"
-                    + "- application/vnd.geo+json "
-                    + "- Deprecated. Will be replaced by application/geo+json in version 1.0.0.\n"
-                    + "- text/csv "
+                    + "- `application/vnd.geo+json` "
+                    + "- Deprecated. Will be replaced by `application/geo+json` in version 1.0.0.\n"
+                    + "- `text/csv` "
                     + "- Available for the bulk download operation only. "
                     + "Some structured fields are omitted from the CSV response."
                     + "\n\n"
@@ -107,7 +107,7 @@ import javax.ws.rs.Path;
 @Path("/")
 public interface FacilitiesService
     extends FacilitiesAllApi,
-        FacilitiesIdsApi,
-        FacilitiesNearbyApi,
         FacilitiesReadApi,
-        FacilitiesSearchApi {}
+        FacilitiesSearchApi,
+        FacilitiesIdsApi,
+        FacilitiesNearbyApi {}

@@ -16,7 +16,7 @@ import javax.ws.rs.Path;
 public interface FacilitiesAllApi {
   @Operation(
       tags = {"facilities"},
-      summary = "Bulk download of all available facilities",
+      summary = "Bulk download information for all facilities",
       description =
           "Retrieve all available facilities in a single operation, formatted as either a GeoJSON "
               + "FeatureCollection or as a CSV. Due to the complexity of the facility resource "
