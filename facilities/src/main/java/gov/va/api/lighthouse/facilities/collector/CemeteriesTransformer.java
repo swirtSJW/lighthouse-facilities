@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
@@ -27,16 +28,16 @@ final class CemeteriesTransformer {
             Facility.Addresses.builder()
                 .physical(
                     Facility.Address.builder()
-                        .address1(attributes.siteAddress1())
-                        .address2(attributes.siteAddress2())
+                        .address1(checkAngleBracketNull(attributes.siteAddress1()))
+                        .address2(checkAngleBracketNull(attributes.siteAddress2()))
                         .city(attributes.siteCity())
                         .state(upperCase(attributes.siteState(), Locale.US))
                         .zip(attributes.siteZip())
                         .build())
                 .mailing(
                     Facility.Address.builder()
-                        .address1(attributes.mailAddress1())
-                        .address2(attributes.mailAddress2())
+                        .address1(checkAngleBracketNull(attributes.mailAddress1()))
+                        .address2(checkAngleBracketNull(attributes.mailAddress2()))
                         .city(attributes.mailCity())
                         .state(upperCase(attributes.mailState(), Locale.US))
                         .zip(attributes.mailZip())

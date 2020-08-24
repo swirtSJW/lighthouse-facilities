@@ -25,6 +25,14 @@ final class Transformers {
     return true;
   }
 
+  static String checkAngleBracketNull(String s) {
+    if ("<Null>".equalsIgnoreCase(s)) {
+      return null;
+    } else {
+      return s;
+    }
+  }
+
   static <T> List<T> emptyToNull(List<T> items) {
     if (isEmpty(items)) {
       return null;

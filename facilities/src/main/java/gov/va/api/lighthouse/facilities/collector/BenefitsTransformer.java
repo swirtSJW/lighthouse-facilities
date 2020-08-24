@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
@@ -30,8 +31,8 @@ final class BenefitsTransformer {
             Facility.Addresses.builder()
                 .physical(
                     Facility.Address.builder()
-                        .address1(cdwFacility.address1())
-                        .address2(cdwFacility.address2())
+                        .address1(checkAngleBracketNull(cdwFacility.address1()))
+                        .address2(checkAngleBracketNull(cdwFacility.address2()))
                         .city(cdwFacility.city())
                         .state(upperCase(cdwFacility.state(), Locale.US))
                         .zip(cdwFacility.zip())

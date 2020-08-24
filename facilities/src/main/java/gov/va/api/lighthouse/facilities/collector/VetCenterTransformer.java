@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.hoursToClosed;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -34,15 +35,20 @@ final class VetCenterTransformer {
 
   private Facility.Address addressPhysical() {
     // address1 is repeat of station name
-    if (allBlank(addressZip(), vast.city(), vast.state(), vast.address2(), vast.address3())) {
+    if (allBlank(
+        addressZip(),
+        vast.city(),
+        vast.state(),
+        checkAngleBracketNull(vast.address2()),
+        checkAngleBracketNull(vast.address3()))) {
       return null;
     }
     return Facility.Address.builder()
         .zip(addressZip())
         .city(vast.city())
         .state(upperCase(vast.state(), Locale.US))
-        .address1(vast.address2())
-        .address2(vast.address3())
+        .address1(checkAngleBracketNull(vast.address2()))
+        .address2(checkAngleBracketNull(vast.address3()))
         .build();
   }
 

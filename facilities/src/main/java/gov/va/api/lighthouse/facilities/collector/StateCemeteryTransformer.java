@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.indexOf;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -148,8 +149,8 @@ final class StateCemeteryTransformer {
   private Facility.Address mailing() {
     return asAddress(
         upperCase(xml.stateCode(), Locale.US),
-        xml.mailingLine1(),
-        xml.mailingLine2(),
+        checkAngleBracketNull(xml.mailingLine1()),
+        checkAngleBracketNull(xml.mailingLine2()),
         xml.mailingLine3());
   }
 
@@ -165,8 +166,8 @@ final class StateCemeteryTransformer {
   private Facility.Address physical() {
     return asAddress(
         upperCase(xml.stateCode(), Locale.US),
-        xml.addressLine1(),
-        xml.addressLine2(),
+        checkAngleBracketNull(xml.addressLine1()),
+        checkAngleBracketNull(xml.addressLine2()),
         xml.addressLine3());
   }
 

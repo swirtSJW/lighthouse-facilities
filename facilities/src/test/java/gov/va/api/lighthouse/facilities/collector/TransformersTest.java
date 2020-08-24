@@ -39,6 +39,13 @@ public class TransformersTest {
   }
 
   @Test
+  void nullAngleBracket() {
+    assertThat(Transformers.checkAngleBracketNull("<Null>")).isNull();
+    assertThat(Transformers.checkAngleBracketNull(null)).isNull();
+    assertThat(Transformers.checkAngleBracketNull("COOL COOL COOL")).isEqualTo("COOL COOL COOL");
+  }
+
+  @Test
   void phoneTrim() {
     assertThat(Transformers.phoneTrim(null)).isNull();
     assertThat(Transformers.phoneTrim("")).isEqualTo(null);
