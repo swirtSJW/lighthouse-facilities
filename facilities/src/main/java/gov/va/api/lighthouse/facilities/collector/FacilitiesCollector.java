@@ -87,6 +87,7 @@ public class FacilitiesCollector {
           "Loading websites took {} millis for {} entries",
           totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
           websites.size());
+      checkState(!websites.isEmpty(), "No website entries");
       return websites;
     }
   }
@@ -186,8 +187,8 @@ public class FacilitiesCollector {
             .collect();
 
     log.info(
-        "Collected: Health {},  Benefits {},  Vet Centers {}, "
-            + "State Cemeteries {}, Cemeteries {}",
+        "Collected: Health {},  Benefits {},  Vet centers {}, "
+            + "Non-national cemeteries {}, Cemeteries {}",
         healths.size(),
         benefits.size(),
         vetCenters.size(),
@@ -244,6 +245,7 @@ public class FacilitiesCollector {
         "Loading VAST took {} millis for {} entries",
         watch.stop().elapsed(TimeUnit.MILLISECONDS),
         entities.size());
+    checkState(!entities.isEmpty(), "No App.Vast entries");
     return entities;
   }
 }

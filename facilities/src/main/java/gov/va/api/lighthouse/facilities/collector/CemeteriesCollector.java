@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
@@ -79,6 +80,7 @@ final class CemeteriesCollector {
         "Loading cemeteries took {} millis for {} features",
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
         cemeteries.features().size());
+    checkState(!cemeteries.features().isEmpty(), "No ArcGIS cemeteries");
     return cemeteries;
   }
 }

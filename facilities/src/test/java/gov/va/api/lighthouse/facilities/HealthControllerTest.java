@@ -63,7 +63,7 @@ public class HealthControllerTest {
   }
 
   private static ResponseEntity<String> ok() {
-    return new ResponseEntity<>(HttpStatus.OK);
+    return new ResponseEntity<>("[{}]", HttpStatus.OK);
   }
 
   private HealthController _controller() {

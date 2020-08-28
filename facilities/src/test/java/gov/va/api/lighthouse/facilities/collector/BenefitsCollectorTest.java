@@ -10,7 +10,6 @@ import static org.mockito.Mockito.when;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -19,9 +18,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 public class BenefitsCollectorTest {
-
   @Test
   @SneakyThrows
+  @SuppressWarnings("unchecked")
   void collect() {
     JdbcTemplate jdbcTemplate = mock(JdbcTemplate.class);
 
@@ -119,14 +118,17 @@ public class BenefitsCollectorTest {
   void exception() {
     assertThrows(
         CollectorExceptions.BenefitsCollectorException.class,
-        () -> BenefitsCollector.builder().websites(emptyMap()).build().collect());
+        () ->
+            BenefitsCollector.builder()
+                .jdbcTemplate(mock(JdbcTemplate.class))
+                .websites(emptyMap())
+                .build()
+                .collect());
   }
 
   @Test
-  @SneakyThrows
-  void toCdwBenefits() throws SQLException {
+  void toCdwBenefits() {
     ResultSet resultSet = mock(ResultSet.class);
-
     assertThat(BenefitsCollector.toCdwBenefits(resultSet)).isEqualTo(CdwBenefits.builder().build());
   }
 }

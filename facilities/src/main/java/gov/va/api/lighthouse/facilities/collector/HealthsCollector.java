@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
@@ -168,6 +169,7 @@ final class HealthsCollector {
         "Loading patient wait times took {} millis for {} entries",
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
         entries.size());
+    checkState(!entries.isEmpty(), "No AccessToCare entries");
     return ImmutableListMultimap.copyOf(map);
   }
 
@@ -198,6 +200,7 @@ final class HealthsCollector {
         "Loading satisfaction scores took {} millis for {} entries",
         watch.stop().elapsed(TimeUnit.MILLISECONDS),
         entries.size());
+    checkState(!entries.isEmpty(), "No AccessToPwt entries");
     return ImmutableListMultimap.copyOf(map);
   }
 
@@ -211,6 +214,7 @@ final class HealthsCollector {
         "Loading mental health contacts took {} millis for {} entries",
         watch.stop().elapsed(TimeUnit.MILLISECONDS),
         map.size());
+    checkState(!map.isEmpty(), "No App.VHA_Mental_Health_Contact_Info entries");
     return Collections.unmodifiableMap(map);
   }
 
@@ -225,6 +229,7 @@ final class HealthsCollector {
         "Loading stop codes took {} millis for {} entries",
         watch.stop().elapsed(TimeUnit.MILLISECONDS),
         map.values().size());
+    checkState(!map.isEmpty(), "No App.VSSC_ClinicalServices entries");
     return ImmutableListMultimap.copyOf(map);
   }
 }

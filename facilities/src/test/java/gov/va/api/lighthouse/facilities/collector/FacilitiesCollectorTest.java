@@ -9,41 +9,157 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
+@DataJpaTest
+@ExtendWith(SpringExtension.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilitiesCollectorTest {
-  @Test
-  void toVastEntity() {
-    assertThat(FacilitiesCollector.toVastEntity(mock(ResultSet.class)))
-        .isEqualTo(
-            VastEntity.builder().vetCenter(false).mobileVetCenter(false).mobile(false).build());
+  @Autowired JdbcTemplate jdbcTemplate;
+
+  private void _initDatabase() {
+    jdbcTemplate.execute(
+        "CREATE TABLE App.FacilityLocator_VBA ("
+            + "FACILITY_NAME VARCHAR,"
+            + "FACILITY_NUMBER VARCHAR,"
+            + "FACILITY_TYPE VARCHAR,"
+            + "ADDRESS_1 VARCHAR,"
+            + "ADDRESS_2 VARCHAR,"
+            + "CITY VARCHAR,"
+            + "STATE VARCHAR,"
+            + "ZIP VARCHAR,"
+            + "FAX VARCHAR,"
+            + "PHONE VARCHAR,"
+            + "MONDAY VARCHAR,"
+            + "TUESDAY VARCHAR,"
+            + "WEDNESDAY VARCHAR,"
+            + "THURSDAY VARCHAR,"
+            + "FRIDAY VARCHAR,"
+            + "SATURDAY VARCHAR,"
+            + "SUNDAY VARCHAR,"
+            + "APPLYING_FOR_BENEFITS VARCHAR,"
+            + "BURIAL_CLAIM_ASSISTANCE VARCHAR,"
+            + "DISABILITY_CLAIM_ASSISTANCE VARCHAR,"
+            + "EBENEFITS_REGISTRATION VARCHAR,"
+            + "EDUCATION_AND_CAREER_COUNSELING VARCHAR,"
+            + "EDUCATION_CLAIM_ASSISTANCE VARCHAR,"
+            + "FAMILY_MEMBER_CLAIM_ASSISTANCE VARCHAR,"
+            + "HOMELESS_ASSISTANCE VARCHAR,"
+            + "VA_HOME_LOAN_ASSISTANCE VARCHAR,"
+            + "INSURANCE_CLAIM_ASSISTANCE VARCHAR,"
+            + "IDES VARCHAR,"
+            + "PRE_DISCHARGE_CLAIM_ASSISTANCE VARCHAR,"
+            + "TRANSITION_ASSISTANCE VARCHAR,"
+            + "UPDATING_DIRECT_DEPOSIT_INFORMA VARCHAR,"
+            + "VOCATIONAL_REHABILITATION_EMPLO VARCHAR,"
+            + "OTHER_SERVICES VARCHAR,"
+            + "LAT VARCHAR,"
+            + "LONG VARCHAR,"
+            + "WEBSITE_URL VARCHAR"
+            + ")");
+
+    jdbcTemplate.execute(
+        "CREATE TABLE App.Vast ("
+            + "VCTR2 VARCHAR,"
+            + "MVCTR VARCHAR,"
+            + "LAT VARCHAR,"
+            + "LON VARCHAR,"
+            + "STA_NO VARCHAR,"
+            + "STATIONNAME VARCHAR,"
+            + "S_ABBR VARCHAR,"
+            + "COCCLASSIFICATIONID VARCHAR,"
+            + "ADDRESS1 VARCHAR,"
+            + "ADDRESS2 VARCHAR,"
+            + "ADDRESS3 VARCHAR,"
+            + "CITY VARCHAR,"
+            + "ST VARCHAR,"
+            + "ZIP VARCHAR,"
+            + "ZIP4 VARCHAR,"
+            + "MONDAY VARCHAR,"
+            + "TUESDAY VARCHAR,"
+            + "WEDNESDAY VARCHAR,"
+            + "THURSDAY VARCHAR,"
+            + "FRIDAY VARCHAR,"
+            + "SATURDAY VARCHAR,"
+            + "SUNDAY VARCHAR,"
+            + "STA_PHONE VARCHAR,"
+            + "STA_FAX VARCHAR,"
+            + "AFTERHOURSPHONE VARCHAR,"
+            + "PATIENTADVOCATEPHONE VARCHAR,"
+            + "ENROLLMENTCOORDINATORPHONE VARCHAR,"
+            + "PHARMACYPHONE VARCHAR,"
+            + "POD VARCHAR,"
+            + "MOBILE VARCHAR,"
+            + "VISN VARCHAR,"
+            + "LASTUPDATED VARCHAR"
+            + ")");
+
+    jdbcTemplate.execute(
+        "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
+            + "StationNumber VARCHAR,"
+            + "MHPhone VARCHAR,"
+            + "Extension FLOAT"
+            + ")");
+
+    jdbcTemplate.execute(
+        "CREATE TABLE App.VSSC_ClinicalServices ("
+            + "Sta6a VARCHAR,"
+            + "PrimaryStopCode VARCHAR,"
+            + "PrimaryStopCodeName VARCHAR,"
+            + "AvgWaitTimeNew VARCHAR"
+            + ")");
+  }
+
+  private void _saveBenefits(String stationNum) {
+    jdbcTemplate.execute(
+        String.format(
+            "INSERT INTO App.FacilityLocator_VBA (FACILITY_NUMBER) VALUES (%s)", stationNum));
+  }
+
+  private void _saveMentalHealthContact(String stationNum, String phone, Double extension) {
+    jdbcTemplate.execute(
+        String.format(
+            "INSERT INTO App.VHA_Mental_Health_Contact_Info (StationNumber, MHPhone, Extension)"
+                + " VALUES ('%s', '%s', '%s')",
+            stationNum, phone, extension));
+  }
+
+  private void _saveStopCode(String stationNum, String code, String name, String wait) {
+    jdbcTemplate.execute(
+        String.format(
+            "INSERT INTO App.VSSC_ClinicalServices (Sta6a, PrimaryStopCode, PrimaryStopCodeName, AvgWaitTimeNew)"
+                + " VALUES ('%s','%s','%s','%s')",
+            stationNum, code, name, wait));
+  }
+
+  private void _saveVast(String stationNum) {
+    jdbcTemplate.execute(String.format("INSERT INTO App.Vast (STA_NO) VALUES (%s)", stationNum));
   }
 
   @Test
   @SneakyThrows
   void verifyResponse() {
+    _initDatabase();
+    _saveBenefits("123");
+    _saveMentalHealthContact("666", "867-5309", 5555D);
+    _saveStopCode("666", "123", "", "10");
+    _saveVast("456");
+
     RestTemplate restTemplate = mock(RestTemplate.class);
-    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
-    when(restTemplate.exchange(
-            contains("VBA_Facilities"),
-            eq(HttpMethod.GET),
-            Mockito.any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.of(
-                Optional.of(
-                    JacksonConfig.createMapper()
-                        .writeValueAsString(ArcGisBenefits.builder().build()))));
     when(restTemplate.exchange(
             contains("NCA_Facilities"),
             eq(HttpMethod.GET),
@@ -53,7 +169,22 @@ public class FacilitiesCollectorTest {
             ResponseEntity.of(
                 Optional.of(
                     JacksonConfig.createMapper()
-                        .writeValueAsString(ArcGisCemeteries.builder().build()))));
+                        .writeValueAsString(
+                            ArcGisCemeteries.builder()
+                                .features(
+                                    List.of(
+                                        ArcGisCemeteries.Feature.builder()
+                                            .attributes(
+                                                ArcGisCemeteries.Attributes.builder().build())
+                                            .geometry(ArcGisCemeteries.Geometry.builder().build())
+                                            .build()))
+                                .build()))));
+
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    InsecureRestTemplateProvider insecureRestTemplateProvider =
+        mock(InsecureRestTemplateProvider.class);
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
+
     when(insecureRestTemplate.exchange(
             startsWith("http://atc/atcapis"),
             eq(HttpMethod.GET),
@@ -65,6 +196,7 @@ public class FacilitiesCollectorTest {
                     JacksonConfig.createMapper()
                         .writeValueAsString(
                             List.of(AccessToCareEntry.builder().facilityId("x").build())))));
+
     when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
@@ -78,20 +210,19 @@ public class FacilitiesCollectorTest {
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
-        .thenReturn(ResponseEntity.of(Optional.of("<cems></cems>")));
-    InsecureRestTemplateProvider insecureRestTemplateProvider =
-        mock(InsecureRestTemplateProvider.class);
-    when(insecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
+        .thenReturn(ResponseEntity.of(Optional.of("<cems><cem fac_id=\"1001\"/></cems>")));
+
     assertThat(
             new FacilitiesCollector(
                     insecureRestTemplateProvider,
-                    mock(JdbcTemplate.class),
+                    jdbcTemplate,
                     restTemplate,
                     "http://arcgis",
                     "http://atc",
                     "http://atp",
                     "http://statecems")
-                .collectFacilities())
-        .isEmpty();
+                .collectFacilities()
+                .size())
+        .isEqualTo(4);
   }
 }

@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
@@ -37,9 +38,8 @@ final class StateCemeteriesCollector {
 
   Collection<Facility> collect() {
     try {
-      final Stopwatch totalWatch = Stopwatch.createStarted();
       List<Facility> cemeteries =
-          load().cem().stream()
+          xmlCemeteries().stream()
               .filter(Objects::nonNull)
               .map(
                   c ->
@@ -50,10 +50,6 @@ final class StateCemeteriesCollector {
                           .toFacility())
               .filter(Objects::nonNull)
               .collect(toList());
-      log.info(
-          "Loading state cemeteries took {} millis for {} features",
-          totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
-          cemeteries.size());
       return cemeteries;
     } catch (Exception e) {
       throw new CollectorExceptions.StateCemeteriesCollectorException(e);
@@ -61,16 +57,25 @@ final class StateCemeteriesCollector {
   }
 
   @SneakyThrows
-  private StateCemeteries load() {
+  private List<StateCemeteries.StateCemetery> xmlCemeteries() {
+    Stopwatch totalWatch = Stopwatch.createStarted();
     String url = UriComponentsBuilder.fromHttpUrl(baseUrl + "cems/cems.xml").build().toUriString();
     String response =
         insecureRestTemplate
             .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
             .getBody();
-    return new XmlMapper()
-        .registerModule(new StringTrimModule())
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .readValue(response, StateCemeteries.class);
+    List<StateCemeteries.StateCemetery> cemeteries =
+        new XmlMapper()
+            .registerModule(new StringTrimModule())
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .readValue(response, StateCemeteries.class)
+            .cem();
+    log.info(
+        "Loading non-national cemeteries took {} millis for {} entries",
+        totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
+        cemeteries.size());
+    checkState(!cemeteries.isEmpty(), "No cems.xml entries");
+    return cemeteries;
   }
 
   private static final class StringTrimModule extends SimpleModule {

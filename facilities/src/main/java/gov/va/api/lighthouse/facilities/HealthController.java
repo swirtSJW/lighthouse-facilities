@@ -1,5 +1,10 @@
 package gov.va.api.lighthouse.facilities;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -96,6 +101,31 @@ public class HealthController {
         .build();
   }
 
+  private static Health testHealthJsonList(
+      @NonNull Instant now,
+      @NonNull RestTemplate restTemplate,
+      @NonNull String name,
+      @NonNull String url) {
+    HttpStatus statusCode;
+    try {
+      ResponseEntity<String> response =
+          restTemplate.exchange(
+              url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class);
+      statusCode = response.getStatusCode();
+      JsonNode root = JacksonConfig.createMapper().readTree(response.getBody());
+      checkState(!((ArrayNode) root).isEmpty(), "No %s entries", name);
+    } catch (Exception e) {
+      log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
+      statusCode = HttpStatus.SERVICE_UNAVAILABLE;
+    }
+    return Health.status(new Status(statusCode.is2xxSuccessful() ? "UP" : "DOWN", name))
+        .withDetail("name", name)
+        .withDetail("statusCode", statusCode.value())
+        .withDetail("status", statusCode)
+        .withDetail("time", now)
+        .build();
+  }
+
   private static String withTrailingSlash(@NonNull String url) {
     return url.endsWith("/") ? url : url + "/";
   }
@@ -149,16 +179,17 @@ public class HealthController {
     hasCachedCollectorBackend.set(true);
     var now = Instant.now();
     RestTemplate insecureTemplate = insecureRestTemplateProvider.restTemplate();
+
     List<Health> healths = new ArrayList<>(5);
     healths.add(
-        testHealth(
+        testHealthJsonList(
             now,
             insecureTemplate,
             "Access to Care",
             UriComponentsBuilder.fromHttpUrl(atcBaseUrl + "atcapis/v1.1/patientwaittimes")
                 .toUriString()));
     healths.add(
-        testHealth(
+        testHealthJsonList(
             now,
             insecureTemplate,
             "Access to PWT",
@@ -183,6 +214,7 @@ public class HealthController {
             UriComponentsBuilder.fromHttpUrl(stateCemeteriesBaseUrl + "cems/cems.xml")
                 .toUriString()));
     healths.add(testEtlLastUpdated(now));
+
     Health overallHealth =
         Health.status(
                 new Status(

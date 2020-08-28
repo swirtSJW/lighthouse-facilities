@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Stopwatch;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,9 +20,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @Builder
 @Slf4j
 final class BenefitsCollector {
-  private final Map<String, String> websites;
+  @NonNull private final Map<String, String> websites;
 
-  private final JdbcTemplate jdbcTemplate;
+  @NonNull private final JdbcTemplate jdbcTemplate;
 
   /** Convert the results into a CdwBenefits Object. */
   @SneakyThrows
@@ -131,6 +133,7 @@ final class BenefitsCollector {
         "Loading benefits facilities took {} millis for {} entries",
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
         cdwBenefits.size());
+    checkState(!cdwBenefits.isEmpty(), "No App.FacilityLocator_VBA entries");
     return cdwBenefits;
   }
 }
