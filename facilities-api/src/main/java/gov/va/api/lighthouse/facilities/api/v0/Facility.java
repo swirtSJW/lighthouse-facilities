@@ -177,10 +177,7 @@ public final class Facility {
     Boolean mobile;
 
     @JsonProperty("active_status")
-    @Schema(
-        description =
-            "This field is deprecated and replaced with \"operating_status\"."
-                + " It will be removed in version 1.0.0")
+    @Schema(description = "This field is deprecated and replaced with \"operating_status\".")
     ActiveStatus activeStatus;
 
     @Schema(example = "20")
