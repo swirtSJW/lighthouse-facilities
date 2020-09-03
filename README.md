@@ -43,7 +43,7 @@ OpenAPI documentation on the
   that provides information about non-national cemeteries that are not managed by the VA.
   This data is aggregated during facilities collection.
 * `Website CSV` is a
-  [CSV document](src/main/resources/websites.csv)
+  [CSV document](facilities/src/main/resources/websites.csv)
   of facility website URLS, maintained in this repository.
   This data is aggregated during facilities collection to augment the _live_ sources.
 * `Corporate Data Warehouse` undergoes a nightly ETL process to transfer
