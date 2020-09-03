@@ -73,6 +73,30 @@ public class FacilitiesCollectorTest {
             + ")");
 
     jdbcTemplate.execute(
+        "CREATE TABLE App.FacilityLocator_NCA ("
+            + "SITE_ID VARCHAR,"
+            + "FULL_NAME VARCHAR,"
+            + "SITE_TYPE VARCHAR,"
+            + "SITE_ADDRESS1 VARCHAR,"
+            + "SITE_ADDRESS2 VARCHAR,"
+            + "SITE_CITY VARCHAR,"
+            + "SITE_STATE VARCHAR,"
+            + "SITE_ZIP VARCHAR,"
+            + "MAIL_ADDRESS1 VARCHAR,"
+            + "MAIL_ADDRESS2 VARCHAR,"
+            + "MAIL_CITY VARCHAR,"
+            + "MAIL_STATE VARCHAR,"
+            + "MAIL_ZIP VARCHAR,"
+            + "PHONE VARCHAR,"
+            + "FAX VARCHAR,"
+            + "VISITATION_HOURS_WEEKDAY VARCHAR,"
+            + "VISITATION_HOURS_WEEKEND VARCHAR,"
+            + "LATITUDE_DD VARCHAR,"
+            + "LONGITUDE_DD VARCHAR,"
+            + "Website_URL VARCHAR"
+            + ")");
+
+    jdbcTemplate.execute(
         "CREATE TABLE App.Vast ("
             + "VCTR2 VARCHAR,"
             + "MVCTR VARCHAR,"
@@ -130,6 +154,11 @@ public class FacilitiesCollectorTest {
             "INSERT INTO App.FacilityLocator_VBA (FACILITY_NUMBER) VALUES (%s)", stationNum));
   }
 
+  private void _saveCemeteries(String stationNum) {
+    jdbcTemplate.execute(
+        String.format("INSERT INTO App.FacilityLocator_NCA (SITE_ID) VALUES (%s)", stationNum));
+  }
+
   private void _saveMentalHealthContact(String stationNum, String phone, Double extension) {
     jdbcTemplate.execute(
         String.format(
@@ -155,6 +184,7 @@ public class FacilitiesCollectorTest {
   void verifyResponse() {
     _initDatabase();
     _saveBenefits("123");
+    _saveCemeteries("456");
     _saveMentalHealthContact("666", "867-5309", 5555D);
     _saveStopCode("666", "123", "", "10");
     _saveVast("456");
@@ -216,8 +246,6 @@ public class FacilitiesCollectorTest {
             new FacilitiesCollector(
                     insecureRestTemplateProvider,
                     jdbcTemplate,
-                    restTemplate,
-                    "http://arcgis",
                     "http://atc",
                     "http://atp",
                     "http://statecems")

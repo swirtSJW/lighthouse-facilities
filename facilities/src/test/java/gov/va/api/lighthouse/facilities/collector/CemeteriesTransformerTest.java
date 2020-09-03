@@ -12,11 +12,11 @@ public class CemeteriesTransformerTest {
   }
 
   @Test
-  void transformerPrioritizesWebsiteFromArcGis() {
-    String arcgis = "https://shanktopus.com/vha/facility";
+  void transformerPrioritizesWebsiteFromCdw() {
+    String cdw = "https://shanktopus.com/vha/facility";
     String csv = "https://shanktofake.com/nope";
     assertThat(tx().website(null)).isNull();
-    assertThat(tx(csv).website(arcgis)).isEqualTo(arcgis);
+    assertThat(tx(csv).website(cdw)).isEqualTo(cdw);
   }
 
   private CemeteriesTransformer tx() {
@@ -25,13 +25,13 @@ public class CemeteriesTransformerTest {
 
   private CemeteriesTransformer tx(String csvWebsite) {
     return CemeteriesTransformer.builder()
-        .arcgisFacility(CemeteriesSamples.ArcGis.create().arcgisCemeteries().features().get(0))
+        .cdwFacility(CemeteriesSamples.Cdw.create().cdwCemeteries())
         .csvWebsite(csvWebsite)
         .build();
   }
 
   @Test
-  void websiteInCsvReturnsValueWhenArcGisIsNull() {
+  void websiteInCsvReturnsValueWhenCdwIsNull() {
     String url = "https://shanktopus.com/vha/facility";
     assertThat(tx(url).toFacility().attributes().website()).isEqualTo(url);
   }

@@ -3,48 +3,57 @@ package gov.va.api.lighthouse.facilities.collector;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 public class CemeteriesCollectorTest {
   @Test
   @SneakyThrows
   void collect() {
-    RestTemplate restTemplate = mock(RestTemplate.class);
+    JdbcTemplate jdbcTemplate = mock(JdbcTemplate.class);
 
-    ResponseEntity<String> body =
-        ResponseEntity.of(
-            Optional.of(
-                new String(
-                    getClass().getResourceAsStream("/arcgis-cemeteries.json").readAllBytes())));
-
-    when(restTemplate.exchange(
-            startsWith("http://localhost:8080"),
-            eq(HttpMethod.GET),
-            Mockito.any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(body);
+    when(jdbcTemplate.query(any(String.class), any(RowMapper.class)))
+        .thenReturn(
+            List.of(
+                CdwCemetery.builder()
+                    .siteId("088")
+                    .fullName("Albany Rural")
+                    .siteType("Rural")
+                    .siteAddress1("Cemetery Avenue")
+                    .siteAddress2("<Null>")
+                    .siteCity("Albany")
+                    .siteState("NY")
+                    .siteZip("12204")
+                    .mailAddress1("200 Duell Road")
+                    .mailAddress2("")
+                    .mailCity("Schuylerville")
+                    .mailState("NY")
+                    .mailZip("12871-1721")
+                    .phone("")
+                    .fax("5184630787")
+                    .visitationHoursWeekday("Sunrise - Sundown")
+                    .visitationHoursWeekend("Sunrise - Sundown")
+                    .latitude(new BigDecimal("42.703844900000036"))
+                    .longitude(new BigDecimal("-73.72356499999995"))
+                    .websiteUrl("http://www.testme.com/")
+                    .build()));
 
     assertThat(
             CemeteriesCollector.builder()
-                .arcgisUrl("http://localhost:8080")
-                .restTemplate(restTemplate)
                 .websites(new HashMap<>())
+                .jdbcTemplate(jdbcTemplate)
                 .build()
                 .collect())
         .isEqualTo(
@@ -72,7 +81,7 @@ public class CemeteriesCollectorTest {
                                     .mailing(
                                         Facility.Address.builder()
                                             .address1("200 Duell Road")
-                                            .address2(null)
+                                            .address2("")
                                             .city("Schuylerville")
                                             .state("NY")
                                             .zip("12871-1721")
@@ -89,21 +98,24 @@ public class CemeteriesCollectorTest {
                                     .saturday("Sunrise - Sundown")
                                     .sunday("Sunrise - Sundown")
                                     .build())
+                            .website("http://www.testme.com/")
                             .build())
                     .build()));
   }
 
   @Test
   void exception() {
-    RestTemplate restTemplate = mock(RestTemplate.class);
     assertThrows(
         CollectorExceptions.CemeteriesCollectorException.class,
-        () ->
-            CemeteriesCollector.builder()
-                .arcgisUrl("http://wrong:8080")
-                .restTemplate(restTemplate)
-                .websites(emptyMap())
-                .build()
-                .collect());
+        () -> CemeteriesCollector.builder().websites(emptyMap()).build().collect());
+  }
+
+  @Test
+  @SneakyThrows
+  void toCdwCemetery() throws SQLException {
+    ResultSet resultSet = mock(ResultSet.class);
+
+    assertThat(CemeteriesCollector.toCdwCemetery(resultSet))
+        .isEqualTo(CdwCemetery.builder().build());
   }
 }

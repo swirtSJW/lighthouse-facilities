@@ -9,24 +9,9 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 class CemeteriesSamples {
   @AllArgsConstructor(staticName = "create")
-  static final class ArcGis {
-    ArcGisCemeteries arcgisCemeteries() {
-      return ArcGisCemeteries.builder()
-          .features(
-              List.of(
-                  ArcGisCemeteries.Feature.builder()
-                      .attributes(attributes())
-                      .geometry(
-                          ArcGisCemeteries.Geometry.builder()
-                              .latitude(new BigDecimal("-73.776232849999985"))
-                              .longitude(new BigDecimal("42.651408840000045"))
-                              .build())
-                      .build()))
-          .build();
-    }
-
-    private ArcGisCemeteries.Attributes attributes() {
-      return ArcGisCemeteries.Attributes.builder()
+  static final class Cdw {
+    CdwCemetery cdwCemeteries() {
+      return CdwCemetery.builder()
           .fullName("Shanktopus Lot")
           .siteId("088")
           .siteType("Lot")
@@ -44,7 +29,8 @@ class CemeteriesSamples {
           .phone("123-789-0456")
           .visitationHoursWeekday("Sunrise-Sunset")
           .visitationHoursWeekend("Sunrise-Sunset")
-          .websiteUrl("NULL")
+          .latitude(new BigDecimal("-73.776232849999985"))
+          .longitude(new BigDecimal("42.651408840000045"))
           .build();
     }
   }

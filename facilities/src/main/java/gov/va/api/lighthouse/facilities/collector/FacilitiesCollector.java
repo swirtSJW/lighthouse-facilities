@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Component
@@ -37,10 +36,6 @@ public class FacilitiesCollector {
   private final InsecureRestTemplateProvider insecureRestTemplateProvider;
 
   private final JdbcTemplate jdbcTemplate;
-
-  private final RestTemplate restTemplate;
-
-  private final String arcGisBaseUrl;
 
   private final String atcBaseUrl;
 
@@ -52,15 +47,11 @@ public class FacilitiesCollector {
   public FacilitiesCollector(
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
-      @Autowired RestTemplate restTemplate,
-      @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
-    this.restTemplate = restTemplate;
-    this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
@@ -180,9 +171,8 @@ public class FacilitiesCollector {
 
     Collection<Facility> cemeteries =
         CemeteriesCollector.builder()
-            .arcgisUrl(arcGisBaseUrl)
-            .restTemplate(restTemplate)
             .websites(websites)
+            .jdbcTemplate(jdbcTemplate)
             .build()
             .collect();
 

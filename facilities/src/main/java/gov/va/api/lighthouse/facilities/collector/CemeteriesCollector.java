@@ -5,40 +5,64 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
 import com.google.common.base.Stopwatch;
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import com.google.common.collect.ImmutableList;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import java.sql.ResultSet;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Builder
 @Slf4j
 final class CemeteriesCollector {
-  @NonNull private final String arcgisUrl;
 
   @NonNull private final Map<String, String> websites;
 
-  @NonNull private final RestTemplate restTemplate;
+  private final JdbcTemplate jdbcTemplate;
+
+  /** Convert the results into a CdwCemetery Object. */
+  @SneakyThrows
+  static CdwCemetery toCdwCemetery(ResultSet rs) {
+    return CdwCemetery.builder()
+        .siteId(rs.getString("SITE_ID"))
+        .fullName(rs.getString("FULL_NAME"))
+        .siteType(rs.getString("SITE_TYPE"))
+        .siteAddress1(rs.getString("SITE_ADDRESS1"))
+        .siteAddress2(rs.getString("SITE_ADDRESS2"))
+        .siteCity(rs.getString("SITE_CITY"))
+        .siteState(rs.getString("SITE_STATE"))
+        .siteZip(rs.getString("SITE_ZIP"))
+        .mailAddress1(rs.getString("MAIL_ADDRESS1"))
+        .mailAddress2(rs.getString("MAIL_ADDRESS2"))
+        .mailCity(rs.getString("MAIL_CITY"))
+        .mailState(rs.getString("MAIL_STATE"))
+        .mailZip(rs.getString("MAIL_ZIP"))
+        .phone(rs.getString("PHONE"))
+        .fax(rs.getString("FAX"))
+        .visitationHoursWeekday(rs.getString("VISITATION_HOURS_WEEKDAY"))
+        .visitationHoursWeekend(rs.getString("VISITATION_HOURS_WEEKEND"))
+        .latitude(rs.getBigDecimal("LATITUDE_DD"))
+        .longitude(rs.getBigDecimal("LONGITUDE_DD"))
+        .websiteUrl(rs.getString("Website_URL"))
+        .build();
+  }
 
   /** Collects and transforms all national cemeteries into a list of facilities. */
   public Collection<Facility> collect() {
     try {
-      return requestArcGisCemeteries().features().stream()
-          .filter(c -> !equalsIgnoreCase(c.attributes().siteType(), "office"))
+      return queryCdwCemeteries().stream()
+          .filter(c -> !equalsIgnoreCase(c.siteType(), "office"))
           .map(
               facility ->
                   CemeteriesTransformer.builder()
-                      .arcgisFacility(facility)
-                      .csvWebsite(websites.get("nca_" + facility.attributes().siteId()))
+                      .cdwFacility(facility)
+                      .csvWebsite(websites.get("nca_" + facility.siteId()))
                       .build()
                       .toFacility())
           .collect(toList());
@@ -47,40 +71,41 @@ final class CemeteriesCollector {
     }
   }
 
-  /** Requests ArcGIS VA_Cemeteries_Facilities in application/json. */
+  /** Requests CDW cemetery in a List. */
   @SneakyThrows
-  private ArcGisCemeteries requestArcGisCemeteries() {
+  private List<CdwCemetery> queryCdwCemeteries() {
     final Stopwatch totalWatch = Stopwatch.createStarted();
-    String url =
-        UriComponentsBuilder.fromHttpUrl(
-                arcgisUrl
-                    + "/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer/0/query")
-            .queryParam("f", "json")
-            .queryParam("inSR", "4326")
-            .queryParam("outSR", "4326")
-            .queryParam("orderByFields", "SITE_ID")
-            .queryParam("outFields", "*")
-            .queryParam("resultOffset", 0)
-            .queryParam("returnCountOnly", false)
-            .queryParam("returnDistinctValues", false)
-            .queryParam("returnGeometry", true)
-            .queryParam("where", "1=1")
-            .build()
-            .toUriString();
-    /*
-     *  ArcGIS returns a response in text/plain, so we need to deserialize as a string.
-     */
-    String arcgisResponse =
-        restTemplate
-            .exchange(url, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
-            .getBody();
-    ArcGisCemeteries cemeteries =
-        JacksonConfig.createMapper().readValue(arcgisResponse, ArcGisCemeteries.class);
+    List<CdwCemetery> cdwCemeteries =
+        ImmutableList.copyOf(
+            jdbcTemplate.query(
+                "SELECT "
+                    + "SITE_ID,"
+                    + "FULL_NAME,"
+                    + "SITE_TYPE,"
+                    + "SITE_ADDRESS1,"
+                    + "SITE_ADDRESS2,"
+                    + "SITE_CITY,"
+                    + "SITE_STATE,"
+                    + "SITE_ZIP,"
+                    + "MAIL_ADDRESS1,"
+                    + "MAIL_ADDRESS2,"
+                    + "MAIL_CITY,"
+                    + "MAIL_STATE,"
+                    + "MAIL_ZIP,"
+                    + "PHONE,"
+                    + "FAX,"
+                    + "VISITATION_HOURS_WEEKDAY,"
+                    + "VISITATION_HOURS_WEEKEND,"
+                    + "LATITUDE_DD,"
+                    + "LONGITUDE_DD,"
+                    + "Website_URL"
+                    + " FROM App.FacilityLocator_NCA",
+                (rs, rowNum) -> toCdwCemetery(rs)));
     log.info(
-        "Loading cemeteries took {} millis for {} features",
+        "Loading cemeteries took {} millis for {} entries",
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
-        cemeteries.features().size());
-    checkState(!cemeteries.features().isEmpty(), "No ArcGIS cemeteries");
-    return cemeteries;
+        cdwCemeteries.size());
+    checkState(!cdwCemeteries.isEmpty(), "No App.FacilityLocator_NCA entries");
+    return cdwCemeteries;
   }
 }

@@ -142,6 +142,39 @@ public final class Populaterator {
     }
   }
 
+  @SneakyThrows
+  private void nca(Connection connection) {
+    log("Populating National Cemeteries");
+    try (InputStreamReader reader =
+        new FileReader(
+            new File(baseDir() + "/src/test/resources/nca.csv"), StandardCharsets.UTF_8)) {
+      CSVParser parser = CSVFormat.DEFAULT.withHeader().withSkipHeaderRecord().parse(reader);
+      List<String> headers = parser.getHeaderNames();
+      connection
+          .prepareStatement(
+              "CREATE TABLE App.FacilityLocator_NCA ("
+                  + headers.stream().map(h -> h + " VARCHAR(MAX)").collect(joining(","))
+                  + ")")
+          .execute();
+      for (CSVRecord row : parser) {
+        try (PreparedStatement statement =
+            connection.prepareStatement(
+                String.format(
+                    "INSERT INTO App.FacilityLocator_NCA (%s) VALUES (%s)",
+                    Joiner.on(",").join(headers),
+                    headers.stream().map(h -> "?").collect(joining(","))))) {
+          int paramIndex = 1;
+          for (Object val : row) {
+            statement.setObject(
+                paramIndex, String.valueOf(val).equalsIgnoreCase("null") ? null : val);
+            paramIndex++;
+          }
+          statement.execute();
+        }
+      }
+    }
+  }
+
   /** Populate the database. */
   @SneakyThrows
   void populate() {
@@ -151,6 +184,7 @@ public final class Populaterator {
     var connection = db.connection();
     createAppSchema(connection);
     mentalHealthContacts(connection);
+    nca(connection);
     stopCodes(connection);
     vast(connection);
     vba(connection);

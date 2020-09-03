@@ -12,47 +12,46 @@ import lombok.NonNull;
 
 @Builder
 final class CemeteriesTransformer {
-  @NonNull ArcGisCemeteries.Feature arcgisFacility;
-
+  @NonNull CdwCemetery cdwFacility;
   String csvWebsite;
 
-  private Facility.FacilityAttributes attributes(ArcGisCemeteries.Attributes attributes) {
+  private Facility.FacilityAttributes attributes() {
     return Facility.FacilityAttributes.builder()
-        .name(attributes.fullName())
+        .name(cdwFacility.fullName())
         .facilityType(Facility.FacilityType.va_cemetery)
-        .classification(attributes.siteType())
-        .latitude(arcgisFacility.geometry().latitude())
-        .longitude(arcgisFacility.geometry().longitude())
-        .website(website(arcgisFacility.attributes().websiteUrl()))
+        .classification(cdwFacility.siteType())
+        .latitude(cdwFacility.latitude())
+        .longitude(cdwFacility.longitude())
+        .website(website(cdwFacility.websiteUrl()))
         .address(
             Facility.Addresses.builder()
                 .physical(
                     Facility.Address.builder()
-                        .address1(checkAngleBracketNull(attributes.siteAddress1()))
-                        .address2(checkAngleBracketNull(attributes.siteAddress2()))
-                        .city(attributes.siteCity())
-                        .state(upperCase(attributes.siteState(), Locale.US))
-                        .zip(attributes.siteZip())
+                        .address1(checkAngleBracketNull(cdwFacility.siteAddress1()))
+                        .address2(checkAngleBracketNull(cdwFacility.siteAddress2()))
+                        .city(cdwFacility.siteCity())
+                        .state(upperCase(cdwFacility.siteState(), Locale.US))
+                        .zip(cdwFacility.siteZip())
                         .build())
                 .mailing(
                     Facility.Address.builder()
-                        .address1(checkAngleBracketNull(attributes.mailAddress1()))
-                        .address2(checkAngleBracketNull(attributes.mailAddress2()))
-                        .city(attributes.mailCity())
-                        .state(upperCase(attributes.mailState(), Locale.US))
-                        .zip(attributes.mailZip())
+                        .address1(checkAngleBracketNull(cdwFacility.mailAddress1()))
+                        .address2(checkAngleBracketNull(cdwFacility.mailAddress2()))
+                        .city(cdwFacility.mailCity())
+                        .state(upperCase(cdwFacility.mailState(), Locale.US))
+                        .zip(cdwFacility.mailZip())
                         .build())
                 .build())
-        .phone(phone(attributes.phone(), attributes.fax()))
+        .phone(phone(cdwFacility.phone(), cdwFacility.fax()))
         .hours(
             Facility.Hours.builder()
-                .monday(attributes.visitationHoursWeekday())
-                .tuesday(attributes.visitationHoursWeekday())
-                .wednesday(attributes.visitationHoursWeekday())
-                .thursday(attributes.visitationHoursWeekday())
-                .friday(attributes.visitationHoursWeekday())
-                .saturday(attributes.visitationHoursWeekend())
-                .sunday(attributes.visitationHoursWeekend())
+                .monday(cdwFacility.visitationHoursWeekday())
+                .tuesday(cdwFacility.visitationHoursWeekday())
+                .wednesday(cdwFacility.visitationHoursWeekday())
+                .thursday(cdwFacility.visitationHoursWeekday())
+                .friday(cdwFacility.visitationHoursWeekday())
+                .saturday(cdwFacility.visitationHoursWeekend())
+                .sunday(cdwFacility.visitationHoursWeekend())
                 .build())
         .build();
   }
@@ -71,16 +70,14 @@ final class CemeteriesTransformer {
 
   Facility toFacility() {
     return Facility.builder()
-        .id("nca_" + arcgisFacility.attributes().siteId())
+        .id("nca_" + cdwFacility.siteId())
         .type(Facility.Type.va_facilities)
-        .attributes(attributes(arcgisFacility.attributes()))
+        .attributes(attributes())
         .build();
   }
 
-  String website(String arcgisWebsite) {
-    /* ArcGIS returns a string NULL... We don't want to return that.*/
-    return arcgisWebsite == null || arcgisWebsite.equalsIgnoreCase("NULL")
-        ? csvWebsite
-        : arcgisWebsite;
+  String website(String website) {
+    /* CDW returns a string NULL... We don't want to return that.*/
+    return website == null || website.equalsIgnoreCase("NULL") ? csvWebsite : website;
   }
 }
