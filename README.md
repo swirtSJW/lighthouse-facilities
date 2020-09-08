@@ -29,14 +29,10 @@ OpenAPI documentation on the
   Drive time band data is refreshed on an as-needed basis.
 * `facilities-timer` is a AWS Lambda Cron pod that fires nightly to trigger the facilities
   collection/data reload process.
-* `Access to Care` provides 
+* `Access to Care` provides
   [wait times](https://www.accesstocare.va.gov/atcapis/v1.1/patientwaittimes) and
   [satisfaction scores](https://www.accesstopwt.va.gov/Shep/getRawData?location=*)
-  for various services offered by VA health facilities. 
-  This data is aggregated during facilities collection.
-* `ArcGIS` provides basic information for VA
-  [cemeteries](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer) and
-  [benefits centers](https://services3.arcgis.com/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VBA_Facilities/FeatureServer).
+  for various services offered by VA health facilities.
   This data is aggregated during facilities collection.
 * `Cemetery XML` is an externally-maintained
   [XML document](https://www.cem.va.gov/cems/cems.xml)
@@ -46,10 +42,10 @@ OpenAPI documentation on the
   [CSV document](facilities/src/main/resources/websites.csv)
   of facility website URLS, maintained in this repository.
   This data is aggregated during facilities collection to augment the _live_ sources.
-* `Corporate Data Warehouse` undergoes a nightly ETL process to transfer
-  health facilities, veteran centers, stop codes, and mental health contact information
-  from the _A01_ server to the _SQL52_ server, where it is consumed
-  during facilities collection.
+* `Corporate Data Warehouse` undergoes a nightly ETL process to transfer various data resources to the _SQL52_ server, where it is consumed during facilities collection. Namely:
+    - Mental Health, Clinical Services, and Stop Codes from the _A01_ server.
+    - National Cemeteries and Benefit Centers from the _NCA VBA SQL40 GIS_ server.
+    - Health facilities and Veteran centers from the _A06_ server.
 * `PSSG Drive Band` documents are periodically uploaded to the `facilities`
   application through management APIs.
 

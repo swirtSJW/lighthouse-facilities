@@ -10,9 +10,12 @@ F -- CDW
 F .. CXML
 F .. WCSV
 F -(0- ATC
-F -(0- ARCGIS
-ETL -up-> CDW
-ETL <-down- CDW
+ETL1 -up-> CDW
+ETL1 <-down- CDW
+ETL2 -up-> CDW
+ETL2 <-down- CDW
+ETL3 -up-> CDW
+ETL3 <-down- CDW
 
 CMS -(0- F : /v0/facilities/{id}/cms-overlay\n/facilities/all
 CMS -[hidden]up- F

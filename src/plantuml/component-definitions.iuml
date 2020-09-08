@@ -30,10 +30,11 @@ database "Corporate Data Warehouse" as CDW <<dependency>>
 
 rectangle "Access to Care (VHA)" as ATC <<dependency>>
 rectangle "Content Management System" as CMS <<partner>>
-rectangle "ArcGIS (VBA and NCA)" as ARCGIS <<dependency>>
 rectangle "Non-National\nCemeteries XML" as CXML <<document>>
 rectangle "Website CSV" as WCSV <<document>>
 rectangle "PSSG Drive Band" as BANDS <<document>>
-rectangle "ETL from A01 to SQL52" as ETL <<sql package>>
+rectangle "ETL from A01 to SQL52" as ETL1 <<sql package>>
+rectangle "ETL from SQL40 GIS Server to SQL52" as ETL2 <<sql package>>
+rectangle "ETL from A06 Raw Service to SQL52" as ETL3 <<sql package>>
 
 @enduml

@@ -7,14 +7,17 @@ ADMIN <-- F <<internal>> : Internal data\nrepresentation\nand metrics
 TIMER --> F <<internal>> : Reload request
 F <--> DB : Facilities\nOperating status\nDrive-time bands
 F <- BANDS : Drive-time bands
-F <-- CDW : Health facilities\nVeteran centers\nMental health contact\nStop codes
+F <-- CDW : Health facilities\nVeteran centers\nMental health contact\nStop codes\nNational Cemeteries\nBenefit Centers
 F <-- CXML : Non-National\ncemeteries
 F -- WCSV : Facility website URLs
 F <-- ATC : Wait times and\nsatisfaction scores
-F <-- ARCGIS : National cemeteries\nand benefit centers
 
-ETL -up-> CDW
-ETL <-- CDW : Health facilities\nVeteran centers\nMental health contact\nStop codes
+ETL1 -up-> CDW
+ETL1 <-- CDW : Mental health contact\nStop codes
+ETL2 -up-> CDW
+ETL2 <-- CDW : National Cemeteries\nBenefit Centers
+ETL3 -up-> CDW
+ETL3 <-- CDW : Health facilities\nVeteran centers
 
 CMS -up-> F : Operating status
 CMS <-- F : Facility IDs
