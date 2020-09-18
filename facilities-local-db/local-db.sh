@@ -26,4 +26,4 @@ docker run \
 #
 sleep 5
 
-mvn clean install -Ppopulaterator -P'!standard'
+mvn clean install -Ppopulaterator -P'!standard' -Dexec.cleanupDaemonThreads=false
