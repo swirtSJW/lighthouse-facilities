@@ -27,8 +27,8 @@ public class StateCemeteriesCollectorTest {
   void collect() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
 
-    ResponseEntity<String> arcGisResponse = mock(ResponseEntity.class);
-    when(arcGisResponse.getBody())
+    ResponseEntity<String> response = mock(ResponseEntity.class);
+    when(response.getBody())
         .thenReturn(
             new XmlMapper()
                 .writeValueAsString(
@@ -55,7 +55,7 @@ public class StateCemeteriesCollectorTest {
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
-        .thenReturn(arcGisResponse);
+        .thenReturn(response);
 
     assertThat(
             StateCemeteriesCollector.builder()

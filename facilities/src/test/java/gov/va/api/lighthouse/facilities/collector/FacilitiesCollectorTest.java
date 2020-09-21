@@ -2,7 +2,6 @@ package gov.va.api.lighthouse.facilities.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
@@ -14,7 +13,6 @@ import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.http.HttpEntity;
@@ -188,27 +186,6 @@ public class FacilitiesCollectorTest {
     _saveMentalHealthContact("666", "867-5309", 5555D);
     _saveStopCode("666", "123", "", "10");
     _saveVast("456");
-
-    RestTemplate restTemplate = mock(RestTemplate.class);
-    when(restTemplate.exchange(
-            contains("NCA_Facilities"),
-            eq(HttpMethod.GET),
-            Mockito.any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(
-            ResponseEntity.of(
-                Optional.of(
-                    JacksonConfig.createMapper()
-                        .writeValueAsString(
-                            ArcGisCemeteries.builder()
-                                .features(
-                                    List.of(
-                                        ArcGisCemeteries.Feature.builder()
-                                            .attributes(
-                                                ArcGisCemeteries.Attributes.builder().build())
-                                            .geometry(ArcGisCemeteries.Geometry.builder().build())
-                                            .build()))
-                                .build()))));
 
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     InsecureRestTemplateProvider insecureRestTemplateProvider =

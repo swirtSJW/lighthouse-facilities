@@ -50,10 +50,8 @@ public class HealthControllerTest {
         ((List<Health>) overallStatus.getDetails().get("downstreamServices"))
             .stream()
                 .collect(Collectors.toMap(h -> h.getStatus().getDescription(), Health::getStatus));
-    // System.out.println(serviceStatus);
     assertThat(serviceStatus.get("Access to Care").getCode()).isEqualTo(expected.accessToCare());
     assertThat(serviceStatus.get("Access to PWT").getCode()).isEqualTo(expected.accessToPwt());
-    assertThat(serviceStatus.get("Public ArcGIS").getCode()).isEqualTo(expected.publicArcGis());
     assertThat(serviceStatus.get("State Cemeteries").getCode())
         .isEqualTo(expected.stateCemeteries());
   }
@@ -71,8 +69,6 @@ public class HealthControllerTest {
         repository,
         insecureRestTemplateProvider,
         jdbcTemplate,
-        restTemplate,
-        "http://arcgis",
         "http://atc",
         "http://atp",
         "http://statecems");
@@ -119,12 +115,6 @@ public class HealthControllerTest {
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(ok());
     when(restTemplate.exchange(
-            startsWith("http://arcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(ok());
-    when(restTemplate.exchange(
             startsWith("http://statecems"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
@@ -139,7 +129,6 @@ public class HealthControllerTest {
         ExpectedStatus.builder()
             .accessToCare("UP")
             .accessToPwt("UP")
-            .publicArcGis("UP")
             .stateCemeteries("UP")
             .lastUpdated("UP")
             .build());
@@ -163,12 +152,6 @@ public class HealthControllerTest {
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(notOk());
     when(restTemplate.exchange(
-            startsWith("http://arcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(ok());
-    when(restTemplate.exchange(
             startsWith("http://statecems"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
@@ -183,7 +166,6 @@ public class HealthControllerTest {
         ExpectedStatus.builder()
             .accessToCare("DOWN")
             .accessToPwt("DOWN")
-            .publicArcGis("UP")
             .stateCemeteries("UP")
             .lastUpdated("DOWN")
             .build());
@@ -197,7 +179,6 @@ public class HealthControllerTest {
         ExpectedStatus.builder()
             .accessToCare("DOWN")
             .accessToPwt("DOWN")
-            .publicArcGis("UP")
             .stateCemeteries("UP")
             .build());
   }
@@ -214,12 +195,6 @@ public class HealthControllerTest {
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenThrow(new ResourceAccessException("I/O error on GET request"));
     when(restTemplate.exchange(
-            startsWith("http://arcgis"),
-            eq(HttpMethod.GET),
-            any(HttpEntity.class),
-            eq(String.class)))
-        .thenReturn(ok());
-    when(restTemplate.exchange(
             startsWith("http://statecems"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
@@ -234,7 +209,6 @@ public class HealthControllerTest {
         ExpectedStatus.builder()
             .accessToCare("DOWN")
             .accessToPwt("DOWN")
-            .publicArcGis("UP")
             .stateCemeteries("UP")
             .lastUpdated("DOWN")
             .build());
@@ -246,8 +220,6 @@ public class HealthControllerTest {
     String accessToCare;
 
     String accessToPwt;
-
-    String publicArcGis;
 
     String stateCemeteries;
 

@@ -45,10 +45,6 @@ public class HealthController {
 
   private final JdbcTemplate jdbcTemplate;
 
-  private final RestTemplate restTemplate;
-
-  private final String arcGisBaseUrl;
-
   private final String atcBaseUrl;
 
   private final String atpBaseUrl;
@@ -63,16 +59,12 @@ public class HealthController {
       @Autowired FacilityRepository repository,
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
-      @Autowired RestTemplate restTemplate,
-      @Value("${arc-gis.url}") String arcGisBaseUrl,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
     this.repository = repository;
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
-    this.restTemplate = restTemplate;
-    this.arcGisBaseUrl = withTrailingSlash(arcGisBaseUrl);
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
@@ -196,15 +188,6 @@ public class HealthController {
             UriComponentsBuilder.fromHttpUrl(atpBaseUrl + "Shep/getRawData")
                 .queryParam("location", "FL")
                 .build()
-                .toUriString()));
-    healths.add(
-        testHealth(
-            now,
-            restTemplate,
-            "Public ArcGIS",
-            UriComponentsBuilder.fromHttpUrl(
-                    arcGisBaseUrl + "aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck")
-                .queryParam("f", "json")
                 .toUriString()));
     healths.add(
         testHealth(

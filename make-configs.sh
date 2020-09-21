@@ -37,7 +37,6 @@ checkForUnsetValues() {
 makeConfig facilities $PROFILE
 configValue facilities $PROFILE access-to-care.url 'http://localhost:8666'
 configValue facilities $PROFILE access-to-pwt.url 'http://localhost:8666'
-configValue facilities $PROFILE arc-gis.url 'http://localhost:8666'
 configValue facilities $PROFILE bing.key 'unused'
 configValue facilities $PROFILE bing.url 'http://localhost:8666'
 configValue facilities $PROFILE facilities.base-path '/'

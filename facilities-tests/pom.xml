@@ -121,7 +121,6 @@
                 <argument>-Dloader=gov.va.api.lighthouse.facilities.Application</argument>
                 <argument>-Daccess-to-care.url=http://localhost:8666</argument>
                 <argument>-Daccess-to-pwt.url=http://localhost:8666</argument>
-                <argument>-Darc-gis.url=http://localhost:8666</argument>
                 <argument>-Dbing.url=http://localhost:8666</argument>
                 <argument>-Dinternal.client-key=axolotl</argument>
                 <argument>-Dstate-cemeteries.url=http://localhost:8666</argument>

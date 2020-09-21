@@ -40,9 +40,6 @@ public class MockServices {
   @Value("${mock.atp-status-code:200}")
   int atpStatusCode;
 
-  @Value("${mock.arcgis-status-code:200}")
-  int arcgisStatusCode;
-
   @Value("${mock.cems-status-code:200}")
   int cemsStatusCode;
 
@@ -73,44 +70,6 @@ public class MockServices {
                 .withStatusCode(atcStatusCode)
                 .withHeader(contentApplicationJson())
                 .withBody(contentOf("/access-to-care-wait-times.json")));
-  }
-
-  private void addArcGisBenefitsFacilities(MockServerClient mock) {
-    mock.when(
-            addQuery(
-                "/aqgBd3l68G8hEFFE/ArcGIS/rest/services/VBA_Facilities/FeatureServer/0/query"
-                    + "?f=json&inSR=4326&outSR=4326&orderByFields=Facility_Number"
-                    + "&outFields=*&resultOffset=0&returnCountOnly=false"
-                    + "&returnDistinctValues=false&returnGeometry=true&where=1=1"))
-        .respond(
-            response()
-                .withStatusCode(arcgisStatusCode)
-                .withHeader(contentTextPlain())
-                .withBody(contentOf("/arcgis-benefits-facilities.json")));
-  }
-
-  private void addArcGisCemeteries(MockServerClient mock) {
-    mock.when(
-            addQuery(
-                "/aqgBd3l68G8hEFFE/ArcGIS/rest/services/NCA_Facilities/FeatureServer/0/query"
-                    + "?f=json&inSR=4326&orderByFields=SITE_ID&outFields=*&outSR=4326"
-                    + "&resultOffset=0&returnCountOnly=false&returnDistinctValues=false"
-                    + "&returnGeometry=true&where=1=1"))
-        .respond(
-            response()
-                .withStatusCode(arcgisStatusCode)
-                .withHeader(contentTextPlain())
-                .withBody(contentOf("/arcgis-cemeteries.json")));
-  }
-
-  private void addArcGisHealthCheck(MockServerClient mock) {
-    mock.when(addQuery("/aqgBd3l68G8hEFFE/ArcGIS/rest/info/healthCheck?f=json"))
-        .respond(
-            response()
-                .withStatusCode(arcgisStatusCode)
-                .withHeader(contentTextPlain())
-                .withBody(
-                    "{\"currentVersion\":10.7,\"fullVersion\":\"10.7\",\"owningSystemUrl\":\"https://www.arcgis.com\",\"owningTenant\":\"aqgBd3l68G8hEFFE\",\"authInfo\":{\"isTokenBasedSecurity\":true,\"tokenServicesUrl\":\"https://www.arcgis.com/sharing/generateToken\"}}"));
   }
 
   private void addBing(MockServerClient mock) {
@@ -213,9 +172,6 @@ public class MockServices {
     addAccessToCareWaitTimes(mock);
     addAccessToCareSatisfactionScores(mock);
     addStateCemeteries(mock);
-    addArcGisBenefitsFacilities(mock);
-    addArcGisCemeteries(mock);
-    addArcGisHealthCheck(mock);
     addPssgDriveTimeBands(mock);
     addBing(mock);
     addHelp(mock);
