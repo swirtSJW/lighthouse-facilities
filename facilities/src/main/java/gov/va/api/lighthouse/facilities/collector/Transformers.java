@@ -15,8 +15,10 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
 @UtilityClass
-final class Transformers {
-  static boolean allBlank(Object... values) {
+public final class Transformers {
+
+  /** Check if all values are blank. */
+  public static boolean allBlank(Object... values) {
     for (Object v : values) {
       if (!isBlank(v)) {
         return false;
@@ -49,7 +51,8 @@ final class Transformers {
     return trim;
   }
 
-  static boolean isBlank(Object value) {
+  /** Check if an object is blank. */
+  public static boolean isBlank(Object value) {
     if (value instanceof CharSequence) {
       return StringUtils.isBlank((CharSequence) value);
     }

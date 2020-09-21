@@ -3,9 +3,10 @@ package gov.va.api.lighthouse.facilities;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
+import static gov.va.api.lighthouse.facilities.collector.Transformers.isBlank;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,26 @@ public class InternalFacilitiesController {
 
   private final FacilityGraveyardRepository graveyardRepository;
 
+  private static Optional<Facility.Address> addressMailing(Facility facility) {
+    return addresses(facility).map(a -> a.mailing());
+  }
+
+  private static Optional<Facility.Address> addressPhysical(Facility facility) {
+    return addresses(facility).map(a -> a.physical());
+  }
+
+  private static Optional<Facility.Addresses> addresses(Facility facility) {
+    return attributes(facility).map(a -> a.address());
+  }
+
+  private static Optional<Facility.FacilityAttributes> attributes(Facility facility) {
+    return Optional.ofNullable(facility.attributes());
+  }
+
+  private static boolean isHoursNull(Facility facility) {
+    return facility.attributes().hours() == null;
+  }
+
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
   static FacilityEntity populate(FacilityEntity record, Facility facility) {
@@ -90,6 +111,10 @@ public class InternalFacilitiesController {
     return allServices;
   }
 
+  private static Optional<Facility.Services> services(Facility facility) {
+    return attributes(facility).map(a -> a.services());
+  }
+
   /** Determine the state if available in a physical address, otherwise return null. */
   static String stateOf(Facility facility) {
     if (facility.attributes().address() != null
@@ -104,10 +129,14 @@ public class InternalFacilitiesController {
   static String zipOf(Facility facility) {
     if (facility.attributes().address() != null
         && facility.attributes().address().physical() != null
-        && isNotBlank(facility.attributes().address().physical().zip())
-        && facility.attributes().address().physical().zip().length() >= 5) {
+        && isNotBlank(facility.attributes().address().physical().zip())) {
       /* We only store the destination portion of the zip code, we do not store the route. */
-      return facility.attributes().address().physical().zip().substring(0, 5);
+      return facility
+          .attributes()
+          .address()
+          .physical()
+          .zip()
+          .substring(0, Math.min(5, facility.attributes().address().physical().zip().length()));
     }
     return null;
   }
@@ -131,13 +160,11 @@ public class InternalFacilitiesController {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-
     if (entity.get().cmsOverlay() != null) {
       log.info("Failed to delete facility {}. cmsOverlay is not null.", sanitize(id));
       return ResponseEntity.status(409)
           .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
     }
-
     log.info("Deleting facility {}", sanitize(id));
     facilityRepository.delete(entity.get());
     return ResponseEntity.ok().build();
@@ -296,17 +323,101 @@ public class InternalFacilitiesController {
     populate(record, facility);
     record.missingTimestamp(null);
     record.lastUpdated(response.timing().completeCollection());
-
     /*
      * Determine if there is something wrong with the record, but it is still usable.
      */
     if (isBlank(record.zip())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing zip"));
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing physical address zip"));
     }
     if (isBlank(record.state())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing state"));
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing physical address state"));
     }
-
+    if (isBlank(addressPhysical(facility).map(a -> a.city()))) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing physical address city"));
+    }
+    if (allBlank(
+        addressPhysical(facility).map(a -> a.address1()),
+        addressPhysical(facility).map(a -> a.address2()),
+        addressPhysical(facility).map(a -> a.address3()))) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing all physical address streets"));
+    }
+    // Mailing addresses only exist for cemeteries
+    if (facility.attributes().facilityType() == Facility.FacilityType.va_cemetery) {
+      if (isBlank(addressMailing(facility).map(a -> a.zip()))) {
+        response
+            .problems()
+            .add(ReloadResponse.Problem.of(facility.id(), "Missing mailing address zip"));
+      }
+      if (isBlank(addressMailing(facility).map(a -> a.state()))) {
+        response
+            .problems()
+            .add(ReloadResponse.Problem.of(facility.id(), "Missing mailing address state"));
+      }
+      if (isBlank(addressMailing(facility).map(a -> a.city()))) {
+        response
+            .problems()
+            .add(ReloadResponse.Problem.of(facility.id(), "Missing mailing address city"));
+      }
+      if (allBlank(
+          addressMailing(facility).map(a -> a.address1()),
+          addressMailing(facility).map(a -> a.address2()),
+          addressMailing(facility).map(a -> a.address3()))) {
+        response
+            .problems()
+            .add(ReloadResponse.Problem.of(facility.id(), "Missing all mailing address streets"));
+      }
+    }
+    if (facility.attributes().phone() == null || isBlank(facility.attributes().phone().main())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing main phone number"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().monday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Monday hours"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().tuesday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Tuesday hours"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().wednesday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Wednesday hours"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().thursday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Thursday hours"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().friday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Friday hours"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().saturday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Saturday hours"));
+    }
+    if (isHoursNull(facility) || isBlank(facility.attributes().hours().sunday())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Sunday hours"));
+    }
+    // Currently classification is not populated for vet centers
+    if (facility.attributes().facilityType() != Facility.FacilityType.vet_center
+        && isBlank(facility.attributes().classification())) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing classification"));
+    }
+    if (record.latitude() > 90 || record.latitude() < -90) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Invalid latitude"));
+    }
+    if (record.longitude() > 180 || record.longitude() < -180) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Invalid longitude"));
+    }
+    if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility
+            && isBlank(services(facility).map(s -> s.health())))
+        || (facility.attributes().facilityType() == Facility.FacilityType.va_benefits_facility
+            && isBlank(services(facility).map(s -> s.benefits())))) {
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
+    }
     try {
       facilityRepository.save(record);
     } catch (Exception e) {
@@ -329,7 +440,6 @@ public class InternalFacilitiesController {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Cannot parse ID"));
       return;
     }
-
     var existing = facilityRepository.findById(pk);
     if (existing.isPresent()) {
       response.facilitiesUpdated().add(facility.id());
@@ -337,7 +447,6 @@ public class InternalFacilitiesController {
       updateAndSave(response, existing.get(), facility);
       return;
     }
-
     var zombie = graveyardRepository.findById(pk);
     if (zombie.isPresent()) {
       response.facilitiesRevived().add(facility.id());

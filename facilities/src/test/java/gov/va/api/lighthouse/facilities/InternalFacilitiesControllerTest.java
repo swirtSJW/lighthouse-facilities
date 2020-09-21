@@ -63,6 +63,9 @@ public class InternalFacilitiesControllerTest {
                 .latitude(BigDecimal.valueOf(latitude))
                 .longitude(BigDecimal.valueOf(longitude))
                 .services(Services.builder().health(health).build())
+                .facilityType(
+                    Facility.FacilityType
+                        .va_cemetery) // making this a cemetery for coverage purposes
                 .build())
         .build();
   }
@@ -224,8 +227,23 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.problems())
         .isEqualTo(
             List.of(
-                ReloadResponse.Problem.of("vha_f1", "Missing zip"),
-                ReloadResponse.Problem.of("vha_f1", "Missing state")));
+                ReloadResponse.Problem.of("vha_f1", "Missing physical address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing physical address state"),
+                ReloadResponse.Problem.of("vha_f1", "Missing physical address city"),
+                ReloadResponse.Problem.of("vha_f1", "Missing all physical address streets"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address state"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address city"),
+                ReloadResponse.Problem.of("vha_f1", "Missing all mailing address streets"),
+                ReloadResponse.Problem.of("vha_f1", "Missing main phone number"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Monday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Tuesday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Wednesday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Thursday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Friday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Saturday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Sunday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing classification")));
   }
 
   @Test
@@ -435,7 +453,7 @@ public class InternalFacilitiesControllerTest {
     InternalFacilitiesController controller =
         InternalFacilitiesController.builder().facilityRepository(repo).build();
     Facility f1 =
-        _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+        _facility("vha_f1", "CO", "53129", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     ReloadResponse response = ReloadResponse.start();
     assertThrows(
         RuntimeException.class,
@@ -445,7 +463,24 @@ public class InternalFacilitiesControllerTest {
                 FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1")).build(),
                 f1));
     assertThat(response.problems())
-        .isEqualTo(List.of(ReloadResponse.Problem.of("vha_f1", "Failed to save record: oh noez")));
+        .isEqualTo(
+            List.of(
+                ReloadResponse.Problem.of("vha_f1", "Missing physical address city"),
+                ReloadResponse.Problem.of("vha_f1", "Missing all physical address streets"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address state"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address city"),
+                ReloadResponse.Problem.of("vha_f1", "Missing all mailing address streets"),
+                ReloadResponse.Problem.of("vha_f1", "Missing main phone number"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Monday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Tuesday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Wednesday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Thursday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Friday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Saturday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing Sunday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing classification"),
+                ReloadResponse.Problem.of("vha_f1", "Failed to save record: oh noez")));
   }
 
   @Test
