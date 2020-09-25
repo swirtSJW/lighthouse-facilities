@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -48,6 +49,10 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/internal/management", produces = "application/json")
 public class InternalFacilitiesController {
+  private static final String ZIP_REGEX = "^[0-9]{5}(-[0-9]{4})?$";
+
+  private static final Pattern ZIP_PATTERN = Pattern.compile(ZIP_REGEX);
+
   private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
 
   private final FacilitiesCollector collector;
@@ -326,10 +331,10 @@ public class InternalFacilitiesController {
     /*
      * Determine if there is something wrong with the record, but it is still usable.
      */
-    if (isBlank(record.zip())) {
+    if (isBlank(record.zip()) || !ZIP_PATTERN.matcher(record.zip()).matches()) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing physical address zip"));
+          .add(ReloadResponse.Problem.of(facility.id(), "Invalid physical address zip"));
     }
     if (isBlank(record.state())) {
       response
@@ -351,10 +356,11 @@ public class InternalFacilitiesController {
     }
     // Mailing addresses only exist for cemeteries
     if (facility.attributes().facilityType() == Facility.FacilityType.va_cemetery) {
-      if (isBlank(addressMailing(facility).map(a -> a.zip()))) {
+      if (isBlank(addressMailing(facility).map(a -> a.zip()))
+          || !ZIP_PATTERN.matcher(facility.attributes().address().mailing().zip()).matches()) {
         response
             .problems()
-            .add(ReloadResponse.Problem.of(facility.id(), "Missing mailing address zip"));
+            .add(ReloadResponse.Problem.of(facility.id(), "Invalid mailing address zip"));
       }
       if (isBlank(addressMailing(facility).map(a -> a.state()))) {
         response

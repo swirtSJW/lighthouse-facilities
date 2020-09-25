@@ -227,11 +227,11 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.problems())
         .isEqualTo(
             List.of(
-                ReloadResponse.Problem.of("vha_f1", "Missing physical address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Invalid physical address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing physical address state"),
                 ReloadResponse.Problem.of("vha_f1", "Missing physical address city"),
                 ReloadResponse.Problem.of("vha_f1", "Missing all physical address streets"),
-                ReloadResponse.Problem.of("vha_f1", "Missing mailing address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Invalid mailing address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address state"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address city"),
                 ReloadResponse.Problem.of("vha_f1", "Missing all mailing address streets"),
@@ -453,7 +453,8 @@ public class InternalFacilitiesControllerTest {
     InternalFacilitiesController controller =
         InternalFacilitiesController.builder().facilityRepository(repo).build();
     Facility f1 =
-        _facility("vha_f1", "CO", "53129", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+        _facility("vha_f1", "CO", "5319", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    f1.attributes().address().mailing(Address.builder().zip("12345-56").build());
     ReloadResponse response = ReloadResponse.start();
     assertThrows(
         RuntimeException.class,
@@ -465,9 +466,10 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.problems())
         .isEqualTo(
             List.of(
+                ReloadResponse.Problem.of("vha_f1", "Invalid physical address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing physical address city"),
                 ReloadResponse.Problem.of("vha_f1", "Missing all physical address streets"),
-                ReloadResponse.Problem.of("vha_f1", "Missing mailing address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Invalid mailing address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address state"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address city"),
                 ReloadResponse.Problem.of("vha_f1", "Missing all mailing address streets"),
