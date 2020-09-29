@@ -221,6 +221,9 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     f1.attributes().address().physical().state(null);
     f1.attributes().address().physical().zip(null);
+    f1.attributes().website("http://notarealwebsite.com/");
+    f1.attributes().latitude(BigDecimal.valueOf(91.4));
+    f1.attributes().longitude(BigDecimal.valueOf(181.4));
     when(collector.collectFacilities()).thenReturn(List.of(f1));
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
@@ -243,7 +246,10 @@ public class InternalFacilitiesControllerTest {
                 ReloadResponse.Problem.of("vha_f1", "Missing Friday hours"),
                 ReloadResponse.Problem.of("vha_f1", "Missing Saturday hours"),
                 ReloadResponse.Problem.of("vha_f1", "Missing Sunday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing classification")));
+                ReloadResponse.Problem.of("vha_f1", "Missing classification"),
+                ReloadResponse.Problem.of("vha_f1", "Invalid latitude"),
+                ReloadResponse.Problem.of("vha_f1", "Invalid longitude"),
+                ReloadResponse.Problem.of("vha_f1", "Invalid website, status code: 500")));
   }
 
   @Test
