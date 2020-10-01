@@ -17,10 +17,6 @@ import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -429,27 +425,6 @@ public class InternalFacilitiesController {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
 
-    if (!isBlank(facility.attributes().website())) {
-
-      try {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request =
-            HttpRequest.newBuilder().uri(URI.create(facility.attributes().website())).build();
-
-        HttpResponse<String> responseCode =
-            client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (responseCode.statusCode() != 200) {
-          response
-              .problems()
-              .add(
-                  ReloadResponse.Problem.of(
-                      facility.id(), "Invalid website, status code: " + responseCode.statusCode()));
-        }
-      } catch (Throwable e) {
-        response.problems().add(ReloadResponse.Problem.of(facility.id(), "Invalid website"));
-      }
-    }
     try {
       facilityRepository.save(record);
     } catch (Exception e) {
