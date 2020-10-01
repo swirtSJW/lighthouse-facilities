@@ -1,10 +1,12 @@
 package gov.va.api.lighthouse.facilities.tests;
 
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.collect.ImmutableSet;
+import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
@@ -12,9 +14,16 @@ import java.time.Instant;
 import java.util.Set;
 import lombok.Data;
 import lombok.NonNull;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class HealthIT {
+
+  @BeforeAll
+  static void assumeEnvironment() {
+    assumeEnvironmentIn(Environment.LOCAL);
+  }
+
   @Test
   void collectorBackendHealth() {
     String path = "collector/health";
