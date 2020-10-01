@@ -87,9 +87,8 @@ class HealthsCollectorJpaTest {
     _initDatabase();
     _saveMentalHealthContact("666", "867-5309", 5555D);
     _saveStopCode("666", "123", "", "10");
-    _saveStopCode("666", "124", "", "20");
-    _saveStopCode("666", "180", "", "30");
-    _saveStopCode("666", "411", "", "40");
+    _saveStopCode("666", "180", "", "20");
+    _saveStopCode("666", "411", "", "30");
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
             startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))

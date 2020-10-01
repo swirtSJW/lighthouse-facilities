@@ -11,7 +11,7 @@ import lombok.Value;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 final class StopCode {
-  static final Set<String> NUTRITION = Set.of("123", "124");
+  static final Set<String> NUTRITION = Set.of("123");
 
   static final Set<String> PODIATRY = Set.of("411");
 
