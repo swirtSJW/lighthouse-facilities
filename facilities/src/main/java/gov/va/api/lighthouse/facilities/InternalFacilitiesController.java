@@ -91,6 +91,7 @@ public class InternalFacilitiesController {
     record.zip(zipOf(facility));
     record.servicesFromServiceTypes(serviceTypesOf(facility));
     record.facility(MAPPER.writeValueAsString(facility));
+    record.visn(facility.attributes().visn());
     return record;
   }
 

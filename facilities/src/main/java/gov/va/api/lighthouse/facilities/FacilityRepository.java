@@ -37,6 +37,8 @@ public interface FacilityRepository
 
   List<FacilityEntity> findByIdIn(Collection<FacilityEntity.Pk> ids);
 
+  List<FacilityEntity> findByVisn(String visn);
+
   @Query("select max(e.lastUpdated) from #{#entityName} e")
   Instant findLastUpdated();
 

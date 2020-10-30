@@ -299,3 +299,17 @@ databaseChangeLog:
                   name: station_number
               - column:
                   name: type
+
+  - changeSet:
+      id: 9
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: visn
+                type: varchar(8)
+                constraints:
+                  nullable: true

@@ -289,7 +289,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
-      params = {"bbox[]", "!lat", "!long", "!state", "!zip"})
+      params = {"bbox[]", "!lat", "!long", "!state", "!visn", "!zip"})
   GeoFacilitiesResponse geoFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
@@ -309,7 +309,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
-      params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!zip"})
+      params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!visn", "!zip"})
   GeoFacilitiesResponse geoFacilitiesByIds(
       @RequestParam(value = "ids") String ids,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
@@ -327,7 +327,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
-      params = {"!bbox[]", "lat", "long", "!state", "!zip"})
+      params = {"!bbox[]", "lat", "long", "!state", "!visn", "!zip"})
   GeoFacilitiesResponse geoFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "long") BigDecimal longitude,
@@ -350,7 +350,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
-      params = {"!bbox[]", "!lat", "!long", "state", "!zip"})
+      params = {"!bbox[]", "!lat", "!long", "state", "!visn", "!zip"})
   GeoFacilitiesResponse geoFacilitiesByState(
       @RequestParam(value = "state") String state,
       @RequestParam(value = "type", required = false) String type,
@@ -368,11 +368,29 @@ public class FacilitiesController {
         .build();
   }
 
+  /** Get facilities by VISN. */
+  @GetMapping(
+      value = "/facilities",
+      produces = {"application/geo+json", "application/vnd.geo+json"},
+      params = {"!bbox[]", "!lat", "!long", "!state", "!type", "visn", "!zip"})
+  GeoFacilitiesResponse geoFacilitiesByVisn(
+      @RequestParam(value = "visn") String visn,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    return GeoFacilitiesResponse.builder()
+        .type(GeoFacilitiesResponse.Type.FeatureCollection)
+        .features(
+            page(facilityRepository.findByVisn(visn), page, perPage).stream()
+                .map(e -> geoFacility(facility(e)))
+                .collect(toList()))
+        .build();
+  }
+
   /** Get facilities by zip. */
   @GetMapping(
       value = "/facilities",
       produces = {"application/geo+json", "application/vnd.geo+json"},
-      params = {"!bbox[]", "!lat", "!long", "!state", "zip"})
+      params = {"!bbox[]", "!lat", "!long", "!state", "!visn", "zip"})
   GeoFacilitiesResponse geoFacilitiesByZip(
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,
@@ -394,7 +412,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = "application/json",
-      params = {"bbox[]", "!lat", "!long", "!state", "!zip"})
+      params = {"bbox[]", "!lat", "!long", "!state", "!visn", "!zip"})
   FacilitiesResponse jsonFacilitiesByBoundingBox(
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
@@ -427,7 +445,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = "application/json",
-      params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!zip"})
+      params = {"!bbox[]", "ids", "!lat", "!long", "!state", "!visn", "!zip"})
   FacilitiesResponse jsonFacilitiesByIds(
       @RequestParam(value = "ids") String ids,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
@@ -456,7 +474,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = "application/json",
-      params = {"!bbox[]", "lat", "long", "!state", "!zip"})
+      params = {"!bbox[]", "lat", "long", "!state", "!visn", "!zip"})
   FacilitiesResponse jsonFacilitiesByLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "long") BigDecimal longitude,
@@ -505,7 +523,7 @@ public class FacilitiesController {
   @GetMapping(
       value = "/facilities",
       produces = "application/json",
-      params = {"!bbox[]", "!lat", "!long", "state", "!zip"})
+      params = {"!bbox[]", "!lat", "!long", "state", "!visn", "!zip"})
   FacilitiesResponse jsonFacilitiesByState(
       @RequestParam(value = "state") String state,
       @RequestParam(value = "type", required = false) String type,
@@ -538,11 +556,40 @@ public class FacilitiesController {
         .build();
   }
 
+  /** Get facilities by VISN. */
+  @GetMapping(
+      value = "/facilities",
+      produces = "application/json",
+      params = {"!bbox[]", "!lat", "!long", "!state", "!type", "visn", "!zip"})
+  FacilitiesResponse jsonFacilitiesByVisn(
+      @RequestParam(value = "visn") String visn,
+      @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
+      @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
+    List<FacilityEntity> entities = facilityRepository.findByVisn(visn);
+    PageLinker linker =
+        PageLinker.builder()
+            .url(linkerUrl + "facilities")
+            .params(
+                Parameters.builder()
+                    .add("visn", visn)
+                    .add("page", page)
+                    .add("per_page", perPage)
+                    .build())
+            .totalEntries(entities.size())
+            .build();
+    return FacilitiesResponse.builder()
+        .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .links(linker.links())
+        .meta(
+            FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
+        .build();
+  }
+
   /** Get facilities by zip. */
   @GetMapping(
       value = "/facilities",
       produces = "application/json",
-      params = {"!bbox[]", "!lat", "!long", "!state", "zip"})
+      params = {"!bbox[]", "!lat", "!long", "!state", "!visn", "zip"})
   FacilitiesResponse jsonFacilitiesByZip(
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,

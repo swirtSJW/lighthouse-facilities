@@ -23,6 +23,7 @@ class SystemDefinitions {
         .city("Melbourne")
         .streetAddress("505 N John Rodes Blvd")
         .type("health")
+        .visn("8")
         .build();
   }
 
@@ -130,6 +131,8 @@ class SystemDefinitions {
     @NonNull String streetAddress;
 
     @NonNull String type;
+
+    @NonNull String visn;
   }
 
   @Value

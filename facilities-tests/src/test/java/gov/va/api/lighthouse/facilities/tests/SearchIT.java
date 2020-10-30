@@ -229,6 +229,18 @@ public class SearchIT {
   }
 
   @Test
+  void searchByVisn() {
+    final String visn = systemDefinition().ids().visn();
+    final String request = "v0/facilities?visn=" + visn;
+    facilitiesRequest("application/vnd.geo+json", request, 200)
+        .expectValid(GeoFacilitiesResponse.class);
+    facilitiesRequest("application/geo+json", request, 200)
+        .expectValid(GeoFacilitiesResponse.class);
+    facilitiesRequest("application/json", request, 200).expectValid(FacilitiesResponse.class);
+    facilitiesRequest(null, request, 200).expectValid(FacilitiesResponse.class);
+  }
+
+  @Test
   void searchByZip() {
     final String zip = systemDefinition().ids().zip();
     final String request = "v0/facilities?zip=" + zip;

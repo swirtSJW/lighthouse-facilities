@@ -40,7 +40,7 @@ import org.springframework.data.domain.Sort;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class FacilityEntity implements HasFacilityPayload {
   /**
-   * API V0 searches by {type}_{faciliityId}. We might want to change that in the future, so we are
+   * API V0 searches by {type}_{facilityId}. We might want to change that in the future, so we are
    * keeping those two pieces of information separate. However, the two (type + facility) are
    * unique, since it is possible for a facility to have multiple types, e.g. benefits and health.
    */
@@ -83,6 +83,9 @@ public class FacilityEntity implements HasFacilityPayload {
   @Column(name = "last_updated")
   private Instant lastUpdated;
 
+  @Column(name = "VISN")
+  private String visn;
+
   /** Builder alternative that allows enums to be specified instead of strings. */
   @Builder(
       builderMethodName = "typeSafeBuilder",
@@ -98,7 +101,8 @@ public class FacilityEntity implements HasFacilityPayload {
       Integer version,
       Set<Facility.ServiceType> servicesTypes,
       Long missingTimestamp,
-      Instant lastUpdated) {
+      Instant lastUpdated,
+      String visn) {
     this(
         id,
         zip,
@@ -110,7 +114,8 @@ public class FacilityEntity implements HasFacilityPayload {
         cmsOverlay,
         version,
         missingTimestamp,
-        lastUpdated);
+        lastUpdated,
+        visn);
   }
 
   static Sort naturalOrder() {
