@@ -23,7 +23,7 @@ public interface FacilitiesSearchApi {
   @Operation(
       summary = "Query facilities by location or IDs, with optional filters",
       description =
-          "Query facilities by bounding box, latitude and longitude, state, or zip code. "
+          "Query facilities by bounding box, latitude and longitude, state, visn, or zip code. "
               + "Bounding box is specified as four `bbox[]` parameters, long1, lat1, long2, lat2. "
               + "(Relative order is unimportant.)"
               + "\n\n"
@@ -57,6 +57,8 @@ public interface FacilitiesSearchApi {
               + "of any combination of `ids`, `type`, or `services[]`"
               + "\n\n"
               + "- `state`, with the option of any combination of `type` or `services[]`"
+              + "\n\n"
+              + "- `visn`"
               + "\n\n"
               + "- `zip`, with the option of any combination of `type` or `services[]`"
               + "\n\n"
@@ -125,7 +127,7 @@ public interface FacilitiesSearchApi {
               name = "state",
               in = ParameterIn.QUERY,
               description =
-                  "State to search for Facilities. "
+                  "State in which to search for facilities. "
                       + "Except in rare cases, this is two characters.",
               schema = @Schema(format = "XX"))
           String state,
@@ -162,6 +164,12 @@ public interface FacilitiesSearchApi {
                       maxItems = 4,
                       schema = @Schema(type = "number", format = "float")))
           List<BigDecimal> bbox,
+      @Parameter(
+              name = "visn",
+              in = ParameterIn.QUERY,
+              description = "VISN search of matching facilities.",
+              schema = @Schema(type = "number"))
+          String visn,
       @Parameter(
               name = "type",
               description = "Optional facility type search filter",
