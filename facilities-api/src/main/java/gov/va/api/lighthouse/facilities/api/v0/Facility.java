@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -134,6 +135,24 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonPropertyOrder({
+    "name",
+    "facility_type",
+    "classification",
+    "website",
+    "lat",
+    "long",
+    "address",
+    "phone",
+    "hours",
+    "services",
+    "satisfaction",
+    "wait_times",
+    "mobile",
+    "active_status",
+    "operating_status",
+    "visn"
+  })
   public static final class FacilityAttributes {
     @Schema(example = "Washington VA Medical Center")
     @NotNull
@@ -180,13 +199,13 @@ public final class Facility {
     @Schema(description = "This field is deprecated and replaced with \"operating_status\".")
     ActiveStatus activeStatus;
 
-    @Schema(example = "20")
-    String visn;
-
     @Valid
     @NotNull
     @JsonProperty(value = "operating_status", required = true)
     OperatingStatus operatingStatus;
+
+    @Schema(example = "20")
+    String visn;
   }
 
   @Data

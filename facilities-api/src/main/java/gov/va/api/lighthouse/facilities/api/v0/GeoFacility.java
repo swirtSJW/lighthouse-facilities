@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,6 +54,23 @@ public final class GeoFacility {
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonPropertyOrder({
+    "id",
+    "name",
+    "facility_type",
+    "classification",
+    "website",
+    "address",
+    "phone",
+    "hours",
+    "services",
+    "satisfaction",
+    "wait_times",
+    "mobile",
+    "active_status",
+    "operating_status",
+    "visn"
+  })
   public static final class Properties {
     @Schema(example = "vha_688")
     @NotNull
