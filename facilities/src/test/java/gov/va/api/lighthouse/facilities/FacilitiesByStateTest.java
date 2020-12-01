@@ -31,7 +31,7 @@ public class FacilitiesByStateTest {
   @Test
   void geoFacilities() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    assertThat(controller().geoFacilitiesByState("oh", "HEALTH", List.of("urology"), 1, 1))
+    assertThat(controller().geoFacilitiesByState("oh", "HEALTH", List.of("urology"), false, 1, 1))
         .isEqualTo(
             GeoFacilitiesResponse.builder()
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
@@ -43,27 +43,28 @@ public class FacilitiesByStateTest {
   void json_invalidService() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
-        () -> controller().jsonFacilitiesByState("FL", null, List.of("unknown"), 1, 1));
+        () -> controller().jsonFacilitiesByState("FL", null, List.of("unknown"), null, 1, 1));
   }
 
   @Test
   void json_invalidType() {
     assertThrows(
         ExceptionsV0.InvalidParameter.class,
-        () -> controller().jsonFacilitiesByState("FL", "xxx", null, 1, 1));
+        () -> controller().jsonFacilitiesByState("FL", "xxx", null, null, 1, 1));
   }
 
   @Test
   void json_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    assertThat(controller().jsonFacilitiesByState("oh", null, null, 1, 1).data())
+    assertThat(controller().jsonFacilitiesByState("oh", null, null, null, 1, 1).data())
         .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
   }
 
   @Test
   void json_serviceOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    assertThat(controller().jsonFacilitiesByState("oh", null, List.of("urology"), 1, 1).data())
+    assertThat(
+            controller().jsonFacilitiesByState("oh", null, List.of("urology"), null, 1, 1).data())
         .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
   }
 
@@ -71,7 +72,8 @@ public class FacilitiesByStateTest {
   void json_typeAndService() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     String linkBase = "http://foo/bp/v0/facilities?services%5B%5D=primarycare&state=oh&type=HEALTH";
-    assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), 1, 1))
+    assertThat(
+            controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
                 .data(List.of(FacilitySamples.defaultSamples().facility("vha_757")))
@@ -97,14 +99,14 @@ public class FacilitiesByStateTest {
   @Test
   void json_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", emptyList(), 1, 1).data())
+    assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", emptyList(), null, 1, 1).data())
         .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
   }
 
   @Test
   void jsonperPageZero() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    assertThat(controller().jsonFacilitiesByState("oh", null, null, 100, 0))
+    assertThat(controller().jsonFacilitiesByState("oh", null, null, null, 100, 0))
         .isEqualTo(
             FacilitiesResponse.builder()
                 .data(emptyList())

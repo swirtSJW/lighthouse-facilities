@@ -313,3 +313,17 @@ databaseChangeLog:
                 type: varchar(8)
                 constraints:
                   nullable: true
+
+  - changeSet:
+      id: 10
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: mobile
+                type: boolean
+                constraints:
+                  nullable: true

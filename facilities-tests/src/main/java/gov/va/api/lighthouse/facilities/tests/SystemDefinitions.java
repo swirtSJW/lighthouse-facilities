@@ -24,6 +24,7 @@ class SystemDefinitions {
         .streetAddress("505 N John Rodes Blvd")
         .type("health")
         .visn("8")
+        .mobile(false)
         .build();
   }
 
@@ -133,6 +134,8 @@ class SystemDefinitions {
     @NonNull String type;
 
     @NonNull String visn;
+
+    @NonNull Boolean mobile;
   }
 
   @Value

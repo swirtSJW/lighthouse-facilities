@@ -30,7 +30,8 @@ public interface FacilitiesSearchApi {
               + "A query by latitude and longitude returns all facilities in the system, "
               + "sorted by distance from that location."
               + "\n\n"
-              + "All location queries support filtering by facility type and available services."
+              + "All location queries support filtering by facility type, available services, and"
+              + " mobile status."
               + "\n\n"
               + "One can also retrieve facilities by ID using a comma-separated "
               + "list like `?ids=id1,id2`. "
@@ -49,18 +50,21 @@ public interface FacilitiesSearchApi {
               + "You may optionally specify `page` and `per_page` with any query. "
               + "You must specify one of the following parameter combinations: "
               + "\n\n"
-              + "- `bbox[]`, with the option of any combination of `type` or `services[]`"
+              + "- `bbox[]`, with the option of any combination of `type`, `services[]`, or"
+              + " `mobile`"
               + "\n\n"
               + "- `ids`"
               + "\n\n"
               + "- `lat` and `long`, with the option "
-              + "of any combination of `ids`, `type`, or `services[]`"
+              + "of any combination of `ids`, `type`, `services[]`, or `mobile`"
               + "\n\n"
-              + "- `state`, with the option of any combination of `type` or `services[]`"
+              + "- `state`, with the option of any combination of `type`, `services[]`, or"
+              + " `mobile`"
               + "\n\n"
               + "- `visn`"
               + "\n\n"
-              + "- `zip`, with the option of any combination of `type` or `services[]`"
+              + "- `zip`, with the option of any combination of `type`, `services[]`, or"
+              + " `mobile`"
               + "\n\n"
               + " Invalid combinations will return `400 Bad Request`. ",
       tags = {"facilities"},
@@ -186,6 +190,12 @@ public interface FacilitiesSearchApi {
               style = ParameterStyle.FORM,
               explode = Explode.TRUE)
           List<String> services,
+      @Parameter(
+              name = "mobile",
+              in = ParameterIn.QUERY,
+              description = "Optional facility mobile search filter",
+              schema = @Schema(type = "Boolean"))
+          Boolean mobile,
       @Parameter(
               name = "page",
               description = "Page of results to return per paginated response.",

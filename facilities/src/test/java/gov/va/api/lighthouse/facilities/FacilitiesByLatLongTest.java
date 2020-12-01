@@ -42,6 +42,7 @@ public class FacilitiesByLatLongTest {
                     null,
                     "HEALTH",
                     List.of("primarycare"),
+                    false,
                     1,
                     10))
         .isEqualTo(
@@ -68,6 +69,7 @@ public class FacilitiesByLatLongTest {
                     "x,,xxx,,,,vha_757,vha_757,vha_757,xxxx,x",
                     "HEALTH",
                     List.of("primarycare"),
+                    false,
                     1,
                     10))
         .isEqualTo(
@@ -90,6 +92,7 @@ public class FacilitiesByLatLongTest {
                     "x,,xxx,,,,vha_757,vha_757,vha_757,xxxx,x",
                     null,
                     null,
+                    null,
                     1,
                     10)
                 .data())
@@ -108,6 +111,7 @@ public class FacilitiesByLatLongTest {
                     null,
                     null,
                     List.of("unknown"),
+                    null,
                     1,
                     1));
   }
@@ -124,6 +128,7 @@ public class FacilitiesByLatLongTest {
                     null,
                     "xxx",
                     null,
+                    null,
                     1,
                     1));
   }
@@ -138,6 +143,7 @@ public class FacilitiesByLatLongTest {
                 .jsonFacilitiesByLatLong(
                     new BigDecimal("28.112464"),
                     new BigDecimal("-80.7015994"),
+                    null,
                     null,
                     null,
                     null,
@@ -161,6 +167,7 @@ public class FacilitiesByLatLongTest {
                 .jsonFacilitiesByLatLong(
                     new BigDecimal("28.112464"),
                     new BigDecimal("-80.7015994"),
+                    null,
                     null,
                     null,
                     null,
@@ -201,6 +208,7 @@ public class FacilitiesByLatLongTest {
                     null,
                     null,
                     List.of("primarycare"),
+                    null,
                     1,
                     10)
                 .data())
@@ -226,6 +234,7 @@ public class FacilitiesByLatLongTest {
                     null,
                     "HEALTH",
                     List.of("primarycare"),
+                    null,
                     1,
                     10))
         .isEqualTo(
@@ -281,6 +290,7 @@ public class FacilitiesByLatLongTest {
                     null,
                     "HEALTH",
                     emptyList(),
+                    null,
                     1,
                     10)
                 .data())

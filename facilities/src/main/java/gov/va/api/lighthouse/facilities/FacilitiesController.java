@@ -159,12 +159,13 @@ public class FacilitiesController {
   }
 
   private List<FacilityEntity> entitiesByBoundingBox(
-      List<BigDecimal> bbox, String rawType, List<String> rawServices) {
+      List<BigDecimal> bbox, String rawType, List<String> rawServices, Boolean rawMobile) {
     if (bbox.size() != 4) {
       throw new ExceptionsV0.InvalidParameter("bbox", bbox);
     }
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<Facility.ServiceType> services = validateServices(rawServices);
+
     // lng lat lng lat
     List<FacilityEntity> allEntities =
         facilityRepository.findAll(
@@ -175,6 +176,7 @@ public class FacilitiesController {
                 .maxLatitude(bbox.get(1).max(bbox.get(3)))
                 .facilityType(facilityType)
                 .services(services)
+                .mobile(rawMobile)
                 .build());
     double centerLng = (bbox.get(0).doubleValue() + bbox.get(2).doubleValue()) / 2;
     double centerLat = (bbox.get(1).doubleValue() + bbox.get(3).doubleValue()) / 2;
@@ -200,7 +202,8 @@ public class FacilitiesController {
       BigDecimal latitude,
       String ids,
       String rawType,
-      List<String> rawServices) {
+      List<String> rawServices,
+      Boolean rawMobile) {
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<Facility.ServiceType> services = validateServices(rawServices);
     List<FacilityEntity> entities =
@@ -209,6 +212,7 @@ public class FacilitiesController {
                 .ids(entityIds(ids))
                 .facilityType(facilityType)
                 .services(services)
+                .mobile(rawMobile)
                 .build());
     double lng = longitude.doubleValue();
     double lat = latitude.doubleValue();
@@ -224,7 +228,12 @@ public class FacilitiesController {
   }
 
   private Page<FacilityEntity> entitiesPageByState(
-      String rawState, String rawType, List<String> rawServices, int page, int perPage) {
+      String rawState,
+      String rawType,
+      List<String> rawServices,
+      Boolean rawMobile,
+      int page,
+      int perPage) {
     checkArgument(page >= 1);
     checkArgument(perPage >= 1);
     String state = rawState.trim().toUpperCase(Locale.US);
@@ -235,12 +244,18 @@ public class FacilitiesController {
             .state(state)
             .facilityType(facilityType)
             .services(services)
+            .mobile(rawMobile)
             .build(),
         PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
   }
 
   private Page<FacilityEntity> entitiesPageByZip(
-      String rawZip, String rawType, List<String> rawServices, int page, int perPage) {
+      String rawZip,
+      String rawType,
+      List<String> rawServices,
+      Boolean rawMobile,
+      int page,
+      int perPage) {
     checkArgument(page >= 1);
     checkArgument(perPage >= 1);
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
@@ -251,6 +266,7 @@ public class FacilitiesController {
             .zip(zip)
             .facilityType(facilityType)
             .services(services)
+            .mobile(rawMobile)
             .build(),
         PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
   }
@@ -294,12 +310,13 @@ public class FacilitiesController {
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     return GeoFacilitiesResponse.builder()
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
-            page(entitiesByBoundingBox(bbox, type, services), page, perPage).stream()
+            page(entitiesByBoundingBox(bbox, type, services, mobile), page, perPage).stream()
                 .map(e -> geoFacility(facility(e)))
                 .collect(toList()))
         .build();
@@ -334,12 +351,13 @@ public class FacilitiesController {
       @RequestParam(value = "ids", required = false) String ids,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     return GeoFacilitiesResponse.builder()
         .type(GeoFacilitiesResponse.Type.FeatureCollection)
         .features(
-            page(entitiesByLatLong(longitude, latitude, ids, type, services), page, perPage)
+            page(entitiesByLatLong(longitude, latitude, ids, type, services, mobile), page, perPage)
                 .stream()
                 .map(e -> geoFacility(e.facility()))
                 .collect(toList()))
@@ -355,6 +373,7 @@ public class FacilitiesController {
       @RequestParam(value = "state") String state,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     return GeoFacilitiesResponse.builder()
@@ -362,7 +381,7 @@ public class FacilitiesController {
         .features(
             perPage == 0
                 ? emptyList()
-                : entitiesPageByState(state, type, services, page, perPage).stream()
+                : entitiesPageByState(state, type, services, mobile, page, perPage).stream()
                     .map(e -> geoFacility(facility(e)))
                     .collect(toList()))
         .build();
@@ -395,6 +414,7 @@ public class FacilitiesController {
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     return GeoFacilitiesResponse.builder()
@@ -402,7 +422,7 @@ public class FacilitiesController {
         .features(
             perPage == 0
                 ? emptyList()
-                : entitiesPageByZip(zip, type, services, page, perPage).stream()
+                : entitiesPageByZip(zip, type, services, mobile, page, perPage).stream()
                     .map(e -> geoFacility(facility(e)))
                     .collect(toList()))
         .build();
@@ -417,9 +437,10 @@ public class FacilitiesController {
       @RequestParam(value = "bbox[]") List<BigDecimal> bbox,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
-    List<FacilityEntity> entities = entitiesByBoundingBox(bbox, type, services);
+    List<FacilityEntity> entities = entitiesByBoundingBox(bbox, type, services, mobile);
     PageLinker linker =
         PageLinker.builder()
             .url(linkerUrl + "facilities")
@@ -428,6 +449,7 @@ public class FacilitiesController {
                     .addAll("bbox[]", bbox)
                     .addIgnoreNull("type", type)
                     .addAll("services[]", services)
+                    .addIgnoreNull("mobile", mobile)
                     .add("page", page)
                     .add("per_page", perPage)
                     .build())
@@ -481,9 +503,11 @@ public class FacilitiesController {
       @RequestParam(value = "ids", required = false) String ids,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
-    List<DistanceEntity> entities = entitiesByLatLong(longitude, latitude, ids, type, services);
+    List<DistanceEntity> entities =
+        entitiesByLatLong(longitude, latitude, ids, type, services, mobile);
     PageLinker linker =
         PageLinker.builder()
             .url(linkerUrl + "facilities")
@@ -493,6 +517,7 @@ public class FacilitiesController {
                     .add("long", longitude)
                     .addIgnoreNull("type", type)
                     .addAll("services[]", services)
+                    .addIgnoreNull("mobile", mobile)
                     .add("page", page)
                     .add("per_page", perPage)
                     .build())
@@ -528,10 +553,11 @@ public class FacilitiesController {
       @RequestParam(value = "state") String state,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     Page<FacilityEntity> entitiesPage =
-        entitiesPageByState(state, type, services, page, Math.max(perPage, 1));
+        entitiesPageByState(state, type, services, mobile, page, Math.max(perPage, 1));
     PageLinker linker =
         PageLinker.builder()
             .url(linkerUrl + "facilities")
@@ -540,6 +566,7 @@ public class FacilitiesController {
                     .add("state", state)
                     .addIgnoreNull("type", type)
                     .addAll("services[]", services)
+                    .addIgnoreNull("mobile", mobile)
                     .add("page", page)
                     .add("per_page", perPage)
                     .build())
@@ -594,10 +621,11 @@ public class FacilitiesController {
       @RequestParam(value = "zip") String zip,
       @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
+      @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     Page<FacilityEntity> entitiesPage =
-        entitiesPageByZip(zip, type, services, page, Math.max(perPage, 1));
+        entitiesPageByZip(zip, type, services, mobile, page, Math.max(perPage, 1));
     PageLinker linker =
         PageLinker.builder()
             .url(linkerUrl + "facilities")
@@ -606,6 +634,7 @@ public class FacilitiesController {
                     .add("zip", zip)
                     .addIgnoreNull("type", type)
                     .addAll("services[]", services)
+                    .addIgnoreNull("mobile", mobile)
                     .add("page", page)
                     .add("per_page", perPage)
                     .build())

@@ -57,6 +57,8 @@ public interface FacilityRepository
 
     @Builder.Default Set<Facility.ServiceType> services = emptySet();
 
+    Boolean mobile;
+
     @Override
     public Predicate toPredicate(
         Root<FacilityEntity> root,
@@ -70,6 +72,11 @@ public interface FacilityRepository
       if (facilityType != null) {
         basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
       }
+
+      if (mobile != null) {
+        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
+      }
+
       Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
       if (isEmpty(services)) {
         return combinedBase;
@@ -92,6 +99,8 @@ public interface FacilityRepository
 
     @Builder.Default Set<Facility.ServiceType> services = emptySet();
 
+    Boolean mobile;
+
     @Override
     public Predicate toPredicate(
         Root<FacilityEntity> root,
@@ -102,6 +111,11 @@ public interface FacilityRepository
       if (facilityType != null) {
         basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
       }
+
+      if (mobile != null) {
+        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
+      }
+
       Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
       if (isEmpty(services)) {
         return combinedBase;
@@ -165,6 +179,8 @@ public interface FacilityRepository
 
     @Builder.Default Set<Facility.ServiceType> services = emptySet();
 
+    Boolean mobile;
+
     @Override
     public Predicate toPredicate(
         Root<FacilityEntity> root,
@@ -179,6 +195,11 @@ public interface FacilityRepository
       if (facilityType != null) {
         basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
       }
+
+      if (mobile != null) {
+        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
+      }
+
       Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
       if (isEmpty(services)) {
         return combinedBase;
@@ -201,6 +222,8 @@ public interface FacilityRepository
 
     @Builder.Default Set<Facility.ServiceType> services = emptySet();
 
+    Boolean mobile;
+
     @Override
     public Predicate toPredicate(
         Root<FacilityEntity> root,
@@ -211,6 +234,11 @@ public interface FacilityRepository
       if (facilityType != null) {
         basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
       }
+
+      if (mobile != null) {
+        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
+      }
+
       Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
       if (isEmpty(services)) {
         return combinedBase;

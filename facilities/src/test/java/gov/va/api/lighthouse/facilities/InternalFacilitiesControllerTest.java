@@ -63,6 +63,7 @@ public class InternalFacilitiesControllerTest {
                 .latitude(BigDecimal.valueOf(latitude))
                 .longitude(BigDecimal.valueOf(longitude))
                 .services(Services.builder().health(health).build())
+                .mobile(false)
                 .facilityType(
                     Facility.FacilityType
                         .va_cemetery) // making this a cemetery for coverage purposes

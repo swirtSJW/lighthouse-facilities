@@ -42,6 +42,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("40")),
                     "HEALTH",
                     List.of("urology"),
+                    false,
                     1,
                     1))
         .isEqualTo(
@@ -66,6 +67,7 @@ public class FacilitiesByBoundingBoxTest {
                         BigDecimal.ZERO),
                     null,
                     null,
+                    null,
                     1,
                     1));
   }
@@ -84,6 +86,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("40")),
                     null,
                     List.of("unknown"),
+                    null,
                     1,
                     1));
   }
@@ -102,6 +105,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("40")),
                     "xxx",
                     null,
+                    null,
                     1,
                     1));
   }
@@ -117,6 +121,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("20"),
                         new BigDecimal("-120"),
                         new BigDecimal("40")),
+                    null,
                     null,
                     null,
                     1,
@@ -136,6 +141,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("20"),
                         new BigDecimal("-120"),
                         new BigDecimal("40")),
+                    null,
                     null,
                     null,
                     100,
@@ -174,6 +180,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("40")),
                     null,
                     List.of("urology"),
+                    null,
                     1,
                     1)
                 .data())
@@ -196,6 +203,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("40")),
                     "HEALTH",
                     List.of("primarycare"),
+                    null,
                     2,
                     1))
         .isEqualTo(
@@ -234,6 +242,7 @@ public class FacilitiesByBoundingBoxTest {
                         new BigDecimal("40")),
                     "HEALTH",
                     emptyList(),
+                    null,
                     1,
                     1)
                 .data())

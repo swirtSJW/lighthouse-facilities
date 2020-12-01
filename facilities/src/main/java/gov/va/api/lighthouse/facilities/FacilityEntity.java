@@ -86,6 +86,9 @@ public class FacilityEntity implements HasFacilityPayload {
   @Column(name = "VISN")
   private String visn;
 
+  @Column(name = "mobile")
+  private Boolean mobile;
+
   /** Builder alternative that allows enums to be specified instead of strings. */
   @Builder(
       builderMethodName = "typeSafeBuilder",
@@ -102,7 +105,8 @@ public class FacilityEntity implements HasFacilityPayload {
       Set<Facility.ServiceType> servicesTypes,
       Long missingTimestamp,
       Instant lastUpdated,
-      String visn) {
+      String visn,
+      Boolean mobile) {
     this(
         id,
         zip,
@@ -115,7 +119,8 @@ public class FacilityEntity implements HasFacilityPayload {
         version,
         missingTimestamp,
         lastUpdated,
-        visn);
+        visn,
+        mobile);
   }
 
   static Sort naturalOrder() {
