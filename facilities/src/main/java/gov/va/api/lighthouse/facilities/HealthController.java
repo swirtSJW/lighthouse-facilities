@@ -49,7 +49,7 @@ public class HealthController {
 
   private final String atpBaseUrl;
 
-  private final String stateCemeteriesBaseUrl;
+  private final String cemeteriesBaseUrl;
 
   private final AtomicBoolean hasCachedCollectorBackend = new AtomicBoolean(false);
 
@@ -61,13 +61,13 @@ public class HealthController {
       @Autowired JdbcTemplate jdbcTemplate,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
-      @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
+      @Value("${cemeteries.url}") String cemeteriesBaseUrl) {
     this.repository = repository;
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
-    this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
+    this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
   }
 
   private static Health testHealth(
@@ -194,8 +194,7 @@ public class HealthController {
             now,
             insecureTemplate,
             "State Cemeteries",
-            UriComponentsBuilder.fromHttpUrl(stateCemeteriesBaseUrl + "cems/cems.xml")
-                .toUriString()));
+            UriComponentsBuilder.fromHttpUrl(cemeteriesBaseUrl + "cems/cems.xml").toUriString()));
     healths.add(testEtlLastUpdated(now));
 
     Health overallHealth =

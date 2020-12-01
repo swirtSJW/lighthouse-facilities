@@ -4,9 +4,12 @@ import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -15,13 +18,40 @@ import java.util.HashMap;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.web.client.RestTemplate;
 
 public class CemeteriesCollectorTest {
   @Test
   @SneakyThrows
   void collect() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+
+    ResponseEntity<String> response = mock(ResponseEntity.class);
+    when(response.getBody())
+        .thenReturn(
+            new XmlMapper()
+                .writeValueAsString(
+                    NationalCemeteries.builder()
+                        .cem(
+                            List.of(
+                                NationalCemeteries.NationalCemetery.builder()
+                                    .id("1001")
+                                    .url("http://www.va.state.al.us/spanishfort.aspx")
+                                    .build()))
+                        .build()));
+
+    when(insecureRestTemplate.exchange(
+            startsWith("http://nationalcems"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(response);
+
     JdbcTemplate jdbcTemplate = mock(JdbcTemplate.class);
 
     when(jdbcTemplate.query(any(String.class), any(RowMapper.class)))
@@ -52,6 +82,8 @@ public class CemeteriesCollectorTest {
 
     assertThat(
             CemeteriesCollector.builder()
+                .baseUrl("http://nationalcems")
+                .insecureRestTemplate(insecureRestTemplate)
                 .websites(new HashMap<>())
                 .jdbcTemplate(jdbcTemplate)
                 .build()
@@ -104,10 +136,39 @@ public class CemeteriesCollectorTest {
   }
 
   @Test
+  @SneakyThrows
   void exception() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+
+    ResponseEntity<String> response = mock(ResponseEntity.class);
+    when(response.getBody())
+        .thenReturn(
+            new XmlMapper()
+                .writeValueAsString(
+                    NationalCemeteries.builder()
+                        .cem(
+                            List.of(
+                                NationalCemeteries.NationalCemetery.builder()
+                                    .id("1001")
+                                    .url("http://www.va.state.al.us/spanishfort.aspx")
+                                    .build()))
+                        .build()));
+
+    when(insecureRestTemplate.exchange(
+            startsWith("http://wrong"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(response);
     assertThrows(
         CollectorExceptions.CemeteriesCollectorException.class,
-        () -> CemeteriesCollector.builder().websites(emptyMap()).build().collect());
+        () ->
+            CemeteriesCollector.builder()
+                .baseUrl("http://wrong")
+                .insecureRestTemplate(insecureRestTemplate)
+                .websites(emptyMap())
+                .build()
+                .collect());
   }
 
   @Test

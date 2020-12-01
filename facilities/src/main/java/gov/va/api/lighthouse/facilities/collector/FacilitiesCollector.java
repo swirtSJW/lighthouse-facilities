@@ -41,7 +41,7 @@ public class FacilitiesCollector {
 
   private final String atpBaseUrl;
 
-  private final String stateCemeteriesBaseUrl;
+  private final String cemeteriesBaseUrl;
 
   /** Autowired constructor. */
   public FacilitiesCollector(
@@ -49,12 +49,12 @@ public class FacilitiesCollector {
       @Autowired JdbcTemplate jdbcTemplate,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
-      @Value("${state-cemeteries.url}") String stateCemeteriesBaseUrl) {
+      @Value("${cemeteries.url}") String cemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
-    this.stateCemeteriesBaseUrl = withTrailingSlash(stateCemeteriesBaseUrl);
+    this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
   }
 
   @SneakyThrows
@@ -153,7 +153,7 @@ public class FacilitiesCollector {
 
     Collection<Facility> stateCems =
         StateCemeteriesCollector.builder()
-            .baseUrl(stateCemeteriesBaseUrl)
+            .baseUrl(cemeteriesBaseUrl)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .websites(websites)
             .build()
@@ -171,6 +171,8 @@ public class FacilitiesCollector {
 
     Collection<Facility> cemeteries =
         CemeteriesCollector.builder()
+            .baseUrl(cemeteriesBaseUrl)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .websites(websites)
             .jdbcTemplate(jdbcTemplate)
             .build()

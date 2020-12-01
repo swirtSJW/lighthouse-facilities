@@ -48,5 +48,5 @@ configValue facilities $PROFILE spring.datasource.username 'SA'
 configValue facilities $PROFILE spring.fc-datasource.password '<YourStrong!Passw0rd>'
 configValue facilities $PROFILE spring.fc-datasource.url 'jdbc:sqlserver://localhost:1533;database=fc;sendStringParametersAsUnicode=false'
 configValue facilities $PROFILE spring.fc-datasource.username 'SA'
-configValue facilities $PROFILE state-cemeteries.url 'http://localhost:8666'
+configValue facilities $PROFILE cemeteries.url 'http://localhost:8666'
 checkForUnsetValues facilities $PROFILE

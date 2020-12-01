@@ -1,9 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -213,11 +211,23 @@ public class FacilitiesCollectorTest {
                         .writeValueAsString(
                             List.of(AccessToPwtEntry.builder().facilityId("x").build())))));
     when(insecureRestTemplate.exchange(
-            startsWith("http://statecems"),
+            matches("http://statecems/cems/cems.xml"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(ResponseEntity.of(Optional.of("<cems><cem fac_id=\"1001\"/></cems>")));
+
+    when(insecureRestTemplate.exchange(
+            matches("http://statecems/cems/national.xml"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(
+            ResponseEntity.of(
+                Optional.of(
+                    "<cems>"
+                        + "<cem station=\"910\" cem_url=\"https://www.cem.va.gov/cems/nchp/FtRichardson.asp\"/>"
+                        + "</cems>")));
 
     assertThat(
             new FacilitiesCollector(

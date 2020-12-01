@@ -91,6 +91,15 @@ public class MockServices {
     log.info("List of supported queries available at http://localhost:{}/help", options.getPort());
   }
 
+  private void addNationalCemeteries(MockServerClient mock) {
+    mock.when(addQuery("/cems/national.xml"))
+        .respond(
+            response()
+                .withStatusCode(cemsStatusCode)
+                .withHeader(contentTextXml())
+                .withBody(contentOf("/national.xml")));
+  }
+
   private void addPssgDriveTimeBands(MockServerClient mock) {
     /* Add a few pages of results. The last page should be empty []. */
     int pageSize = 30;
@@ -172,6 +181,7 @@ public class MockServices {
     addAccessToCareWaitTimes(mock);
     addAccessToCareSatisfactionScores(mock);
     addStateCemeteries(mock);
+    addNationalCemeteries(mock);
     addPssgDriveTimeBands(mock);
     addBing(mock);
     addHelp(mock);

@@ -13,7 +13,7 @@ import lombok.NonNull;
 @Builder
 final class CemeteriesTransformer {
   @NonNull CdwCemetery cdwFacility;
-  String csvWebsite;
+  String website;
 
   private Facility.FacilityAttributes attributes() {
     return Facility.FacilityAttributes.builder()
@@ -76,8 +76,8 @@ final class CemeteriesTransformer {
         .build();
   }
 
-  String website(String website) {
-    /* CDW returns a string NULL... We don't want to return that.*/
-    return website == null || website.equalsIgnoreCase("NULL") ? csvWebsite : website;
+  String website(String url) {
+    /* CDW could return a string NULL... We don't want to return that.*/
+    return url == null || url.equalsIgnoreCase("NULL") || url.isEmpty() ? website : url;
   }
 }

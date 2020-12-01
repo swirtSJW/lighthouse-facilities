@@ -26,7 +26,7 @@ public class CemeteriesTransformerTest {
   private CemeteriesTransformer tx(String csvWebsite) {
     return CemeteriesTransformer.builder()
         .cdwFacility(CemeteriesSamples.Cdw.create().cdwCemeteries())
-        .csvWebsite(csvWebsite)
+        .website(csvWebsite)
         .build();
   }
 
