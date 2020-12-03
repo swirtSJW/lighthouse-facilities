@@ -61,6 +61,9 @@ public final class PssgDriveTimeBand {
 
     @JsonProperty("ToBreak")
     int toBreak;
+
+    @JsonProperty("MONTHYEAR")
+    String monthYear;
   }
 
   @Data
