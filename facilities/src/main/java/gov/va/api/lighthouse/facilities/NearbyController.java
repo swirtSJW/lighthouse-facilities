@@ -2,7 +2,6 @@ package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static gov.va.api.lighthouse.facilities.Controllers.validateFacilityType;
 import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -187,11 +186,10 @@ public class NearbyController {
       @RequestParam(value = "city") String city,
       @RequestParam(value = "state") String state,
       @RequestParam(value = "zip") String zip,
-      @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
       @RequestParam(value = "drive_time", required = false) Integer maxDriveTime) {
     Coordinates coor = geocodeAddress(street, city, state, zip);
-    List<NearbyId> ids = nearbyIds(coor.longitude(), coor.latitude(), type, services, maxDriveTime);
+    List<NearbyId> ids = nearbyIds(coor.longitude(), coor.latitude(), services, maxDriveTime);
 
     return NearbyResponse.builder()
         .data(ids.stream().map(this::nearbyFacility).collect(toList()))
@@ -214,10 +212,8 @@ public class NearbyController {
   private List<NearbyId> nearbyIds(
       @NonNull BigDecimal longitude,
       @NonNull BigDecimal latitude,
-      String rawType,
       List<String> rawServices,
       Integer rawMaxDriveTime) {
-    FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<Facility.ServiceType> services = validateServices(rawServices);
     Integer maxDriveTime = validateDriveTime(rawMaxDriveTime);
     log.info(
@@ -241,7 +237,7 @@ public class NearbyController {
         facilityRepository.findAll(
             FacilityRepository.StationNumbersSpecification.builder()
                 .stationNumbers(bandsByStation.keySet())
-                .facilityType(facilityType)
+                .facilityType(FacilityEntity.Type.vha)
                 .services(services)
                 .build());
     return facilityEntities.stream()
@@ -262,10 +258,9 @@ public class NearbyController {
   NearbyResponse nearbyLatLong(
       @RequestParam(value = "lat") BigDecimal latitude,
       @RequestParam(value = "lng") BigDecimal longitude,
-      @RequestParam(value = "type", required = false) String type,
       @RequestParam(value = "services[]", required = false) List<String> services,
       @RequestParam(value = "drive_time", required = false) Integer maxDriveTime) {
-    List<NearbyId> ids = nearbyIds(longitude, latitude, type, services, maxDriveTime);
+    List<NearbyId> ids = nearbyIds(longitude, latitude, services, maxDriveTime);
 
     return NearbyResponse.builder()
         .data(ids.stream().map(this::nearbyFacility).collect(toList()))

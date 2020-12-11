@@ -195,7 +195,7 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
         _controller()
-            .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null);
+            .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null);
     assertThat(response)
         .isEqualTo(
             NearbyResponse.builder()
@@ -225,8 +225,7 @@ public class NearbyTest {
         ExceptionsV0.BingException.class,
         () ->
             _controller()
-                .nearbyAddress(
-                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null));
+                .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null));
   }
 
   @Test
@@ -266,40 +265,36 @@ public class NearbyTest {
         ExceptionsV0.BingException.class,
         () ->
             _controller()
-                .nearbyAddress(
-                    "505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null, null));
+                .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null));
   }
 
   @Test
   void empty() {
     facilityRepository.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null);
     assertThat(response).isEqualTo(NearbyResponse.builder().data(emptyList()).build());
   }
 
   @Test
   void filterMaxDriveTime() {
-    facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
     driveTimeBandRepository.save(_entity(_diamondBand("666", 50, 60, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, 50);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, 50);
     assertThat(response).isEqualTo(NearbyResponse.builder().data(emptyList()).build());
   }
 
   @Test
   void filterServices() {
-    facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller()
-            .nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, List.of("primarycare"), null);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, List.of("primarycare"), null);
     assertThat(response)
         .isEqualTo(
             NearbyResponse.builder()
@@ -318,39 +313,13 @@ public class NearbyTest {
   }
 
   @Test
-  void filterType() {
-    facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
-    facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
-    facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
-    driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
-    driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
-    NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, "benefits", null, null);
-    assertThat(response)
-        .isEqualTo(
-            NearbyResponse.builder()
-                .data(
-                    List.of(
-                        NearbyResponse.Nearby.builder()
-                            .id("vba_666")
-                            .type(NearbyResponse.Type.NearbyFacility)
-                            .attributes(
-                                NearbyResponse.NearbyAttributes.builder()
-                                    .minTime(0)
-                                    .maxTime(10)
-                                    .build())
-                            .build()))
-                .build());
-  }
-
-  @Test
   void hit() {
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
     facilityRepository.save(_facilityEntity(_facilityHealth("vha_777")));
     driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null);
     assertThat(response).isEqualTo(hitVha666());
   }
 
@@ -375,41 +344,7 @@ public class NearbyTest {
     driveTimeBandRepository.save(
         _deprecatedPssgDriveTimeBandEntity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
+        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null);
     assertThat(response).isEqualTo(hitVha666());
-  }
-
-  @Test
-  void sameStationNumber() {
-    facilityRepository.save(_facilityEntity(_facilityBenefits("vba_666")));
-    facilityRepository.save(_facilityEntity(_facilityHealth("vha_666")));
-    driveTimeBandRepository.save(_entity(_diamondBand("666", 0, 10, 0)));
-    driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
-    NearbyResponse response =
-        _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null, null);
-    assertThat(response)
-        .isEqualTo(
-            NearbyResponse.builder()
-                .data(
-                    List.of(
-                        NearbyResponse.Nearby.builder()
-                            .id("vba_666")
-                            .type(NearbyResponse.Type.NearbyFacility)
-                            .attributes(
-                                NearbyResponse.NearbyAttributes.builder()
-                                    .minTime(0)
-                                    .maxTime(10)
-                                    .build())
-                            .build(),
-                        NearbyResponse.Nearby.builder()
-                            .id("vha_666")
-                            .type(NearbyResponse.Type.NearbyFacility)
-                            .attributes(
-                                NearbyResponse.NearbyAttributes.builder()
-                                    .minTime(0)
-                                    .maxTime(10)
-                                    .build())
-                            .build()))
-                .build());
   }
 }
