@@ -277,6 +277,7 @@ public class InternalFacilitiesController {
         processMissingFacility(response, missingId);
       }
     } catch (Exception e) {
+      log.error("Failed to process facilities: {}", e.getMessage());
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     } finally {
       response.timing().markComplete();
