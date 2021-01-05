@@ -35,8 +35,13 @@ public class FacilityGraveyardEntity {
 
   @Lob
   @Basic(fetch = FetchType.EAGER)
-  @Column(name = "cms_overlay")
-  private String cmsOverlay;
+  @Column(name = "cms_operating_status")
+  private String cmsOperatingStatus;
+
+  @Lob
+  @Basic(fetch = FetchType.EAGER)
+  @Column(name = "cms_services")
+  private String cmsServices;
 
   @Column(name = "missing_timestamp")
   private Long missingTimestamp;

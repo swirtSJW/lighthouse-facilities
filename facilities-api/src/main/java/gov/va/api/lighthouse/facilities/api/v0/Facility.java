@@ -60,6 +60,7 @@ public final class Facility {
   public enum HealthService implements ServiceType {
     Audiology,
     Cardiology,
+    Covid19Vaccine,
     DentalServices,
     Dermatology,
     EmergencyCare,
@@ -307,6 +308,45 @@ public final class Facility {
                 + " such as messages about parking lot closures or"
                 + " floor visitation information.")
     String additionalInfo;
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(
+      description =
+          "Current status of facility services via CMS."
+              + "The overall status of the facility which can be"
+              + " Normal Hours and Services,"
+              + " Facility Notice,"
+              + " Limited Hours and/or Services,"
+              + " or Closed.")
+  public static final class CmsService {
+
+    @Schema(example = "COVID-19 vaccines")
+    String name;
+
+    @Schema(
+        example = "0",
+        type = "integer",
+        description = "0 means service is not available and 1 means available")
+    int active;
+
+    @Schema(example = "Vaccine availability for COVID-19")
+    @JsonProperty("description_national")
+    String descriptionNational;
+
+    @Schema(example = "System description for vaccine availability for COVID-19")
+    @JsonProperty("description_system")
+    String descriptionSystem;
+
+    @Schema(example = "Facility description for vaccine availability for COVID-19")
+    @JsonProperty("description_facility")
+    String descriptionFacility;
+
+    @Schema(example = "12345")
+    @JsonProperty("health_service_api_id")
+    String healthServiceApiId;
   }
 
   @Data

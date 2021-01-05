@@ -58,6 +58,7 @@ Example:
           "health" : [
             "Audiology",
             "Cardiology",
+            "Covid19Vaccine",
             "DentalServices",
             "Dermatology",
             "Gastroenterology",
@@ -192,6 +193,7 @@ Example:
           "health" : [
             "Audiology",
             "Cardiology",
+            "Covid19Vaccine",
             "DentalServices",
             "Dermatology",
             "Gastroenterology",

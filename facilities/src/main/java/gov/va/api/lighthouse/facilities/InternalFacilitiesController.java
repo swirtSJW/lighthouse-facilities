@@ -156,7 +156,9 @@ public class InternalFacilitiesController {
       return ResponseEntity.accepted().build();
     }
     log.info("Removing cmsOverlay from facility {}", sanitize(id));
-    facilityRepository.save(entity.get().cmsOverlay(null));
+    facilityRepository.save(entity.get().cmsOperatingStatus(null));
+    facilityRepository.save(entity.get().cmsServices(null));
+
     return ResponseEntity.ok().build();
   }
 
@@ -167,8 +169,10 @@ public class InternalFacilitiesController {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-    if (entity.get().cmsOverlay() != null) {
-      log.info("Failed to delete facility {}. cmsOverlay is not null.", sanitize(id));
+    if (entity.get().cmsOperatingStatus() != null || entity.get().cmsServices() != null) {
+      log.info(
+          "Failed to delete facility {}. cmsOperatingStatus or cmsServices are not null.",
+          sanitize(id));
       return ResponseEntity.status(409)
           .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
     }
@@ -217,10 +221,23 @@ public class InternalFacilitiesController {
                                 FacilitiesJacksonConfig.quietlyMap(
                                     MAPPER, z.facility(), Facility.class))
                             .cmsOverlay(
-                                z.cmsOverlay() == null
-                                    ? null
-                                    : FacilitiesJacksonConfig.quietlyMap(
-                                        MAPPER, z.cmsOverlay(), CmsOverlay.class))
+                                CmsOverlay.builder()
+                                    .operatingStatus(
+                                        z.cmsOperatingStatus() == null
+                                            ? null
+                                            : FacilitiesJacksonConfig.quietlyMap(
+                                                MAPPER,
+                                                z.cmsOperatingStatus(),
+                                                Facility.OperatingStatus.class))
+                                    .cmsServices(
+                                        z.cmsServices() == null
+                                            ? null
+                                            : List.of(
+                                                FacilitiesJacksonConfig.quietlyMap(
+                                                    MAPPER,
+                                                    z.cmsServices(),
+                                                    Facility.CmsService[].class)))
+                                    .build())
                             .missing(
                                 z.missingTimestamp() == null
                                     ? null
@@ -251,7 +268,8 @@ public class InternalFacilitiesController {
           FacilityGraveyardEntity.builder()
               .id(id)
               .facility(entity.facility())
-              .cmsOverlay(entity.cmsOverlay())
+              .cmsOperatingStatus(entity.cmsOperatingStatus())
+              .cmsServices(entity.cmsServices())
               .missingTimestamp(entity.missingTimestamp())
               .lastUpdated(now)
               .build());
@@ -465,7 +483,12 @@ public class InternalFacilitiesController {
       // only thing to retain from graveyard is CMS overlay
       // all other fields will be populated in updateAndSave()
       FacilityEntity facilityEntity =
-          FacilityEntity.builder().id(pk).cmsOverlay(zombieEntity.cmsOverlay()).build();
+          FacilityEntity.builder()
+              .id(pk)
+              .cmsOperatingStatus(zombieEntity.cmsOperatingStatus())
+              .cmsServices(zombieEntity.cmsServices())
+              .build();
+
       updateAndSave(response, facilityEntity, facility);
       deleteFromGraveyard(response, zombieEntity);
       return;

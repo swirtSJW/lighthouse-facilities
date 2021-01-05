@@ -327,3 +327,39 @@ databaseChangeLog:
                 type: boolean
                 constraints:
                   nullable: true
+  - changeSet:
+      id: 11
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: cms_operating_status
+                type: clob
+                constraints:
+                  nullable: true
+            - column:
+                name: cms_services
+                type: clob
+                constraints:
+                  nullable: true
+  - changeSet:
+      id: 12
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: facility_graveyard
+          schemaName: app
+          columns:
+            - column:
+                name: cms_operating_status
+                type: clob
+                constraints:
+                  nullable: true
+            - column:
+                name: cms_services
+                type: clob
+                constraints:
+                  nullable: true

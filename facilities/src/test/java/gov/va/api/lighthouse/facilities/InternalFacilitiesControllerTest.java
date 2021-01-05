@@ -78,6 +78,17 @@ public class InternalFacilitiesControllerTest {
                 .code(Facility.OperatingStatusCode.LIMITED)
                 .additionalInfo("Limited")
                 .build())
+        .cmsServices(
+            List.of(
+                Facility.CmsService.builder()
+                    .name("COVID-19 vaccines")
+                    .active(1)
+                    .descriptionNational("Vaccine availability for COVID-19")
+                    .descriptionSystem("System description for vaccine availability for COVID-19")
+                    .descriptionFacility(
+                        "Facility description for vaccine availability for COVID-19")
+                    .healthServiceApiId("12345")
+                    .build()))
         .build();
   }
 
@@ -95,11 +106,26 @@ public class InternalFacilitiesControllerTest {
 
   @SneakyThrows
   private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
-    String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
+    String operatingStatusString = null;
+    String cmsServicesString = null;
+
+    if (overlay != null) {
+      operatingStatusString =
+          overlay.operatingStatus() == null
+              ? null
+              : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
+
+      cmsServicesString =
+          overlay.cmsServices() == null
+              ? null
+              : JacksonConfig.createMapper().writeValueAsString(overlay.cmsServices());
+    }
+
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
-            .cmsOverlay(o)
+            .cmsOperatingStatus(operatingStatusString)
+            .cmsServices(cmsServicesString)
             .lastUpdated(Instant.now())
             .build(),
         fac);
@@ -107,11 +133,25 @@ public class InternalFacilitiesControllerTest {
 
   @SneakyThrows
   private FacilityGraveyardEntity _graveyardEntityWithOverlay(Facility fac, CmsOverlay overlay) {
-    String o = overlay == null ? null : JacksonConfig.createMapper().writeValueAsString(overlay);
+    String operatingStatusString = null;
+    String cmsServicesString = null;
+
+    if (overlay != null) {
+      operatingStatusString =
+          overlay.operatingStatus() == null
+              ? null
+              : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
+
+      cmsServicesString =
+          overlay.cmsServices() == null
+              ? null
+              : JacksonConfig.createMapper().writeValueAsString(overlay.cmsServices());
+    }
     return FacilityGraveyardEntity.builder()
         .id(FacilityEntity.Pk.fromIdString(fac.id()))
         .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(fac))
-        .cmsOverlay(o)
+        .cmsOperatingStatus(operatingStatusString)
+        .cmsServices(cmsServicesString)
         .missingTimestamp(LocalDateTime.now().minusDays(4).toInstant(ZoneOffset.UTC).toEpochMilli())
         .lastUpdated(Instant.now())
         .build();
@@ -150,7 +190,8 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.id()).isEqualTo(entity.id());
     assertThat(result.facility())
         .isEqualTo(FacilitiesJacksonConfig.createMapper().writeValueAsString(f1));
-    assertThat(result.cmsOverlay()).isEqualTo(entity.cmsOverlay());
+    assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
+    assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
@@ -266,7 +307,8 @@ public class InternalFacilitiesControllerTest {
     FacilityGraveyardEntity result = Iterables.getOnlyElement(graveyardRepository.findAll());
     assertThat(result.id()).isEqualTo(entity.id());
     assertThat(result.facility()).isEqualTo(entity.facility());
-    assertThat(result.cmsOverlay()).isEqualTo(entity.cmsOverlay());
+    assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
+    assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
     assertThat(result.missingTimestamp()).isEqualTo(threeDaysAgo);
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }

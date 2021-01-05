@@ -45,10 +45,20 @@ public class CmsOverlayController {
       log.info("Received Unknown Facility ID ({}) for CMS Overlay", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-    existingEntity
-        .get()
-        .cmsOverlay(FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay));
-    repository.save(existingEntity.get());
+
+    FacilityEntity entity = existingEntity.get();
+
+    if (overlay.operatingStatus() != null) {
+      entity.cmsOperatingStatus(
+          FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()));
+    }
+
+    if (overlay.cmsServices() != null) {
+      entity.cmsServices(
+          FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.cmsServices()));
+    }
+
+    repository.save(entity);
     return ResponseEntity.ok().build();
   }
 }

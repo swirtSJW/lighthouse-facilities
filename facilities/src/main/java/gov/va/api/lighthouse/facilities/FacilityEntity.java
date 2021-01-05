@@ -72,8 +72,13 @@ public class FacilityEntity implements HasFacilityPayload {
 
   @Lob
   @Basic(fetch = FetchType.EAGER)
-  @Column(name = "cms_overlay")
-  private String cmsOverlay;
+  @Column(name = "cms_operating_status")
+  private String cmsOperatingStatus;
+
+  @Lob
+  @Basic(fetch = FetchType.EAGER)
+  @Column(name = "cms_services")
+  private String cmsServices;
 
   @Version private Integer version;
 
@@ -100,7 +105,8 @@ public class FacilityEntity implements HasFacilityPayload {
       double latitude,
       double longitude,
       String facility,
-      String cmsOverlay,
+      String cmsOperatingStatus,
+      String cmsServices,
       Integer version,
       Set<Facility.ServiceType> servicesTypes,
       Long missingTimestamp,
@@ -115,7 +121,8 @@ public class FacilityEntity implements HasFacilityPayload {
         longitude,
         servicesTypes.stream().map(Object::toString).collect(toSet()),
         facility,
-        cmsOverlay,
+        cmsOperatingStatus,
+        cmsServices,
         version,
         missingTimestamp,
         lastUpdated,

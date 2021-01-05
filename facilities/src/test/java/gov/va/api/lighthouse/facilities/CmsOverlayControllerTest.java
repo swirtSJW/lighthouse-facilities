@@ -6,8 +6,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
+import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,17 @@ public class CmsOverlayControllerTest {
                 .code(OperatingStatusCode.NOTICE)
                 .additionalInfo("i need attention")
                 .build())
+        .cmsServices(
+            List.of(
+                Facility.CmsService.builder()
+                    .name("COVID-19 vaccines")
+                    .active(1)
+                    .descriptionNational("Vaccine availability for COVID-19")
+                    .descriptionSystem("System description for vaccine availability for COVID-19")
+                    .descriptionFacility(
+                        "Facility description for vaccine availability for COVID-19")
+                    .healthServiceApiId("12345")
+                    .build()))
         .build();
   }
 
@@ -43,7 +56,11 @@ public class CmsOverlayControllerTest {
     when(repository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
     ResponseEntity<Void> response = controller().saveOverlay("vha_123", overlay);
-    entity.cmsOverlay(FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay));
+
+    entity.cmsOperatingStatus(
+        FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()));
+    entity.cmsServices(
+        FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.cmsServices()));
     verify(repository).save(entity);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
