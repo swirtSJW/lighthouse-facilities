@@ -64,9 +64,7 @@ public class InternalFacilitiesControllerTest {
                 .longitude(BigDecimal.valueOf(longitude))
                 .services(Services.builder().health(health).build())
                 .mobile(false)
-                .facilityType(
-                    Facility.FacilityType
-                        .va_cemetery) // making this a cemetery for coverage purposes
+                .facilityType(Facility.FacilityType.va_cemetery)
                 .build())
         .build();
   }
@@ -108,19 +106,16 @@ public class InternalFacilitiesControllerTest {
   private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
     String cmsServicesString = null;
-
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-
       cmsServicesString =
           overlay.cmsServices() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.cmsServices());
     }
-
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
@@ -135,13 +130,11 @@ public class InternalFacilitiesControllerTest {
   private FacilityGraveyardEntity _graveyardEntityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
     String cmsServicesString = null;
-
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-
       cmsServicesString =
           overlay.cmsServices() == null
               ? null
@@ -194,6 +187,19 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
+  }
+
+  @Test
+  @SneakyThrows
+  void collect_invalidLatLong() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "999", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    f1.attributes().latitude(null);
+    f1.attributes().longitude(null);
+    when(collector.collectFacilities()).thenReturn(List.of(f1));
+    ReloadResponse response = _controller().reload().getBody();
+    assertThat(response.problems())
+        .isEqualTo(List.of(ReloadResponse.Problem.of("vha_f1", "Missing coordinates")));
   }
 
   @Test

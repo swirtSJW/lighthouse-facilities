@@ -468,6 +468,11 @@ public class InternalFacilitiesController {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Cannot parse ID"));
       return;
     }
+    if (facility.attributes().latitude() == null || facility.attributes().longitude() == null) {
+      log.error("Cannot process facility {}, latitude and/or longitude is null", facility.id());
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing coordinates"));
+      return;
+    }
     var existing = facilityRepository.findById(pk);
     if (existing.isPresent()) {
       response.facilitiesUpdated().add(facility.id());
