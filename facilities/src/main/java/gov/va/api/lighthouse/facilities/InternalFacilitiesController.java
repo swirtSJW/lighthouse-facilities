@@ -170,7 +170,9 @@ public class InternalFacilitiesController {
       return ResponseEntity.accepted().build();
     }
     if (entity.get().cmsOperatingStatus() != null || entity.get().overlayServices() != null) {
-      log.info("Failed to delete facility {}. cmsOperatingStatus or overlayServices are not null", sanitize(id));
+      log.info(
+          "Failed to delete facility {}. cmsOperatingStatus or overlayServices are not null",
+          sanitize(id));
       return ResponseEntity.status(409)
           .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
     }
