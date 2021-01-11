@@ -283,7 +283,7 @@ public final class Facility {
   @Schema(
       description =
           "Current status of facility operations."
-              + "The overall status of the facility which can be"
+              + " The overall status of the facility, which can be:"
               + " Normal Hours and Services,"
               + " Facility Notice,"
               + " Limited Hours and/or Services,"
@@ -315,12 +315,13 @@ public final class Facility {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(
       description =
-          "Current status of facility services via CMS."
-              + "The overall status of the facility which can be"
-              + " Normal Hours and Services,"
-              + " Facility Notice,"
-              + " Limited Hours and/or Services,"
-              + " or Closed.")
+          "Current descriptions of facility service via CMS."
+              + "The descriptions of the facility service can be: "
+              + " Active/Inactive,"
+              + " National Description,"
+              + " System Description,"
+              + " Facility Description,"
+              + " or Health Service API ID.")
   public static final class CmsService {
 
     @Schema(example = "COVID-19 vaccines")
@@ -329,7 +330,7 @@ public final class Facility {
     @Schema(
         example = "0",
         type = "integer",
-        description = "0 means service is not available and 1 means available")
+        description = "0 means service is inactive and 1 means active")
     int active;
 
     @Schema(example = "Vaccine availability for COVID-19")

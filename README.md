@@ -25,7 +25,7 @@ OpenAPI documentation on the
 * `facilities-operational-db` is used to maintain _ready to serve_ representations of
   facilities, operating status, and drive time bands. Facility data is updated nightly
   through the facilities collection process.
-  Operating status may be updated at any time by CMS.
+  Operating status and extended services may be updated at any time by CMS.
   Drive time band data is refreshed on an as-needed basis.
 * `facilities-timer` is a AWS Lambda Cron pod that fires nightly to trigger the facilities
   collection/data reload process.
@@ -58,7 +58,7 @@ OpenAPI documentation on the
   Collection is an expensive process that is performed periodically.
 * `CMS` is both a consumer and a producer of information. `CMS` will periodically pull all
   facilities to automatically populate content pages in Drupal.
-  Additionally, regional administrators of CMS data, may change the operating status at any time.
+  Additionally, regional administrators of CMS data may change the operating status or extended service(s) at any time.
   This information is provided back to the Facilities API through a specialized CMS-dedicated
   endpoint. Operating status is stored in the operational database along side facility data.
 

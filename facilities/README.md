@@ -367,7 +367,10 @@ Example:
 ```
 curl -s -w %{http_code} http://localhost:8085/v0/facilities/vha_402/cms-overlay \
 -HContent-Type:application/json \
--d'{"operating_status":{"code":"CLOSED","additional_info":"flavor text"}}'
+-d'{"operating_status":{"code":"CLOSED","additional_info":"flavor text"},"detailed_services": [{
+"name": "COVID-19 vaccines","active": 1,"description_national": "National description",
+"description_system": "System description","description_facility": "Facility Description",
+"health_service_api_id": null}]}'
 ```
 
 ## Local Development
