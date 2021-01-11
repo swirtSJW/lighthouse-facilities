@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
@@ -76,17 +77,6 @@ public class InternalFacilitiesControllerTest {
                 .code(Facility.OperatingStatusCode.LIMITED)
                 .additionalInfo("Limited")
                 .build())
-        .cmsServices(
-            List.of(
-                Facility.CmsService.builder()
-                    .name("COVID-19 vaccines")
-                    .active(1)
-                    .descriptionNational("Vaccine availability for COVID-19")
-                    .descriptionSystem("System description for vaccine availability for COVID-19")
-                    .descriptionFacility(
-                        "Facility description for vaccine availability for COVID-19")
-                    .healthServiceApiId("12345")
-                    .build()))
         .build();
   }
 
@@ -105,22 +95,26 @@ public class InternalFacilitiesControllerTest {
   @SneakyThrows
   private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
-    String cmsServicesString = null;
+    Set<String> detailedServices = null;
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-      cmsServicesString =
-          overlay.cmsServices() == null
-              ? null
-              : JacksonConfig.createMapper().writeValueAsString(overlay.cmsServices());
+      if (overlay.cmsServices() != null) {
+        detailedServices = new HashSet<>();
+        for (Facility.CmsService service : overlay.cmsServices()) {
+          if (1 == service.active()) {
+            detailedServices.add(service.name());
+          }
+        }
+      }
     }
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
             .cmsOperatingStatus(operatingStatusString)
-            .cmsServices(cmsServicesString)
+            .overlayServices(detailedServices)
             .lastUpdated(Instant.now())
             .build(),
         fac);
@@ -129,22 +123,25 @@ public class InternalFacilitiesControllerTest {
   @SneakyThrows
   private FacilityGraveyardEntity _graveyardEntityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
-    String cmsServicesString = null;
+    Set<String> detailedServices = new HashSet<>();
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-      cmsServicesString =
-          overlay.cmsServices() == null
-              ? null
-              : JacksonConfig.createMapper().writeValueAsString(overlay.cmsServices());
+      if (overlay.cmsServices() != null) {
+        for (Facility.CmsService service : overlay.cmsServices()) {
+          if (1 == service.active()) {
+            detailedServices.add(service.name());
+          }
+        }
+      }
     }
     return FacilityGraveyardEntity.builder()
         .id(FacilityEntity.Pk.fromIdString(fac.id()))
         .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(fac))
         .cmsOperatingStatus(operatingStatusString)
-        .cmsServices(cmsServicesString)
+        .overlayServices(detailedServices)
         .missingTimestamp(LocalDateTime.now().minusDays(4).toInstant(ZoneOffset.UTC).toEpochMilli())
         .lastUpdated(Instant.now())
         .build();
@@ -184,7 +181,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.facility())
         .isEqualTo(FacilitiesJacksonConfig.createMapper().writeValueAsString(f1));
     assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
-    assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
+    assertThat(result.overlayServices()).isEqualTo(entity.overlayServices());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
@@ -314,7 +311,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.id()).isEqualTo(entity.id());
     assertThat(result.facility()).isEqualTo(entity.facility());
     assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
-    assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
+    assertThat(result.overlayServices()).isEqualTo(entity.overlayServices());
     assertThat(result.missingTimestamp()).isEqualTo(threeDaysAgo);
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
@@ -398,6 +395,7 @@ public class InternalFacilitiesControllerTest {
                                 JacksonConfig.createMapper()
                                     .readValue(entity.facility(), Facility.class))
                             .cmsOverlay(overlay)
+                            .overlayServices(entity.overlayServices())
                             .missing(Instant.ofEpochMilli(entity.missingTimestamp()))
                             .lastUpdated(entity.lastUpdated())
                             .build()))

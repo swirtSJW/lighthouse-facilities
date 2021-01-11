@@ -1,11 +1,15 @@
 package gov.va.api.lighthouse.facilities;
 
 import java.time.Instant;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -38,10 +42,13 @@ public class FacilityGraveyardEntity {
   @Column(name = "cms_operating_status")
   private String cmsOperatingStatus;
 
-  @Lob
-  @Basic(fetch = FetchType.EAGER)
-  @Column(name = "cms_services")
-  private String cmsServices;
+  @ElementCollection(targetClass = String.class)
+  @CollectionTable(
+      name = "cms_overlay_detailed_services",
+      schema = "app",
+      joinColumns = {@JoinColumn(name = "station_number"), @JoinColumn(name = "type")})
+  @Column(length = 48, name = "overlay_detailed_services")
+  private Set<String> overlayServices;
 
   @Column(name = "missing_timestamp")
   private Long missingTimestamp;

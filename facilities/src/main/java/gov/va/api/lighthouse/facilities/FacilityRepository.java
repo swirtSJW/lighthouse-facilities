@@ -85,8 +85,17 @@ public interface FacilityRepository
           services.stream()
               .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
               .toArray(Predicate[]::new);
-      Predicate anyService = criteriaBuilder.or(servicePredicates);
-      return criteriaBuilder.and(combinedBase, anyService);
+      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
+
+      Predicate[] overlayServicePredicates =
+          services.stream()
+              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
+              .toArray(Predicate[]::new);
+      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
+
+      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
+
+      return criteriaBuilder.and(combinedBase, combinedServices);
     }
   }
 
@@ -124,8 +133,17 @@ public interface FacilityRepository
           services.stream()
               .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
               .toArray(Predicate[]::new);
-      Predicate anyService = criteriaBuilder.or(servicePredicates);
-      return criteriaBuilder.and(combinedBase, anyService);
+      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
+
+      Predicate[] overlayServicePredicates =
+          services.stream()
+              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
+              .toArray(Predicate[]::new);
+      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
+
+      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
+
+      return criteriaBuilder.and(combinedBase, combinedServices);
     }
   }
 
@@ -165,8 +183,17 @@ public interface FacilityRepository
           services.stream()
               .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
               .toArray(Predicate[]::new);
-      Predicate anyService = criteriaBuilder.or(servicePredicates);
-      return criteriaBuilder.and(combinedBase, anyService);
+      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
+
+      Predicate[] overlayServicePredicates =
+          services.stream()
+              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
+              .toArray(Predicate[]::new);
+      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
+
+      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
+
+      return criteriaBuilder.and(combinedBase, combinedServices);
     }
   }
 
@@ -208,8 +235,17 @@ public interface FacilityRepository
           services.stream()
               .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
               .toArray(Predicate[]::new);
-      Predicate anyService = criteriaBuilder.or(servicePredicates);
-      return criteriaBuilder.and(combinedBase, anyService);
+      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
+
+      Predicate[] overlayServicePredicates =
+          services.stream()
+              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
+              .toArray(Predicate[]::new);
+      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
+
+      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
+
+      return criteriaBuilder.and(combinedBase, combinedServices);
     }
   }
 
@@ -247,8 +283,17 @@ public interface FacilityRepository
           services.stream()
               .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
               .toArray(Predicate[]::new);
-      Predicate anyService = criteriaBuilder.or(servicePredicates);
-      return criteriaBuilder.and(combinedBase, anyService);
+      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
+
+      Predicate[] overlayServicePredicates =
+          services.stream()
+              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
+              .toArray(Predicate[]::new);
+      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
+
+      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
+
+      return criteriaBuilder.and(combinedBase, combinedServices);
     }
   }
 }

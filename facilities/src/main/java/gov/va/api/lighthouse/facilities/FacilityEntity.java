@@ -75,10 +75,13 @@ public class FacilityEntity implements HasFacilityPayload {
   @Column(name = "cms_operating_status")
   private String cmsOperatingStatus;
 
-  @Lob
-  @Basic(fetch = FetchType.EAGER)
-  @Column(name = "cms_services")
-  private String cmsServices;
+  @ElementCollection(targetClass = String.class)
+  @CollectionTable(
+      name = "cms_overlay_detailed_services",
+      schema = "app",
+      joinColumns = {@JoinColumn(name = "station_number"), @JoinColumn(name = "type")})
+  @Column(length = 48, name = "overlay_detailed_services")
+  private Set<String> overlayServices;
 
   @Version private Integer version;
 
@@ -106,7 +109,7 @@ public class FacilityEntity implements HasFacilityPayload {
       double longitude,
       String facility,
       String cmsOperatingStatus,
-      String cmsServices,
+      Set<Facility.ServiceType> overlayServiceTypes,
       Integer version,
       Set<Facility.ServiceType> servicesTypes,
       Long missingTimestamp,
@@ -122,7 +125,7 @@ public class FacilityEntity implements HasFacilityPayload {
         servicesTypes.stream().map(Object::toString).collect(toSet()),
         facility,
         cmsOperatingStatus,
-        cmsServices,
+        overlayServiceTypes.stream().map(Object::toString).collect(toSet()),
         version,
         missingTimestamp,
         lastUpdated,
@@ -132,6 +135,11 @@ public class FacilityEntity implements HasFacilityPayload {
 
   static Sort naturalOrder() {
     return Sort.by("id").ascending();
+  }
+
+  /** Populate overlay services from a type safe collection. */
+  public void overlayServicesFromServiceTypes(Set<Facility.ServiceType> overlayServiceTypes) {
+    overlayServices(overlayServiceTypes.stream().map(Object::toString).collect(toSet()));
   }
 
   /** Populate services from a type safe collection. */

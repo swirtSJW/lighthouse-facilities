@@ -9,7 +9,9 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -72,11 +74,23 @@ public class FacilityOverlayTest {
 
   @SneakyThrows
   private FacilityEntity entity(Facility facility, CmsOverlay overlay) {
+
+    Set<String> detailedServices = null;
+
+    if (overlay != null) {
+      detailedServices = new HashSet<>();
+      for (Facility.CmsService service : overlay.cmsServices()) {
+        if (1 == service.active()) {
+          detailedServices.add(service.name());
+        }
+      }
+    }
+
     return FacilityEntity.builder()
         .facility(mapper.writeValueAsString(facility))
         .cmsOperatingStatus(
             overlay == null ? null : mapper.writeValueAsString(overlay.operatingStatus()))
-        .cmsServices(overlay == null ? null : mapper.writeValueAsString(overlay.cmsServices()))
+        .overlayServices(overlay == null ? null : detailedServices)
         .build();
   }
 
@@ -115,7 +129,7 @@ public class FacilityOverlayTest {
         .cmsServices(
             List.of(
                 Facility.CmsService.builder()
-                    .name("COVID-19 vaccines")
+                    .name("Covid19Vaccine")
                     .active(cmsServiceActiveValue)
                     .descriptionNational("Vaccine availability for COVID-19")
                     .descriptionSystem("System description for vaccine availability for COVID-19")

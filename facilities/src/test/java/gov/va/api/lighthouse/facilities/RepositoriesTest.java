@@ -47,6 +47,7 @@ public class RepositoriesTest {
             .zip("90210")
             .state("CA")
             .servicesTypes(Set.of(HealthService.PrimaryCare, HealthService.SpecialtyCare))
+            .overlayServiceTypes(Set.of(HealthService.Covid19Vaccine))
             .facility("{garbage}")
             .version(null)
             .build();

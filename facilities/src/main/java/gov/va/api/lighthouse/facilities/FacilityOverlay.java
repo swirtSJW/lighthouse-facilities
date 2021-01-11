@@ -7,6 +7,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import lombok.Builder;
 import lombok.NonNull;
@@ -20,40 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
   @NonNull ObjectMapper mapper;
 
-  private static void applyCmsOverlayCmsServices(
-      Facility facility, List<Facility.CmsService> cmsServices) {
-    if (cmsServices == null) {
-      log.warn("CMS Overlay for facility {} is missing CMS Services", facility.id());
-    } else {
-      boolean needToSort = false;
-      for (Facility.CmsService service : cmsServices) {
-        if ("COVID-19 vaccines".equals(service.name())) {
-          if (1 == service.active()) {
-            if (facility.attributes().services().health() != null) {
-              facility.attributes().services().health().add(Facility.HealthService.Covid19Vaccine);
-            } else {
-              facility
-                  .attributes()
-                  .services()
-                  .health(List.of(Facility.HealthService.Covid19Vaccine));
-            }
-
-            needToSort = true;
-          }
-          break;
-        }
-      }
-
-      // re-sort the health services list with the newly added field(s)
-      if (needToSort && facility.attributes().services().health().size() > 1) {
-
-        Collections.sort(
-            facility.attributes().services().health(),
-            (left, right) -> left.name().compareToIgnoreCase(right.name()));
-      }
-    }
-  }
-
   private static void applyCmsOverlayOperatingStatus(
       Facility facility, Facility.OperatingStatus operatingStatus) {
     if (operatingStatus == null) {
@@ -64,6 +31,31 @@ public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
         facility.attributes().activeStatus(ActiveStatus.T);
       } else {
         facility.attributes().activeStatus(ActiveStatus.A);
+      }
+    }
+  }
+
+  private static void applyCmsOverlayServices(Facility facility, Set<String> overlayServices) {
+    if (overlayServices == null) {
+      log.warn("CMS Overlay for facility {} is missing CMS Services", facility.id());
+    } else {
+      boolean needToSort = false;
+      for (String overlayService : overlayServices) {
+        if ("Covid19Vaccine".equals(overlayService)) {
+          if (facility.attributes().services().health() != null) {
+            facility.attributes().services().health().add(Facility.HealthService.Covid19Vaccine);
+          } else {
+            facility.attributes().services().health(List.of(Facility.HealthService.Covid19Vaccine));
+          }
+          needToSort = true;
+          break;
+        }
+      }
+      // re-sort the health services list with the newly added field(s)
+      if (needToSort && facility.attributes().services().health().size() > 1) {
+        Collections.sort(
+            facility.attributes().services().health(),
+            (left, right) -> left.name().compareToIgnoreCase(right.name()));
       }
     }
   }
@@ -90,9 +82,8 @@ public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
           .operatingStatus(
               determineOperatingStatusFromActiveStatus(facility.attributes().activeStatus()));
     }
-    if (entity.cmsServices() != null) {
-      applyCmsOverlayCmsServices(
-          facility, List.of(mapper.readValue(entity.cmsServices(), Facility.CmsService[].class)));
+    if (entity.overlayServices() != null) {
+      applyCmsOverlayServices(facility, entity.overlayServices());
     }
     return facility;
   }

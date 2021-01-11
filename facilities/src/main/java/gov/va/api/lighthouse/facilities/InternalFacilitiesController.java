@@ -157,7 +157,7 @@ public class InternalFacilitiesController {
     }
     log.info("Removing cmsOverlay from facility {}", sanitize(id));
     facilityRepository.save(entity.get().cmsOperatingStatus(null));
-    facilityRepository.save(entity.get().cmsServices(null));
+    facilityRepository.save(entity.get().overlayServices(null));
 
     return ResponseEntity.ok().build();
   }
@@ -169,10 +169,8 @@ public class InternalFacilitiesController {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-    if (entity.get().cmsOperatingStatus() != null || entity.get().cmsServices() != null) {
-      log.info(
-          "Failed to delete facility {}. cmsOperatingStatus or cmsServices are not null.",
-          sanitize(id));
+    if (entity.get().cmsOperatingStatus() != null || entity.get().overlayServices() != null) {
+      log.info("Failed to delete facility {}. cmsOperatingStatus or overlayServices are not null", sanitize(id));
       return ResponseEntity.status(409)
           .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
     }
@@ -229,15 +227,8 @@ public class InternalFacilitiesController {
                                                 MAPPER,
                                                 z.cmsOperatingStatus(),
                                                 Facility.OperatingStatus.class))
-                                    .cmsServices(
-                                        z.cmsServices() == null
-                                            ? null
-                                            : List.of(
-                                                FacilitiesJacksonConfig.quietlyMap(
-                                                    MAPPER,
-                                                    z.cmsServices(),
-                                                    Facility.CmsService[].class)))
                                     .build())
+                            .overlayServices(z.overlayServices())
                             .missing(
                                 z.missingTimestamp() == null
                                     ? null
@@ -269,7 +260,7 @@ public class InternalFacilitiesController {
               .id(id)
               .facility(entity.facility())
               .cmsOperatingStatus(entity.cmsOperatingStatus())
-              .cmsServices(entity.cmsServices())
+              .overlayServices(entity.overlayServices())
               .missingTimestamp(entity.missingTimestamp())
               .lastUpdated(now)
               .build());
@@ -491,7 +482,7 @@ public class InternalFacilitiesController {
           FacilityEntity.builder()
               .id(pk)
               .cmsOperatingStatus(zombieEntity.cmsOperatingStatus())
-              .cmsServices(zombieEntity.cmsServices())
+              .overlayServices(zombieEntity.overlayServices())
               .build();
 
       updateAndSave(response, facilityEntity, facility);

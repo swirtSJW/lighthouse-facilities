@@ -5,6 +5,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
 
@@ -19,6 +20,8 @@ final class GraveyardResponse {
     private Facility facility;
 
     private CmsOverlay cmsOverlay;
+
+    private Set<String> overlayServices;
 
     private Instant missing;
 

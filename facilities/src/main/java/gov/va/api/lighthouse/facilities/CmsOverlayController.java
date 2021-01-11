@@ -3,7 +3,10 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,8 +57,19 @@ public class CmsOverlayController {
     }
 
     if (overlay.cmsServices() != null) {
-      entity.cmsServices(
-          FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.cmsServices()));
+      // Compile the set of overlay services to be added
+      Set<String> detailedServices = new HashSet<>();
+      for (Facility.CmsService service : overlay.cmsServices()) {
+        // Since the covid 19 service name doesn't match our enum, we need to update and verify??
+        if (1 == service.active()) {
+          if (service.name().equals("COVID-19 vaccines")) {
+            detailedServices.add("Covid19Vaccine");
+          } else {
+            detailedServices.add(service.name());
+          }
+        }
+      }
+      entity.overlayServices(detailedServices);
     }
 
     repository.save(entity);

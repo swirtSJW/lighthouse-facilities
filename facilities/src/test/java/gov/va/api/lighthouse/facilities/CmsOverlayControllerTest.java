@@ -9,8 +9,10 @@ import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,11 +58,17 @@ public class CmsOverlayControllerTest {
     when(repository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
     ResponseEntity<Void> response = controller().saveOverlay("vha_123", overlay);
+    Set<String> detailedServices = new HashSet<>();
+
+    for (Facility.CmsService service : overlay.cmsServices()) {
+      if (1 == service.active()) {
+        detailedServices.add(service.name());
+      }
+    }
 
     entity.cmsOperatingStatus(
         FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()));
-    entity.cmsServices(
-        FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.cmsServices()));
+    entity.overlayServices(detailedServices);
     verify(repository).save(entity);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
