@@ -53,6 +53,8 @@ final class VastEntity {
 
   private String sunday;
 
+  private String operationalHoursSpecialInstructions;
+
   private String staPhone;
 
   private String staFax;
@@ -107,7 +109,6 @@ final class VastEntity {
   // UNIQUESTAT
   // URH
   // VA_SITE
-  // OperationalHoursSpecialInstructions
   // CLC
   // District
   // DistrictName

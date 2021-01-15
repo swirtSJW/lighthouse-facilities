@@ -38,6 +38,7 @@
         "saturday" : "Closed",
         "sunday" : "Closed"
       },
+      "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
       "services" : {
         "other" : [ ],
         "health" : [

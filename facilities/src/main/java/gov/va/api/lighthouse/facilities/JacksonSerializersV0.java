@@ -239,6 +239,8 @@ final class JacksonSerializersV0 {
       jgen.writeObjectField(
           "hours", Optional.ofNullable(value.hours()).orElse(Facility.Hours.builder().build()));
       jgen.writeObjectField(
+          "operationalHoursSpecialInstructions", value.operationalHoursSpecialInstructions());
+      jgen.writeObjectField(
           "services",
           Optional.ofNullable(value.services()).orElse(Facility.Services.builder().build()));
       jgen.writeObjectField(
@@ -482,6 +484,8 @@ final class JacksonSerializersV0 {
           "phone", Optional.ofNullable(value.phone()).orElse(Facility.Phone.builder().build()));
       jgen.writeObjectField(
           "hours", Optional.ofNullable(value.hours()).orElse(Facility.Hours.builder().build()));
+      jgen.writeObjectField(
+          "operationalHoursSpecialInstructions", value.operationalHoursSpecialInstructions());
       jgen.writeObjectField(
           "services",
           Optional.ofNullable(value.services()).orElse(Facility.Services.builder().build()));

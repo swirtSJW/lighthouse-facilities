@@ -41,6 +41,7 @@ final class GeoFacilityTransformer {
         .address(attr.address())
         .phone(attr.phone())
         .hours(attr.hours())
+        .operationalHoursSpecialInstructions(attr.operationalHoursSpecialInstructions())
         .services(attr.services())
         .satisfaction(attr.satisfaction())
         .waitTimes(attr.waitTimes())

@@ -146,6 +146,7 @@ public final class Facility {
     "address",
     "phone",
     "hours",
+    "operationalHoursSpecialInstructions",
     "services",
     "satisfaction",
     "wait_times",
@@ -184,6 +185,9 @@ public final class Facility {
     @Valid Phone phone;
 
     @Valid Hours hours;
+
+    @Schema(example = "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.")
+    String operationalHoursSpecialInstructions;
 
     @Valid Services services;
 

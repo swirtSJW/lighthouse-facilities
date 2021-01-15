@@ -116,6 +116,7 @@ public class FacilitiesCollectorTest {
             + "FRIDAY VARCHAR,"
             + "SATURDAY VARCHAR,"
             + "SUNDAY VARCHAR,"
+            + "OPERATIONALHOURSSPECIALINSTRUCTIONS VARCHAR,"
             + "STA_PHONE VARCHAR,"
             + "STA_FAX VARCHAR,"
             + "AFTERHOURSPHONE VARCHAR,"

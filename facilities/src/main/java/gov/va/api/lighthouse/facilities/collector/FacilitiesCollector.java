@@ -121,6 +121,7 @@ public class FacilitiesCollector {
             Optional.ofNullable(rs.getTimestamp("LASTUPDATED"))
                 .map(t -> t.toInstant())
                 .orElse(null))
+        .operationalHoursSpecialInstructions(rs.getString("OPERATIONALHOURSSPECIALINSTRUCTIONS"))
         .build();
   }
 
@@ -220,6 +221,7 @@ public class FacilitiesCollector {
                     + "FRIDAY,"
                     + "SATURDAY,"
                     + "SUNDAY,"
+                    + "OPERATIONALHOURSSPECIALINSTRUCTIONS,"
                     + "STA_PHONE,"
                     + "STA_FAX,"
                     + "AFTERHOURSPHONE,"

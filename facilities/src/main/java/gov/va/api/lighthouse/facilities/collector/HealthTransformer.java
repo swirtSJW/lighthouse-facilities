@@ -144,6 +144,7 @@ final class HealthTransformer {
         address(),
         phone(),
         hours(),
+        vast.operationalHoursSpecialInstructions(),
         services(),
         satisfaction(),
         waitTimes(),
@@ -162,6 +163,7 @@ final class HealthTransformer {
         .address(address())
         .phone(phone())
         .hours(hours())
+        .operationalHoursSpecialInstructions(vast.operationalHoursSpecialInstructions())
         .services(services())
         .satisfaction(satisfaction())
         .waitTimes(waitTimes())

@@ -142,6 +142,8 @@ class HealthsCollectorJpaTest {
             .friday("730AM-430PM")
             .saturday("-")
             .sunday("-")
+            .operationalHoursSpecialInstructions(
+                "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m. |")
             .staPhone("632-550-3888 x")
             .staFax("632-310-5962 x")
             .afterHoursPhone(null)
@@ -205,6 +207,8 @@ class HealthsCollectorJpaTest {
                                     .saturday("Closed")
                                     .sunday("Closed")
                                     .build())
+                            .operationalHoursSpecialInstructions(
+                                "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m. |")
                             .services(
                                 Facility.Services.builder()
                                     .health(

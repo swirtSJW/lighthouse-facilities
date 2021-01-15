@@ -40,6 +40,7 @@
         "saturday" : "Sunrise - Sundown",
         "sunday" : "Sunrise - Sundown"
       },
+      "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
       "services" : { },
       "satisfaction" : { },
       "wait_times" : { },

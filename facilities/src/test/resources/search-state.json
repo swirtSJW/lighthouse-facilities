@@ -39,6 +39,7 @@
           "thursday" : "800AM-430PM",
           "wednesday" : "800AM-430PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -178,6 +179,7 @@
           "thursday" : "24/7",
           "wednesday" : "24/7"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -324,6 +326,7 @@
           "thursday" : "700AM-430PM",
           "wednesday" : "700AM-600PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -462,6 +465,7 @@
           "thursday" : "700AM-430PM",
           "wednesday" : "700AM-600PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -575,6 +579,7 @@
           "thursday" : "730AM-430PM",
           "wednesday" : "730AM-430PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -658,6 +663,7 @@
           "thursday" : "700AM-430PM",
           "wednesday" : "700AM-600PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -778,6 +784,7 @@
           "thursday" : "730AM-430PM",
           "wednesday" : "730AM-430PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -873,6 +880,7 @@
           "thursday" : "700AM-430PM",
           "wednesday" : "700AM-430PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -968,6 +976,7 @@
           "thursday" : "24/7",
           "wednesday" : "24/7"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -1088,6 +1097,7 @@
           "thursday" : "730AM-430PM",
           "wednesday" : "730AM-530PM"
         },
+        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [

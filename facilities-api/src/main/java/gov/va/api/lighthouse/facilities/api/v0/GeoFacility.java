@@ -63,6 +63,7 @@ public final class GeoFacility {
     "address",
     "phone",
     "hours",
+    "operationalHoursSpecialInstructions",
     "services",
     "satisfaction",
     "wait_times",
@@ -94,6 +95,9 @@ public final class GeoFacility {
     @Valid Facility.Phone phone;
 
     @Valid Facility.Hours hours;
+
+    @Schema(example = "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.")
+    String operationalHoursSpecialInstructions;
 
     @Valid Facility.Services services;
 

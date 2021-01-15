@@ -35,6 +35,8 @@ public class VetCentersCollectorTest {
             .friday("730AM-430PM")
             .saturday("-")
             .sunday("-")
+            .operationalHoursSpecialInstructions(
+                "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m. |")
             .pod("A")
             .mobile(false)
             .visn("21")
@@ -82,6 +84,8 @@ public class VetCentersCollectorTest {
                                     .saturday("Closed")
                                     .sunday("Closed")
                                     .build())
+                            .operationalHoursSpecialInstructions(
+                                "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m. |")
                             .mobile(false)
                             .activeStatus(Facility.ActiveStatus.A)
                             .visn("21")

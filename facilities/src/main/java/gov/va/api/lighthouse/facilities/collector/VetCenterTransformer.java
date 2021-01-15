@@ -70,6 +70,7 @@ final class VetCenterTransformer {
         address(),
         phone(),
         hours(),
+        vast.operationalHoursSpecialInstructions(),
         vast.mobile(),
         activeStatus(),
         vast.visn())) {
@@ -84,6 +85,7 @@ final class VetCenterTransformer {
         .address(address())
         .phone(phone())
         .hours(hours())
+        .operationalHoursSpecialInstructions(vast.operationalHoursSpecialInstructions())
         .mobile(vast.mobile())
         .activeStatus(activeStatus())
         .visn(vast.visn())
