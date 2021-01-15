@@ -45,6 +45,7 @@ public class ReloadResponse {
         .build();
   }
 
+  @Builder
   @Value
   @AllArgsConstructor(staticName = "of")
   public static final class Problem {
