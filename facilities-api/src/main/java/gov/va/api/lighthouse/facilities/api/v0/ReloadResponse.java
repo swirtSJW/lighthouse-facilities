@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilities;
+package gov.va.api.lighthouse.facilities.api.v0;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -13,20 +13,27 @@ import lombok.Value;
 @Builder
 @Data
 public class ReloadResponse {
-  private int totalFacilities;
-  private List<String> facilitiesUpdated;
-  private List<String> facilitiesRevived;
-  private List<String> facilitiesCreated;
-  private List<String> facilitiesMissing;
-  private List<String> facilitiesRemoved;
-  private List<Problem> problems;
-  private Timing timing;
+  public List<String> facilitiesUpdated;
+
+  public List<String> facilitiesRevived;
+
+  public List<String> facilitiesCreated;
+
+  public List<String> facilitiesMissing;
+
+  public List<String> facilitiesRemoved;
+
+  public List<Problem> problems;
+
+  public Timing timing;
+
+  int totalFacilities;
 
   /**
    * Create an instance that is has thread safe collections that can be added to when processing
    * records simultaneously and has timing initialized to start now.
    */
-  static ReloadResponse start() {
+  public static ReloadResponse start() {
     return ReloadResponse.builder()
         .timing(Timing.builder().start(Instant.now()).build())
         .facilitiesUpdated(new CopyOnWriteArrayList<>())
@@ -40,28 +47,29 @@ public class ReloadResponse {
 
   @Value
   @AllArgsConstructor(staticName = "of")
-  static final class Problem {
+  public static final class Problem {
     String facilityId;
+
     String description;
   }
 
   @Builder
   @Data
-  static final class Timing {
+  public static final class Timing {
     /** The time we started the reload process. */
-    private Instant start;
+    public Instant start;
 
     /**
      * The time after we started and completed the collection phase, but not yet started updating
      * the database.
      */
-    private Instant completeCollection;
+    public Instant completeCollection;
 
     /** The time completed all work (including the DB updates). */
-    private Instant complete;
+    public Instant complete;
 
     /** The amount of time it took to perform the full reload cycle. */
-    private Duration totalDuration;
+    public Duration totalDuration;
 
     /** Set the 'complete' time to now and compute the 'totalDuration'. */
     public void markComplete() {

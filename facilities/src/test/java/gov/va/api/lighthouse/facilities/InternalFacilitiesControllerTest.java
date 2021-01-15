@@ -20,6 +20,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
+import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.math.BigDecimal;
 import java.time.Instant;
