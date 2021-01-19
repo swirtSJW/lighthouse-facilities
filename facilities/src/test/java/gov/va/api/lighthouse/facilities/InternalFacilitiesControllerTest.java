@@ -277,25 +277,25 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.problems())
         .isEqualTo(
             List.of(
-                ReloadResponse.Problem.of("vha_f1", "Invalid physical address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing or invalid physical address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing physical address state"),
                 ReloadResponse.Problem.of("vha_f1", "Missing physical address city"),
-                ReloadResponse.Problem.of("vha_f1", "Missing all physical address streets"),
-                ReloadResponse.Problem.of("vha_f1", "Invalid mailing address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing physical address street information"),
+                ReloadResponse.Problem.of("vha_f1", "Missing or invalid mailing address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address state"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address city"),
-                ReloadResponse.Problem.of("vha_f1", "Missing all mailing address streets"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address street information"),
                 ReloadResponse.Problem.of("vha_f1", "Missing main phone number"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Monday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Tuesday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Wednesday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Thursday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Friday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Saturday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Sunday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Monday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Tuesday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Wednesday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Thursday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Friday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Saturday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Sunday"),
                 ReloadResponse.Problem.of("vha_f1", "Missing classification"),
-                ReloadResponse.Problem.of("vha_f1", "Invalid latitude"),
-                ReloadResponse.Problem.of("vha_f1", "Invalid longitude")));
+                ReloadResponse.Problem.of("vha_f1", "Missing or invalid location latitude"),
+                ReloadResponse.Problem.of("vha_f1", "Missing or invalid location longitude")));
   }
 
   @Test
@@ -540,21 +540,21 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.problems())
         .isEqualTo(
             List.of(
-                ReloadResponse.Problem.of("vha_f1", "Invalid physical address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing or invalid physical address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing physical address city"),
-                ReloadResponse.Problem.of("vha_f1", "Missing all physical address streets"),
-                ReloadResponse.Problem.of("vha_f1", "Invalid mailing address zip"),
+                ReloadResponse.Problem.of("vha_f1", "Missing physical address street information"),
+                ReloadResponse.Problem.of("vha_f1", "Missing or invalid mailing address zip"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address state"),
                 ReloadResponse.Problem.of("vha_f1", "Missing mailing address city"),
-                ReloadResponse.Problem.of("vha_f1", "Missing all mailing address streets"),
+                ReloadResponse.Problem.of("vha_f1", "Missing mailing address street information"),
                 ReloadResponse.Problem.of("vha_f1", "Missing main phone number"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Monday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Tuesday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Wednesday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Thursday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Friday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Saturday hours"),
-                ReloadResponse.Problem.of("vha_f1", "Missing Sunday hours"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Monday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Tuesday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Wednesday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Thursday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Friday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Saturday"),
+                ReloadResponse.Problem.of("vha_f1", "Missing hours Sunday"),
                 ReloadResponse.Problem.of("vha_f1", "Missing classification"),
                 ReloadResponse.Problem.of("vha_f1", "Failed to save record: oh noez")));
   }

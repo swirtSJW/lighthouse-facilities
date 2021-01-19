@@ -350,7 +350,7 @@ public class InternalFacilitiesController {
     if (isBlank(record.zip()) || !ZIP_PATTERN.matcher(record.zip()).matches()) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Invalid physical address zip"));
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid physical address zip"));
     }
     if (isBlank(record.state())) {
       response
@@ -368,7 +368,9 @@ public class InternalFacilitiesController {
         addressPhysical(facility).map(a -> a.address3()))) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing all physical address streets"));
+          .add(
+              ReloadResponse.Problem.of(
+                  facility.id(), "Missing physical address street information"));
     }
     // Mailing addresses only exist for cemeteries
     if (facility.attributes().facilityType() == Facility.FacilityType.va_cemetery) {
@@ -376,7 +378,8 @@ public class InternalFacilitiesController {
           || !ZIP_PATTERN.matcher(facility.attributes().address().mailing().zip()).matches()) {
         response
             .problems()
-            .add(ReloadResponse.Problem.of(facility.id(), "Invalid mailing address zip"));
+            .add(
+                ReloadResponse.Problem.of(facility.id(), "Missing or invalid mailing address zip"));
       }
       if (isBlank(addressMailing(facility).map(a -> a.state()))) {
         response
@@ -394,7 +397,9 @@ public class InternalFacilitiesController {
           addressMailing(facility).map(a -> a.address3()))) {
         response
             .problems()
-            .add(ReloadResponse.Problem.of(facility.id(), "Missing all mailing address streets"));
+            .add(
+                ReloadResponse.Problem.of(
+                    facility.id(), "Missing mailing address street information"));
       }
     }
     if (facility.attributes().phone() == null || isBlank(facility.attributes().phone().main())) {
@@ -403,25 +408,25 @@ public class InternalFacilitiesController {
           .add(ReloadResponse.Problem.of(facility.id(), "Missing main phone number"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().monday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Monday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Monday"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().tuesday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Tuesday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Tuesday"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().wednesday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Wednesday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Wednesday"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().thursday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Thursday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Thursday"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().friday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Friday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Friday"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().saturday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Saturday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Saturday"));
     }
     if (isHoursNull(facility) || isBlank(facility.attributes().hours().sunday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing Sunday hours"));
+      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Sunday"));
     }
     // Currently classification is not populated for vet centers
     if (facility.attributes().facilityType() != Facility.FacilityType.vet_center
@@ -429,10 +434,14 @@ public class InternalFacilitiesController {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing classification"));
     }
     if (record.latitude() > 90 || record.latitude() < -90) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Invalid latitude"));
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid location latitude"));
     }
     if (record.longitude() > 180 || record.longitude() < -180) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Invalid longitude"));
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid location longitude"));
     }
     if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility
             || facility.attributes().facilityType() == Facility.FacilityType.va_benefits_facility)
