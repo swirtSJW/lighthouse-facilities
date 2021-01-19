@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_health_facility;
+import static gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -294,6 +296,26 @@ public class InternalFacilitiesControllerTest {
                 ReloadResponse.Problem.of("vha_f1", "Missing classification"),
                 ReloadResponse.Problem.of("vha_f1", "Invalid latitude"),
                 ReloadResponse.Problem.of("vha_f1", "Invalid longitude")));
+  }
+
+  @Test
+  @SneakyThrows
+  void collect_noVISN() {
+    Facility f1 = _facility("vha_f1", "FL", "32934", 91.4, 181.4, List.of());
+    f1.attributes().facilityType(va_health_facility);
+    when(collector.collectFacilities()).thenReturn(List.of(f1));
+    ReloadResponse responseHealth = _controller().reload().getBody();
+    assertThat(responseHealth.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
+    assertThat(responseHealth.problems())
+        .contains(ReloadResponse.Problem.of("vha_f1", "Missing VISN"));
+
+    Facility f2 = _facility("vc_f1", "FL", "32934", 91.4, 181.4, List.of());
+    f2.attributes().facilityType(vet_center);
+    when(collector.collectFacilities()).thenReturn(List.of(f2));
+    ReloadResponse responseVetCenter = _controller().reload().getBody();
+    assertThat(responseVetCenter.facilitiesCreated()).isEqualTo(List.of("vc_f1"));
+    assertThat(responseVetCenter.problems())
+        .contains(ReloadResponse.Problem.of("vc_f1", "Missing VISN"));
   }
 
   @Test
