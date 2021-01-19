@@ -436,12 +436,12 @@ public class InternalFacilitiesController {
     }
     if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility
             || facility.attributes().facilityType() == Facility.FacilityType.va_benefits_facility)
-            && isBlank(services(facility).map(s -> s.health()))) {
+        && isBlank(services(facility).map(s -> s.health()))) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
     if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility
             || facility.attributes().facilityType() == Facility.FacilityType.vet_center)
-            && isBlank(record.visn())) {
+        && isBlank(record.visn())) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing VISN"));
     }
 
