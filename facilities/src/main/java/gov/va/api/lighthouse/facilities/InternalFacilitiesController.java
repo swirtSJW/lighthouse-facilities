@@ -231,7 +231,7 @@ public class InternalFacilitiesController {
                                                 z.cmsOperatingStatus(),
                                                 Facility.OperatingStatus.class))
                                     .build())
-                            .overlayServices(z.overlayServices())
+                            .overlayServices(z.graveyardOverlayServices())
                             .missing(
                                 z.missingTimestamp() == null
                                     ? null
@@ -263,7 +263,8 @@ public class InternalFacilitiesController {
               .id(id)
               .facility(entity.facility())
               .cmsOperatingStatus(entity.cmsOperatingStatus())
-              .overlayServices(entity.overlayServices())
+              .graveyardOverlayServices(
+                  entity.overlayServices() == null ? null : new HashSet<>(entity.overlayServices()))
               .missingTimestamp(entity.missingTimestamp())
               .lastUpdated(now)
               .build());
@@ -485,7 +486,10 @@ public class InternalFacilitiesController {
           FacilityEntity.builder()
               .id(pk)
               .cmsOperatingStatus(zombieEntity.cmsOperatingStatus())
-              .overlayServices(zombieEntity.overlayServices())
+              .overlayServices(
+                  zombieEntity.graveyardOverlayServices() == null
+                      ? null
+                      : new HashSet<>(zombieEntity.graveyardOverlayServices()))
               .build();
 
       updateAndSave(response, facilityEntity, facility);

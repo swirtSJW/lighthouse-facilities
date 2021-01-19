@@ -44,11 +44,11 @@ public class FacilityGraveyardEntity {
 
   @ElementCollection(targetClass = String.class)
   @CollectionTable(
-      name = "cms_overlay_detailed_services",
+      name = "cms_graveyard_overlay_detailed_services",
       schema = "app",
       joinColumns = {@JoinColumn(name = "station_number"), @JoinColumn(name = "type")})
-  @Column(length = 48, name = "overlay_detailed_services")
-  private Set<String> overlayServices;
+  @Column(length = 48, name = "graveyard_overlay_detailed_services")
+  private Set<String> graveyardOverlayServices;
 
   @Column(name = "missing_timestamp")
   private Long missingTimestamp;

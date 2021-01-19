@@ -404,3 +404,43 @@ databaseChangeLog:
                   name: type
               - column:
                   name: overlay_detailed_services
+
+  - changeSet:
+      id: 14
+      author: axolotl
+      changes:
+        - createTable:
+            tableName: cms_graveyard_overlay_detailed_services
+            schemaName: app
+            columns:
+              - column:
+                  name: station_number
+                  type: varchar(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(3)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: graveyard_overlay_detailed_services
+                  type: varchar(48)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+        - createIndex:
+            tableName: cms_graveyard_overlay_detailed_services
+            schemaName: app
+            clustered: false
+            indexName: graveyard_overlay_detailed_services_id_idx
+            columns:
+              - column:
+                  name: station_number
+              - column:
+                  name: type
+              - column:
+                  name: graveyard_overlay_detailed_services

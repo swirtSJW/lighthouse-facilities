@@ -142,7 +142,7 @@ public class InternalFacilitiesControllerTest {
         .id(FacilityEntity.Pk.fromIdString(fac.id()))
         .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(fac))
         .cmsOperatingStatus(operatingStatusString)
-        .overlayServices(detailedServices)
+        .graveyardOverlayServices(detailedServices)
         .missingTimestamp(LocalDateTime.now().minusDays(4).toInstant(ZoneOffset.UTC).toEpochMilli())
         .lastUpdated(Instant.now())
         .build();
@@ -182,7 +182,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.facility())
         .isEqualTo(FacilitiesJacksonConfig.createMapper().writeValueAsString(f1));
     assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
-    assertThat(result.overlayServices()).isEqualTo(entity.overlayServices());
+    assertThat(result.overlayServices()).isEqualTo(entity.graveyardOverlayServices());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
@@ -312,7 +312,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.id()).isEqualTo(entity.id());
     assertThat(result.facility()).isEqualTo(entity.facility());
     assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
-    assertThat(result.overlayServices()).isEqualTo(entity.overlayServices());
+    assertThat(result.graveyardOverlayServices()).isEqualTo(entity.overlayServices());
     assertThat(result.missingTimestamp()).isEqualTo(threeDaysAgo);
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
@@ -396,7 +396,7 @@ public class InternalFacilitiesControllerTest {
                                 JacksonConfig.createMapper()
                                     .readValue(entity.facility(), Facility.class))
                             .cmsOverlay(overlay)
-                            .overlayServices(entity.overlayServices())
+                            .overlayServices(entity.graveyardOverlayServices())
                             .missing(Instant.ofEpochMilli(entity.missingTimestamp()))
                             .lastUpdated(entity.lastUpdated())
                             .build()))
