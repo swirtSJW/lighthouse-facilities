@@ -449,7 +449,7 @@ public class InternalFacilitiesController {
     }
 
     if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility)
-            && isBlank(services(facility).map(s -> s.health()))) {
+        && isBlank(services(facility).map(s -> s.health()))) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
 
