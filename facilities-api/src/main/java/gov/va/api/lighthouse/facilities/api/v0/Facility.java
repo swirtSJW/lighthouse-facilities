@@ -212,6 +212,13 @@ public final class Facility {
 
     @Schema(example = "20")
     String visn;
+
+    public static final class FacilityAttributesBuilder {
+      @JsonProperty("operationalHoursSpecialInstructions")
+      public FacilityAttributesBuilder instructions(String val) {
+        return operationalHoursSpecialInstructions(val);
+      }
+    }
   }
 
   @Data
@@ -328,7 +335,6 @@ public final class Facility {
               + " Facility Description,"
               + " or Health Service API ID.")
   public static final class CmsService {
-
     @Schema(example = "COVID-19 vaccines")
     String name;
 
