@@ -41,7 +41,7 @@
           "thursday" : "Sunrise - Sundown",
           "wednesday" : "Sunrise - Sundown"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -85,7 +85,7 @@
           "thursday" : "Sunrise - Sunset",
           "wednesday" : "Sunrise - Sunset"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -131,7 +131,7 @@
           "thursday" : "8:00AM-4:00PM",
           "wednesday" : "8:00AM-4:00PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "benefits" : [
             "EducationAndCareerCounseling",
@@ -181,7 +181,7 @@
           "thursday" : "830AM-600PM",
           "wednesday" : "830AM-600PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -232,7 +232,7 @@
           "thursday" : "700AM-430PM",
           "wednesday" : "700AM-430PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [

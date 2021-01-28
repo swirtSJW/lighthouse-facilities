@@ -39,7 +39,7 @@
           "thursday" : "730AM-430PM",
           "wednesday" : "730AM-430PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -166,7 +166,7 @@
           "thursday" : "800AM-630PM",
           "wednesday" : "800AM-630PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -219,7 +219,7 @@
           "thursday" : "Sunrise - Sunset",
           "wednesday" : "Sunrise - Sunset"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -270,7 +270,7 @@
           "thursday" : "24/7",
           "wednesday" : "24/7"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -412,7 +412,7 @@
           "thursday" : "8:00AM-4:00PM",
           "wednesday" : "8:00AM-4:00PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "benefits" : [
             "ApplyingForBenefits",
@@ -469,7 +469,7 @@
           "thursday" : "800AM-630PM",
           "wednesday" : "800AM-630PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -519,7 +519,7 @@
           "thursday" : "800AM-400PM",
           "wednesday" : "800AM-400PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -594,7 +594,7 @@
           "thursday" : "800AM-430PM",
           "wednesday" : "800AM-430PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -684,7 +684,7 @@
           "thursday" : "730AM-430PM",
           "wednesday" : "730AM-430PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [
@@ -774,7 +774,7 @@
           "thursday" : "800AM-430PM",
           "wednesday" : "800AM-430PM"
         },
-        "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [

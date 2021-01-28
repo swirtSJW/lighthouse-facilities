@@ -75,7 +75,7 @@ import javax.ws.rs.Path;
                     + "- The list of available services in the `services` element is only "
                     + "applicable to VA health and\n  benefits facilities.\n"
                     + "- The operational hours special instructions contained in the "
-                    + "`operationalhoursspecialinstructions` element is only applicable to VA "
+                    + "`operational_hours_special_instructions` element is only applicable to VA "
                     + "health and Vet Center facilities."
                     + "\n\n"
                     + "### Facility ID Formats and Constraints"

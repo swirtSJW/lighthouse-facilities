@@ -35,7 +35,7 @@
       "Saturday" : "Sunrise - Sunset",
       "Sunday" : "Sunrise - Sunset"
     },
-    "operationalHoursSpecialInstructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+    "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
     "services" : { },
     "satisfaction" : { },
     "wait_times" : { },
