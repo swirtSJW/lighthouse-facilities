@@ -14,6 +14,7 @@ import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
+import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -41,10 +42,12 @@ public class NearbyTest {
   @Mock RestTemplate restTemplate = mock(RestTemplate.class);
 
   private NearbyController _controller() {
+    InsecureRestTemplateProvider restTemplateProvider = mock(InsecureRestTemplateProvider.class);
+    when(restTemplateProvider.restTemplate()).thenReturn(restTemplate);
     return NearbyController.builder()
         .facilityRepository(facilityRepository)
         .driveTimeBandRepository(driveTimeBandRepository)
-        .restTemplate(restTemplate)
+        .restTemplateProvider(restTemplateProvider)
         .bingKey("bingKey")
         .bingUrl("http://bing")
         .build();

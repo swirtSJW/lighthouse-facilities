@@ -16,6 +16,7 @@ import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
+import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.math.BigDecimal;
@@ -68,12 +69,12 @@ public class NearbyController {
   NearbyController(
       @Autowired FacilityRepository facilityRepository,
       @Autowired DriveTimeBandRepository driveTimeBandRepository,
-      @Autowired RestTemplate restTemplate,
+      @Autowired InsecureRestTemplateProvider restTemplateProvider,
       @Value("${bing.key}") String bingKey,
       @Value("${bing.url}") String bingUrl) {
     this.facilityRepository = facilityRepository;
     this.driveTimeBandRepository = driveTimeBandRepository;
-    this.restTemplate = restTemplate;
+    this.restTemplate = restTemplateProvider.restTemplate();
     this.bingKey = bingKey;
     this.bingUrl = bingUrl.endsWith("/") ? bingUrl : bingUrl + "/";
   }
