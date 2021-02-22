@@ -141,6 +141,14 @@ final class CemeteriesCollector {
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             .readValue(response, NationalCemeteries.class)
             .cem();
+
+    // Single and double digit ids must be prepended with '0's
+    for (NationalCemeteries.NationalCemetery cem : cemeteries) {
+      while (cem.id.length() < 3) {
+        cem.id = "0" + cem.id;
+      }
+    }
+
     log.info(
         "Loading national cemeteries xml took {} millis for {} entries",
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
