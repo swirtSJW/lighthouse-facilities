@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -106,8 +108,9 @@ public class HealthController {
       statusCode = response.getStatusCode();
       JsonNode root = JacksonConfig.createMapper().readTree(response.getBody());
       checkState(!((ArrayNode) root).isEmpty(), "No %s entries", name);
-    } catch (Exception e) {
-      log.info("Exception occurred. GET {} message: {}", url, e.getMessage());
+    } catch (RestClientException | JsonProcessingException | IllegalArgumentException e) {
+      log.info(
+          "{} occurred. GET {} message: {}", e.getClass().getSimpleName(), url, e.getMessage());
       statusCode = HttpStatus.SERVICE_UNAVAILABLE;
     }
     return Health.status(new Status(statusCode.is2xxSuccessful() ? "UP" : "DOWN", name))

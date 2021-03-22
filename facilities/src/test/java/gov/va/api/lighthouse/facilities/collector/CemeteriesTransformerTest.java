@@ -34,8 +34,8 @@ public class CemeteriesTransformerTest {
   private CemeteriesTransformer tx(String xmlWebsite, String xmlFacilityName) {
     return CemeteriesTransformer.builder()
         .cdwFacility(CemeteriesSamples.Cdw.create().cdwCemeteries())
-        .facilityName(xmlFacilityName)
-        .website(xmlWebsite)
+        .externalFacilityName(xmlFacilityName)
+        .externalWebsite(xmlWebsite)
         .build();
   }
 

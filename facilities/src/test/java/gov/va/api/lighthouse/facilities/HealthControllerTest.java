@@ -169,9 +169,7 @@ public class HealthControllerTest {
             .stateCemeteries("UP")
             .lastUpdated("DOWN")
             .build());
-
     when(jdbcTemplate.queryForObject(any(String.class), eq(Timestamp.class))).thenReturn(null);
-
     response = _controller().collectorBackendHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
     assertStatus(

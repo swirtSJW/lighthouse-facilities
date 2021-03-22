@@ -14,9 +14,9 @@ import lombok.NonNull;
 final class CemeteriesTransformer {
   @NonNull CdwCemetery cdwFacility;
 
-  String facilityName;
+  String externalFacilityName;
 
-  String website;
+  String externalWebsite;
 
   private Facility.FacilityAttributes attributes() {
     return Facility.FacilityAttributes.builder()
@@ -60,7 +60,7 @@ final class CemeteriesTransformer {
   }
 
   String facilityName(String cdwName) {
-    return facilityName != null ? facilityName : cdwName;
+    return externalFacilityName != null ? externalFacilityName : cdwName;
   }
 
   private Facility.Phone phone(String attPhone, String attFax) {
@@ -82,6 +82,6 @@ final class CemeteriesTransformer {
   }
 
   String website(String cdwUrl) {
-    return website != null ? website : cdwUrl;
+    return externalWebsite != null ? externalWebsite : cdwUrl;
   }
 }

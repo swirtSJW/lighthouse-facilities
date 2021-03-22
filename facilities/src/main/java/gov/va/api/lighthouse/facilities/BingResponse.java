@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,8 @@ public final class BingResponse {
   @Builder
   @JsonIgnoreProperties(ignoreUnknown = true)
   static final class Resource {
-    Point point;
+    @JsonProperty("point")
+    Point resourcePoint;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     static final class ResourceBuilder {}
