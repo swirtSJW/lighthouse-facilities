@@ -51,6 +51,9 @@ public class DriveTimeBandEntity {
   @Column(name = "max_longitude")
   private double maxLongitude;
 
+  @Column(name = "month_year")
+  private String monthYear;
+
   @Lob
   @Basic(fetch = FetchType.LAZY)
   @Column

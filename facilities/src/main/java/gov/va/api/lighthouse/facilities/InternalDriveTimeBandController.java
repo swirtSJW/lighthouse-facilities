@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
+import gov.va.api.lighthouse.facilities.api.pssg.BandResult;
 import gov.va.api.lighthouse.facilities.api.pssg.BandUpdateResponse;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
@@ -15,7 +16,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,20 @@ public class InternalDriveTimeBandController {
   BandResult band(@PathVariable("name") String name) {
     return repository
         .findById(DriveTimeBandEntity.Pk.fromName(name))
-        .map(BandResult::new)
+        .map(
+            result ->
+                BandResult.builder()
+                    .stationNumber(result.id().stationNumber())
+                    .fromMinutes(result.id().fromMinutes())
+                    .toMinutes(result.id().toMinutes())
+                    .minLatitude(result.minLatitude())
+                    .minLongitude(result.minLongitude())
+                    .maxLatitude(result.maxLatitude())
+                    .maxLongitude(result.maxLongitude())
+                    .monthYear(result.monthYear())
+                    .band(result.band())
+                    .version(result.version() == null ? 0 : result.version())
+                    .build())
         .orElseThrow(() -> new ExceptionsV0.NotFound(name));
   }
 
@@ -105,34 +118,8 @@ public class InternalDriveTimeBandController {
     entity.minLatitude(bounds.getMinY());
     entity.maxLongitude(bounds.getMaxX());
     entity.maxLatitude(bounds.getMaxY());
+    entity.monthYear(band.attributes().monthYear());
     entity.band(PathEncoder.create().encodeToBase64(band));
     repository.save(entity);
-  }
-
-  @Data
-  @AllArgsConstructor
-  static final class BandResult {
-    String stationNumber;
-    int fromMinutes;
-    int toMinutes;
-    double minLatitude;
-    double minLongitude;
-    double maxLatitude;
-    double maxLongitude;
-    String band;
-    int version;
-
-    BandResult(DriveTimeBandEntity e) {
-      this(
-          e.id().stationNumber(),
-          e.id().fromMinutes(),
-          e.id().fromMinutes(),
-          e.minLatitude(),
-          e.minLongitude(),
-          e.maxLatitude(),
-          e.maxLongitude(),
-          e.band(),
-          e.version() == null ? 0 : e.version());
-    }
   }
 }

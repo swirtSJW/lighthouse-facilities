@@ -28,6 +28,7 @@ public class RepositoriesTest {
             .maxLongitude(50)
             .minLatitude(40)
             .minLongitude(25)
+            .monthYear("AUG2020")
             .band("{garbage}")
             .version(null)
             .build();

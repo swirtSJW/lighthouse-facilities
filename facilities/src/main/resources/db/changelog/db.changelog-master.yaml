@@ -444,3 +444,14 @@ databaseChangeLog:
                   name: type
               - column:
                   name: graveyard_overlay_detailed_services
+  - changeSet:
+      id: 15
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: drive_time_band
+          schemaName: app
+          columns:
+            - column:
+                name: month_year
+                type: varchar(7)

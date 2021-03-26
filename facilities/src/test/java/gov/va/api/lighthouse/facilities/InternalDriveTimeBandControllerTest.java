@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import gov.va.api.lighthouse.facilities.api.pssg.BandResult;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgResponse;
@@ -40,7 +41,18 @@ public class InternalDriveTimeBandControllerTest {
     var e = Entities.diamond("a-1-2", 100);
     when(repo.findById(e.id())).thenReturn(Optional.of(e));
     assertThat(controller().band("a-1-2"))
-        .isEqualTo(new InternalDriveTimeBandController.BandResult(e));
+        .isEqualTo(
+            BandResult.builder()
+                .stationNumber(e.id().stationNumber())
+                .fromMinutes(e.id().fromMinutes())
+                .toMinutes(e.id().toMinutes())
+                .minLatitude(e.minLatitude())
+                .minLongitude(e.minLongitude())
+                .maxLatitude(e.maxLatitude())
+                .maxLongitude(e.maxLongitude())
+                .monthYear(e.monthYear())
+                .band(e.band())
+                .build());
   }
 
   @Test
@@ -85,6 +97,7 @@ public class InternalDriveTimeBandControllerTest {
           .maxLatitude(offset + 2)
           .minLongitude(offset - 1)
           .minLatitude(offset - 2)
+          .monthYear("MAR2021")
           .band(PathEncoder.create().encodeToBase64(diamondBand(name, offset)))
           .build();
     }
@@ -105,6 +118,7 @@ public class InternalDriveTimeBandControllerTest {
                   .stationNumber(pk.stationNumber())
                   .fromBreak(pk.fromMinutes())
                   .toBreak(pk.toMinutes())
+                  .monthYear("MAR2021")
                   .build())
           .geometry(PssgDriveTimeBand.Geometry.builder().rings(rings).build())
           .build();
