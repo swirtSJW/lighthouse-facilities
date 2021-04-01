@@ -1,10 +1,14 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.collector.FacilitiesCollector.loadWebsites;
 
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.validation.Valid;
@@ -28,6 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CmsOverlayController {
+  public static final String CMS_OVERLAY_SERVICE_NAME_COVID_19 = "COVID-19 vaccines";
+
+  private static final String COVID_CSV_WEBSITES_RESOURCE_NAME = "COVID-19-Facility-URLs.csv";
+
   private final FacilityRepository repository;
 
   @InitBinder
@@ -56,20 +64,30 @@ public class CmsOverlayController {
           FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()));
     }
 
-    if (overlay.cmsServices() != null) {
+    if (overlay.detailedServices() != null) {
       // Compile the set of overlay services to be added
       Set<String> detailedServices = new HashSet<>();
-      for (Facility.CmsService service : overlay.cmsServices()) {
+      List<DetailedService> activeServices = new ArrayList<>();
+
+      for (DetailedService service : overlay.detailedServices()) {
+
         // Since the covid 19 service name doesn't match our enum, we need to update and verify??
-        if (1 == service.active()) {
-          if (service.name().equals("COVID-19 vaccines")) {
+        if (service.active()) {
+          if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
             detailedServices.add("Covid19Vaccine");
+
+            Map<String, String> websites = loadWebsites(COVID_CSV_WEBSITES_RESOURCE_NAME);
+            service.path(websites.get(id));
           } else {
             detailedServices.add(service.name());
           }
+          activeServices.add(service);
         }
       }
       entity.overlayServices(detailedServices);
+
+      // Save the full payload as well
+      entity.cmsServices(FacilitiesJacksonConfig.createMapper().writeValueAsString(activeServices));
     }
 
     repository.save(entity);

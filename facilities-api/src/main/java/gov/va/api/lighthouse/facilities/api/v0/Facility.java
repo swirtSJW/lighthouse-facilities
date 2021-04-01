@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.v0;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -153,6 +154,7 @@ public final class Facility {
     "mobile",
     "active_status",
     "operating_status",
+    "detailed_services",
     "visn"
   })
   public static final class FacilityAttributes {
@@ -209,6 +211,10 @@ public final class Facility {
     @NotNull
     @JsonProperty(value = "operating_status", required = true)
     OperatingStatus operatingStatus;
+
+    @Valid
+    @JsonProperty(value = "detailed_services")
+    List<DetailedService> detailedServices;
 
     @Schema(example = "20")
     String visn;
@@ -320,45 +326,6 @@ public final class Facility {
                 + " such as messages about parking lot closures or"
                 + " floor visitation information.")
     String additionalInfo;
-  }
-
-  @Data
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  @Schema(
-      description =
-          "Current descriptions of facility service via CMS."
-              + "The descriptions of the facility service can be: "
-              + " Active/Inactive,"
-              + " National Description,"
-              + " System Description,"
-              + " Facility Description,"
-              + " or Health Service API ID.")
-  public static final class CmsService {
-    @Schema(example = "COVID-19 vaccines")
-    String name;
-
-    @Schema(
-        example = "0",
-        type = "integer",
-        description = "0 means service is inactive and 1 means active")
-    int active;
-
-    @Schema(example = "Vaccine availability for COVID-19")
-    @JsonProperty("description_national")
-    String descriptionNational;
-
-    @Schema(example = "System description for vaccine availability for COVID-19")
-    @JsonProperty("description_system")
-    String descriptionSystem;
-
-    @Schema(example = "Facility description for vaccine availability for COVID-19")
-    @JsonProperty("description_facility")
-    String descriptionFacility;
-
-    @Schema(example = "12345")
-    @JsonProperty("health_service_api_id")
-    String healthServiceApiId;
   }
 
   @Data

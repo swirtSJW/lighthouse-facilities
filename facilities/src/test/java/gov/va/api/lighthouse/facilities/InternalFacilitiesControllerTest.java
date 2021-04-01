@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
@@ -80,6 +81,67 @@ public class InternalFacilitiesControllerTest {
                 .code(Facility.OperatingStatusCode.LIMITED)
                 .additionalInfo("Limited")
                 .build())
+        .detailedServices(
+            List.of(
+                DetailedService.builder()
+                    .name("Covid19Vaccine")
+                    .descriptionFacility(
+                        "Facility description for vaccine availability for COVID-19")
+                    .appointmentLeadIn(
+                        "Your VA health care team will contact you if you...more text")
+                    .onlineSchedulingAvailable("True")
+                    .phoneNumbers(
+                        List.of(
+                            DetailedService.AppointmentPhoneNumber.builder()
+                                .extension("123")
+                                .label("Main phone")
+                                .number("555-555-1212")
+                                .type("tel")
+                                .build()))
+                    .referralRequired("True")
+                    .walkInsAccepted("False")
+                    .serviceLocations(
+                        List.of(
+                            DetailedService.DetailedServiceLocation.builder()
+                                .serviceLocationAddress(
+                                    DetailedService.DetailedServiceAddress.builder()
+                                        .buildingNameNumber("Baxter Building")
+                                        .clinicName("Baxter Clinic")
+                                        .wingFloorOrRoomNumber("Wing East")
+                                        .address1("122 Main St.")
+                                        .address2(null)
+                                        .city("Rochester")
+                                        .state("NY")
+                                        .zipCode("14623-1345")
+                                        .countryCode("US")
+                                        .build())
+                                .appointmentPhoneNumbers(
+                                    List.of(
+                                        DetailedService.AppointmentPhoneNumber.builder()
+                                            .extension("567")
+                                            .label("Alt phone")
+                                            .number("556-565-1119")
+                                            .type("tel")
+                                            .build()))
+                                .emailContacts(
+                                    List.of(
+                                        DetailedService.DetailedServiceEmailContact.builder()
+                                            .emailAddress("georgea@va.gov")
+                                            .emailLabel("George Anderson")
+                                            .build()))
+                                .facilityServiceHours(
+                                    DetailedService.DetailedServiceHours.builder()
+                                        .monday("8:30AM-7:00PM")
+                                        .tuesday("8:30AM-7:00PM")
+                                        .wednesday("8:30AM-7:00PM")
+                                        .thursday("8:30AM-7:00PM")
+                                        .friday("8:30AM-7:00PM")
+                                        .saturday("8:30AM-7:00PM")
+                                        .sunday("CLOSED")
+                                        .build())
+                                .additionalHoursInfo("Please call for an appointment outside...")
+                                .build()))
+                    .build()))
         .build();
   }
 
@@ -104,10 +166,10 @@ public class InternalFacilitiesControllerTest {
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-      if (overlay.cmsServices() != null) {
+      if (overlay.detailedServices() != null) {
         detailedServices = new HashSet<>();
-        for (Facility.CmsService service : overlay.cmsServices()) {
-          if (1 == service.active()) {
+        for (DetailedService service : overlay.detailedServices()) {
+          if (service.active()) {
             detailedServices.add(service.name());
           }
         }
@@ -127,24 +189,31 @@ public class InternalFacilitiesControllerTest {
   private FacilityGraveyardEntity _graveyardEntityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
     Set<String> detailedServices = new HashSet<>();
+    String cmsServicesString = null;
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-      if (overlay.cmsServices() != null) {
-        for (Facility.CmsService service : overlay.cmsServices()) {
-          if (1 == service.active()) {
+      if (overlay.detailedServices() != null) {
+        for (DetailedService service : overlay.detailedServices()) {
+          if (service.active()) {
             detailedServices.add(service.name());
           }
         }
       }
+
+      cmsServicesString =
+          overlay.detailedServices() == null
+              ? null
+              : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices());
     }
     return FacilityGraveyardEntity.builder()
         .id(FacilityEntity.Pk.fromIdString(fac.id()))
         .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(fac))
         .cmsOperatingStatus(operatingStatusString)
         .graveyardOverlayServices(detailedServices)
+        .cmsServices(cmsServicesString)
         .missingTimestamp(LocalDateTime.now().minusDays(4).toInstant(ZoneOffset.UTC).toEpochMilli())
         .lastUpdated(Instant.now())
         .build();

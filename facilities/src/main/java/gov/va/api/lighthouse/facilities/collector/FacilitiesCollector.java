@@ -33,6 +33,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class FacilitiesCollector {
+  private static final String WEBSITES_CSV_RESOURCE_NAME = "websites.csv";
+
   private final InsecureRestTemplateProvider insecureRestTemplateProvider;
 
   private final JdbcTemplate jdbcTemplate;
@@ -57,12 +59,13 @@ public class FacilitiesCollector {
     this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
   }
 
+  /** Load websites given a resource name. */
   @SneakyThrows
-  private static Map<String, String> loadWebsites() {
+  public static Map<String, String> loadWebsites(String resourceName) {
     final Stopwatch totalWatch = Stopwatch.createStarted();
     try (InputStreamReader reader =
         new InputStreamReader(
-            new ClassPathResource("websites.csv").getInputStream(), StandardCharsets.UTF_8)) {
+            new ClassPathResource(resourceName).getInputStream(), StandardCharsets.UTF_8)) {
       Iterable<CSVRecord> rows = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
       Map<String, String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
       for (CSVRecord row : rows) {
@@ -135,7 +138,7 @@ public class FacilitiesCollector {
     Map<String, String> websites;
     Collection<VastEntity> vastEntities;
     try {
-      websites = loadWebsites();
+      websites = loadWebsites(WEBSITES_CSV_RESOURCE_NAME);
       vastEntities = loadVast();
     } catch (Exception e) {
       throw new CollectorExceptions.CollectorException(e);

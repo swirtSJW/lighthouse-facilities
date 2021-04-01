@@ -15,6 +15,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
@@ -159,6 +160,7 @@ public class InternalFacilitiesController {
     log.info("Removing cmsOverlay from facility {}", sanitize(id));
     facilityRepository.save(entity.get().cmsOperatingStatus(null));
     facilityRepository.save(entity.get().overlayServices(null));
+    facilityRepository.save(entity.get().cmsServices(null));
 
     return ResponseEntity.ok().build();
   }
@@ -170,9 +172,12 @@ public class InternalFacilitiesController {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-    if (entity.get().cmsOperatingStatus() != null || entity.get().overlayServices() != null) {
+    if (entity.get().cmsOperatingStatus() != null
+        || entity.get().overlayServices() != null
+        || entity.get().cmsServices() != null) {
       log.info(
-          "Failed to delete facility {}. cmsOperatingStatus or overlayServices are not null",
+          "Failed to delete facility {}. cmsOperatingStatus, "
+              + "overlayServices, or cmsServices are not null",
           sanitize(id));
       return ResponseEntity.status(409)
           .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
@@ -230,6 +235,14 @@ public class InternalFacilitiesController {
                                                 MAPPER,
                                                 z.cmsOperatingStatus(),
                                                 Facility.OperatingStatus.class))
+                                    .detailedServices(
+                                        z.cmsServices() == null
+                                            ? null
+                                            : List.of(
+                                                FacilitiesJacksonConfig.quietlyMap(
+                                                    MAPPER,
+                                                    z.cmsServices(),
+                                                    DetailedService[].class)))
                                     .build())
                             .overlayServices(z.graveyardOverlayServices())
                             .missing(
@@ -263,6 +276,7 @@ public class InternalFacilitiesController {
               .id(id)
               .facility(entity.facility())
               .cmsOperatingStatus(entity.cmsOperatingStatus())
+              .cmsServices(entity.cmsServices())
               .graveyardOverlayServices(
                   entity.overlayServices() == null ? null : new HashSet<>(entity.overlayServices()))
               .missingTimestamp(entity.missingTimestamp())
@@ -504,6 +518,7 @@ public class InternalFacilitiesController {
           FacilityEntity.builder()
               .id(pk)
               .cmsOperatingStatus(zombieEntity.cmsOperatingStatus())
+              .cmsServices(zombieEntity.cmsServices())
               .overlayServices(
                   zombieEntity.graveyardOverlayServices() == null
                       ? null

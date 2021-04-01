@@ -48,6 +48,7 @@ final class GeoFacilityTransformer {
         .mobile(attr.mobile())
         .activeStatus(attr.activeStatus())
         .operatingStatus(attr.operatingStatus())
+        .detailedServices(attr.detailedServices())
         .visn(attr.visn())
         .build();
   }
