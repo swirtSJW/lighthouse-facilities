@@ -26,6 +26,9 @@ public interface DriveTimeBandRepository
   @Query("select e.id from #{#entityName} e")
   List<DriveTimeBandEntity.Pk> findAllIds();
 
+  @Query("select min(e.monthYear) from #{#entityName} e")
+  String getDefaultBandVersion();
+
   @Value
   @Builder
   class MinMaxSpecification implements Specification<DriveTimeBandEntity> {

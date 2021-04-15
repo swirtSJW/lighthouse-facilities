@@ -128,5 +128,8 @@
         "max_time" : 70
       }
     }
-  ]
+  ],
+  "meta" : {
+    "band_version" : "APR2021"
+  }
 }

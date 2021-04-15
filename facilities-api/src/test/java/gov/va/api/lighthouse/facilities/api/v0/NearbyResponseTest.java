@@ -60,6 +60,7 @@ public class NearbyResponseTest {
                     "vha_675QE", 60, 70, "/services/va_facilities/v0/facilities/vha_675QE"),
                 nearbyFacility(
                     "vha_675GC", 60, 70, "/services/va_facilities/v0/facilities/vha_675GC")))
+        .meta(NearbyResponse.Meta.builder().bandVersion("APR2021").build())
         .build();
   }
 

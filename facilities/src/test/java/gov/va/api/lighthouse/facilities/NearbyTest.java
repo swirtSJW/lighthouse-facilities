@@ -214,6 +214,7 @@ public class NearbyTest {
                                     .maxTime(10)
                                     .build())
                             .build()))
+                .meta(NearbyResponse.Meta.builder().bandVersion("Unknown").build())
                 .build());
   }
 
@@ -278,7 +279,12 @@ public class NearbyTest {
     facilityRepository.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     NearbyResponse response =
         _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null);
-    assertThat(response).isEqualTo(NearbyResponse.builder().data(emptyList()).build());
+    assertThat(response)
+        .isEqualTo(
+            NearbyResponse.builder()
+                .data(emptyList())
+                .meta(NearbyResponse.Meta.builder().bandVersion("Unknown").build())
+                .build());
   }
 
   @Test
@@ -289,7 +295,12 @@ public class NearbyTest {
     driveTimeBandRepository.save(_entity(_diamondBand("777", 80, 90, 5)));
     NearbyResponse response =
         _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, 50);
-    assertThat(response).isEqualTo(NearbyResponse.builder().data(emptyList()).build());
+    assertThat(response)
+        .isEqualTo(
+            NearbyResponse.builder()
+                .data(emptyList())
+                .meta(NearbyResponse.Meta.builder().bandVersion("Unknown").build())
+                .build());
   }
 
   @Test
@@ -314,6 +325,7 @@ public class NearbyTest {
                                     .maxTime(10)
                                     .build())
                             .build()))
+                .meta(NearbyResponse.Meta.builder().bandVersion("Unknown").build())
                 .build());
   }
 
@@ -338,6 +350,7 @@ public class NearbyTest {
                     .attributes(
                         NearbyResponse.NearbyAttributes.builder().minTime(0).maxTime(10).build())
                     .build()))
+        .meta(NearbyResponse.Meta.builder().bandVersion("Unknown").build())
         .build();
   }
 

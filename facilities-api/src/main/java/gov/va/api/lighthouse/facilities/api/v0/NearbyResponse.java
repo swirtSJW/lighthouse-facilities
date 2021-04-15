@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
@@ -12,8 +13,11 @@ import lombok.Value;
 @Value
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonPropertyOrder({"data", "meta"})
 public final class NearbyResponse {
   @Valid @NotNull List<Nearby> data;
+
+  Meta meta;
 
   public enum Type {
     @JsonProperty("nearby_facility")
@@ -33,6 +37,16 @@ public final class NearbyResponse {
     @Schema(example = "20")
     @JsonProperty("max_time")
     Integer maxTime;
+  }
+
+  @Value
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(description = "JSON API-compliant object containing metadata about this response")
+  public static final class Meta {
+    @Schema(example = "APR2021")
+    @JsonProperty("band_version")
+    String bandVersion;
   }
 
   @Value

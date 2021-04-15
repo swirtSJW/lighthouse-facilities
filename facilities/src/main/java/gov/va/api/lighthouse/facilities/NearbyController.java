@@ -155,6 +155,22 @@ public class NearbyController {
         .build();
   }
 
+  private String getMonthYearFromBandIds(List<NearbyId> ids) {
+    String monthYear;
+
+    if (!ids.isEmpty() && driveTimeBandRepository.findById(ids.get(0).bandId).isPresent()) {
+      monthYear = driveTimeBandRepository.findById(ids.get(0).bandId).get().monthYear();
+    } else {
+      monthYear = driveTimeBandRepository.getDefaultBandVersion();
+    }
+
+    if (monthYear == null) {
+      monthYear = "Unknown";
+    }
+
+    return monthYear;
+  }
+
   private Map<String, DriveTimeBandEntity> intersections(
       @NonNull BigDecimal longitude,
       @NonNull BigDecimal latitude,
@@ -194,6 +210,7 @@ public class NearbyController {
 
     return NearbyResponse.builder()
         .data(ids.stream().map(this::nearbyFacility).collect(toList()))
+        .meta(NearbyResponse.Meta.builder().bandVersion(getMonthYearFromBandIds(ids)).build())
         .build();
   }
 
@@ -265,6 +282,7 @@ public class NearbyController {
 
     return NearbyResponse.builder()
         .data(ids.stream().map(this::nearbyFacility).collect(toList()))
+        .meta(NearbyResponse.Meta.builder().bandVersion(getMonthYearFromBandIds(ids)).build())
         .build();
   }
 
