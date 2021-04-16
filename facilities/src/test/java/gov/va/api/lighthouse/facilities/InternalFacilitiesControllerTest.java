@@ -84,6 +84,7 @@ public class InternalFacilitiesControllerTest {
         .detailedServices(
             List.of(
                 DetailedService.builder()
+                    .active(true)
                     .name("Covid19Vaccine")
                     .descriptionFacility(
                         "Facility description for vaccine availability for COVID-19")
@@ -160,17 +161,25 @@ public class InternalFacilitiesControllerTest {
   @SneakyThrows
   private FacilityEntity _entityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
-    Set<String> detailedServices = null;
+    Set<String> cmsServicesNames = null;
+    String cmsServicesString = null;
+
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
+
+      cmsServicesString =
+          overlay.detailedServices() == null
+              ? null
+              : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices());
+
       if (overlay.detailedServices() != null) {
-        detailedServices = new HashSet<>();
+        cmsServicesNames = new HashSet<>();
         for (DetailedService service : overlay.detailedServices()) {
           if (service.active()) {
-            detailedServices.add(service.name());
+            cmsServicesNames.add(service.name());
           }
         }
       }
@@ -179,7 +188,8 @@ public class InternalFacilitiesControllerTest {
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
             .cmsOperatingStatus(operatingStatusString)
-            .overlayServices(detailedServices)
+            .overlayServices(cmsServicesNames)
+            .cmsServices(cmsServicesString)
             .lastUpdated(Instant.now())
             .build(),
         fac);
@@ -188,7 +198,7 @@ public class InternalFacilitiesControllerTest {
   @SneakyThrows
   private FacilityGraveyardEntity _graveyardEntityWithOverlay(Facility fac, CmsOverlay overlay) {
     String operatingStatusString = null;
-    Set<String> detailedServices = new HashSet<>();
+    Set<String> cmsServicesNames = new HashSet<>();
     String cmsServicesString = null;
     if (overlay != null) {
       operatingStatusString =
@@ -198,7 +208,7 @@ public class InternalFacilitiesControllerTest {
       if (overlay.detailedServices() != null) {
         for (DetailedService service : overlay.detailedServices()) {
           if (service.active()) {
-            detailedServices.add(service.name());
+            cmsServicesNames.add(service.name());
           }
         }
       }
@@ -212,7 +222,7 @@ public class InternalFacilitiesControllerTest {
         .id(FacilityEntity.Pk.fromIdString(fac.id()))
         .facility(FacilitiesJacksonConfig.createMapper().writeValueAsString(fac))
         .cmsOperatingStatus(operatingStatusString)
-        .graveyardOverlayServices(detailedServices)
+        .graveyardOverlayServices(cmsServicesNames)
         .cmsServices(cmsServicesString)
         .missingTimestamp(LocalDateTime.now().minusDays(4).toInstant(ZoneOffset.UTC).toEpochMilli())
         .lastUpdated(Instant.now())
@@ -477,6 +487,12 @@ public class InternalFacilitiesControllerTest {
     CmsOverlay overlay = _overlay();
     FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1, overlay);
     graveyardRepository.save(entity);
+
+    // Since we don't save active status to the database, make it false
+    for (DetailedService d : overlay.detailedServices()) {
+      d.active(false);
+    }
+
     assertThat(_controller().graveyardAll())
         .isEqualTo(
             GraveyardResponse.builder()

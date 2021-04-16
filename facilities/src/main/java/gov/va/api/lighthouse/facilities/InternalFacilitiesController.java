@@ -173,7 +173,7 @@ public class InternalFacilitiesController {
       return ResponseEntity.accepted().build();
     }
     if (entity.get().cmsOperatingStatus() != null
-        || entity.get().overlayServices() != null
+        || (entity.get().overlayServices() != null && entity.get().overlayServices().size() != 0)
         || entity.get().cmsServices() != null) {
       log.info(
           "Failed to delete facility {}. cmsOperatingStatus, "
