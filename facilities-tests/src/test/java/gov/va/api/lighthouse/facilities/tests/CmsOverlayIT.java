@@ -144,7 +144,10 @@ public class CmsOverlayIT {
 
   private static RequestSpecification requestSpecificationInternal() {
     SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
-    return RestAssured.given().baseUri(svcInternal.url()).port(svcInternal.port()).relaxedHTTPSValidation();
+    return RestAssured.given()
+        .baseUri(svcInternal.url())
+        .port(svcInternal.port())
+        .relaxedHTTPSValidation();
   }
 
   @Test
@@ -179,14 +182,18 @@ public class CmsOverlayIT {
                 .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
                 .request(
                     Method.DELETE,
-                    svcInternal.urlWithApiPath() + "internal/management/facilities/" + id + "/cms-overlay"))
+                    svcInternal.urlWithApiPath()
+                        + "internal/management/facilities/"
+                        + id
+                        + "/cms-overlay"))
         .expect(200);
 
     ExpectedResponse.of(
             requestSpecificationInternal()
                 .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
                 .request(
-                    Method.DELETE, svcInternal.urlWithApiPath() + "internal/management/facilities/" + id))
+                    Method.DELETE,
+                    svcInternal.urlWithApiPath() + "internal/management/facilities/" + id))
         .expect(200);
 
     // Call reload since we deleted the facility
