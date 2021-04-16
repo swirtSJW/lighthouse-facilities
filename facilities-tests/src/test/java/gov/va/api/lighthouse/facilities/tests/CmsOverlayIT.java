@@ -142,6 +142,11 @@ public class CmsOverlayIT {
     return RestAssured.given().baseUri(svc.url()).port(svc.port()).relaxedHTTPSValidation();
   }
 
+  private static RequestSpecification requestSpecificationInternal() {
+    SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
+    return RestAssured.given().baseUri(svcInternal.url()).port(svcInternal.port()).relaxedHTTPSValidation();
+  }
+
   @Test
   void canApplyOverlay() {
     var message = getClass().getSimpleName() + " " + Instant.now();
@@ -158,6 +163,8 @@ public class CmsOverlayIT {
 
     SystemDefinitions.Service svc = systemDefinition().facilities();
 
+    SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
+
     // Create detailed service for facility then remove it
     ExpectedResponse.of(
             requestSpecification()
@@ -168,21 +175,18 @@ public class CmsOverlayIT {
         .expect(200);
 
     ExpectedResponse.of(
-            requestSpecification()
+            requestSpecificationInternal()
                 .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
                 .request(
                     Method.DELETE,
-                    svc.urlWithApiPath() + "internal/management/facilities/" + id + "/cms-overlay"))
+                    svcInternal.urlWithApiPath() + "internal/management/facilities/" + id + "/cms-overlay"))
         .expect(200);
 
     ExpectedResponse.of(
-            RestAssured.given()
-                .baseUri(svc.url())
-                .port(svc.port())
-                .relaxedHTTPSValidation()
+            requestSpecificationInternal()
                 .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
                 .request(
-                    Method.DELETE, svc.urlWithApiPath() + "internal/management/facilities/" + id))
+                    Method.DELETE, svcInternal.urlWithApiPath() + "internal/management/facilities/" + id))
         .expect(200);
 
     // Call reload since we deleted the facility
