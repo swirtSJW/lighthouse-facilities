@@ -147,7 +147,8 @@ public class CmsOverlayIT {
     return RestAssured.given()
         .baseUri(svcInternal.url())
         .port(svcInternal.port())
-        .relaxedHTTPSValidation();
+        .relaxedHTTPSValidation()
+        .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT));
   }
 
   @Test
@@ -179,7 +180,6 @@ public class CmsOverlayIT {
 
     ExpectedResponse.of(
             requestSpecificationInternal()
-                .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
                 .request(
                     Method.DELETE,
                     svcInternal.urlWithApiPath()
@@ -190,25 +190,16 @@ public class CmsOverlayIT {
 
     ExpectedResponse.of(
             requestSpecificationInternal()
-                .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
                 .request(
                     Method.DELETE,
                     svcInternal.urlWithApiPath() + "internal/management/facilities/" + id))
         .expect(200);
 
     // Call reload since we deleted the facility
-    var response =
-        requestSpecification()
-            .header("client-key", System.getProperty("client-key", CLIENT_KEY_DEFAULT))
-            .log()
-            .uri()
-            .request(Method.GET, svc.urlWithApiPath() + "internal/management/reload");
-    if (response.statusCode() != 200) {
-      log.warn(
-          "Facility loading appears to have failed with status {}\n{}",
-          response.statusCode(),
-          response.getBody().prettyPrint());
-    }
+    ExpectedResponse.of(
+            requestSpecificationInternal()
+                .request(Method.GET, svcInternal.urlWithApiPath() + "internal/management/reload"))
+        .expect(200);
   }
 
   @Test
