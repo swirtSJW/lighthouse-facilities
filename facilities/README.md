@@ -367,10 +367,85 @@ Example:
 ```
 curl -s -w %{http_code} http://localhost:8085/v0/facilities/vha_402/cms-overlay \
 -HContent-Type:application/json \
--d'{"operating_status":{"code":"CLOSED","additional_info":"flavor text"},"detailed_services": [{
-"name": "COVID-19 vaccines","active": 1,"description_national": "National description",
-"description_system": "System description","description_facility": "Facility Description",
-"health_service_api_id": null}]}'
+-d'{"operating_status":{"code":"CLOSED","additional_info":"flavor text"},
+"detailed_services":[
+ {
+   "name":"COVID-19 vaccines",
+   "active":true,
+   "changed": "2021-02-04T22:36:49+00:00",
+   "description_national":"<p>We provide COVID-19 vaccines for eligible veterans and staff. VA has a limited amount of this vaccine to start. Your VA health care team will contact you if you\u2019re eligible to get a vaccine during this time.<\/p>\r\n",
+   "description_system":"<h3>Care we provide at VA Erie health care<\/h3><ul><li>COVID-19 vaccines for eligible Veterans and staff<\/li><\/ul><p><a href=\"\/health-care\/covid-19-vaccine\">Learn more about COVID-19 vaccines at VA<\/a><\/p>",
+   "health_service_api_id":null,
+   "appointment_leadin":"Your VA health care team will contact you if you...more text",
+   "online_scheduling_available": "Unknown",
+   "path": "\/erie-health-care\/locations\/erie-va-medical-center\/covid-19-vaccines",
+   "appointment_phones": [
+     {
+       "extension": "123",
+       "label": "Main phone changed",
+       "number": "555-555-1212",
+       "type": "tel"
+     },
+     {
+      "extension": null,
+       "label": "Main Fax",
+       "number": "444-444-1212",
+       "type": "fax"
+     }
+   ],
+   "referral_required": "False",
+   "service_locations": [ 
+     {
+       "additional_hours_info": "Please use call for an apt outside...",
+       "email_contacts": [ 
+         {
+           "email_address": "georgea@va.gov",
+           "email_label": "George Anderson"
+         },
+         {
+           "email_address": "confirmations@va.gov",
+           "email_label": "Confirm your appointment"
+         }
+       ],
+       "facility_service_hours": { 
+        "Monday": "830AM-700PM",
+        "Tuesday": "830AM-700PM",
+        "Wednesday": "ANY STRING b"
+        "Thursday": "830AM-600PM",
+        "Friday": "830AM-430PM",
+        "Saturday": "Closed",
+        "Sunday": "Closed"
+       },
+       "appointment_phones": [  
+         {
+           "extension": "123",
+           "label": "Appointment phone",
+           "number": "555-555-1212",
+           "type": "tel"
+         },
+         {
+          "extension": null, 
+           "label": "TTY",
+           "number": "222-222-1212",
+           "type": "tty"
+         }
+       ],
+       "service_location_address": {
+         "address_line1": "122 Main St.",
+         "address_line2": null,
+         "building_name_number": "Baxter Bulding",
+         "clinic_name": "Baxter Clinic",
+         "country_code": "US",
+         "city": "Rochester",
+         "state": "NY",
+         "zip_code": "14623-1345",
+         "wing_floor_or_room_number": "Wing East"
+       }
+     }
+   ],
+   "walk_ins_accepted": "True"
+ }
+]}'
 ```
 
 ## Local Development

@@ -73,6 +73,10 @@ public class CmsOverlayController {
 
         // Since the covid 19 service name doesn't match our enum, we need to update and verify??
         if (service.active()) {
+
+          // Set facility description to null until further notice
+          service.descriptionFacility(null);
+
           if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
             detailedServices.add("Covid19Vaccine");
 

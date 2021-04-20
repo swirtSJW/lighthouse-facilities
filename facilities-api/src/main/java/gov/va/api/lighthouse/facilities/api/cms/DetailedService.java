@@ -2,19 +2,28 @@ package gov.va.api.lighthouse.facilities.api.cms;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @JsonInclude()
+@JsonIgnoreProperties(
+    ignoreUnknown = true,
+    value = {"active"},
+    allowSetters = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonPropertyOrder({
   "name",
   "description_facility",
@@ -25,67 +34,76 @@ import lombok.Data;
   "walk_ins_accepted",
   "service_locations"
 })
-@Schema(description = "Detailed information of a facility service")
+@Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService {
-  @Schema(example = "COVID-19 vaccines")
+  @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
   String name;
 
-  @JsonIgnore boolean active;
+  @Schema(hidden = true)
+  boolean active;
 
-  // todo add description
   @JsonIgnore
-  @Schema(example = "2021-02-04T22:36:49+00:00")
+  @Schema(
+      description = "Timestamp of last time detailed service was updated.",
+      example = "2021-02-04T22:36:49+00:00",
+      nullable = true)
   String changed;
 
-  @JsonIgnore
-  @Schema(example = "Vaccine availability for COVID-19")
-  @JsonProperty("description_national")
-  String descriptionNational;
-
-  @JsonIgnore
-  @Schema(example = "System description for vaccine availability for COVID-19")
-  @JsonProperty("description_system")
-  String descriptionSystem;
-
-  @Schema(example = "Facility description for vaccine availability for COVID-19")
+  @Schema(description = "Deprecated until further notice.", example = "null", nullable = true)
   @JsonProperty("description_facility")
   String descriptionFacility;
 
-  @JsonIgnore
-  @Schema(example = "12345")
-  @JsonProperty("health_service_api_id")
-  String healthServiceApiId;
-
-  // todo example?
-  @Schema(example = "Your VA health care team will contact you if you...")
+  @Schema(
+      description =
+          "Additional appointment information. May contain html /"
+              + " string formatting characters.",
+      example =
+          "Your VA health care team will contact you if you’re eligible to get a vaccine "
+              + "during this time. As the supply of vaccine increases, we'll work with our care "
+              + "teams to let Veterans know their options.",
+      nullable = true)
   @JsonProperty("appointment_leadin")
   String appointmentLeadIn;
 
-  @Schema(example = "True")
+  @Schema(
+      description = "String detailing online scheduling availability.",
+      example = "True",
+      nullable = true)
   @JsonProperty("online_scheduling_available")
   String onlineSchedulingAvailable;
 
-  // todo example?
-  @Schema(example = "https://www.boston.va.gov/services/covid-19-vaccines.asp")
+  @Schema(
+      description =
+          "URL to a page with additional details for this service within"
+              + " the associated facility's health care system.",
+      example = "https://www.boston.va.gov/services/covid-19-vaccines.asp",
+      nullable = true)
   String path;
 
-  // todo description and example?
+  @Schema(
+      description = "List of phone numbers related to scheduling appointments for this service.",
+      nullable = true)
   @JsonProperty("appointment_phones")
   List<AppointmentPhoneNumber> phoneNumbers;
 
-  @Schema(example = "False")
+  @Schema(
+      description = "String detailing if referrals are required for the service.",
+      example = "False",
+      nullable = true)
   @JsonProperty("referral_required")
   String referralRequired;
 
-  // todo description and example?
+  @Schema(description = "List of service locations.", nullable = true)
   @JsonProperty("service_locations")
   List<DetailedServiceLocation> serviceLocations;
 
-  @Schema(example = "True")
+  @Schema(
+      description = "String detailing if walk-ins are accepted for the service.",
+      example = "True",
+      nullable = true)
   @JsonProperty("walk_ins_accepted")
   String walkInsAccepted;
 
-  // todo descriptions
   @Data
   @Builder
   @JsonInclude()
@@ -101,56 +119,68 @@ public class DetailedService {
     "zip_code",
     "country_code"
   })
+  @Schema(description = "Service location address.", nullable = true)
   public static final class DetailedServiceAddress {
-    @Schema(example = "50 Irving Street, Northwest")
+    @Schema(example = "50 Irving Street, Northwest", nullable = true)
     @JsonProperty("address_line1")
     String address1;
 
+    @Schema(nullable = true)
     @JsonProperty("address_line2")
     String address2;
 
-    // todo state or admin area?
-    @Schema(example = "NY")
-    @JsonProperty("state")
+    @Schema(example = "DC", nullable = true)
     String state;
 
+    @Schema(
+        description = "Building name and/or number of service.",
+        example = "Baxter Building",
+        nullable = true)
     @JsonProperty("building_name_number")
     String buildingNameNumber;
 
+    @Schema(description = "Clinic name for service.", example = "Baxter Clinic", nullable = true)
     @JsonProperty("clinic_name")
     String clinicName;
 
+    @Schema(example = "US", nullable = true)
     @JsonProperty("country_code")
     String countryCode;
 
-    // todo is this city or locality? waiting on confirmation
+    @Schema(example = "Washington", nullable = true)
     String city;
 
-    @Schema(example = "20422-0001")
+    @Schema(example = "20422-0001", nullable = true)
     @JsonProperty("zip_code")
     String zipCode;
 
-    @Schema(example = "Wing East")
+    @Schema(
+        description = "Wing, floor, or room number of service.",
+        example = "Wing East",
+        nullable = true)
     @JsonProperty("wing_floor_or_room_number")
     String wingFloorOrRoomNumber;
   }
 
-  // todo descriptions
   @Data
   @Builder
   @JsonInclude()
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(description = "Phone number information for scheduling an appointment.", nullable = true)
   public static final class AppointmentPhoneNumber {
+    @Schema(example = "71234", nullable = true)
     String extension;
 
+    @Schema(example = "Main phone", nullable = true)
     String label;
 
+    @Schema(example = "937-268-6511", nullable = true)
     String number;
 
+    @Schema(example = "tel", nullable = true)
     String type;
   }
 
-  // todo descriptions
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -161,21 +191,29 @@ public class DetailedService {
     "facility_service_hours",
     "additional_hours_info"
   })
+  @Schema(description = "Details for a location offering a service.", nullable = true)
   public static final class DetailedServiceLocation {
-
+    @Schema(
+        description = "Additional information related to service location hours.",
+        example = "Location hours times may vary depending on staff availability",
+        nullable = true)
     @JsonProperty("additional_hours_info")
     String additionalHoursInfo;
 
+    @Schema(description = "List of email contact information.", nullable = true)
     @JsonProperty("email_contacts")
     List<DetailedServiceEmailContact> emailContacts;
 
+    @Schema(nullable = true)
     @JsonProperty("facility_service_hours")
     @Valid
     DetailedServiceHours facilityServiceHours;
 
+    @Schema(description = "List of appointment phone information.", nullable = true)
     @JsonProperty("appointment_phones")
     List<AppointmentPhoneNumber> appointmentPhoneNumbers;
 
+    @Schema(nullable = true)
     @JsonProperty("service_location_address")
     DetailedServiceAddress serviceLocationAddress;
   }
@@ -183,12 +221,13 @@ public class DetailedService {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(description = "Email contact information.", nullable = true)
   public static final class DetailedServiceEmailContact {
-    @Schema(example = "georgea@va.gov")
+    @Schema(example = "georgea@va.gov", nullable = true)
     @JsonProperty("email_address")
     String emailAddress;
 
-    @Schema(example = "George Anderson")
+    @Schema(example = "George Anderson", nullable = true)
     @JsonProperty("email_label")
     String emailLabel;
   }
@@ -196,37 +235,39 @@ public class DetailedService {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
   @Schema(
       description =
           "Standard hours of operation. Currently formatted as descriptive text suitable for "
               + "display, with no guarantee of a standard parseable format. "
-              + "Hours of operation may vary due to holidays or other events.")
+              + "Hours of operation may vary due to holidays or other events.",
+      nullable = true)
   public static final class DetailedServiceHours {
-    @Schema(example = "9AM-5PM")
+    @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Monday")
     String monday;
 
-    @Schema(example = "9AM-5PM")
+    @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Tuesday")
     String tuesday;
 
-    @Schema(example = "9AM-5PM")
+    @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Wednesday")
     String wednesday;
 
-    @Schema(example = "9AM-5PM")
+    @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Thursday")
     String thursday;
 
-    @Schema(example = "9AM-5PM")
+    @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Friday")
     String friday;
 
-    @Schema(example = "Closed")
+    @Schema(example = "Closed", nullable = true)
     @JsonProperty("Saturday")
     String saturday;
 
-    @Schema(example = "Closed")
+    @Schema(example = "Closed", nullable = true)
     @JsonProperty("Sunday")
     String sunday;
   }

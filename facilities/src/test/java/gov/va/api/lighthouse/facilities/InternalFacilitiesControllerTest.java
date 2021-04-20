@@ -86,8 +86,7 @@ public class InternalFacilitiesControllerTest {
                 DetailedService.builder()
                     .active(true)
                     .name("Covid19Vaccine")
-                    .descriptionFacility(
-                        "Facility description for vaccine availability for COVID-19")
+                    .descriptionFacility(null)
                     .appointmentLeadIn(
                         "Your VA health care team will contact you if you...more text")
                     .onlineSchedulingAvailable("True")

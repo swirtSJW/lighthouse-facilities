@@ -42,11 +42,7 @@ public class CmsOverlayControllerTest {
                     .name(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)
                     .active(true)
                     .changed("2021-02-04T22:36:49+00:00")
-                    .descriptionNational("Vaccine availability for COVID-19")
-                    .descriptionSystem("System description for vaccine availability for COVID-19")
-                    .descriptionFacility(
-                        "Facility description for vaccine availability for COVID-19")
-                    .healthServiceApiId("12345")
+                    .descriptionFacility(null)
                     .appointmentLeadIn(
                         "Your VA health care team will contact you if you...more text")
                     .onlineSchedulingAvailable("True")
