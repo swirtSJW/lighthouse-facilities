@@ -46,6 +46,9 @@ public interface FacilitiesAllApi {
       description = "Success",
       content = {
         @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = GeoFacilitiesResponse.class)),
+        @Content(
             mediaType = "application/geo+json",
             schema = @Schema(implementation = GeoFacilitiesResponse.class)),
         @Content(

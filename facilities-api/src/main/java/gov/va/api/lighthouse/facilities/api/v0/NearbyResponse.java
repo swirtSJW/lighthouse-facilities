@@ -17,6 +17,7 @@ import lombok.Value;
 public final class NearbyResponse {
   @Valid @NotNull List<Nearby> data;
 
+  @Schema(nullable = true)
   Meta meta;
 
   public enum Type {
@@ -27,6 +28,7 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(nullable = true)
   public static final class NearbyAttributes {
     @NotNull
     @Schema(example = "10")
@@ -42,9 +44,11 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  @Schema(description = "JSON API-compliant object containing metadata about this response")
+  @Schema(
+      description = "JSON API-compliant object containing metadata about this response",
+      nullable = true)
   public static final class Meta {
-    @Schema(example = "APR2021")
+    @Schema(example = "APR2021", nullable = true)
     @JsonProperty("band_version")
     String bandVersion;
   }
@@ -52,13 +56,15 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  @Schema(description = "JSON API-compliant object describing a nearby VA facility")
+  @Schema(
+      description = "JSON API-compliant object describing a nearby VA facility",
+      nullable = true)
   public static final class Nearby {
     @Schema(example = "vha_688")
     @NotNull
     String id;
 
-    @Schema(example = "nearby_facility")
+    @Schema(example = "va_health_facility")
     @NotNull
     Type type;
 

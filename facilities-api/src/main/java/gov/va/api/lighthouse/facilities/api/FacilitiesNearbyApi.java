@@ -114,7 +114,7 @@ public interface FacilitiesNearbyApi {
               in = ParameterIn.QUERY,
               description = "Latitude of the location from which drive time will be calculated.",
               schema = @Schema(type = "number", format = "float"),
-              examples = @ExampleObject(name = "coordinates", value = "123.4"))
+              examples = @ExampleObject(name = "coordinates", value = "56.7"))
           BigDecimal lat,
       @Parameter(
               name = "lng",
@@ -123,7 +123,7 @@ public interface FacilitiesNearbyApi {
               style = ParameterStyle.FORM,
               explode = Explode.TRUE,
               schema = @Schema(type = "number", format = "float"),
-              examples = @ExampleObject(name = "coordinates", value = "456.7"))
+              examples = @ExampleObject(name = "coordinates", value = "-123.4"))
           BigDecimal lng,
       @Parameter(
               name = "drive_time",

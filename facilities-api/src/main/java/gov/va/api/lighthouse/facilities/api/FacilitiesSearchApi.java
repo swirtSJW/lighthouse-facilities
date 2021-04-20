@@ -118,7 +118,7 @@ public interface FacilitiesSearchApi {
               in = ParameterIn.QUERY,
               style = ParameterStyle.FORM,
               explode = Explode.FALSE,
-              examples = @ExampleObject(name = "ids", value = "vha_688,vha_644"))
+              examples = @ExampleObject(name = "ids", value = "[\"vha_688\",\"vha_644\"]"))
           List<String> id,
       @Parameter(
               name = "zip",
@@ -146,7 +146,7 @@ public interface FacilitiesSearchApi {
                   "Latitude of point to search for facilities, "
                       + "in WGS84 coordinate reference system.",
               schema = @Schema(type = "number", format = "float"),
-              examples = @ExampleObject(name = "coordinates", value = "40.0"))
+              examples = @ExampleObject(name = "coordinates", value = "56.7"))
           BigDecimal lat,
       @Parameter(
               name = "long",
@@ -157,7 +157,7 @@ public interface FacilitiesSearchApi {
               style = ParameterStyle.FORM,
               explode = Explode.TRUE,
               schema = @Schema(type = "number", format = "float"),
-              examples = @ExampleObject(name = "coordinates", value = "-105.0"))
+              examples = @ExampleObject(name = "coordinates", value = "-123.4"))
           BigDecimal lng,
       @Parameter(
               name = "bbox[]",
@@ -173,7 +173,7 @@ public interface FacilitiesSearchApi {
                       minItems = 4,
                       maxItems = 4,
                       schema = @Schema(type = "number", format = "float")),
-              examples = @ExampleObject(name = "bbox", value = "-105.4, 39.4, -104.5, 40.1"))
+              examples = @ExampleObject(name = "bbox", value = "[-105.4, 39.4, -104.5, 40.1]"))
           List<BigDecimal> bbox,
       @Parameter(
               name = "visn",

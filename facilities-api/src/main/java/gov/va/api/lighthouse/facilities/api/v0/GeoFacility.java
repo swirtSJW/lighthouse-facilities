@@ -41,12 +41,13 @@ public final class GeoFacility {
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @Schema(nullable = true)
   public static final class Geometry {
     @Schema(example = "Point")
     @NotNull
     GeometryType type;
 
-    @Schema(example = "[-77.0367761, 38.9004181]")
+    @Schema(example = "[-77.0367761, 38.9004181]", nullable = true)
     @Size(min = 2, max = 2)
     List<BigDecimal> coordinates;
   }
@@ -78,40 +79,54 @@ public final class GeoFacility {
     @NotNull
     String id;
 
-    @Schema(example = "Washington VA Medical Center")
+    @Schema(example = "Washington VA Medical Center", nullable = true)
     String name;
 
     @NotNull
     @JsonProperty("facility_type")
     Facility.FacilityType facilityType;
 
-    @Schema(example = "VA Medical Center (VAMC)")
+    @Schema(example = "VA Medical Center (VAMC)", nullable = true)
     String classification;
 
-    @Schema(example = "http://www.washingtondc.va.gov")
+    @Schema(example = "http://www.washingtondc.va.gov", nullable = true)
     String website;
 
-    @Valid Facility.Addresses address;
+    @Schema(nullable = true)
+    @Valid
+    Facility.Addresses address;
 
-    @Valid Facility.Phone phone;
+    @Schema(nullable = true)
+    @Valid
+    Facility.Phone phone;
 
-    @Valid Facility.Hours hours;
+    @Schema(nullable = true)
+    @Valid
+    Facility.Hours hours;
 
-    @Schema(example = "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.")
+    @Schema(
+        example = "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        nullable = true)
     @JsonProperty("operational_hours_special_instructions")
     String operationalHoursSpecialInstructions;
 
-    @Valid Facility.Services services;
+    @Schema(nullable = true)
+    @Valid
+    Facility.Services services;
 
-    @Valid Facility.Satisfaction satisfaction;
+    @Schema(nullable = true)
+    @Valid
+    Facility.Satisfaction satisfaction;
 
     @Valid
+    @Schema(nullable = true)
     @JsonProperty("wait_times")
     Facility.WaitTimes waitTimes;
 
-    @Schema(example = "false")
+    @Schema(example = "false", nullable = true)
     Boolean mobile;
 
+    @Schema(nullable = true)
     @JsonProperty("active_status")
     Facility.ActiveStatus activeStatus;
 
@@ -122,9 +137,10 @@ public final class GeoFacility {
 
     @Valid
     @JsonProperty(value = "detailed_services")
+    @Schema(nullable = true)
     List<DetailedService> detailedServices;
 
-    @Schema(example = "20")
+    @Schema(example = "20", nullable = true)
     String visn;
   }
 }
