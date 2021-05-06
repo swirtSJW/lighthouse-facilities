@@ -263,6 +263,7 @@ public class InternalFacilitiesControllerTest {
         .isEqualTo(FacilitiesJacksonConfig.createMapper().writeValueAsString(f1));
     assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
     assertThat(result.overlayServices()).isEqualTo(entity.graveyardOverlayServices());
+    assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
     assertThat(result.missingTimestamp()).isNull();
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
@@ -413,6 +414,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(result.facility()).isEqualTo(entity.facility());
     assertThat(result.cmsOperatingStatus()).isEqualTo(entity.cmsOperatingStatus());
     assertThat(result.graveyardOverlayServices()).isEqualTo(entity.overlayServices());
+    assertThat(result.cmsServices()).isEqualTo(entity.cmsServices());
     assertThat(result.missingTimestamp()).isEqualTo(threeDaysAgo);
     assertThat(result.lastUpdated()).isEqualTo(response.timing().completeCollection());
   }
