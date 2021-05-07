@@ -22,7 +22,7 @@ public class TelehealthIT {
 
   @BeforeAll
   static void assumeEnvironment() {
-    // CMS overlay tests alter data, but do not infinitely create more
+    // Tests alter data, but do not infinitely create more
     // These can run in lower environments, but not SLA'd environments
     assumeEnvironmentNotIn(Environment.LAB, Environment.PROD);
   }

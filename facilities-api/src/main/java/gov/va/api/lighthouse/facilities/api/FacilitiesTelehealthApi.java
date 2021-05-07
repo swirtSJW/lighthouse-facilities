@@ -24,7 +24,7 @@ public interface FacilitiesTelehealthApi {
       operationId = "getTelehealthById",
       security = @SecurityRequirement(name = "apikey"))
   @GET // todo change path
-  @Path("/axolotlysuperawesometelehealthENDPOINT")
+  @Path("telehealth")
   @ApiResponse(
       responseCode = "200",
       description = "Success",
