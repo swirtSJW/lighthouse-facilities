@@ -16,15 +16,16 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v0.Pagination;
+import gov.va.api.lighthouse.facilities.api.v0.TelehealthBody;
+import gov.va.api.lighthouse.facilities.api.v0.TelehealthResponse;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.ResponseEntity;
 
 public class FacilitiesControllerTest {
   FacilityRepository fr = mock(FacilityRepository.class);
-
-  DriveTimeBandRepository dbr = mock(DriveTimeBandRepository.class);
 
   @Test
   @SneakyThrows
@@ -211,5 +212,21 @@ public class FacilitiesControllerTest {
   @Test
   void readJson_notFound() {
     assertThrows(ExceptionsV0.NotFound.class, () -> controller().readJson("vha_691GB"));
+  }
+
+  @Test
+  void telehealthById() {
+    // todo remove stub and save to new telehealth repo (if not facility repo)
+    fr.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
+    assertThat(controller().telehealthById("vha_757"))
+        .isEqualTo(TelehealthResponse.builder().stub("vha_757stub").build());
+  }
+
+  @Test
+  void updateTelehealth() {
+    // todo stubbed until new entity exists or facility entity is expanded
+    assertThat(
+            controller().updateTelehealth("vha_757", TelehealthBody.builder().stub("stub").build()))
+        .isEqualTo(ResponseEntity.ok().build());
   }
 }

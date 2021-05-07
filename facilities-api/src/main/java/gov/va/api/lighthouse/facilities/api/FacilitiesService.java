@@ -128,4 +128,5 @@ public interface FacilitiesService
         FacilitiesReadApi,
         FacilitiesSearchApi,
         FacilitiesIdsApi,
-        FacilitiesNearbyApi {}
+        FacilitiesNearbyApi,
+        FacilitiesTelehealthApi {}
