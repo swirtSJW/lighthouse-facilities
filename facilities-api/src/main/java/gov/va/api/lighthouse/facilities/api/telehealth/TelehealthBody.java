@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilities.api.v0;
+package gov.va.api.lighthouse.facilities.api.telehealth;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,9 +9,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-@Schema(
-    description =
-        "Data provided by telehealth team to Facilities to be applied on top of known data.")
+@Schema(description = "Data provided by telehealth team to Facilities.")
 public class TelehealthBody {
   // todo fill in variables once confirmed
   @JsonProperty("stub")

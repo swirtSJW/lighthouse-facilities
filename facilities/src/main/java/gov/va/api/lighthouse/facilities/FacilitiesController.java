@@ -18,8 +18,6 @@ import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v0.TelehealthBody;
-import gov.va.api.lighthouse.facilities.api.v0.TelehealthResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -29,7 +27,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
@@ -41,12 +38,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -669,27 +663,6 @@ public class FacilitiesController {
   @GetMapping(value = "/facilities/{id}", produces = "application/json")
   FacilityReadResponse readJson(@PathVariable("id") String id) {
     return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
-  }
-
-  @GetMapping(
-      value = "/telehealth",
-      produces = {"application/json"})
-  TelehealthResponse telehealthById(@RequestParam(value = "id") String id) {
-    // todo search for id via telehealth entity
-    // todo remove stub
-    return TelehealthResponse.builder().stub(id + "stub").build();
-  }
-
-  @PostMapping(
-      value = "/telehealth/{id}/update",
-      produces = "application/json",
-      consumes = "application/json")
-  ResponseEntity<Void> updateTelehealth(
-      @PathVariable("id") String id, @Valid @RequestBody TelehealthBody telehealthBody) {
-
-    // Todo new telehealth entity needed
-    System.out.println(id + telehealthBody.stub());
-    return ResponseEntity.ok().build();
   }
 
   @Data

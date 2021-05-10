@@ -1,8 +1,8 @@
 package gov.va.api.lighthouse.facilities.api;
 
+import gov.va.api.lighthouse.facilities.api.telehealth.TelehealthResponse;
 import gov.va.api.lighthouse.facilities.api.v0.ApiError;
 import gov.va.api.lighthouse.facilities.api.v0.GenericError;
-import gov.va.api.lighthouse.facilities.api.v0.TelehealthResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -50,6 +50,13 @@ public interface FacilitiesTelehealthApi {
   @ApiResponse(
       responseCode = "406",
       description = "Requested format unacceptable",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ApiError.class)))
+  @ApiResponse(
+      responseCode = "429",
+      description = "Exceeds the rate limit for this environment",
       content =
           @Content(
               mediaType = "application/json",
