@@ -56,7 +56,7 @@ public interface FacilitiesTelehealthApi {
               schema = @Schema(implementation = ApiError.class)))
   @ApiResponse(
       responseCode = "429",
-      description = "Exceeds the rate limit for this environment",
+      description = "API rate limit exceeded",
       content =
           @Content(
               mediaType = "application/json",
