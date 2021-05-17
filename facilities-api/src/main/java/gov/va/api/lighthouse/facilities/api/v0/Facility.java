@@ -205,7 +205,7 @@ public final class Facility {
     Hours hours;
 
     @Schema(
-        example = "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        example = "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
         nullable = true)
     @JsonProperty("operational_hours_special_instructions")
     String operationalHoursSpecialInstructions;

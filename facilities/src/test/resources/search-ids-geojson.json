@@ -47,7 +47,7 @@
           "Thursday" : "Sunrise - Sundown",
           "Wednesday" : "Sunrise - Sundown"
         },
-        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -97,7 +97,7 @@
           "Thursday" : "Sunrise - Sunset",
           "Wednesday" : "Sunrise - Sunset"
         },
-        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -149,7 +149,7 @@
           "Thursday" : "8:00AM-4:00PM",
           "Wednesday" : "8:00AM-4:00PM"
         },
-        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "benefits" : [
             "EducationAndCareerCounseling",
@@ -205,7 +205,7 @@
           "thursday" : "830AM-600PM",
           "wednesday" : "830AM-600PM"
         },
-        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
         "services" : { },
         "satisfaction" : { },
         "wait_times" : { },
@@ -262,7 +262,7 @@
           "Thursday" : "700AM-430PM",
           "Wednesday" : "700AM-430PM"
         },
-        "operational_hours_special_instructions" : "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.",
+        "operational_hours_special_instructions" : "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
         "services" : {
           "other" : [ ],
           "health" : [

@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.*;
 import static gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_health_facility;
 import static gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center;
 import static java.util.Collections.emptyList;
@@ -162,18 +163,15 @@ public class InternalFacilitiesControllerTest {
     String operatingStatusString = null;
     Set<String> cmsServicesNames = null;
     String cmsServicesString = null;
-
     if (overlay != null) {
       operatingStatusString =
           overlay.operatingStatus() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus());
-
       cmsServicesString =
           overlay.detailedServices() == null
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices());
-
       if (overlay.detailedServices() != null) {
         cmsServicesNames = new HashSet<>();
         for (DetailedService service : overlay.detailedServices()) {
@@ -211,7 +209,6 @@ public class InternalFacilitiesControllerTest {
           }
         }
       }
-
       cmsServicesString =
           overlay.detailedServices() == null
               ? null
@@ -387,7 +384,6 @@ public class InternalFacilitiesControllerTest {
     assertThat(responseHealth.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
     assertThat(responseHealth.problems())
         .contains(ReloadResponse.Problem.of("vha_f1", "Missing VISN"));
-
     Facility f2 = _facility("vc_f1", "FL", "32934", 91.4, 181.4, List.of());
     f2.attributes().facilityType(vet_center);
     when(collector.collectFacilities()).thenReturn(List.of(f2));
@@ -488,12 +484,10 @@ public class InternalFacilitiesControllerTest {
     CmsOverlay overlay = _overlay();
     FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1, overlay);
     graveyardRepository.save(entity);
-
     // Since we don't save active status to the database, make it false
     for (DetailedService d : overlay.detailedServices()) {
       d.active(false);
     }
-
     assertThat(_controller().graveyardAll())
         .isEqualTo(
             GraveyardResponse.builder()
@@ -643,6 +637,52 @@ public class InternalFacilitiesControllerTest {
                 ReloadResponse.Problem.of("vha_f1", "Missing hours Sunday"),
                 ReloadResponse.Problem.of("vha_f1", "Missing classification"),
                 ReloadResponse.Problem.of("vha_f1", "Failed to save record: oh noez")));
+  }
+
+  @Test
+  void updateAndSave_replaceInstructions() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "32934", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
+    Facility f2 = _facility("vha_f2", "FL", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
+    Facility f3 = _facility("vha_f3", "FL", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
+    f1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_1);
+    f2.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_2);
+    f3.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_3);
+
+    ReloadResponse response = ReloadResponse.start();
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1")).build(),
+            f1);
+    assertThat(f1.attributes().operationalHoursSpecialInstructions())
+        .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_1);
+
+    assertThat(
+            facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1")).get().facility())
+        .contains(SPECIAL_INSTRUCTION_UPDATED_1);
+
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f2")).build(),
+            f2);
+    assertThat(f2.attributes().operationalHoursSpecialInstructions())
+        .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_2);
+    assertThat(
+            facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2")).get().facility())
+        .contains(SPECIAL_INSTRUCTION_UPDATED_2);
+
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f3")).build(),
+            f3);
+    assertThat(f3.attributes().operationalHoursSpecialInstructions())
+        .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_3);
+    assertThat(
+            facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f3")).get().facility())
+        .contains(SPECIAL_INSTRUCTION_UPDATED_3);
   }
 
   @Test

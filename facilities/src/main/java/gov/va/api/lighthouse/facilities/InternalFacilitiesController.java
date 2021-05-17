@@ -51,6 +51,28 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @RequestMapping(value = "/internal/management", produces = "application/json")
 public class InternalFacilitiesController {
+  static final String SPECIAL_INSTRUCTION_OLD_1 =
+      "Expanded or Nontraditional hours are available for some services on a routine and "
+          + "or requested basis. Please call our main phone number for details.";
+
+  static final String SPECIAL_INSTRUCTION_UPDATED_1 =
+      "More hours are available for some services. To learn more, call our main phone number.";
+
+  static final String SPECIAL_INSTRUCTION_OLD_2 =
+      "Vet Center after hours assistance is "
+          + "available by calling 1-877-WAR-VETS (1-877-927-8387).";
+
+  static final String SPECIAL_INSTRUCTION_UPDATED_2 =
+      "If you need to talk to someone "
+          + "or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS "
+          + "(1-877-927-8387).";
+
+  static final String SPECIAL_INSTRUCTION_OLD_3 =
+      "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m.";
+
+  static final String SPECIAL_INSTRUCTION_UPDATED_3 =
+      "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.";
+
   private static final String ZIP_REGEX = "^[0-9]{5}(-[0-9]{4})?$";
 
   private static final Pattern ZIP_PATTERN = Pattern.compile(ZIP_REGEX);
@@ -161,7 +183,6 @@ public class InternalFacilitiesController {
     facilityRepository.save(entity.get().cmsOperatingStatus(null));
     facilityRepository.save(entity.get().overlayServices(null));
     facilityRepository.save(entity.get().cmsServices(null));
-
     return ResponseEntity.ok().build();
   }
 
@@ -213,6 +234,27 @@ public class InternalFacilitiesController {
       return Optional.empty();
     }
     return facilityRepository.findById(pk);
+  }
+
+  private String findAndReplaceOperationalHoursSpecialInstructions(String instructions) {
+    if (instructions == null) {
+      return null;
+    } else {
+      // Look through the instructions for specific substrings and replace them if necessary
+      if (instructions.contains(SPECIAL_INSTRUCTION_OLD_1)) {
+        instructions =
+            instructions.replace(SPECIAL_INSTRUCTION_OLD_1, SPECIAL_INSTRUCTION_UPDATED_1);
+      }
+      if (instructions.contains(SPECIAL_INSTRUCTION_OLD_2)) {
+        instructions =
+            instructions.replace(SPECIAL_INSTRUCTION_OLD_2, SPECIAL_INSTRUCTION_UPDATED_2);
+      }
+      if (instructions.contains(SPECIAL_INSTRUCTION_OLD_3)) {
+        instructions =
+            instructions.replace(SPECIAL_INSTRUCTION_OLD_3, SPECIAL_INSTRUCTION_UPDATED_3);
+      }
+    }
+    return instructions;
   }
 
   @GetMapping("/graveyard")
@@ -355,6 +397,12 @@ public class InternalFacilitiesController {
 
   @SneakyThrows
   void updateAndSave(ReloadResponse response, FacilityEntity record, Facility facility) {
+    facility
+        .attributes()
+        .operationalHoursSpecialInstructions(
+            findAndReplaceOperationalHoursSpecialInstructions(
+                facility.attributes().operationalHoursSpecialInstructions()));
+
     populate(record, facility);
     record.missingTimestamp(null);
     record.lastUpdated(response.timing().completeCollection());
@@ -461,18 +509,15 @@ public class InternalFacilitiesController {
         && isBlank(services(facility).map(s -> s.benefits()))) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
-
     if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility)
         && isBlank(services(facility).map(s -> s.health()))) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
-
     if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility
             || facility.attributes().facilityType() == Facility.FacilityType.vet_center)
         && isBlank(record.visn())) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing VISN"));
     }
-
     try {
       facilityRepository.save(record);
     } catch (Exception e) {
@@ -524,7 +569,6 @@ public class InternalFacilitiesController {
                       ? null
                       : new HashSet<>(zombieEntity.graveyardOverlayServices()))
               .build();
-
       updateAndSave(response, facilityEntity, facility);
       deleteFromGraveyard(response, zombieEntity);
       return;
