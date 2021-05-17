@@ -71,6 +71,13 @@ public interface FacilitiesReadApi {
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = ApiError.class)))
+  @ApiResponse(
+      responseCode = "429",
+      description = "API rate limit exceeded",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ApiError.class)))
   FacilityReadResponse getFacilityById(
       @Parameter(
               in = ParameterIn.PATH,

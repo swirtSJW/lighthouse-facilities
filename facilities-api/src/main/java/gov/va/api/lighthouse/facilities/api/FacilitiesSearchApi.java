@@ -108,6 +108,13 @@ public interface FacilitiesSearchApi {
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = ApiError.class)))
+  @ApiResponse(
+      responseCode = "429",
+      description = "API rate limit exceeded",
+      content =
+          @Content(
+              mediaType = "application/json",
+              schema = @Schema(implementation = ApiError.class)))
   FacilitiesResponse getFacilitiesByLocation(
       @Parameter(
               name = "ids",
