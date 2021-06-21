@@ -162,6 +162,7 @@ final class HealthTransformer {
         .website(website())
         .latitude(vast.latitude())
         .longitude(vast.longitude())
+        .timeZone(TimeZoneFinder.calculateTimeZonesWithMap(vast.latitude(), vast.longitude(), id()))
         .address(address())
         .phone(phone())
         .hours(hours())

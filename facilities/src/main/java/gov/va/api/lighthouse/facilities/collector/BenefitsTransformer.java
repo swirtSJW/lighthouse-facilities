@@ -26,6 +26,11 @@ final class BenefitsTransformer {
         .classification(cdwFacility.facilityType())
         .latitude(cdwFacility.latitude())
         .longitude(cdwFacility.longitude())
+        .timeZone(
+            TimeZoneFinder.calculateTimeZonesWithMap(
+                cdwFacility.latitude(),
+                cdwFacility.longitude(),
+                "vba_" + cdwFacility.facilityNumber()))
         .website(website(cdwFacility.websiteUrl()))
         .address(
             Facility.Addresses.builder()
@@ -54,10 +59,8 @@ final class BenefitsTransformer {
   }
 
   private Facility.Phone phone() {
-
     String main = phoneTrim(cdwFacility.phone());
     String fax = phoneTrim(cdwFacility.fax());
-
     if (allBlank(main, fax)) {
       return null;
     } else {

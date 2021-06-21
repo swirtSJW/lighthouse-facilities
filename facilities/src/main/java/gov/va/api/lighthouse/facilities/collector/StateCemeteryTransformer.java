@@ -42,7 +42,6 @@ final class StateCemeteryTransformer {
           .address2(line2)
           .build();
     }
-
     if (isNotBlank(line2)) {
       if (allBlank(parseZip(line2), parseCity(line2), line1)) {
         return null;
@@ -54,7 +53,6 @@ final class StateCemeteryTransformer {
           .address1(line1)
           .build();
     }
-
     if (isNotBlank(line1)) {
       if (allBlank(parseZip(line1), parseCity(line1))) {
         return Facility.Address.builder().address1(line1).build();
@@ -65,7 +63,6 @@ final class StateCemeteryTransformer {
           .state(state)
           .build();
     }
-
     return null;
   }
 
@@ -106,6 +103,7 @@ final class StateCemeteryTransformer {
         .website(website())
         .latitude(latitude())
         .longitude(longitude())
+        .timeZone(TimeZoneFinder.calculateTimeZonesWithMap(latitude(), longitude(), id()))
         .address(address())
         .phone(phone())
         .hours(defaultHours())

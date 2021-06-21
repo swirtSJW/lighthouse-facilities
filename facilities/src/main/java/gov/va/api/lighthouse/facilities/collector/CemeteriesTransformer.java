@@ -25,6 +25,9 @@ final class CemeteriesTransformer {
         .classification(cdwFacility.siteType())
         .latitude(cdwFacility.latitude())
         .longitude(cdwFacility.longitude())
+        .timeZone(
+            TimeZoneFinder.calculateTimeZonesWithMap(
+                cdwFacility.latitude(), cdwFacility.longitude(), "nca_" + cdwFacility.siteId()))
         .website(website(cdwFacility.websiteUrl()))
         .address(
             Facility.Addresses.builder()
