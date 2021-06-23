@@ -4,7 +4,7 @@ import static java.util.Collections.emptySet;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public interface FacilityRepository
 
     FacilityEntity.Type facilityType;
 
-    @Builder.Default Set<Facility.ServiceType> services = emptySet();
+    @Builder.Default Set<ServiceType> services = emptySet();
 
     Boolean mobile;
 
@@ -106,7 +106,7 @@ public interface FacilityRepository
 
     FacilityEntity.Type facilityType;
 
-    @Builder.Default Set<Facility.ServiceType> services = emptySet();
+    @Builder.Default Set<ServiceType> services = emptySet();
 
     Boolean mobile;
 
@@ -154,7 +154,7 @@ public interface FacilityRepository
 
     FacilityEntity.Type facilityType;
 
-    @Builder.Default Set<Facility.ServiceType> services = emptySet();
+    @Builder.Default Set<ServiceType> services = emptySet();
 
     @Override
     public Predicate toPredicate(
@@ -204,7 +204,7 @@ public interface FacilityRepository
 
     FacilityEntity.Type facilityType;
 
-    @Builder.Default Set<Facility.ServiceType> services = emptySet();
+    @Builder.Default Set<ServiceType> services = emptySet();
 
     Boolean mobile;
 
@@ -256,7 +256,7 @@ public interface FacilityRepository
 
     FacilityEntity.Type facilityType;
 
-    @Builder.Default Set<Facility.ServiceType> services = emptySet();
+    @Builder.Default Set<ServiceType> services = emptySet();
 
     Boolean mobile;
 

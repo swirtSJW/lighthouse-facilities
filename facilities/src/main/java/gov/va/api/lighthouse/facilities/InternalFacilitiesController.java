@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -115,6 +116,7 @@ public class InternalFacilitiesController {
     record.zip(zipOf(facility));
     record.servicesFromServiceTypes(serviceTypesOf(facility));
     record.facility(MAPPER.writeValueAsString(facility));
+
     record.visn(facility.attributes().visn());
     record.mobile(facility.attributes().mobile());
     return record;
@@ -124,12 +126,12 @@ public class InternalFacilitiesController {
    * Determine the total collection of service types by combining health, benefits, and other
    * services types. This is guaranteed to return a non-null, but potentially empty collection.
    */
-  static Set<Facility.ServiceType> serviceTypesOf(Facility facility) {
+  static Set<ServiceType> serviceTypesOf(Facility facility) {
     var services = facility.attributes().services();
     if (services == null) {
       return Set.of();
     }
-    var allServices = new HashSet<Facility.ServiceType>();
+    var allServices = new HashSet<ServiceType>();
     if (services.health() != null) {
       allServices.addAll(services.health());
     }

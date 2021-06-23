@@ -3,7 +3,7 @@ package gov.va.api.lighthouse.facilities;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toSet;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Optional;
@@ -72,6 +72,11 @@ public class FacilityEntity implements HasFacilityPayload {
 
   @Lob
   @Basic(fetch = FetchType.EAGER)
+  @Column(name = "facility_v1")
+  private String facilityV1;
+
+  @Lob
+  @Basic(fetch = FetchType.EAGER)
   @Column(name = "cms_operating_status")
   private String cmsOperatingStatus;
 
@@ -113,11 +118,12 @@ public class FacilityEntity implements HasFacilityPayload {
       double latitude,
       double longitude,
       String facility,
+      String facilityV1,
       String cmsOperatingStatus,
       String cmsServices,
-      Set<Facility.ServiceType> overlayServiceTypes,
+      Set<ServiceType> overlayServiceTypes,
       Integer version,
-      Set<Facility.ServiceType> servicesTypes,
+      Set<ServiceType> servicesTypes,
       Long missingTimestamp,
       Instant lastUpdated,
       String visn,
@@ -130,6 +136,7 @@ public class FacilityEntity implements HasFacilityPayload {
         longitude,
         servicesTypes.stream().map(Object::toString).collect(toSet()),
         facility,
+        facilityV1,
         cmsOperatingStatus,
         cmsServices,
         overlayServiceTypes.stream().map(Object::toString).collect(toSet()),
@@ -145,12 +152,12 @@ public class FacilityEntity implements HasFacilityPayload {
   }
 
   /** Populate overlay services from a type safe collection. */
-  public void overlayServicesFromServiceTypes(Set<Facility.ServiceType> overlayServiceTypes) {
+  public void overlayServicesFromServiceTypes(Set<ServiceType> overlayServiceTypes) {
     overlayServices(overlayServiceTypes.stream().map(Object::toString).collect(toSet()));
   }
 
   /** Populate services from a type safe collection. */
-  public void servicesFromServiceTypes(Set<Facility.ServiceType> serviceTypes) {
+  public void servicesFromServiceTypes(Set<ServiceType> serviceTypes) {
     services(serviceTypes.stream().map(Object::toString).collect(toSet()));
   }
 

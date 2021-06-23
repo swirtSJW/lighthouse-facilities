@@ -455,3 +455,30 @@ databaseChangeLog:
             - column:
                 name: month_year
                 type: varchar(7)
+
+  - changeSet:
+      id: 16
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: facility
+          schemaName: app
+          columns:
+            - column:
+                name: facility_v1
+                type: clob
+                constraints:
+                  nullable: false
+  - changeSet:
+      id: 17
+      author: axolotl
+      changes:
+        addColumn:
+          tableName: facility_graveyard
+          schemaName: app
+          columns:
+            - column:
+                name: facility_v1
+                type: clob
+                constraints:
+                  nullable: false

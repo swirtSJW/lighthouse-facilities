@@ -44,7 +44,7 @@ public class CmsOverlayController {
   }
 
   @PostMapping(
-      value = "/v0/facilities/{id}/cms-overlay",
+      value = {"/v0/facilities/{id}/cms-overlay", "/v1/facilities/{id}/cms-overlay"},
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows

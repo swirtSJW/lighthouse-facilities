@@ -10,5 +10,7 @@ public interface HasFacilityPayload {
 
   String facility();
 
+  String facilityV1();
+
   Set<String> overlayServices();
 }

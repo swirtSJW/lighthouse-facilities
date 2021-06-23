@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-final class Controllers {
+final class ControllersV1 {
   private static final Map<String, FacilityEntity.Type> ENTITY_TYPE_LOOKUP =
       caseInsensitiveMap(
           ImmutableMap.of(

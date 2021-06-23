@@ -39,6 +39,11 @@ public class FacilityGraveyardEntity {
 
   @Lob
   @Basic(fetch = FetchType.EAGER)
+  @Column(name = "facility_v1")
+  private String facilityV1;
+
+  @Lob
+  @Basic(fetch = FetchType.EAGER)
   @Column(name = "cms_operating_status")
   private String cmsOperatingStatus;
 

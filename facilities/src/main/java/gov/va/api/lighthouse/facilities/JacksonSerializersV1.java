@@ -8,13 +8,13 @@ import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
-import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
+import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
+import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
 @UtilityClass
-final class JacksonSerializersV0 {
+final class JacksonSerializersV1 {
   private static boolean hasParent(JsonGenerator jgen, Class<?> clazz) {
     return parents(jgen).stream().anyMatch(p -> clazz.isInstance(p));
   }
@@ -70,8 +70,8 @@ final class JacksonSerializersV0 {
     return parents;
   }
 
-  /** Custom serialization rules for V0 API classes. */
-  static SimpleModule serializersV0() {
+  /** Custom serialization rules for V1 API classes. */
+  static SimpleModule serializersV1() {
     SimpleModule mod = new SimpleModule();
     mod.addSerializer(Facility.Address.class, new AddressSerializer());
     mod.addSerializer(Facility.Addresses.class, new AddressesSerializer());

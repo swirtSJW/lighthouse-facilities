@@ -1,9 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static gov.va.api.lighthouse.facilities.Controllers.page;
-import static gov.va.api.lighthouse.facilities.Controllers.validateFacilityType;
-import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
+import static gov.va.api.lighthouse.facilities.ControllersV1.page;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateFacilityType;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateServices;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.distance;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.entityIds;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.haversine;
@@ -13,13 +13,13 @@ import static java.util.stream.Collectors.toMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.api.v0.FacilitiesIdsResponse;
-import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
+import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -48,19 +48,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping(value = "/v0")
-public class FacilitiesController {
-  private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
+@RequestMapping(value = "/v1")
+public class FacilitiesControllerV1 {
+  private static final ObjectMapper MAPPER = FacilitiesJacksonConfigV1.createMapper();
 
-  private static final FacilityOverlay FACILITY_OVERLAY =
-      FacilityOverlay.builder().mapper(MAPPER).build();
+  private static final FacilityOverlayV1 FACILITY_OVERLAY =
+      FacilityOverlayV1.builder().mapper(MAPPER).build();
 
   private final FacilityRepository facilityRepository;
 
   private final String linkerUrl;
 
   @Builder
-  FacilitiesController(
+  FacilitiesControllerV1(
       @Autowired FacilityRepository facilityRepository,
       @Value("${facilities.url}") String baseUrl,
       @Value("${facilities.base-path}") String basePath) {
@@ -68,7 +68,7 @@ public class FacilitiesController {
     String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
     String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
-    linkerUrl = url + path + "v0/";
+    linkerUrl = url + path + "v1/";
   }
 
   @SneakyThrows
@@ -77,7 +77,7 @@ public class FacilitiesController {
   }
 
   private static GeoFacility geoFacility(Facility facility) {
-    return GeoFacilityTransformer.builder().facility(facility).build().toGeoFacility();
+    return GeoFacilityTransformerV1.builder().facility(facility).build().toGeoFacility();
   }
 
   /** Get all facilities. */
@@ -109,12 +109,12 @@ public class FacilitiesController {
     List<List<String>> rows =
         facilityRepository.findAllProjectedBy().stream()
             .parallel()
-            .map(e -> CsvTransformer.builder().facility(facility(e)).build().toRow())
+            .map(e -> CsvTransformerV1.builder().facility(facility(e)).build().toRow())
             .collect(toList());
     StringBuilder sb = new StringBuilder();
     try (CSVPrinter printer =
         CSVFormat.DEFAULT
-            .withHeader(CsvTransformer.HEADERS.stream().toArray(String[]::new))
+            .withHeader(CsvTransformerV1.HEADERS.stream().toArray(String[]::new))
             .print(sb)) {
       for (List<String> row : rows) {
         printer.printRecord(row);
@@ -641,7 +641,7 @@ public class FacilitiesController {
 
     Facility facility() {
       if (facility == null) {
-        facility = FacilitiesController.facility(entity);
+        facility = FacilitiesControllerV1.facility(entity);
       }
       return facility;
     }

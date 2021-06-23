@@ -12,9 +12,9 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
 import java.awt.geom.Path2D;
@@ -232,7 +232,7 @@ public class NearbyController {
       @NonNull BigDecimal latitude,
       List<String> rawServices,
       Integer rawMaxDriveTime) {
-    Set<Facility.ServiceType> services = validateServices(rawServices);
+    Set<ServiceType> services = validateServices(rawServices);
     Integer maxDriveTime = validateDriveTime(rawMaxDriveTime);
     log.info(
         "Searching near {},{} within {} minutes with {} services",

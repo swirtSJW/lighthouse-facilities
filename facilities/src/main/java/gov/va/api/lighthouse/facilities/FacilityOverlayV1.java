@@ -2,10 +2,10 @@ package gov.va.api.lighthouse.facilities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.ActiveStatus;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.OperatingStatus;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.OperatingStatusCode;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -19,11 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 @Value
 @Slf4j
-public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
+public class FacilityOverlayV1 implements Function<HasFacilityPayload, Facility> {
   @NonNull ObjectMapper mapper;
 
   private static void applyCmsOverlayOperatingStatus(
-      Facility facility, Facility.OperatingStatus operatingStatus) {
+      Facility facility, OperatingStatus operatingStatus) {
     if (operatingStatus == null) {
       log.warn("CMS Overlay for facility {} is missing operating status", facility.id());
     } else {
@@ -85,7 +85,7 @@ public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
 
     if (entity.cmsOperatingStatus() != null) {
       applyCmsOverlayOperatingStatus(
-          facility, mapper.readValue(entity.cmsOperatingStatus(), Facility.OperatingStatus.class));
+          facility, mapper.readValue(entity.cmsOperatingStatus(), OperatingStatus.class));
     }
     if (facility.attributes().operatingStatus() == null) {
       facility
