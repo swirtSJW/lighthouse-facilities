@@ -1,9 +1,10 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.DRIVE_TIME_VALUES;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.Coordinates;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.DRIVE_TIME_VALUES;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.NearbyId;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.toPath;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.logging.log4j.util.Strings.isBlank;
@@ -278,5 +279,4 @@ public class NearbyController {
         .meta(NearbyResponse.Meta.builder().bandVersion(getMonthYearFromBandIds(ids)).build())
         .build();
   }
-
 }

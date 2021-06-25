@@ -1,5 +1,14 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.Coordinates;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.DRIVE_TIME_VALUES;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.NearbyId;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.toPath;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.apache.logging.log4j.util.Strings.isBlank;
+
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -7,6 +16,17 @@ import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
 import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
+import java.awt.geom.Path2D;
+import java.awt.geom.Point2D;
+import java.math.BigDecimal;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -23,27 +43,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
-import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-
-import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.DRIVE_TIME_VALUES;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.NearbyId;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.Coordinates;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.toPath;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Validated
 @RestController
