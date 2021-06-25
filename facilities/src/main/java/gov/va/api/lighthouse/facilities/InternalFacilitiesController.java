@@ -80,6 +80,8 @@ public class InternalFacilitiesController {
 
   private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
 
+  private static final ObjectMapper MAPPER_V1 = FacilitiesJacksonConfigV1.createMapper();
+
   private final FacilitiesCollector collector;
 
   private final FacilityRepository facilityRepository;
@@ -119,6 +121,16 @@ public class InternalFacilitiesController {
 
     record.visn(facility.attributes().visn());
     record.mobile(facility.attributes().mobile());
+    return record;
+  }
+
+  /** Populate the new v1 version of facilities. */
+  @SneakyThrows
+  static FacilityEntity populateV1(
+      FacilityEntity record, gov.va.api.lighthouse.facilities.api.v1.Facility facility) {
+
+    record.facilityV1(MAPPER_V1.writeValueAsString(facility));
+
     return record;
   }
 
