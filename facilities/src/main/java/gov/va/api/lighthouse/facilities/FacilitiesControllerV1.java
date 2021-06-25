@@ -94,7 +94,7 @@ public class FacilitiesControllerV1 {
       all.parallelStream()
           .map(
               e ->
-                  FacilitiesJacksonConfig.quietlyWriteValueAsString(
+                  FacilitiesJacksonConfigV1.quietlyWriteValueAsString(
                       MAPPER, geoFacility(facility(e))))
           .forEachOrdered(g -> sb.append(g).append(","));
       sb.deleteCharAt(sb.length() - 1);

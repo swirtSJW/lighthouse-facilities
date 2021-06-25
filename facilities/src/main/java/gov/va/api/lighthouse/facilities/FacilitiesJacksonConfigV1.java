@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class FacilitiesJacksonConfigV1 {
   static ObjectMapper createMapper() {
-    return new FacilitiesJacksonConfigV1().objectMapper();
+    return new FacilitiesJacksonConfigV1().objectMapperV1();
   }
 
   /** Mask away checked exception so this Jackson can be used in streams. */
@@ -32,7 +32,7 @@ class FacilitiesJacksonConfigV1 {
   }
 
   @Bean
-  public ObjectMapper objectMapper() {
+  public ObjectMapper objectMapperV1() {
     return JacksonConfig.createMapper().registerModule(JacksonSerializersV1.serializersV1());
   }
 }

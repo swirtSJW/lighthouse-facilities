@@ -468,7 +468,7 @@ databaseChangeLog:
                 name: facility_v1
                 type: clob
                 constraints:
-                  nullable: false
+                  nullable: true
   - changeSet:
       id: 17
       author: axolotl
@@ -481,4 +481,4 @@ databaseChangeLog:
                 name: facility_v1
                 type: clob
                 constraints:
-                  nullable: false
+                  nullable: true
