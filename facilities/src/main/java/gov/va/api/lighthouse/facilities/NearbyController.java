@@ -2,22 +2,17 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.Coordinates;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.DRIVE_TIME_VALUES;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.NearbyId;
-import static gov.va.api.lighthouse.facilities.NearbyUtils.toPath;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.intersections;
+import static gov.va.api.lighthouse.facilities.NearbyUtils.validateDriveTime;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.apache.logging.log4j.util.Strings.isBlank;
 
 import com.google.common.base.Stopwatch;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v0.NearbyResponse;
 import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
-import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
@@ -26,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -71,36 +65,6 @@ public class NearbyController {
     this.restTemplate = restTemplateProvider.restTemplate();
     this.bingKey = bingKey;
     this.bingUrl = bingUrl.endsWith("/") ? bingUrl : bingUrl + "/";
-  }
-
-  private static Integer validateDriveTime(Integer val) {
-    if (val != null && !DRIVE_TIME_VALUES.contains(val)) {
-      throw new ExceptionsV0.InvalidParameter("drive_time", val);
-    }
-    return val;
-  }
-
-  @SneakyThrows
-  private Optional<DriveTimeBandEntity> firstIntersection(
-      @NonNull Point2D point, List<DriveTimeBandEntity> entities) {
-    Stopwatch timer = Stopwatch.createStarted();
-    int count = 0;
-    for (DriveTimeBandEntity entity : entities) {
-      count++;
-      Path2D path2D = toPath(entity);
-      if (path2D.contains(point)) {
-        log.info(
-            "Found {} intersection in {} ms, looked at {} of {} options",
-            entity.id().stationNumber(),
-            timer.elapsed(TimeUnit.MILLISECONDS),
-            count,
-            entities.size());
-        return Optional.of(entity);
-      }
-    }
-    log.info("No matches found in {} options", entities.size());
-
-    return Optional.empty();
   }
 
   @SneakyThrows
@@ -163,29 +127,6 @@ public class NearbyController {
     }
 
     return monthYear;
-  }
-
-  private Map<String, DriveTimeBandEntity> intersections(
-      @NonNull BigDecimal longitude,
-      @NonNull BigDecimal latitude,
-      List<DriveTimeBandEntity> entities) {
-    ListMultimap<String, DriveTimeBandEntity> bandsForStation = ArrayListMultimap.create();
-    for (DriveTimeBandEntity e : entities) {
-      bandsForStation.put(e.id().stationNumber(), e);
-    }
-
-    Point2D point = new Point2D.Double(longitude.doubleValue(), latitude.doubleValue());
-    return bandsForStation.asMap().entrySet().parallelStream()
-        .map(
-            entry -> {
-              List<DriveTimeBandEntity> sortedEntities =
-                  entry.getValue().stream()
-                      .sorted(Comparator.comparingInt(left -> left.id().fromMinutes()))
-                      .collect(toList());
-              return firstIntersection(point, sortedEntities).orElse(null);
-            })
-        .filter(Objects::nonNull)
-        .collect(toMap(b -> b.id().stationNumber(), Function.identity()));
   }
 
   /** Nearby facilities by address. */

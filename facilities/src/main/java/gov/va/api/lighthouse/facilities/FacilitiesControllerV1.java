@@ -22,6 +22,7 @@ import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
 import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -146,10 +147,7 @@ public class FacilitiesControllerV1 {
     double centerLng = (bbox.get(0).doubleValue() + bbox.get(2).doubleValue()) / 2;
     double centerLat = (bbox.get(1).doubleValue() + bbox.get(3).doubleValue()) / 2;
     return allEntities.stream()
-        .sorted(
-            (left, right) ->
-                Double.compare(
-                    distance(left, centerLng, centerLat), distance(right, centerLng, centerLat)))
+        .sorted(Comparator.comparingDouble(left -> distance(left, centerLng, centerLat)))
         .collect(toList());
   }
 
