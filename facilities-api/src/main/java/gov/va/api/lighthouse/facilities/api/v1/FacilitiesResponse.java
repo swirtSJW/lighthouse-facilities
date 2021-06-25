@@ -1,8 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
-import gov.va.api.lighthouse.facilities.api.v0.Pagination;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;

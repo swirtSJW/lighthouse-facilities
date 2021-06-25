@@ -404,8 +404,8 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<FacilityEntity> entities = entitiesByBoundingBox(bbox, type, services, mobile);
-    PageLinker linker =
-        PageLinker.builder()
+    PageLinkerV1 linker =
+        PageLinkerV1.builder()
             .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
@@ -436,8 +436,8 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<FacilityEntity> entities = entitiesByIds(ids);
-    PageLinker linker =
-        PageLinker.builder()
+    PageLinkerV1 linker =
+        PageLinkerV1.builder()
             .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
@@ -471,8 +471,8 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<DistanceEntity> entities =
         entitiesByLatLong(longitude, latitude, ids, type, services, mobile);
-    PageLinker linker =
-        PageLinker.builder()
+    PageLinkerV1 linker =
+        PageLinkerV1.builder()
             .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
@@ -521,8 +521,8 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     Page<FacilityEntity> entitiesPage =
         entitiesPageByState(state, type, services, mobile, page, Math.max(perPage, 1));
-    PageLinker linker =
-        PageLinker.builder()
+    PageLinkerV1 linker =
+        PageLinkerV1.builder()
             .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
@@ -556,8 +556,8 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<FacilityEntity> entities = facilityRepository.findByVisn(visn);
-    PageLinker linker =
-        PageLinker.builder()
+    PageLinkerV1 linker =
+        PageLinkerV1.builder()
             .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
@@ -589,8 +589,8 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     Page<FacilityEntity> entitiesPage =
         entitiesPageByZip(zip, type, services, mobile, page, Math.max(perPage, 1));
-    PageLinker linker =
-        PageLinker.builder()
+    PageLinkerV1 linker =
+        PageLinkerV1.builder()
             .url(linkerUrl + "facilities")
             .params(
                 Parameters.builder()
