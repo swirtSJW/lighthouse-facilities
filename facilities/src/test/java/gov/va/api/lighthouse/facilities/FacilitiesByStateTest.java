@@ -76,7 +76,7 @@ public class FacilitiesByStateTest {
             controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757")))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=1")

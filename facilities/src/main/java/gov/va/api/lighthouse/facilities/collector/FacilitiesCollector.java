@@ -26,6 +26,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -163,7 +164,8 @@ public class FacilitiesCollector {
 
   /** Collect facilities. */
   @SneakyThrows
-  public List<Facility> collectFacilities() {
+  public List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>>
+      collectFacilities() {
     Map<String, String> websites;
     Collection<VastEntity> vastEntities;
     ArrayList<String> cscFacilities;
@@ -189,6 +191,18 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> healthsV1 =
+        HealthsCollector.builder()
+            .atcBaseUrl(atcBaseUrl)
+            .atpBaseUrl(atpBaseUrl)
+            .cscFacilities(cscFacilities)
+            .jdbcTemplate(jdbcTemplate)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
+            .vastEntities(vastEntities)
+            .websites(websites)
+            .build()
+            .collectV1();
+
     Collection<Facility> stateCems =
         StateCemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
@@ -197,6 +211,14 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> stateCemsV1 =
+        StateCemeteriesCollector.builder()
+            .baseUrl(cemeteriesBaseUrl)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
+            .websites(websites)
+            .build()
+            .collectV1();
+
     Collection<Facility> vetCenters =
         VetCentersCollector.builder()
             .vastEntities(vastEntities)
@@ -204,8 +226,22 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> vetCentersV1 =
+        VetCentersCollector.builder()
+            .vastEntities(vastEntities)
+            .websites(websites)
+            .build()
+            .collectV1();
+
     Collection<Facility> benefits =
         BenefitsCollector.builder().websites(websites).jdbcTemplate(jdbcTemplate).build().collect();
+
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> benefitsV1 =
+        BenefitsCollector.builder()
+            .websites(websites)
+            .jdbcTemplate(jdbcTemplate)
+            .build()
+            .collectV1();
 
     Collection<Facility> cemeteries =
         CemeteriesCollector.builder()
@@ -216,6 +252,15 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> cemeteriesV1 =
+        CemeteriesCollector.builder()
+            .baseUrl(cemeteriesBaseUrl)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
+            .websites(websites)
+            .jdbcTemplate(jdbcTemplate)
+            .build()
+            .collectV1();
+
     log.info(
         "Collected: Health {},  Benefits {},  Vet centers {}, "
             + "Non-national cemeteries {}, Cemeteries {}",
@@ -225,9 +270,30 @@ public class FacilitiesCollector {
         stateCems.size(),
         cemeteries.size());
 
-    return Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
-        .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
-        .collect(toList());
+    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
+        new ArrayList<>();
+
+    List<Facility> facilities =
+        Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
+            .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
+            .collect(toList());
+
+    List<gov.va.api.lighthouse.facilities.api.v1.Facility> facilitiesV1 =
+        Streams.stream(
+                Iterables.concat(benefitsV1, cemeteriesV1, healthsV1, stateCemsV1, vetCentersV1))
+            .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
+            .collect(toList());
+
+    for (int i = 0; i < facilities.size(); i++) {
+      facilityPairs.add(Pair.of(facilities.get(i), facilitiesV1.get(i)));
+    }
+
+    return facilityPairs;
+
+    //    return Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems,
+    // vetCenters))
+    //        .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
+    //        .collect(toList());
   }
 
   private List<VastEntity> loadVast() {

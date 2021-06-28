@@ -146,6 +146,34 @@ final class HealthsCollector {
     }
   }
 
+  Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    try {
+      ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
+      ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
+      Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
+      ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
+      return vastEntities.stream()
+          .filter(Objects::nonNull)
+          .filter(v -> !v.isVetCenter())
+          .map(
+              v ->
+                  HealthTransformerV1.builder()
+                      .vast(v)
+                      .accessToCare(accessToCareEntries)
+                      .accessToPwt(accessToPwtEntries)
+                      .cscFacilities(cscFacilities)
+                      .mentalHealthPhoneNumbers(mentalHealthPhoneNumbers)
+                      .stopCodesMap(stopCodesMap)
+                      .websites(websites)
+                      .build()
+                      .toFacility())
+          .filter(Objects::nonNull)
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.HealthsCollectorException(e);
+    }
+  }
+
   @SneakyThrows
   private ListMultimap<String, AccessToCareEntry> loadAccessToCare() {
     final Stopwatch totalWatch = Stopwatch.createStarted();

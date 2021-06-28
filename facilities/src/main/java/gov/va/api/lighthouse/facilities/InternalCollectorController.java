@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,7 +52,7 @@ public class InternalCollectorController {
   }
 
   @GetMapping(value = "/facilities")
-  List<Facility> collectFacilities() {
+  List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> collectFacilities() {
     return collector.collectFacilities();
   }
 

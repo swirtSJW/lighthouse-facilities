@@ -81,7 +81,7 @@ public class FacilityOverlayV1 implements Function<HasFacilityPayload, Facility>
   @Override
   @SneakyThrows
   public Facility apply(HasFacilityPayload entity) {
-    Facility facility = mapper.readValue(entity.facility(), Facility.class);
+    Facility facility = mapper.readValue(entity.facilityV1(), Facility.class);
 
     if (entity.cmsOperatingStatus() != null) {
       applyCmsOverlayOperatingStatus(

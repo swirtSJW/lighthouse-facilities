@@ -99,7 +99,7 @@ public class FacilitiesByZipTest {
             controller().jsonFacilitiesByZip("43219", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757")))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()))
                 .links(
                     PageLinks.builder()
                         .self(

@@ -88,6 +88,25 @@ final class CemeteriesCollector {
     }
   }
 
+  public Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    List<NationalCemeteries.NationalCemetery> cemeteries = xmlCemeteries();
+    try {
+      return queryCdwCemeteries().stream()
+          .filter(c -> !equalsIgnoreCase(c.siteType(), "office"))
+          .map(
+              facility ->
+                  CemeteriesTransformerV1.builder()
+                      .cdwFacility(facility)
+                      .externalFacilityName(xmlFacilityName(cemeteries, facility.siteId()))
+                      .externalWebsite(xmlOrCsvWebsite(cemeteries, facility.siteId()))
+                      .build()
+                      .toFacility())
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.CemeteriesCollectorException(e);
+    }
+  }
+
   /** Requests CDW cemetery in a List. */
   @SneakyThrows
   private List<CdwCemetery> queryCdwCemeteries() {

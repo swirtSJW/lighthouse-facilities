@@ -20,6 +20,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -126,28 +127,49 @@ public class NearbyTest {
         .build();
   }
 
-  private FacilityEntity _facilityEntity(Facility fac) {
+  private FacilityEntity _facilityEntity(
+      Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair) {
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
-            .id(FacilityEntity.Pk.fromIdString(fac.id()))
+            .id(FacilityEntity.Pk.fromIdString(facilityPair.getLeft().id()))
             .lastUpdated(Instant.now())
             .build(),
-        fac);
+        facilityPair);
   }
 
-  private Facility _facilityHealth(String id) {
-    return Facility.builder()
-        .id(id)
-        .attributes(
-            Facility.FacilityAttributes.builder()
-                .latitude(BigDecimal.ONE)
-                .longitude(BigDecimal.ONE)
-                .services(
-                    Facility.Services.builder()
-                        .health(List.of(Facility.HealthService.PrimaryCare))
-                        .build())
-                .build())
-        .build();
+  private Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> _facilityHealth(
+      String id) {
+    Facility facility =
+        Facility.builder()
+            .id(id)
+            .attributes(
+                Facility.FacilityAttributes.builder()
+                    .latitude(BigDecimal.ONE)
+                    .longitude(BigDecimal.ONE)
+                    .services(
+                        Facility.Services.builder()
+                            .health(List.of(Facility.HealthService.PrimaryCare))
+                            .build())
+                    .build())
+            .build();
+
+    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 =
+        gov.va.api.lighthouse.facilities.api.v1.Facility.builder()
+            .id(id)
+            .attributes(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes.builder()
+                    .latitude(BigDecimal.ONE)
+                    .longitude(BigDecimal.ONE)
+                    .services(
+                        gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
+                            .health(
+                                List.of(
+                                    gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
+                                        .PrimaryCare))
+                            .build())
+                    .build())
+            .build();
+    return Pair.of(facility, facilityV1);
   }
 
   @Test

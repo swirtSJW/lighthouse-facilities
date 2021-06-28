@@ -241,9 +241,9 @@ public class FacilitiesByLatLongTest {
             FacilitiesResponse.builder()
                 .data(
                     List.of(
-                        FacilitySamples.defaultSamples().facility("vha_757"),
-                        FacilitySamples.defaultSamples().facility("vha_740GA"),
-                        FacilitySamples.defaultSamples().facility("vha_691GB")))
+                        FacilitySamples.defaultSamples().facility("vha_757").getLeft(),
+                        FacilitySamples.defaultSamples().facility("vha_740GA").getLeft(),
+                        FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=10")

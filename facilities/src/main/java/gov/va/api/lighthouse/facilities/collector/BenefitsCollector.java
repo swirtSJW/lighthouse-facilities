@@ -84,6 +84,23 @@ final class BenefitsCollector {
     }
   }
 
+  /** Collects and transforms all benefits into a list of facilities. */
+  public Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    try {
+      return requestCdwBenefits().stream()
+          .map(
+              facility ->
+                  BenefitsTransformerV1.builder()
+                      .cdwFacility(facility)
+                      .csvWebsite(websites.get("vba_" + facility.facilityNumber()))
+                      .build()
+                      .toFacility())
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.BenefitsCollectorException(e);
+    }
+  }
+
   @SneakyThrows
   private List<CdwBenefits> requestCdwBenefits() {
     final Stopwatch totalWatch = Stopwatch.createStarted();

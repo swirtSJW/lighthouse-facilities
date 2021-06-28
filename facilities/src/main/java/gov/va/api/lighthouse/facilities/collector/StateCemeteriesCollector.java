@@ -38,19 +38,31 @@ final class StateCemeteriesCollector {
 
   Collection<Facility> collect() {
     try {
-      List<Facility> cemeteries =
-          xmlCemeteries().stream()
-              .filter(Objects::nonNull)
-              .map(
-                  c ->
-                      StateCemeteryTransformer.builder()
-                          .xml(c)
-                          .websites(websites)
-                          .build()
-                          .toFacility())
-              .filter(Objects::nonNull)
-              .collect(toList());
-      return cemeteries;
+      return xmlCemeteries().stream()
+          .filter(Objects::nonNull)
+          .map(
+              c ->
+                  StateCemeteryTransformer.builder().xml(c).websites(websites).build().toFacility())
+          .filter(Objects::nonNull)
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.StateCemeteriesCollectorException(e);
+    }
+  }
+
+  Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    try {
+      return xmlCemeteries().stream()
+          .filter(Objects::nonNull)
+          .map(
+              c ->
+                  StateCemeteryTransformerV1.builder()
+                      .xml(c)
+                      .websites(websites)
+                      .build()
+                      .toFacility())
+          .filter(Objects::nonNull)
+          .collect(toList());
     } catch (Exception e) {
       throw new CollectorExceptions.StateCemeteriesCollectorException(e);
     }

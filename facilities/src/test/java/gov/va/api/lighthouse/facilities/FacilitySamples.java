@@ -13,20 +13,38 @@ import java.util.Map;
 import java.util.function.Function;
 import lombok.Builder;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class FacilitySamples {
   private final Map<String, Facility> facilities;
+
+  private final Map<String, gov.va.api.lighthouse.facilities.api.v1.Facility> facilitiesV1;
 
   @SneakyThrows
   @Builder
   FacilitySamples(List<String> resources) {
     var mapper = FacilitiesJacksonConfig.createMapper();
+    var mapperV1 = FacilitiesJacksonConfigV1.createMapper();
+
     facilities =
         resources.stream()
             .map(r -> getClass().getResourceAsStream(r))
             .map(in -> quietlyMap(mapper, in, FacilityReadResponse.class))
             .map(FacilityReadResponse::facility)
             .collect(toMap(Facility::id, Function.identity()));
+
+    facilitiesV1 =
+        resources.stream()
+            .map(r -> getClass().getResourceAsStream(r))
+            .map(
+                in ->
+                    quietlyMap(
+                        mapperV1,
+                        in,
+                        gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse.class))
+            .map(gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse::facility)
+            .collect(
+                toMap(gov.va.api.lighthouse.facilities.api.v1.Facility::id, Function.identity()));
   }
 
   static FacilitySamples defaultSamples() {
@@ -35,10 +53,13 @@ public class FacilitySamples {
         .build();
   }
 
-  Facility facility(String id) {
+  Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facility(String id) {
     var f = facilities.get(id);
     assertThat(f).describedAs(id).isNotNull();
-    return f;
+
+    var fV1 = facilitiesV1.get(id);
+    assertThat(fV1).describedAs(id).isNotNull();
+    return Pair.of(f, fV1);
   }
 
   FacilityEntity facilityEntity(String id) {
@@ -51,6 +72,14 @@ public class FacilitySamples {
   }
 
   GeoFacility geoFacility(String id) {
-    return GeoFacilityTransformer.builder().facility(facility(id)).build().toGeoFacility();
+    var f = facilities.get(id);
+    assertThat(f).describedAs(id).isNotNull();
+    return GeoFacilityTransformer.builder().facility(f).build().toGeoFacility();
+  }
+
+  gov.va.api.lighthouse.facilities.api.v1.GeoFacility geoFacilityV1(String id) {
+    var fV1 = facilitiesV1.get(id);
+    assertThat(fV1).describedAs(id).isNotNull();
+    return GeoFacilityTransformerV1.builder().facility(fV1).build().toGeoFacility();
   }
 }

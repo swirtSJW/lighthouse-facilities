@@ -208,7 +208,7 @@ public class FacilitiesByBoundingBoxTest {
                     1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB")))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=2&per_page=1")

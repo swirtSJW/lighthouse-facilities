@@ -19,10 +19,29 @@ final class VetCentersCollector {
     try {
       return vastEntities.stream()
           .filter(Objects::nonNull)
-          .filter(vast -> vast.isVetCenter())
+          .filter(VastEntity::isVetCenter)
           .map(
               vast ->
                   VetCenterTransformer.builder().vast(vast).websites(websites).build().toFacility())
+          .filter(Objects::nonNull)
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.VetCentersCollectorException(e);
+    }
+  }
+
+  Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    try {
+      return vastEntities.stream()
+          .filter(Objects::nonNull)
+          .filter(VastEntity::isVetCenter)
+          .map(
+              vast ->
+                  VetCenterTransformerV1.builder()
+                      .vast(vast)
+                      .websites(websites)
+                      .build()
+                      .toFacility())
           .filter(Objects::nonNull)
           .collect(toList());
     } catch (Exception e) {
