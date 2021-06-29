@@ -4,10 +4,10 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
-import gov.va.api.lighthouse.facilities.api.v0.Pagination;
+import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
+import gov.va.api.lighthouse.facilities.api.v1.Pagination;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -18,11 +18,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByBoundingBoxTest {
+public class FacilitiesByBoundingBoxTestV1 {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV1 controller() {
+    return FacilitiesControllerV1.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -48,7 +48,7 @@ public class FacilitiesByBoundingBoxTest {
         .isEqualTo(
             GeoFacilitiesResponse.builder()
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
-                .features(List.of(FacilitySamples.defaultSamples().geoFacility("vha_757")))
+                .features(List.of(FacilitySamples.defaultSamples().geoFacilityV1("vha_757")))
                 .build());
   }
 
@@ -127,7 +127,7 @@ public class FacilitiesByBoundingBoxTest {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 
   @Test
@@ -152,7 +152,7 @@ public class FacilitiesByBoundingBoxTest {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v0/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&page=100&per_page=0")
+                            "http://foo/bp/v1/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -184,7 +184,7 @@ public class FacilitiesByBoundingBoxTest {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 
   @Test
@@ -192,7 +192,7 @@ public class FacilitiesByBoundingBoxTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     String linkBase =
-        "http://foo/bp/v0/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&services%5B%5D=primarycare&type=HEALTH";
+        "http://foo/bp/v1/facilities?bbox%5B%5D=-80&bbox%5B%5D=20&bbox%5B%5D=-120&bbox%5B%5D=40&services%5B%5D=primarycare&type=HEALTH";
     assertThat(
             controller()
                 .jsonFacilitiesByBoundingBox(
@@ -208,7 +208,7 @@ public class FacilitiesByBoundingBoxTest {
                     1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB").getRight()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=2&per_page=1")
@@ -246,6 +246,6 @@ public class FacilitiesByBoundingBoxTest {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 }

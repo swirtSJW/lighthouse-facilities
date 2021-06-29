@@ -4,10 +4,10 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
-import gov.va.api.lighthouse.facilities.api.v0.Pagination;
+import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
+import gov.va.api.lighthouse.facilities.api.v1.Pagination;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,11 +17,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByStateTest {
+public class FacilitiesByStateTestV1 {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV1 controller() {
+    return FacilitiesControllerV1.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -35,7 +35,7 @@ public class FacilitiesByStateTest {
         .isEqualTo(
             GeoFacilitiesResponse.builder()
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
-                .features(List.of(FacilitySamples.defaultSamples().geoFacility("vha_757")))
+                .features(List.of(FacilitySamples.defaultSamples().geoFacilityV1("vha_757")))
                 .build());
   }
 
@@ -57,7 +57,7 @@ public class FacilitiesByStateTest {
   void json_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByState("oh", null, null, null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 
   @Test
@@ -65,7 +65,7 @@ public class FacilitiesByStateTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller().jsonFacilitiesByState("oh", null, List.of("urology"), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class FacilitiesByStateTest {
             controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=1")
@@ -100,7 +100,7 @@ public class FacilitiesByStateTest {
   void json_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", emptyList(), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 
   @Test

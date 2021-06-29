@@ -2,7 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,11 +12,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByVisnTest {
+public class FacilitiesByVisnTestV1 {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV1 controller() {
+    return FacilitiesControllerV1.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -30,7 +30,7 @@ public class FacilitiesByVisnTest {
         .isEqualTo(
             GeoFacilitiesResponse.builder()
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
-                .features(List.of(FacilitySamples.defaultSamples().geoFacility("vha_757")))
+                .features(List.of(FacilitySamples.defaultSamples().geoFacilityV1("vha_757")))
                 .build());
   }
 
@@ -38,6 +38,6 @@ public class FacilitiesByVisnTest {
   void json_searchVisn() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByVisn("10", 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 }

@@ -1,6 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.Controllers.validateServices;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateServices;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.Coordinates;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.NearbyId;
 import static gov.va.api.lighthouse.facilities.NearbyUtils.intersections;

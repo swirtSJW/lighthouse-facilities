@@ -4,10 +4,10 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v0.PageLinks;
-import gov.va.api.lighthouse.facilities.api.v0.Pagination;
+import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
+import gov.va.api.lighthouse.facilities.api.v1.Pagination;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -18,11 +18,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByLatLongTest {
+public class FacilitiesByLatLongTestV1 {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV1 controller() {
+    return FacilitiesControllerV1.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("")
@@ -50,9 +50,9 @@ public class FacilitiesByLatLongTest {
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
                 .features(
                     List.of(
-                        FacilitySamples.defaultSamples().geoFacility("vha_757"),
-                        FacilitySamples.defaultSamples().geoFacility("vha_740GA"),
-                        FacilitySamples.defaultSamples().geoFacility("vha_691GB")))
+                        FacilitySamples.defaultSamples().geoFacilityV1("vha_757"),
+                        FacilitySamples.defaultSamples().geoFacilityV1("vha_740GA"),
+                        FacilitySamples.defaultSamples().geoFacilityV1("vha_691GB")))
                 .build());
   }
 
@@ -75,7 +75,7 @@ public class FacilitiesByLatLongTest {
         .isEqualTo(
             GeoFacilitiesResponse.builder()
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
-                .features(List.of(FacilitySamples.defaultSamples().geoFacility("vha_757")))
+                .features(List.of(FacilitySamples.defaultSamples().geoFacilityV1("vha_757")))
                 .build());
   }
 
@@ -96,7 +96,7 @@ public class FacilitiesByLatLongTest {
                     1,
                     10)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getLeft()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
   }
 
   @Test
@@ -152,9 +152,9 @@ public class FacilitiesByLatLongTest {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757").getLeft(),
-                FacilitySamples.defaultSamples().facility("vha_740GA").getLeft(),
-                FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()));
+                FacilitySamples.defaultSamples().facility("vha_757").getRight(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").getRight(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").getRight()));
   }
 
   @Test
@@ -214,9 +214,9 @@ public class FacilitiesByLatLongTest {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757").getLeft(),
-                FacilitySamples.defaultSamples().facility("vha_740GA").getLeft(),
-                FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()));
+                FacilitySamples.defaultSamples().facility("vha_757").getRight(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").getRight(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").getRight()));
   }
 
   @Test
@@ -241,9 +241,9 @@ public class FacilitiesByLatLongTest {
             FacilitiesResponse.builder()
                 .data(
                     List.of(
-                        FacilitySamples.defaultSamples().facility("vha_757").getLeft(),
-                        FacilitySamples.defaultSamples().facility("vha_740GA").getLeft(),
-                        FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()))
+                        FacilitySamples.defaultSamples().facility("vha_757").getRight(),
+                        FacilitySamples.defaultSamples().facility("vha_740GA").getRight(),
+                        FacilitySamples.defaultSamples().facility("vha_691GB").getRight()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=10")
@@ -296,8 +296,8 @@ public class FacilitiesByLatLongTest {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757").getLeft(),
-                FacilitySamples.defaultSamples().facility("vha_740GA").getLeft(),
-                FacilitySamples.defaultSamples().facility("vha_691GB").getLeft()));
+                FacilitySamples.defaultSamples().facility("vha_757").getRight(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").getRight(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").getRight()));
   }
 }

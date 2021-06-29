@@ -26,7 +26,6 @@ public class StateCemeteriesCollectorTest {
   @SuppressWarnings("unchecked")
   void collect() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
-
     ResponseEntity<String> response = mock(ResponseEntity.class);
     when(response.getBody())
         .thenReturn(
@@ -49,14 +48,12 @@ public class StateCemeteriesCollectorTest {
                                     .longitude("-87.8985442")
                                     .build()))
                         .build()));
-
     when(insecureRestTemplate.exchange(
             startsWith("http://statecems"),
             eq(HttpMethod.GET),
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(response);
-
     assertThat(
             StateCemeteriesCollector.builder()
                 .baseUrl("http://statecems")
@@ -108,6 +105,93 @@ public class StateCemeteriesCollectorTest {
   }
 
   @Test
+  @SneakyThrows
+  @SuppressWarnings("unchecked")
+  void collectV1() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    ResponseEntity<String> response = mock(ResponseEntity.class);
+    when(response.getBody())
+        .thenReturn(
+            new XmlMapper()
+                .writeValueAsString(
+                    StateCemeteries.builder()
+                        .cem(
+                            List.of(
+                                StateCemeteries.StateCemetery.builder()
+                                    .id("1001")
+                                    .stateCode("AL")
+                                    .name(
+                                        "Alabama State Veterans Memorial Cemetery At Spanish Fort")
+                                    .url("http://www.va.state.al.us/spanishfort.aspx")
+                                    .addressLine1("34904 State Highway 225")
+                                    .addressLine2("Spanish Fort, AL 36577")
+                                    .phone("251-625-1338")
+                                    .fax("251-626-9204")
+                                    .latitude("30.7346233")
+                                    .longitude("-87.8985442")
+                                    .build()))
+                        .build()));
+    when(insecureRestTemplate.exchange(
+            startsWith("http://statecems"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(response);
+    assertThat(
+            StateCemeteriesCollector.builder()
+                .baseUrl("http://statecems")
+                .insecureRestTemplate(insecureRestTemplate)
+                .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
+                .build()
+                .collectV1())
+        .isEqualTo(
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.builder()
+                    .id("nca_s1001")
+                    .type(gov.va.api.lighthouse.facilities.api.v1.Facility.Type.va_facilities)
+                    .attributes(
+                        gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes
+                            .builder()
+                            .name("Alabama State Veterans Memorial Cemetery At Spanish Fort")
+                            .facilityType(
+                                gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityType
+                                    .va_cemetery)
+                            .classification("State Cemetery")
+                            .website("http://www.va.state.al.us/spanishfort.aspx")
+                            .latitude(new BigDecimal("30.7346233"))
+                            .longitude(new BigDecimal("-87.8985442"))
+                            .timeZone("America/Chicago")
+                            .address(
+                                gov.va.api.lighthouse.facilities.api.v1.Facility.Addresses.builder()
+                                    .physical(
+                                        gov.va.api.lighthouse.facilities.api.v1.Facility.Address
+                                            .builder()
+                                            .zip("36577")
+                                            .city("Spanish Fort")
+                                            .state("AL")
+                                            .address1("34904 State Highway 225")
+                                            .build())
+                                    .build())
+                            .phone(
+                                gov.va.api.lighthouse.facilities.api.v1.Facility.Phone.builder()
+                                    .fax("251-626-9204")
+                                    .main("251-625-1338")
+                                    .build())
+                            .hours(
+                                gov.va.api.lighthouse.facilities.api.v1.Facility.Hours.builder()
+                                    .monday("Sunrise - Sunset")
+                                    .tuesday("Sunrise - Sunset")
+                                    .wednesday("Sunrise - Sunset")
+                                    .thursday("Sunrise - Sunset")
+                                    .friday("Sunrise - Sunset")
+                                    .saturday("Sunrise - Sunset")
+                                    .sunday("Sunrise - Sunset")
+                                    .build())
+                            .build())
+                    .build()));
+  }
+
+  @Test
   void exception() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     assertThrows(
@@ -119,5 +203,19 @@ public class StateCemeteriesCollectorTest {
                 .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
                 .build()
                 .collect());
+  }
+
+  @Test
+  void exceptionV1() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    assertThrows(
+        CollectorExceptions.StateCemeteriesCollectorException.class,
+        () ->
+            StateCemeteriesCollector.builder()
+                .baseUrl("http://wrong")
+                .insecureRestTemplate(insecureRestTemplate)
+                .websites(ImmutableMap.of("nca_s1001", "DONTUSE"))
+                .build()
+                .collectV1());
   }
 }

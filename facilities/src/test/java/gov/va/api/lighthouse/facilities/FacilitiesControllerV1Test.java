@@ -36,7 +36,7 @@ public class FacilitiesControllerV1Test {
                 samples.facilityEntity("vha_757")));
     String actual = controller().all();
     assertThat(
-            FacilitiesJacksonConfig.createMapper()
+            FacilitiesJacksonConfigV1.createMapper()
                 .readValue(actual, GeoFacilitiesResponse.class)
                 .features())
         .hasSize(3);
@@ -167,7 +167,7 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v0/facilities?ids=x%2Cvha_691GB%2C%2Cx%2C%2Cvha_740GA%2Cvha_757&page=2&per_page=0")
+                            "http://foo/bp/v1/facilities?ids=x%2Cvha_691GB%2C%2Cx%2C%2Cvha_740GA%2Cvha_757&page=2&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
