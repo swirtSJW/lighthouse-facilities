@@ -96,7 +96,7 @@ public class FacilitiesByLatLongV1Test {
                     1,
                     10)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v1));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v1()));
   }
 
   @Test
@@ -152,9 +152,9 @@ public class FacilitiesByLatLongV1Test {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757").v1,
-                FacilitySamples.defaultSamples().facility("vha_740GA").v1,
-                FacilitySamples.defaultSamples().facility("vha_691GB").v1));
+                FacilitySamples.defaultSamples().facility("vha_757").v1(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").v1(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").v1()));
   }
 
   @Test
@@ -214,9 +214,9 @@ public class FacilitiesByLatLongV1Test {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757").v1,
-                FacilitySamples.defaultSamples().facility("vha_740GA").v1,
-                FacilitySamples.defaultSamples().facility("vha_691GB").v1));
+                FacilitySamples.defaultSamples().facility("vha_757").v1(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").v1(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").v1()));
   }
 
   @Test
@@ -241,9 +241,9 @@ public class FacilitiesByLatLongV1Test {
             FacilitiesResponse.builder()
                 .data(
                     List.of(
-                        FacilitySamples.defaultSamples().facility("vha_757").v1,
-                        FacilitySamples.defaultSamples().facility("vha_740GA").v1,
-                        FacilitySamples.defaultSamples().facility("vha_691GB").v1))
+                        FacilitySamples.defaultSamples().facility("vha_757").v1(),
+                        FacilitySamples.defaultSamples().facility("vha_740GA").v1(),
+                        FacilitySamples.defaultSamples().facility("vha_691GB").v1()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=10")
@@ -296,8 +296,8 @@ public class FacilitiesByLatLongV1Test {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757").v1,
-                FacilitySamples.defaultSamples().facility("vha_740GA").v1,
-                FacilitySamples.defaultSamples().facility("vha_691GB").v1));
+                FacilitySamples.defaultSamples().facility("vha_757").v1(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").v1(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").v1()));
   }
 }

@@ -4,6 +4,7 @@ import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfig.quietlyMa
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;

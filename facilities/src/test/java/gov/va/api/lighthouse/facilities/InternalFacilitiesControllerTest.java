@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;

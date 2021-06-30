@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -129,7 +130,7 @@ public class NearbyTest {
   private FacilityEntity _facilityEntity(FacilityPair facilityPair) {
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
-            .id(FacilityEntity.Pk.fromIdString(facilityPair.v0.id()))
+            .id(FacilityEntity.Pk.fromIdString(facilityPair.v0().id()))
             .lastUpdated(Instant.now())
             .build(),
         facilityPair);

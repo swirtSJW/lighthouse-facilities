@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
@@ -112,7 +113,7 @@ public class InternalFacilitiesController {
   @SneakyThrows
   static FacilityEntity populate(FacilityEntity record, FacilityPair facilityPair) {
 
-    Facility facility = facilityPair.v0;
+    Facility facility = facilityPair.v0();
 
     checkArgument(record.id() != null);
     record.latitude(facility.attributes().latitude().doubleValue());
@@ -124,7 +125,7 @@ public class InternalFacilitiesController {
     record.visn(facility.attributes().visn());
     record.mobile(facility.attributes().mobile());
 
-    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1;
+    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1();
     record.facilityV1(MAPPER_V1.writeValueAsString(facilityV1));
     return record;
   }
@@ -309,7 +310,7 @@ public class InternalFacilitiesController {
   private Set<FacilityEntity.Pk> missingIds(List<FacilityPair> collectedFacilities) {
     Set<FacilityEntity.Pk> newIds =
         collectedFacilities.stream()
-            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.v0.id()).orElse(null))
+            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.v0().id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(toCollection(LinkedHashSet::new));
     Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
@@ -408,7 +409,7 @@ public class InternalFacilitiesController {
   @SneakyThrows
   void updateAndSave(ReloadResponse response, FacilityEntity record, FacilityPair facilityPair) {
 
-    Facility facility = facilityPair.v0;
+    Facility facility = facilityPair.v0();
 
     facility
         .attributes()
@@ -548,7 +549,7 @@ public class InternalFacilitiesController {
     FacilityEntity.Pk pk;
 
     // Facility v0 is on the left side of the pairing
-    Facility facility = facilityPair.v0;
+    Facility facility = facilityPair.v0();
 
     try {
       pk = FacilityEntity.Pk.fromIdString(facility.id());

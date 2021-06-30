@@ -123,7 +123,7 @@ public class FacilitiesControllerTest {
     assertThat(controller().jsonFacilitiesByIds("x,vha_691GB,,x,,vha_740GA,vha_757", 2, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_740GA").v0))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_740GA").v0()))
                 .links(
                     PageLinks.builder()
                         .self(
@@ -195,7 +195,7 @@ public class FacilitiesControllerTest {
 
   @Test
   void readJson() {
-    Facility facility = FacilitySamples.defaultSamples().facility("vha_691GB").v0;
+    Facility facility = FacilitySamples.defaultSamples().facility("vha_691GB").v0();
     FacilityEntity entity = FacilitySamples.defaultSamples().facilityEntity("vha_691GB");
     when(fr.findById(FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB")))
         .thenReturn(Optional.of(entity));

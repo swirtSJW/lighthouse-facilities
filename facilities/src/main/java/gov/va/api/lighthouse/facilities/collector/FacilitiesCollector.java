@@ -8,7 +8,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import gov.va.api.lighthouse.facilities.FacilityPair;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

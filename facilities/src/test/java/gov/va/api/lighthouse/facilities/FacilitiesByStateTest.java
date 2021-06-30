@@ -57,7 +57,7 @@ public class FacilitiesByStateTest {
   void json_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByState("oh", null, null, null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -65,7 +65,7 @@ public class FacilitiesByStateTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller().jsonFacilitiesByState("oh", null, List.of("urology"), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class FacilitiesByStateTest {
             controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=1")
@@ -100,7 +100,7 @@ public class FacilitiesByStateTest {
   void json_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", emptyList(), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test

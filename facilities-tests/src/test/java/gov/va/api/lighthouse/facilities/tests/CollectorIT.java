@@ -5,7 +5,7 @@ import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDef
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
-import gov.va.api.lighthouse.facilities.FacilityPair;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import java.util.Map;

@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
