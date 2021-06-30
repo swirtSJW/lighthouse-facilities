@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import org.junit.jupiter.api.Test;
 
-public class VetCenterTransformerTestV1 {
+public class VetCenterTransformerV1Test {
   @Test
   void empty() {
     assertThat(

@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesIdsControllerTestV1 {
+public class FacilitiesIdsControllerV1Test {
   @Autowired private FacilityRepository repo;
 
   private FacilitiesControllerV1 controller() {

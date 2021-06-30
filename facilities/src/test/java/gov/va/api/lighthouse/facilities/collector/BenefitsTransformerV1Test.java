@@ -6,7 +6,7 @@ import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class BenefitsTransformerTestV1 {
+public class BenefitsTransformerV1Test {
 
   @Test
   void benefitsServices() {

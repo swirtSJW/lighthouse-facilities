@@ -7,7 +7,7 @@ import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
-public class StateCemeteryTransformerTestV1 {
+public class StateCemeteryTransformerV1Test {
   @Test
   void asAddress_parseLine1() {
     assertThat(StateCemeteryTransformerV1.asAddress("AL", "Spanish Fort, AL, 36577-1234", "", ""))

@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class NearbyTestV1 {
+public class NearbyV1Test {
   @Autowired FacilityRepository facilityRepository;
 
   @Autowired DriveTimeBandRepository driveTimeBandRepository;

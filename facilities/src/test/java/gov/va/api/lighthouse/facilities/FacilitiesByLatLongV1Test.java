@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByLatLongTestV1 {
+public class FacilitiesByLatLongV1Test {
   @Autowired private FacilityRepository repo;
 
   private FacilitiesControllerV1 controller() {
@@ -179,7 +179,7 @@ public class FacilitiesByLatLongTestV1 {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/v0/facilities?lat=28.112464&long=-80.7015994&page=100&per_page=0")
+                            "http://foo/v1/facilities?lat=28.112464&long=-80.7015994&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -225,7 +225,7 @@ public class FacilitiesByLatLongTestV1 {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     String linkBase =
-        "http://foo/v0/facilities?lat=28.112464&long=-80.7015994&services%5B%5D=primarycare&type=HEALTH";
+        "http://foo/v1/facilities?lat=28.112464&long=-80.7015994&services%5B%5D=primarycare&type=HEALTH";
     assertThat(
             controller()
                 .jsonFacilitiesByLatLong(

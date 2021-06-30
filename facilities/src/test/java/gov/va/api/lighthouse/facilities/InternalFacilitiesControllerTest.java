@@ -218,9 +218,6 @@ public class InternalFacilitiesControllerTest {
       }
     }
 
-    Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair =
-        Pair.of(fac, facV1);
-
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
@@ -229,7 +226,7 @@ public class InternalFacilitiesControllerTest {
             .cmsServices(cmsServicesString)
             .lastUpdated(Instant.now())
             .build(),
-        facilityPair);
+        Pair.of(fac, facV1));
   }
 
   @SneakyThrows

@@ -8,7 +8,7 @@ import gov.va.api.lighthouse.facilities.api.v1.Pagination;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.MultiValueMap;
 
-public class PageLinkerTestV1 {
+public class PageLinkerV1Test {
   @Test
   void links_afterAfterLastPage() {
     assertThat(

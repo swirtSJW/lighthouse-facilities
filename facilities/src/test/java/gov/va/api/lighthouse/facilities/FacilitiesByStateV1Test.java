@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByStateTestV1 {
+public class FacilitiesByStateV1Test {
   @Autowired private FacilityRepository repo;
 
   private FacilitiesControllerV1 controller() {
@@ -71,7 +71,7 @@ public class FacilitiesByStateTestV1 {
   @Test
   void json_typeAndService() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
-    String linkBase = "http://foo/bp/v0/facilities?services%5B%5D=primarycare&state=oh&type=HEALTH";
+    String linkBase = "http://foo/bp/v1/facilities?services%5B%5D=primarycare&state=oh&type=HEALTH";
     assertThat(
             controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
@@ -112,7 +112,7 @@ public class FacilitiesByStateTestV1 {
                 .data(emptyList())
                 .links(
                     PageLinks.builder()
-                        .self("http://foo/bp/v0/facilities?state=oh&page=100&per_page=0")
+                        .self("http://foo/bp/v1/facilities?state=oh&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()

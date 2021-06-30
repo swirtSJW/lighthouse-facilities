@@ -12,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByVisnTestV1 {
+public class FacilitiesByVisnV1Test {
   @Autowired private FacilityRepository repo;
 
   private FacilitiesControllerV1 controller() {

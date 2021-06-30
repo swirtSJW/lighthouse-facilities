@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @DataJpaTest
 @ExtendWith(SpringExtension.class)
-public class FacilitiesByZipTestV1 {
+public class FacilitiesByZipV1Test {
   @Autowired private FacilityRepository repo;
 
   private FacilitiesControllerV1 controller() {
@@ -69,7 +69,7 @@ public class FacilitiesByZipTestV1 {
                 .data(emptyList())
                 .links(
                     PageLinks.builder()
-                        .self("http://foo/bp/v0/facilities?zip=43219&page=100&per_page=0")
+                        .self("http://foo/bp/v1/facilities?zip=43219&page=100&per_page=0")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -103,11 +103,11 @@ public class FacilitiesByZipTestV1 {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
                         .first(
-                            "http://foo/bp/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
                         .last(
-                            "http://foo/bp/v0/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?services%5B%5D=primarycare&type=HEALTH&zip=43219&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()

@@ -16,7 +16,7 @@ import java.util.Set;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-public class FacilityOverlayTestV1 {
+public class FacilityOverlayV1Test {
   private static final ObjectMapper mapper = FacilitiesJacksonConfigV1.createMapper();
 
   @Test

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class HealthTransformerTestV1 {
+public class HealthTransformerV1Test {
 
   private static final String CSC_STATIONS_RESOURCE_NAME = "csc_stations.txt";
 
