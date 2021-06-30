@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
@@ -10,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +50,7 @@ public class InternalCollectorController {
   }
 
   @GetMapping(value = "/facilities")
-  List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> collectFacilities() {
+  List<FacilityPair> collectFacilities() {
     return collector.collectFacilities();
   }
 

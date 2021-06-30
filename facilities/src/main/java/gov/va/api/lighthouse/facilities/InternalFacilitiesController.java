@@ -33,7 +33,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -111,11 +110,9 @@ public class InternalFacilitiesController {
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
-  static FacilityEntity populate(
-      FacilityEntity record,
-      Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair) {
+  static FacilityEntity populate(FacilityEntity record, FacilityPair facilityPair) {
 
-    Facility facility = facilityPair.getLeft();
+    Facility facility = facilityPair.v0;
 
     checkArgument(record.id() != null);
     record.latitude(facility.attributes().latitude().doubleValue());
@@ -127,7 +124,7 @@ public class InternalFacilitiesController {
     record.visn(facility.attributes().visn());
     record.mobile(facility.attributes().mobile());
 
-    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.getRight();
+    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1;
     record.facilityV1(MAPPER_V1.writeValueAsString(facilityV1));
     return record;
   }
@@ -309,11 +306,10 @@ public class InternalFacilitiesController {
         .build();
   }
 
-  private Set<FacilityEntity.Pk> missingIds(
-      List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> collectedFacilities) {
+  private Set<FacilityEntity.Pk> missingIds(List<FacilityPair> collectedFacilities) {
     Set<FacilityEntity.Pk> newIds =
         collectedFacilities.stream()
-            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.getLeft().id()).orElse(null))
+            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.v0.id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(toCollection(LinkedHashSet::new));
     Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
@@ -351,8 +347,7 @@ public class InternalFacilitiesController {
   }
 
   private ResponseEntity<ReloadResponse> process(
-      ReloadResponse response,
-      List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> collectedFacilities) {
+      ReloadResponse response, List<FacilityPair> collectedFacilities) {
     response.timing().markCompleteCollection();
     log.info("Facilities collected: {}", collectedFacilities.size());
     try {
@@ -411,12 +406,9 @@ public class InternalFacilitiesController {
   }
 
   @SneakyThrows
-  void updateAndSave(
-      ReloadResponse response,
-      FacilityEntity record,
-      Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair) {
+  void updateAndSave(ReloadResponse response, FacilityEntity record, FacilityPair facilityPair) {
 
-    Facility facility = facilityPair.getLeft();
+    Facility facility = facilityPair.v0;
 
     facility
         .attributes()
@@ -552,13 +544,11 @@ public class InternalFacilitiesController {
     }
   }
 
-  private void updateFacility(
-      ReloadResponse response,
-      Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair) {
+  private void updateFacility(ReloadResponse response, FacilityPair facilityPair) {
     FacilityEntity.Pk pk;
 
     // Facility v0 is on the left side of the pairing
-    Facility facility = facilityPair.getLeft();
+    Facility facility = facilityPair.v0;
 
     try {
       pk = FacilityEntity.Pk.fromIdString(facility.id());
@@ -607,10 +597,7 @@ public class InternalFacilitiesController {
 
   @PostMapping(value = "/reload")
   @Loggable(arguments = false)
-  ResponseEntity<ReloadResponse> upload(
-      @RequestBody
-          List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>>
-              collectedFacilities) {
+  ResponseEntity<ReloadResponse> upload(@RequestBody List<FacilityPair> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
   }

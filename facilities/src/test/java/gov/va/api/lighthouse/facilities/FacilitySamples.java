@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.function.Function;
 import lombok.Builder;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class FacilitySamples {
   private final Map<String, Facility> facilities;
@@ -53,13 +52,13 @@ public class FacilitySamples {
         .build();
   }
 
-  Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facility(String id) {
+  FacilityPair facility(String id) {
     var f = facilities.get(id);
     assertThat(f).describedAs(id).isNotNull();
 
     var fV1 = facilitiesV1.get(id);
     assertThat(fV1).describedAs(id).isNotNull();
-    return Pair.of(f, fV1);
+    return FacilityPair.builder().v0(f).v1(fV1).build();
   }
 
   FacilityEntity facilityEntity(String id) {

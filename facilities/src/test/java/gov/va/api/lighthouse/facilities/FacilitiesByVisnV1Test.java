@@ -38,6 +38,6 @@ public class FacilitiesByVisnV1Test {
   void json_searchVisn() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByVisn("10", 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v1));
   }
 }

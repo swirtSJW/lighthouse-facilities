@@ -35,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -226,7 +225,7 @@ public class InternalFacilitiesControllerTest {
             .cmsServices(cmsServicesString)
             .lastUpdated(Instant.now())
             .build(),
-        Pair.of(fac, facV1));
+        FacilityPair.builder().v0(fac).v1(facV1).build());
   }
 
   @SneakyThrows
@@ -287,11 +286,10 @@ public class InternalFacilitiesControllerTest {
             6.7,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
+    List<FacilityPair> facilityPairs = new ArrayList<>();
 
-    facilityPairs.add(Pair.of(f1, f1V1));
-    facilityPairs.add(Pair.of(f2, f2V1));
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
+    facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
 
     Facility f2Old =
         _facility("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
@@ -340,10 +338,9 @@ public class InternalFacilitiesControllerTest {
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
+    List<FacilityPair> facilityPairs = new ArrayList<>();
 
-    facilityPairs.add(Pair.of(f1, f1V1));
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
 
     FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1Old, _overlay());
     graveyardRepository.save(entity);
@@ -384,10 +381,9 @@ public class InternalFacilitiesControllerTest {
     f1V1.attributes().latitude(null);
     f1V1.attributes().longitude(null);
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
+    List<FacilityPair> facilityPairs = new ArrayList<>();
 
-    facilityPairs.add(Pair.of(f1, f1V1));
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
 
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
@@ -451,10 +447,9 @@ public class InternalFacilitiesControllerTest {
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
+    List<FacilityPair> facilityPairs = new ArrayList<>();
 
-    facilityPairs.add(Pair.of(f1, f1V1));
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
 
     facilityRepository.save(_entity(f1Old, f1OldV1));
     facilityRepository.save(_entity(f2Old, f2OldV1));
@@ -499,9 +494,8 @@ public class InternalFacilitiesControllerTest {
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
-    facilityPairs.add(Pair.of(f1, f1V1));
+    List<FacilityPair> facilityPairs = new ArrayList<>();
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
 
     facilityRepository.save(_entity(f1Old, f1OldV1).missingTimestamp(Instant.now().toEpochMilli()));
     when(collector.collectFacilities()).thenReturn(facilityPairs);
@@ -562,9 +556,8 @@ public class InternalFacilitiesControllerTest {
     f1V1.attributes().latitude(BigDecimal.valueOf(91.4));
     f1V1.attributes().longitude(BigDecimal.valueOf(181.4));
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
-    facilityPairs.add(Pair.of(f1, f1V1));
+    List<FacilityPair> facilityPairs = new ArrayList<>();
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
 
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
@@ -605,9 +598,8 @@ public class InternalFacilitiesControllerTest {
         .facilityType(
             gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityType.va_health_facility);
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
-    facilityPairs.add(Pair.of(f1, f1V1));
+    List<FacilityPair> facilityPairs = new ArrayList<>();
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
 
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse responseHealth = _controller().reload().getBody();
@@ -622,7 +614,7 @@ public class InternalFacilitiesControllerTest {
         .facilityType(gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityType.vet_center);
 
     facilityPairs = new ArrayList<>();
-    facilityPairs.add(Pair.of(f2, f2V1));
+    facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
 
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse responseVetCenter = _controller().reload().getBody();
@@ -906,9 +898,6 @@ public class InternalFacilitiesControllerTest {
                 .zip("12345-56")
                 .build());
 
-    Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair =
-        Pair.of(f1, f1V1);
-
     ReloadResponse response = ReloadResponse.start();
     assertThrows(
         RuntimeException.class,
@@ -916,7 +905,7 @@ public class InternalFacilitiesControllerTest {
             controller.updateAndSave(
                 response,
                 FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1")).build(),
-                facilityPair));
+                FacilityPair.builder().v0(f1).v1(f1V1).build()));
     assertThat(response.problems())
         .isEqualTo(
             List.of(
@@ -980,15 +969,12 @@ public class InternalFacilitiesControllerTest {
     f2V1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_2);
     f3V1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_3);
 
-    Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair =
-        Pair.of(f1, f1V1);
-
     ReloadResponse response = ReloadResponse.start();
     _controller()
         .updateAndSave(
             response,
             FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1")).build(),
-            facilityPair);
+            FacilityPair.builder().v0(f1).v1(f1V1).build());
     assertThat(f1.attributes().operationalHoursSpecialInstructions())
         .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_1);
 
@@ -996,26 +982,22 @@ public class InternalFacilitiesControllerTest {
             facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1")).get().facility())
         .contains(SPECIAL_INSTRUCTION_UPDATED_1);
 
-    facilityPair = Pair.of(f2, f2V1);
-
     _controller()
         .updateAndSave(
             response,
             FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f2")).build(),
-            facilityPair);
+            FacilityPair.builder().v0(f2).v1(f2V1).build());
     assertThat(f2.attributes().operationalHoursSpecialInstructions())
         .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_2);
     assertThat(
             facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2")).get().facility())
         .contains(SPECIAL_INSTRUCTION_UPDATED_2);
 
-    facilityPair = Pair.of(f3, f3V1);
-
     _controller()
         .updateAndSave(
             response,
             FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f3")).build(),
-            facilityPair);
+            FacilityPair.builder().v0(f3).v1(f3V1).build());
     assertThat(f3.attributes().operationalHoursSpecialInstructions())
         .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_3);
     assertThat(
@@ -1049,11 +1031,10 @@ public class InternalFacilitiesControllerTest {
             6.7,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
+    List<FacilityPair> facilityPairs = new ArrayList<>();
 
-    facilityPairs.add(Pair.of(f1, f1V1));
-    facilityPairs.add(Pair.of(f2, f2V1));
+    facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
+    facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
 
     _controller().upload(facilityPairs);
     assertThat(facilityRepository.findAll())

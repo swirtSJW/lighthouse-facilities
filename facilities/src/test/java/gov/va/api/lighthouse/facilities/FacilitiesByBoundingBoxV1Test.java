@@ -127,7 +127,7 @@ public class FacilitiesByBoundingBoxV1Test {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v1));
   }
 
   @Test
@@ -184,7 +184,7 @@ public class FacilitiesByBoundingBoxV1Test {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v1));
   }
 
   @Test
@@ -208,7 +208,7 @@ public class FacilitiesByBoundingBoxV1Test {
                     1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB").getRight()))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB").v1))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=2&per_page=1")
@@ -246,6 +246,6 @@ public class FacilitiesByBoundingBoxV1Test {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").getRight()));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v1));
   }
 }

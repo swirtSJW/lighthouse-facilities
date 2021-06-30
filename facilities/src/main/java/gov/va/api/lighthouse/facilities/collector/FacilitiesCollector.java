@@ -8,6 +8,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
+import gov.va.api.lighthouse.facilities.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,7 +27,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -164,8 +164,7 @@ public class FacilitiesCollector {
 
   /** Collect facilities. */
   @SneakyThrows
-  public List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>>
-      collectFacilities() {
+  public List<FacilityPair> collectFacilities() {
     Map<String, String> websites;
     Collection<VastEntity> vastEntities;
     ArrayList<String> cscFacilities;
@@ -270,8 +269,7 @@ public class FacilitiesCollector {
         stateCems.size(),
         cemeteries.size());
 
-    List<Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility>> facilityPairs =
-        new ArrayList<>();
+    List<FacilityPair> facilityPairs = new ArrayList<>();
 
     List<Facility> facilities =
         Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
@@ -285,15 +283,11 @@ public class FacilitiesCollector {
             .collect(toList());
 
     for (int i = 0; i < facilities.size(); i++) {
-      facilityPairs.add(Pair.of(facilities.get(i), facilitiesV1.get(i)));
+      facilityPairs.add(
+          FacilityPair.builder().v0(facilities.get(i)).v1(facilitiesV1.get(i)).build());
     }
 
     return facilityPairs;
-
-    //    return Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems,
-    // vetCenters))
-    //        .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
-    //        .collect(toList());
   }
 
   private List<VastEntity> loadVast() {

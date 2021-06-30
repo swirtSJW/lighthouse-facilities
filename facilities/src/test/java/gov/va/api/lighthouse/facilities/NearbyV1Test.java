@@ -20,7 +20,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -127,18 +126,16 @@ public class NearbyV1Test {
         .build();
   }
 
-  private FacilityEntity _facilityEntity(
-      Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> facilityPair) {
+  private FacilityEntity _facilityEntity(FacilityPair facilityPair) {
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
-            .id(FacilityEntity.Pk.fromIdString(facilityPair.getLeft().id()))
+            .id(FacilityEntity.Pk.fromIdString(facilityPair.v0.id()))
             .lastUpdated(Instant.now())
             .build(),
         facilityPair);
   }
 
-  private Pair<Facility, gov.va.api.lighthouse.facilities.api.v1.Facility> _facilityHealth(
-      String id) {
+  private FacilityPair _facilityHealth(String id) {
     Facility facility =
         Facility.builder()
             .id(id)
@@ -169,7 +166,7 @@ public class NearbyV1Test {
                             .build())
                     .build())
             .build();
-    return Pair.of(facility, facilityV1);
+    return FacilityPair.builder().v0(facility).v1(facilityV1).build();
   }
 
   @Test
