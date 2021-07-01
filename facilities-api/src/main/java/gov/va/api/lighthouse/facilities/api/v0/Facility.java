@@ -194,7 +194,6 @@ public final class Facility {
     @JsonProperty("long")
     BigDecimal longitude;
 
-    @NotNull
     @Schema(description = "Facility time zone", format = "String", example = "America/New_York")
     @JsonProperty("time_zone")
     String timeZone;
