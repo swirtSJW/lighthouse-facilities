@@ -3,6 +3,10 @@ package gov.va.api.lighthouse.facilities.api.v1;
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,9 +22,8 @@ public class ReadHealthByIdJsonTest {
     assertThat(f).isEqualTo(sample());
   }
 
-  private Facility.PatientWaitTime patientWaitTime(
-      Facility.HealthService service, Double newPat, Double oldPat) {
-    Facility.PatientWaitTime.PatientWaitTimeBuilder wait = Facility.PatientWaitTime.builder();
+  private PatientWaitTime patientWaitTime(HealthService service, Double newPat, Double oldPat) {
+    PatientWaitTime.PatientWaitTimeBuilder wait = PatientWaitTime.builder();
     if (service != null) {
       wait.service(service);
     }
@@ -82,15 +85,15 @@ public class ReadHealthByIdJsonTest {
                                 .sunday("Closed")
                                 .build())
                         .services(
-                            Facility.Services.builder()
+                            Services.builder()
                                 .other(new ArrayList<>())
                                 .health(
                                     List.of(
-                                        Facility.HealthService.EmergencyCare,
-                                        Facility.HealthService.PrimaryCare,
-                                        Facility.HealthService.MentalHealthCare,
-                                        Facility.HealthService.Dermatology,
-                                        Facility.HealthService.SpecialtyCare))
+                                        HealthService.EmergencyCare,
+                                        HealthService.PrimaryCare,
+                                        HealthService.MentalHealthCare,
+                                        HealthService.Dermatology,
+                                        HealthService.SpecialtyCare))
                                 .lastUpdated(LocalDate.parse("2020-02-24"))
                                 .build())
                         .satisfaction(
@@ -103,21 +106,15 @@ public class ReadHealthByIdJsonTest {
                                 .effectiveDate(LocalDate.parse("2019-06-20"))
                                 .build())
                         .waitTimes(
-                            Facility.WaitTimes.builder()
+                            WaitTimes.builder()
                                 .health(
                                     List.of(
+                                        patientWaitTime(HealthService.Dermatology, 3.714285, null),
                                         patientWaitTime(
-                                            Facility.HealthService.Dermatology, 3.714285, null),
+                                            HealthService.PrimaryCare, 13.727272, 10.392441),
+                                        patientWaitTime(HealthService.SpecialtyCare, 5.222222, 0.0),
                                         patientWaitTime(
-                                            Facility.HealthService.PrimaryCare,
-                                            13.727272,
-                                            10.392441),
-                                        patientWaitTime(
-                                            Facility.HealthService.SpecialtyCare, 5.222222, 0.0),
-                                        patientWaitTime(
-                                            Facility.HealthService.MentalHealthCare,
-                                            5.75,
-                                            2.634703)))
+                                            HealthService.MentalHealthCare, 5.75, 2.634703)))
                                 .effectiveDate(LocalDate.parse("2020-02-24"))
                                 .build())
                         .mobile(false)

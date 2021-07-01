@@ -13,7 +13,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.OtherService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,9 +45,9 @@ final class ControllersV1 {
       caseInsensitiveMap(
           Streams.stream(
                   Iterables.concat(
-                      List.<ServiceType>of(Facility.HealthService.values()),
-                      List.<ServiceType>of(Facility.BenefitsService.values()),
-                      List.<ServiceType>of(Facility.OtherService.values())))
+                      List.<ServiceType>of(HealthService.values()),
+                      List.<ServiceType>of(BenefitsService.values()),
+                      List.<ServiceType>of(OtherService.values())))
               .collect(toMap(v -> v.toString(), Function.identity())));
 
   private static <T> Map<String, T> caseInsensitiveMap(@NonNull Map<String, T> source) {

@@ -3,6 +3,10 @@ package gov.va.api.lighthouse.facilities.api.v1;
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
@@ -24,12 +28,8 @@ public class SearchByZipGeoJsonTest {
     assertThat(f).isEqualTo(sample());
   }
 
-  private gov.va.api.lighthouse.facilities.api.v0.Facility.PatientWaitTime patientWaitTime(
-      gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService service,
-      Double newPat,
-      Double oldPat) {
-    gov.va.api.lighthouse.facilities.api.v0.Facility.PatientWaitTime.PatientWaitTimeBuilder
-        waitTime = gov.va.api.lighthouse.facilities.api.v0.Facility.PatientWaitTime.builder();
+  private PatientWaitTime patientWaitTime(HealthService service, Double newPat, Double oldPat) {
+    PatientWaitTime.PatientWaitTimeBuilder waitTime = PatientWaitTime.builder();
     if (service != null) {
       waitTime.service(service);
     }
@@ -105,34 +105,22 @@ public class SearchByZipGeoJsonTest {
                                     .sun("Closed")
                                     .build())
                             .services(
-                                gov.va.api.lighthouse.facilities.api.v0.Facility.Services.builder()
+                                Services.builder()
                                     .other(new ArrayList<>())
                                     .health(
                                         List.of(
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.PrimaryCare,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.MentalHealthCare,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Audiology,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Cardiology,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Dermatology,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Gastroenterology,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Ophthalmology,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Optometry,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Orthopedics,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.Urology,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.SpecialtyCare,
-                                            gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                .HealthService.DentalServices))
+                                            HealthService.PrimaryCare,
+                                            HealthService.MentalHealthCare,
+                                            HealthService.Audiology,
+                                            HealthService.Cardiology,
+                                            HealthService.Dermatology,
+                                            HealthService.Gastroenterology,
+                                            HealthService.Ophthalmology,
+                                            HealthService.Optometry,
+                                            HealthService.Orthopedics,
+                                            HealthService.Urology,
+                                            HealthService.SpecialtyCare,
+                                            HealthService.DentalServices))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(
@@ -147,64 +135,33 @@ public class SearchByZipGeoJsonTest {
                                     .effectiveDate(LocalDate.parse("2019-06-20"))
                                     .build())
                             .waitTimes(
-                                gov.va.api.lighthouse.facilities.api.v0.Facility.WaitTimes.builder()
+                                WaitTimes.builder()
                                     .health(
                                         List.of(
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Urology,
-                                                32.047619,
-                                                9.879032),
+                                                HealthService.Urology, 32.047619, 9.879032),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Audiology,
-                                                1.706967,
-                                                2.126855),
+                                                HealthService.Audiology, 1.706967, 2.126855),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Optometry,
-                                                76.396226,
-                                                7.900787),
+                                                HealthService.Optometry, 76.396226, 7.900787),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Cardiology,
-                                                18.657142,
-                                                6.4),
+                                                HealthService.Cardiology, 18.657142, 6.4),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Dermatology,
-                                                0.616666,
-                                                0.555555),
+                                                HealthService.Dermatology, 0.616666, 0.555555),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Orthopedics,
-                                                24.682539,
-                                                4.995024),
+                                                HealthService.Orthopedics, 24.682539, 4.995024),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.PrimaryCare,
-                                                26.405405,
-                                                1.545372),
+                                                HealthService.PrimaryCare, 26.405405, 1.545372),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Ophthalmology,
-                                                47.571428,
-                                                3.258992),
+                                                HealthService.Ophthalmology, 47.571428, 3.258992),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.SpecialtyCare,
-                                                20.963572,
-                                                5.775406),
+                                                HealthService.SpecialtyCare, 20.963572, 5.775406),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.Gastroenterology,
+                                                HealthService.Gastroenterology,
                                                 22.151515,
                                                 4.943661),
                                             patientWaitTime(
-                                                gov.va.api.lighthouse.facilities.api.v0.Facility
-                                                    .HealthService.MentalHealthCare,
-                                                7.592814,
-                                                3.97159)))
+                                                HealthService.MentalHealthCare, 7.592814, 3.97159)))
                                     .effectiveDate(LocalDate.parse("2020-03-02"))
                                     .build())
                             .mobile(false)

@@ -11,6 +11,9 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.FacilityPair;
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -120,8 +123,8 @@ public class NearbyV1Test {
                 .latitude(BigDecimal.ONE)
                 .longitude(BigDecimal.ONE)
                 .services(
-                    Facility.Services.builder()
-                        .benefits(List.of(Facility.BenefitsService.ApplyingForBenefits))
+                    Services.builder()
+                        .benefits(List.of(BenefitsService.ApplyingForBenefits))
                         .build())
                 .build())
         .build();
@@ -144,10 +147,7 @@ public class NearbyV1Test {
                 Facility.FacilityAttributes.builder()
                     .latitude(BigDecimal.ONE)
                     .longitude(BigDecimal.ONE)
-                    .services(
-                        Facility.Services.builder()
-                            .health(List.of(Facility.HealthService.PrimaryCare))
-                            .build())
+                    .services(Services.builder().health(List.of(HealthService.PrimaryCare)).build())
                     .build())
             .build();
 
@@ -158,13 +158,7 @@ public class NearbyV1Test {
                 gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes.builder()
                     .latitude(BigDecimal.ONE)
                     .longitude(BigDecimal.ONE)
-                    .services(
-                        gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
-                            .health(
-                                List.of(
-                                    gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
-                                        .PrimaryCare))
-                            .build())
+                    .services(Services.builder().health(List.of(HealthService.PrimaryCare)).build())
                     .build())
             .build();
     return FacilityPair.builder().v0(facility).v1(facilityV1).build();

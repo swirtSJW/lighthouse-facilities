@@ -7,6 +7,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -97,17 +99,15 @@ public class BenefitsCollectorTest {
                                     .sunday("Closed")
                                     .build())
                             .services(
-                                Facility.Services.builder()
+                                Services.builder()
                                     .benefits(
                                         List.of(
-                                            Facility.BenefitsService.ApplyingForBenefits,
-                                            Facility.BenefitsService.BurialClaimAssistance,
-                                            Facility.BenefitsService.DisabilityClaimAssistance,
-                                            Facility.BenefitsService
-                                                .eBenefitsRegistrationAssistance,
-                                            Facility.BenefitsService.FamilyMemberClaimAssistance,
-                                            Facility.BenefitsService
-                                                .UpdatingDirectDepositInformation))
+                                            BenefitsService.ApplyingForBenefits,
+                                            BenefitsService.BurialClaimAssistance,
+                                            BenefitsService.DisabilityClaimAssistance,
+                                            BenefitsService.eBenefitsRegistrationAssistance,
+                                            BenefitsService.FamilyMemberClaimAssistance,
+                                            BenefitsService.UpdatingDirectDepositInformation))
                                     .build())
                             .build())
                     .build()));
@@ -196,21 +196,15 @@ public class BenefitsCollectorTest {
                                     .sunday("Closed")
                                     .build())
                             .services(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
+                                Services.builder()
                                     .benefits(
                                         List.of(
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .BenefitsService.ApplyingForBenefits,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .BenefitsService.BurialClaimAssistance,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .BenefitsService.DisabilityClaimAssistance,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .BenefitsService.eBenefitsRegistrationAssistance,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .BenefitsService.FamilyMemberClaimAssistance,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .BenefitsService.UpdatingDirectDepositInformation))
+                                            BenefitsService.ApplyingForBenefits,
+                                            BenefitsService.BurialClaimAssistance,
+                                            BenefitsService.DisabilityClaimAssistance,
+                                            BenefitsService.eBenefitsRegistrationAssistance,
+                                            BenefitsService.FamilyMemberClaimAssistance,
+                                            BenefitsService.UpdatingDirectDepositInformation))
                                     .build())
                             .build())
                     .build()));

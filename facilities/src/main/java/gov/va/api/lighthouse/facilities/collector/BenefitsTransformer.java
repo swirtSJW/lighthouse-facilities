@@ -5,6 +5,8 @@ import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngle
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,58 +70,57 @@ final class BenefitsTransformer {
     }
   }
 
-  Facility.Services services() {
-    List<Facility.BenefitsService> benefitsServices = new ArrayList<>();
+  Services services() {
+    List<BenefitsService> benefitsServices = new ArrayList<>();
     if (yesNoToBoolean(cdwFacility.applyingForBenefits())) {
-      benefitsServices.add(Facility.BenefitsService.ApplyingForBenefits);
+      benefitsServices.add(BenefitsService.ApplyingForBenefits);
     }
     if (yesNoToBoolean(cdwFacility.burialClaimAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.BurialClaimAssistance);
+      benefitsServices.add(BenefitsService.BurialClaimAssistance);
     }
     if (yesNoToBoolean(cdwFacility.disabilityClaimAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.DisabilityClaimAssistance);
+      benefitsServices.add(BenefitsService.DisabilityClaimAssistance);
     }
     if (yesNoToBoolean(cdwFacility.ebenefitsRegistration())) {
-      benefitsServices.add(Facility.BenefitsService.eBenefitsRegistrationAssistance);
+      benefitsServices.add(BenefitsService.eBenefitsRegistrationAssistance);
     }
     if (yesNoToBoolean(cdwFacility.educationAndCareerCounseling())) {
-      benefitsServices.add(Facility.BenefitsService.EducationAndCareerCounseling);
+      benefitsServices.add(BenefitsService.EducationAndCareerCounseling);
     }
     if (yesNoToBoolean(cdwFacility.educationClaimAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.EducationClaimAssistance);
+      benefitsServices.add(BenefitsService.EducationClaimAssistance);
     }
     if (yesNoToBoolean(cdwFacility.familyMemberClaimAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.FamilyMemberClaimAssistance);
+      benefitsServices.add(BenefitsService.FamilyMemberClaimAssistance);
     }
     if (yesNoToBoolean(cdwFacility.homelessAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.HomelessAssistance);
+      benefitsServices.add(BenefitsService.HomelessAssistance);
     }
     if (yesNoToBoolean(cdwFacility.vaHomeLoanAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.VAHomeLoanAssistance);
+      benefitsServices.add(BenefitsService.VAHomeLoanAssistance);
     }
     if (yesNoToBoolean(cdwFacility.insuranceClaimAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling);
+      benefitsServices.add(BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling);
     }
     if (yesNoToBoolean(cdwFacility.integratedDisabilityEvaluationSystem())) {
-      benefitsServices.add(Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance);
+      benefitsServices.add(BenefitsService.IntegratedDisabilityEvaluationSystemAssistance);
     }
     if (yesNoToBoolean(cdwFacility.preDischargeClaimAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.PreDischargeClaimAssistance);
+      benefitsServices.add(BenefitsService.PreDischargeClaimAssistance);
     }
     if (yesNoToBoolean(cdwFacility.transitionAssistance())) {
-      benefitsServices.add(Facility.BenefitsService.TransitionAssistance);
+      benefitsServices.add(BenefitsService.TransitionAssistance);
     }
     if (yesNoToBoolean(cdwFacility.updatingDirectDepositInformation())) {
-      benefitsServices.add(Facility.BenefitsService.UpdatingDirectDepositInformation);
+      benefitsServices.add(BenefitsService.UpdatingDirectDepositInformation);
     }
     if (yesNoToBoolean(cdwFacility.vocationalRehabilitationEmplo())) {
-      benefitsServices.add(
-          Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance);
+      benefitsServices.add(BenefitsService.VocationalRehabilitationAndEmploymentAssistance);
     }
     if (StringUtils.containsIgnoreCase(cdwFacility.otherServices(), "PENSION")) {
-      benefitsServices.add(Facility.BenefitsService.Pensions);
+      benefitsServices.add(BenefitsService.Pensions);
     }
-    return Facility.Services.builder().benefits(benefitsServices).build();
+    return Services.builder().benefits(benefitsServices).build();
   }
 
   Facility toFacility() {

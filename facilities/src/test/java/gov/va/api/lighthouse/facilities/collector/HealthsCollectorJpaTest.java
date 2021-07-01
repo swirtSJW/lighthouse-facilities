@@ -9,6 +9,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -213,15 +217,15 @@ class HealthsCollectorJpaTest {
                             .operationalHoursSpecialInstructions(
                                 "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m. |")
                             .services(
-                                Facility.Services.builder()
+                                Services.builder()
                                     .health(
                                         List.of(
-                                            Facility.HealthService.Audiology,
-                                            Facility.HealthService.DentalServices,
-                                            Facility.HealthService.EmergencyCare,
-                                            Facility.HealthService.Nutrition,
-                                            Facility.HealthService.Podiatry,
-                                            Facility.HealthService.UrgentCare))
+                                            HealthService.Audiology,
+                                            HealthService.DentalServices,
+                                            HealthService.EmergencyCare,
+                                            HealthService.Nutrition,
+                                            HealthService.Podiatry,
+                                            HealthService.UrgentCare))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(
@@ -234,11 +238,11 @@ class HealthsCollectorJpaTest {
                                     .effectiveDate(LocalDate.parse("2019-06-20"))
                                     .build())
                             .waitTimes(
-                                Facility.WaitTimes.builder()
+                                WaitTimes.builder()
                                     .health(
                                         List.of(
-                                            Facility.PatientWaitTime.builder()
-                                                .service(Facility.HealthService.Audiology)
+                                            PatientWaitTime.builder()
+                                                .service(HealthService.Audiology)
                                                 .newPatientWaitTime(new BigDecimal("128.378378"))
                                                 .establishedPatientWaitTime(
                                                     new BigDecimal("28.857142"))
@@ -387,21 +391,15 @@ class HealthsCollectorJpaTest {
                             .operationalHoursSpecialInstructions(
                                 "Administrative hours are Monday-Friday 8:00 a.m. to 4:30 p.m. |")
                             .services(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
+                                Services.builder()
                                     .health(
                                         List.of(
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .HealthService.Audiology,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .HealthService.DentalServices,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .HealthService.EmergencyCare,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .HealthService.Nutrition,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .HealthService.Podiatry,
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .HealthService.UrgentCare))
+                                            HealthService.Audiology,
+                                            HealthService.DentalServices,
+                                            HealthService.EmergencyCare,
+                                            HealthService.Nutrition,
+                                            HealthService.Podiatry,
+                                            HealthService.UrgentCare))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(
@@ -416,14 +414,11 @@ class HealthsCollectorJpaTest {
                                     .effectiveDate(LocalDate.parse("2019-06-20"))
                                     .build())
                             .waitTimes(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.WaitTimes.builder()
+                                WaitTimes.builder()
                                     .health(
                                         List.of(
-                                            gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                .PatientWaitTime.builder()
-                                                .service(
-                                                    gov.va.api.lighthouse.facilities.api.v1.Facility
-                                                        .HealthService.Audiology)
+                                            PatientWaitTime.builder()
+                                                .service(HealthService.Audiology)
                                                 .newPatientWaitTime(new BigDecimal("128.378378"))
                                                 .establishedPatientWaitTime(
                                                     new BigDecimal("28.857142"))

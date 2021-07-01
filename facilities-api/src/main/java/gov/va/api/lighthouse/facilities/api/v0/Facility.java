@@ -3,8 +3,9 @@ package gov.va.api.lighthouse.facilities.api.v0;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,57 +34,11 @@ public final class Facility {
     T
   }
 
-  public enum BenefitsService implements ServiceType {
-    ApplyingForBenefits,
-    BurialClaimAssistance,
-    DisabilityClaimAssistance,
-    eBenefitsRegistrationAssistance,
-    EducationAndCareerCounseling,
-    EducationClaimAssistance,
-    FamilyMemberClaimAssistance,
-    HomelessAssistance,
-    InsuranceClaimAssistanceAndFinancialCounseling,
-    IntegratedDisabilityEvaluationSystemAssistance,
-    Pensions,
-    PreDischargeClaimAssistance,
-    TransitionAssistance,
-    UpdatingDirectDepositInformation,
-    VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance
-  }
-
   public enum FacilityType {
     va_benefits_facility,
     va_cemetery,
     va_health_facility,
     vet_center
-  }
-
-  public enum HealthService implements ServiceType {
-    Audiology,
-    Cardiology,
-    CaregiverSupport,
-    Covid19Vaccine,
-    DentalServices,
-    Dermatology,
-    EmergencyCare,
-    Gastroenterology,
-    Gynecology,
-    MentalHealthCare,
-    Ophthalmology,
-    Optometry,
-    Orthopedics,
-    Nutrition,
-    Podiatry,
-    PrimaryCare,
-    SpecialtyCare,
-    UrgentCare,
-    Urology,
-    WomensHealth
-  }
-
-  public enum OtherService implements ServiceType {
-    OnlineScheduling
   }
 
   public enum Type {
@@ -412,35 +367,6 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  @Schema(
-      description =
-          "Expected wait times for new and established patients for a given health care service",
-      nullable = true)
-  public static final class PatientWaitTime {
-    @NotNull HealthService service;
-
-    @Schema(
-        example = "10",
-        description =
-            "Average number of days a Veteran who hasn't been to this location has to wait "
-                + "for a non-urgent appointment.",
-        nullable = true)
-    @JsonProperty("new")
-    BigDecimal newPatientWaitTime;
-
-    @Schema(
-        example = "5",
-        description =
-            "Average number of days a patient who has already been to this location has to wait "
-                + "for a non-urgent appointment.",
-        nullable = true)
-    @JsonProperty("established")
-    BigDecimal establishedPatientWaitTime;
-  }
-
-  @Data
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @Schema(nullable = true)
   public static final class Phone {
     @Schema(example = "202-555-1212", nullable = true)
@@ -477,39 +403,6 @@ public final class Facility {
     @Schema(nullable = true)
     @Valid
     PatientSatisfaction health;
-
-    @Schema(example = "2018-01-01", nullable = true)
-    @JsonProperty("effective_date")
-    LocalDate effectiveDate;
-  }
-
-  @Data
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  @Schema(nullable = true)
-  public static final class Services {
-    @Schema(nullable = true)
-    List<OtherService> other;
-
-    @Schema(nullable = true)
-    List<HealthService> health;
-
-    @Schema(nullable = true)
-    List<BenefitsService> benefits;
-
-    @Schema(example = "2018-01-01", nullable = true)
-    @JsonProperty("last_updated")
-    LocalDate lastUpdated;
-  }
-
-  @Data
-  @Builder
-  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-  @Schema(nullable = true)
-  public static final class WaitTimes {
-    @Schema(nullable = true)
-    @Valid
-    List<PatientWaitTime> health;
 
     @Schema(example = "2018-01-01", nullable = true)
     @JsonProperty("effective_date")

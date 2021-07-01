@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.util.List;
@@ -85,24 +87,24 @@ class BenefitsSamples {
                   .sunday("Closed")
                   .build())
           .services(
-              Facility.Services.builder()
+              Services.builder()
                   .benefits(
                       List.of(
-                          Facility.BenefitsService.ApplyingForBenefits,
-                          Facility.BenefitsService.DisabilityClaimAssistance,
-                          Facility.BenefitsService.eBenefitsRegistrationAssistance,
-                          Facility.BenefitsService.EducationAndCareerCounseling,
-                          Facility.BenefitsService.EducationClaimAssistance,
-                          Facility.BenefitsService.FamilyMemberClaimAssistance,
-                          Facility.BenefitsService.HomelessAssistance,
-                          Facility.BenefitsService.VAHomeLoanAssistance,
-                          Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
-                          Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
-                          Facility.BenefitsService.PreDischargeClaimAssistance,
-                          Facility.BenefitsService.TransitionAssistance,
-                          Facility.BenefitsService.UpdatingDirectDepositInformation,
-                          Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
-                          Facility.BenefitsService.Pensions))
+                          BenefitsService.ApplyingForBenefits,
+                          BenefitsService.DisabilityClaimAssistance,
+                          BenefitsService.eBenefitsRegistrationAssistance,
+                          BenefitsService.EducationAndCareerCounseling,
+                          BenefitsService.EducationClaimAssistance,
+                          BenefitsService.FamilyMemberClaimAssistance,
+                          BenefitsService.HomelessAssistance,
+                          BenefitsService.VAHomeLoanAssistance,
+                          BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
+                          BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
+                          BenefitsService.PreDischargeClaimAssistance,
+                          BenefitsService.TransitionAssistance,
+                          BenefitsService.UpdatingDirectDepositInformation,
+                          BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
+                          BenefitsService.Pensions))
                   .build())
           .build();
     }

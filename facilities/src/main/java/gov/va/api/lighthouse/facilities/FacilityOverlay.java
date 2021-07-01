@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
@@ -44,9 +45,9 @@ public class FacilityOverlay implements Function<HasFacilityPayload, Facility> {
       for (String overlayService : overlayServices) {
         if ("Covid19Vaccine".equals(overlayService)) {
           if (facility.attributes().services().health() != null) {
-            facility.attributes().services().health().add(Facility.HealthService.Covid19Vaccine);
+            facility.attributes().services().health().add(HealthService.Covid19Vaccine);
           } else {
-            facility.attributes().services().health(List.of(Facility.HealthService.Covid19Vaccine));
+            facility.attributes().services().health(List.of(HealthService.Covid19Vaccine));
           }
           needToSort = true;
           break;

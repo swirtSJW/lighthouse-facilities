@@ -17,14 +17,14 @@ import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.OtherService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Address;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.math.BigDecimal;
@@ -83,7 +83,7 @@ public class InternalFacilitiesControllerTest {
       String zip,
       double latitude,
       double longitude,
-      List<gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService> health) {
+      List<HealthService> health) {
     return gov.va.api.lighthouse.facilities.api.v1.Facility.builder()
         .id(id)
         .attributes(
@@ -98,10 +98,7 @@ public class InternalFacilitiesControllerTest {
                         .build())
                 .latitude(BigDecimal.valueOf(latitude))
                 .longitude(BigDecimal.valueOf(longitude))
-                .services(
-                    gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
-                        .health(health)
-                        .build())
+                .services(Services.builder().health(health).build())
                 .mobile(false)
                 .facilityType(
                     gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityType.va_cemetery)
@@ -270,22 +267,9 @@ public class InternalFacilitiesControllerTest {
     Facility f2 = _facility("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
-        _facilityV1(
-            "vha_f2",
-            "NEAT",
-            "32934",
-            5.6,
-            6.7,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
+        _facilityV1("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
 
     List<FacilityPair> facilityPairs = new ArrayList<>();
 
@@ -296,13 +280,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f2OldV1 =
-        _facilityV1(
-            "vha_f2",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     facilityRepository.save(_entity(f2Old, f2OldV1));
     when(collector.collectFacilities()).thenReturn(facilityPairs);
@@ -322,22 +300,9 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f1OldV1 =
-        _facilityV1(
-            "vha_f1",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     List<FacilityPair> facilityPairs = new ArrayList<>();
 
@@ -367,14 +332,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "999", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     f1.attributes().latitude(null);
     f1.attributes().longitude(null);
@@ -407,46 +365,15 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f4", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f1OldV1 =
-        _facilityV1(
-            "vha_f1",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f2OldV1 =
-        _facilityV1(
-            "vha_f2",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f3OldV1 =
-        _facilityV1(
-            "vha_f3",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f3", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f4OldV1 =
-        _facilityV1(
-            "vha_f4",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f4", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     List<FacilityPair> facilityPairs = new ArrayList<>();
 
@@ -478,22 +405,9 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f1OldV1 =
-        _facilityV1(
-            "vha_f1",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     List<FacilityPair> facilityPairs = new ArrayList<>();
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
@@ -514,13 +428,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1OldV1 =
-        _facilityV1(
-            "vha_f1",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     long early = Instant.now().minusSeconds(60).toEpochMilli();
     facilityRepository.save(_entity(f1Old, f1OldV1).missingTimestamp(early));
@@ -538,14 +446,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     f1.attributes().address().physical().state(null);
     f1.attributes().address().physical().zip(null);
@@ -630,13 +531,7 @@ public class InternalFacilitiesControllerTest {
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f1OldV1 =
-        _facilityV1(
-            "vha_f1",
-            "NO",
-            "666",
-            9.0,
-            9.1,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
+        _facilityV1("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
 
     long threeDaysAgo = LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC).toEpochMilli();
     FacilityEntity entity =
@@ -661,14 +556,7 @@ public class InternalFacilitiesControllerTest {
     Facility f =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     facilityRepository.save(_entityWithOverlay(f, f1V1, _overlay()));
     Integer status = _controller().deleteFacilityById("vha_f1").getStatusCodeValue();
@@ -682,14 +570,7 @@ public class InternalFacilitiesControllerTest {
     Facility f =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     facilityRepository.save(_entity(f, f1V1));
     Integer status = _controller().deleteFacilityById("vha_f1").getStatusCodeValue();
     assertThat(status).isEqualTo(200);
@@ -702,14 +583,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     facilityRepository.save(_entityWithOverlay(f, f1V1, _overlay()));
     Integer status = _controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue();
@@ -882,14 +756,7 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "CO", "5319", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
 
     f1.attributes().address().mailing(Address.builder().zip("12345-56").build());
     f1V1.attributes()
@@ -937,30 +804,11 @@ public class InternalFacilitiesControllerTest {
     Facility f3 = _facility("vha_f3", "FL", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
-        _facilityV1(
-            "vha_f2",
-            "NEAT",
-            "32934",
-            5.6,
-            6.7,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
+        _facilityV1("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f3V1 =
-        _facilityV1(
-            "vha_f3",
-            "FL",
-            "32934",
-            5.6,
-            6.7,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
+        _facilityV1("vha_f3", "FL", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
 
     f1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_1);
     f2.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_2);
@@ -1015,22 +863,9 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f92", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
 
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-        _facilityV1(
-            "vha_f1",
-            "FL",
-            "South",
-            1.2,
-            3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+        _facilityV1("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
-        _facilityV1(
-            "vha_f2",
-            "NEAT",
-            "32934",
-            5.6,
-            6.7,
-            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
+        _facilityV1("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
 
     List<FacilityPair> facilityPairs = new ArrayList<>();
 

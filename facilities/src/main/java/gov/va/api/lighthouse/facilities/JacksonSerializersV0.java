@@ -8,6 +8,9 @@ import com.fasterxml.jackson.core.JsonStreamContext;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.v0.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
@@ -79,11 +82,11 @@ final class JacksonSerializersV0 {
         FacilitiesResponse.FacilitiesMetadata.class, new FacilitiesMetadataSerializer());
     mod.addSerializer(Facility.FacilityAttributes.class, new FacilityAttributesSerializer());
     mod.addSerializer(Facility.Hours.class, new HoursSerializer());
-    mod.addSerializer(Facility.PatientWaitTime.class, new PatientWaitTimeSerializer());
+    mod.addSerializer(PatientWaitTime.class, new PatientWaitTimeSerializer());
     mod.addSerializer(Facility.Phone.class, new PhoneSerializer());
     mod.addSerializer(Facility.Satisfaction.class, new SatisfactionSerializer());
-    mod.addSerializer(Facility.Services.class, new ServicesSerializer());
-    mod.addSerializer(Facility.WaitTimes.class, new WaitTimesSerializer());
+    mod.addSerializer(Services.class, new ServicesSerializer());
+    mod.addSerializer(WaitTimes.class, new WaitTimesSerializer());
     mod.addSerializer(GeoFacility.Properties.class, new PropertiesSerializer());
     mod.addSerializer(PageLinks.class, new PageLinksSerializer());
     return mod;
@@ -236,15 +239,13 @@ final class JacksonSerializersV0 {
       jgen.writeObjectField(
           "operational_hours_special_instructions", value.operationalHoursSpecialInstructions());
       jgen.writeObjectField(
-          "services",
-          Optional.ofNullable(value.services()).orElse(Facility.Services.builder().build()));
+          "services", Optional.ofNullable(value.services()).orElse(Services.builder().build()));
       jgen.writeObjectField(
           "satisfaction",
           Optional.ofNullable(value.satisfaction())
               .orElse(Facility.Satisfaction.builder().build()));
       jgen.writeObjectField(
-          "wait_times",
-          Optional.ofNullable(value.waitTimes()).orElse(Facility.WaitTimes.builder().build()));
+          "wait_times", Optional.ofNullable(value.waitTimes()).orElse(WaitTimes.builder().build()));
       jgen.writeObjectField("mobile", value.mobile());
       jgen.writeObjectField("active_status", value.activeStatus());
       jgen.writeObjectField("operating_status", value.operatingStatus());
@@ -373,20 +374,18 @@ final class JacksonSerializersV0 {
     }
   }
 
-  private static final class PatientWaitTimeSerializer
-      extends StdSerializer<Facility.PatientWaitTime> {
+  private static final class PatientWaitTimeSerializer extends StdSerializer<PatientWaitTime> {
     public PatientWaitTimeSerializer() {
       this(null);
     }
 
-    public PatientWaitTimeSerializer(Class<Facility.PatientWaitTime> t) {
+    public PatientWaitTimeSerializer(Class<PatientWaitTime> t) {
       super(t);
     }
 
     @Override
     @SneakyThrows
-    public void serialize(
-        Facility.PatientWaitTime value, JsonGenerator jgen, SerializerProvider provider) {
+    public void serialize(PatientWaitTime value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
       jgen.writeObjectField("service", value.service());
       jgen.writeObjectField("new", value.newPatientWaitTime());
@@ -484,15 +483,13 @@ final class JacksonSerializersV0 {
       jgen.writeObjectField(
           "operational_hours_special_instructions", value.operationalHoursSpecialInstructions());
       jgen.writeObjectField(
-          "services",
-          Optional.ofNullable(value.services()).orElse(Facility.Services.builder().build()));
+          "services", Optional.ofNullable(value.services()).orElse(Services.builder().build()));
       jgen.writeObjectField(
           "satisfaction",
           Optional.ofNullable(value.satisfaction())
               .orElse(Facility.Satisfaction.builder().build()));
       jgen.writeObjectField(
-          "wait_times",
-          Optional.ofNullable(value.waitTimes()).orElse(Facility.WaitTimes.builder().build()));
+          "wait_times", Optional.ofNullable(value.waitTimes()).orElse(WaitTimes.builder().build()));
       jgen.writeObjectField("mobile", value.mobile());
       jgen.writeObjectField("active_status", value.activeStatus());
       jgen.writeObjectField("operating_status", value.operatingStatus());
@@ -531,19 +528,18 @@ final class JacksonSerializersV0 {
     }
   }
 
-  private static final class ServicesSerializer extends StdSerializer<Facility.Services> {
+  private static final class ServicesSerializer extends StdSerializer<Services> {
     public ServicesSerializer() {
       this(null);
     }
 
-    public ServicesSerializer(Class<Facility.Services> t) {
+    public ServicesSerializer(Class<Services> t) {
       super(t);
     }
 
     @Override
     @SneakyThrows
-    public void serialize(
-        Facility.Services value, JsonGenerator jgen, SerializerProvider provider) {
+    public void serialize(Services value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
       if (idStartsWith(jgen, "vha_")) {
         jgen.writeObjectField("other", Optional.ofNullable(value.other()).orElse(emptyList()));
@@ -568,23 +564,22 @@ final class JacksonSerializersV0 {
     }
   }
 
-  private static final class WaitTimesSerializer extends StdSerializer<Facility.WaitTimes> {
+  private static final class WaitTimesSerializer extends StdSerializer<WaitTimes> {
     public WaitTimesSerializer() {
       this(null);
     }
 
-    public WaitTimesSerializer(Class<Facility.WaitTimes> t) {
+    public WaitTimesSerializer(Class<WaitTimes> t) {
       super(t);
     }
 
-    private static boolean empty(Facility.WaitTimes value) {
+    private static boolean empty(WaitTimes value) {
       return value.health() == null && value.effectiveDate() == null;
     }
 
     @Override
     @SneakyThrows
-    public void serialize(
-        Facility.WaitTimes value, JsonGenerator jgen, SerializerProvider provider) {
+    public void serialize(WaitTimes value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
       if (!empty(value) || idStartsWith(jgen, "vha_")) {
         jgen.writeObjectField("health", Optional.ofNullable(value.health()).orElse(emptyList()));

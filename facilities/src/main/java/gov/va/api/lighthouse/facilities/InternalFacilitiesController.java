@@ -18,6 +18,7 @@ import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
@@ -152,7 +153,7 @@ public class InternalFacilitiesController {
     return allServices;
   }
 
-  private static Optional<Facility.Services> services(Facility facility) {
+  private static Optional<Services> services(Facility facility) {
     return attributes(facility).map(a -> a.services());
   }
 

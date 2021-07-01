@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes;
@@ -46,7 +47,7 @@ public class FacilityOverlayV1Test {
     assertStatus(
         ActiveStatus.A,
         op(OperatingStatusCode.LIMITED, "neato"),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        List.of(HealthService.Covid19Vaccine),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(
@@ -57,7 +58,7 @@ public class FacilityOverlayV1Test {
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, "neato"),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        List.of(HealthService.Covid19Vaccine),
         entity(
             fromActiveStatus(ActiveStatus.A),
             overlay(
@@ -70,7 +71,7 @@ public class FacilityOverlayV1Test {
   private void assertStatus(
       ActiveStatus expectedActiveStatus,
       OperatingStatus expectedOperatingStatus,
-      List<Facility.HealthService> expectedHealthServices,
+      List<HealthService> expectedHealthServices,
       FacilityEntity entity) {
     Facility facility = FacilityOverlayV1.builder().mapper(mapper).build().apply(entity);
     assertThat(facility.attributes().activeStatus()).isEqualTo(expectedActiveStatus);
@@ -83,7 +84,7 @@ public class FacilityOverlayV1Test {
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        List.of(HealthService.Covid19Vaccine),
         entity(fromActiveStatus(null), overlay(null, true)));
     assertStatus(
         null,

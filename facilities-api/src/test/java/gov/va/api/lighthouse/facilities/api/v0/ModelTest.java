@@ -4,6 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Attributes;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand.Geometry;
@@ -268,21 +273,21 @@ public class ModelTest {
         .build();
   }
 
-  private Facility.Services services() {
-    return Facility.Services.builder()
-        .benefits(List.of(Facility.BenefitsService.eBenefitsRegistrationAssistance))
+  private Services services() {
+    return Services.builder()
+        .benefits(List.of(BenefitsService.eBenefitsRegistrationAssistance))
         .lastUpdated(LocalDate.parse("2020-03-12"))
         .build();
   }
 
-  private Facility.WaitTimes waitTimes() {
-    return Facility.WaitTimes.builder()
+  private WaitTimes waitTimes() {
+    return WaitTimes.builder()
         .health(
             List.of(
-                Facility.PatientWaitTime.builder()
+                PatientWaitTime.builder()
                     .newPatientWaitTime(BigDecimal.valueOf(25))
                     .establishedPatientWaitTime(BigDecimal.valueOf(10))
-                    .service(Facility.HealthService.Audiology)
+                    .service(HealthService.Audiology)
                     .build()))
         .effectiveDate(LocalDate.parse("2020-03-12"))
         .build();

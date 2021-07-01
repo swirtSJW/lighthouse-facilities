@@ -2,7 +2,8 @@ package gov.va.api.lighthouse.facilities.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -17,25 +18,25 @@ public class BenefitsTransformerTest {
         .isEqualTo(
             facilityService(
                 List.of(
-                    Facility.BenefitsService.ApplyingForBenefits,
-                    Facility.BenefitsService.DisabilityClaimAssistance,
-                    Facility.BenefitsService.eBenefitsRegistrationAssistance,
-                    Facility.BenefitsService.EducationAndCareerCounseling,
-                    Facility.BenefitsService.EducationClaimAssistance,
-                    Facility.BenefitsService.FamilyMemberClaimAssistance,
-                    Facility.BenefitsService.HomelessAssistance,
-                    Facility.BenefitsService.VAHomeLoanAssistance,
-                    Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
-                    Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
-                    Facility.BenefitsService.PreDischargeClaimAssistance,
-                    Facility.BenefitsService.TransitionAssistance,
-                    Facility.BenefitsService.UpdatingDirectDepositInformation,
-                    Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
-                    Facility.BenefitsService.Pensions)));
+                    BenefitsService.ApplyingForBenefits,
+                    BenefitsService.DisabilityClaimAssistance,
+                    BenefitsService.eBenefitsRegistrationAssistance,
+                    BenefitsService.EducationAndCareerCounseling,
+                    BenefitsService.EducationClaimAssistance,
+                    BenefitsService.FamilyMemberClaimAssistance,
+                    BenefitsService.HomelessAssistance,
+                    BenefitsService.VAHomeLoanAssistance,
+                    BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
+                    BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
+                    BenefitsService.PreDischargeClaimAssistance,
+                    BenefitsService.TransitionAssistance,
+                    BenefitsService.UpdatingDirectDepositInformation,
+                    BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
+                    BenefitsService.Pensions)));
   }
 
-  private Facility.Services facilityService(List<Facility.BenefitsService> services) {
-    return Facility.Services.builder().benefits(services).build();
+  private Services facilityService(List<BenefitsService> services) {
+    return Services.builder().benefits(services).build();
   }
 
   @Test

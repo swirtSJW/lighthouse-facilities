@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
@@ -38,14 +39,14 @@ public class FacilityOverlayTest {
     assertStatus(
         ActiveStatus.A,
         op(OperatingStatusCode.LIMITED, "neato"),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        List.of(HealthService.Covid19Vaccine),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(op(OperatingStatusCode.LIMITED, "neato"), true)));
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, "neato"),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        List.of(HealthService.Covid19Vaccine),
         entity(
             fromActiveStatus(ActiveStatus.A),
             overlay(op(OperatingStatusCode.CLOSED, "neato"), true)));
@@ -54,7 +55,7 @@ public class FacilityOverlayTest {
   private void assertStatus(
       ActiveStatus expectedActiveStatus,
       OperatingStatus expectedOperatingStatus,
-      List<Facility.HealthService> expectedHealthServices,
+      List<HealthService> expectedHealthServices,
       FacilityEntity entity) {
     Facility facility = FacilityOverlay.builder().mapper(mapper).build().apply(entity);
     assertThat(facility.attributes().activeStatus()).isEqualTo(expectedActiveStatus);
@@ -67,7 +68,7 @@ public class FacilityOverlayTest {
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        List.of(HealthService.Covid19Vaccine),
         entity(fromActiveStatus(null), overlay(null, true)));
     assertStatus(
         null,

@@ -3,6 +3,10 @@ package gov.va.api.lighthouse.facilities.api.v1;
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,9 +22,8 @@ public class SearchByZipJsonTest {
     assertThat(f).isEqualTo(sample());
   }
 
-  private Facility.PatientWaitTime patientWaitTime(
-      Facility.HealthService service, Double newPat, Double oldPat) {
-    Facility.PatientWaitTime.PatientWaitTimeBuilder waitTime = Facility.PatientWaitTime.builder();
+  private PatientWaitTime patientWaitTime(HealthService service, Double newPat, Double oldPat) {
+    PatientWaitTime.PatientWaitTimeBuilder waitTime = PatientWaitTime.builder();
     if (service != null) {
       waitTime.service(service);
     }
@@ -100,22 +103,22 @@ public class SearchByZipJsonTest {
                                     .sunday("Closed")
                                     .build())
                             .services(
-                                Facility.Services.builder()
+                                Services.builder()
                                     .other(new ArrayList<>())
                                     .health(
                                         List.of(
-                                            Facility.HealthService.PrimaryCare,
-                                            Facility.HealthService.MentalHealthCare,
-                                            Facility.HealthService.Audiology,
-                                            Facility.HealthService.Cardiology,
-                                            Facility.HealthService.Dermatology,
-                                            Facility.HealthService.Gastroenterology,
-                                            Facility.HealthService.Ophthalmology,
-                                            Facility.HealthService.Optometry,
-                                            Facility.HealthService.Orthopedics,
-                                            Facility.HealthService.Urology,
-                                            Facility.HealthService.SpecialtyCare,
-                                            Facility.HealthService.DentalServices))
+                                            HealthService.PrimaryCare,
+                                            HealthService.MentalHealthCare,
+                                            HealthService.Audiology,
+                                            HealthService.Cardiology,
+                                            HealthService.Dermatology,
+                                            HealthService.Gastroenterology,
+                                            HealthService.Ophthalmology,
+                                            HealthService.Optometry,
+                                            HealthService.Orthopedics,
+                                            HealthService.Urology,
+                                            HealthService.SpecialtyCare,
+                                            HealthService.DentalServices))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(
@@ -128,51 +131,33 @@ public class SearchByZipJsonTest {
                                     .effectiveDate(LocalDate.parse("2019-06-20"))
                                     .build())
                             .waitTimes(
-                                Facility.WaitTimes.builder()
+                                WaitTimes.builder()
                                     .health(
                                         List.of(
                                             patientWaitTime(
-                                                Facility.HealthService.Urology,
-                                                32.047619,
-                                                9.879032),
+                                                HealthService.Urology, 32.047619, 9.879032),
                                             patientWaitTime(
-                                                Facility.HealthService.Audiology,
-                                                1.706967,
-                                                2.126855),
+                                                HealthService.Audiology, 1.706967, 2.126855),
                                             patientWaitTime(
-                                                Facility.HealthService.Optometry,
-                                                76.396226,
-                                                7.900787),
+                                                HealthService.Optometry, 76.396226, 7.900787),
                                             patientWaitTime(
-                                                Facility.HealthService.Cardiology, 18.657142, 6.4),
+                                                HealthService.Cardiology, 18.657142, 6.4),
                                             patientWaitTime(
-                                                Facility.HealthService.Dermatology,
-                                                0.616666,
-                                                0.555555),
+                                                HealthService.Dermatology, 0.616666, 0.555555),
                                             patientWaitTime(
-                                                Facility.HealthService.Orthopedics,
-                                                24.682539,
-                                                4.995024),
+                                                HealthService.Orthopedics, 24.682539, 4.995024),
                                             patientWaitTime(
-                                                Facility.HealthService.PrimaryCare,
-                                                26.405405,
-                                                1.545372),
+                                                HealthService.PrimaryCare, 26.405405, 1.545372),
                                             patientWaitTime(
-                                                Facility.HealthService.Ophthalmology,
-                                                47.571428,
-                                                3.258992),
+                                                HealthService.Ophthalmology, 47.571428, 3.258992),
                                             patientWaitTime(
-                                                Facility.HealthService.SpecialtyCare,
-                                                20.963572,
-                                                5.775406),
+                                                HealthService.SpecialtyCare, 20.963572, 5.775406),
                                             patientWaitTime(
-                                                Facility.HealthService.Gastroenterology,
+                                                HealthService.Gastroenterology,
                                                 22.151515,
                                                 4.943661),
                                             patientWaitTime(
-                                                Facility.HealthService.MentalHealthCare,
-                                                7.592814,
-                                                3.97159)))
+                                                HealthService.MentalHealthCare, 7.592814, 3.97159)))
                                     .effectiveDate(LocalDate.parse("2020-03-02"))
                                     .build())
                             .mobile(false)

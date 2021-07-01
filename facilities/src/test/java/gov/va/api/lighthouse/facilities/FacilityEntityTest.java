@@ -3,7 +3,9 @@ package gov.va.api.lighthouse.facilities;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.model.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.OtherService;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
@@ -48,13 +50,13 @@ public class FacilityEntityTest {
     FacilityEntity e = FacilityEntity.builder().build();
     e.servicesFromServiceTypes(
         Set.of(
-            Facility.HealthService.SpecialtyCare,
-            Facility.BenefitsService.ApplyingForBenefits,
-            Facility.OtherService.OnlineScheduling));
+            HealthService.SpecialtyCare,
+            BenefitsService.ApplyingForBenefits,
+            OtherService.OnlineScheduling));
     assertThat(e.services())
         .containsExactlyInAnyOrder(
-            Facility.HealthService.SpecialtyCare.toString(),
-            Facility.BenefitsService.ApplyingForBenefits.toString(),
-            Facility.OtherService.OnlineScheduling.toString());
+            HealthService.SpecialtyCare.toString(),
+            BenefitsService.ApplyingForBenefits.toString(),
+            OtherService.OnlineScheduling.toString());
   }
 }

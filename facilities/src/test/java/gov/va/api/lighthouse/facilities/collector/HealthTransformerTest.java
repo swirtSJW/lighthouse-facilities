@@ -1,11 +1,12 @@
 package gov.va.api.lighthouse.facilities.collector;
 
-import static gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService.CaregiverSupport;
+import static gov.va.api.lighthouse.facilities.api.model.HealthService.CaregiverSupport;
 import static gov.va.api.lighthouse.facilities.collector.FacilitiesCollector.loadCaregiverSupport;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ArrayListMultimap;
+import gov.va.api.lighthouse.facilities.api.model.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,8 +121,7 @@ public class HealthTransformerTest {
                 .attributes(
                     Facility.FacilityAttributes.builder()
                         .facilityType(Facility.FacilityType.va_health_facility)
-                        .services(
-                            Facility.Services.builder().health(List.of(CaregiverSupport)).build())
+                        .services(Services.builder().health(List.of(CaregiverSupport)).build())
                         .build())
                 .build());
   }

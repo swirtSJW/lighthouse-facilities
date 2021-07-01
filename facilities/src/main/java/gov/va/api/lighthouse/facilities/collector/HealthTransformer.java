@@ -15,8 +15,11 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import com.google.common.collect.ListMultimap;
+import gov.va.api.lighthouse.facilities.api.model.HealthService;
+import gov.va.api.lighthouse.facilities.api.model.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.PatientWaitTime;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,8 +36,7 @@ import org.apache.commons.lang3.BooleanUtils;
 
 @Builder
 final class HealthTransformer {
-  private static final Map<String, Facility.HealthService> HEALTH_SERVICES =
-      initHealthServicesMap();
+  private static final Map<String, HealthService> HEALTH_SERVICES = initHealthServicesMap();
 
   @NonNull private final VastEntity vast;
 
@@ -50,25 +52,25 @@ final class HealthTransformer {
 
   @NonNull private final ArrayList<String> cscFacilities;
 
-  private static Map<String, Facility.HealthService> initHealthServicesMap() {
-    Map<String, Facility.HealthService> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    map.put("AUDIOLOGY", Facility.HealthService.Audiology);
-    map.put("CARDIOLOGY", Facility.HealthService.Cardiology);
-    map.put("COMP WOMEN'S HLTH", Facility.HealthService.WomensHealth);
-    map.put("DERMATOLOGY", Facility.HealthService.Dermatology);
-    map.put("GASTROENTEROLOGY", Facility.HealthService.Gastroenterology);
-    map.put("GYNECOLOGY", Facility.HealthService.Gynecology);
-    map.put("MENTAL HEALTH", Facility.HealthService.MentalHealthCare);
-    map.put("OPHTHALMOLOGY", Facility.HealthService.Ophthalmology);
-    map.put("OPTOMETRY", Facility.HealthService.Optometry);
-    map.put("ORTHOPEDICS", Facility.HealthService.Orthopedics);
-    map.put("PRIMARY CARE", Facility.HealthService.PrimaryCare);
-    map.put("SPECIALTY CARE", Facility.HealthService.SpecialtyCare);
-    map.put("UROLOGY CLINIC", Facility.HealthService.Urology);
+  private static Map<String, HealthService> initHealthServicesMap() {
+    Map<String, HealthService> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    map.put("AUDIOLOGY", HealthService.Audiology);
+    map.put("CARDIOLOGY", HealthService.Cardiology);
+    map.put("COMP WOMEN'S HLTH", HealthService.WomensHealth);
+    map.put("DERMATOLOGY", HealthService.Dermatology);
+    map.put("GASTROENTEROLOGY", HealthService.Gastroenterology);
+    map.put("GYNECOLOGY", HealthService.Gynecology);
+    map.put("MENTAL HEALTH", HealthService.MentalHealthCare);
+    map.put("OPHTHALMOLOGY", HealthService.Ophthalmology);
+    map.put("OPTOMETRY", HealthService.Optometry);
+    map.put("ORTHOPEDICS", HealthService.Orthopedics);
+    map.put("PRIMARY CARE", HealthService.PrimaryCare);
+    map.put("SPECIALTY CARE", HealthService.SpecialtyCare);
+    map.put("UROLOGY CLINIC", HealthService.Urology);
     return map;
   }
 
-  private static Facility.HealthService serviceName(AccessToCareEntry atc) {
+  private static HealthService serviceName(AccessToCareEntry atc) {
     return atc == null ? null : HEALTH_SERVICES.get(trimToEmpty(atc.apptTypeName()));
   }
 
@@ -76,13 +78,13 @@ final class HealthTransformer {
     return length(slice) <= 9 ? null : LocalDate.parse(slice.substring(0, 10));
   }
 
-  private static Facility.PatientWaitTime waitTime(AccessToCareEntry atc) {
+  private static PatientWaitTime waitTime(AccessToCareEntry atc) {
     if (atc == null
         || isBlank(serviceName(atc))
         || allBlank(waitTimeNumber(atc.newWaitTime()), waitTimeNumber(atc.estWaitTime()))) {
       return null;
     }
-    return Facility.PatientWaitTime.builder()
+    return PatientWaitTime.builder()
         .service(serviceName(atc))
         .newPatientWaitTime(waitTimeNumber(atc.newWaitTime()))
         .establishedPatientWaitTime(waitTimeNumber(atc.estWaitTime()))
@@ -311,39 +313,36 @@ final class HealthTransformer {
         .build();
   }
 
-  private Facility.Services services() {
+  private Services services() {
     if (allBlank(servicesHealth(), atcEffectiveDate())) {
       return null;
     }
-    return Facility.Services.builder()
-        .health(servicesHealth())
-        .lastUpdated(atcEffectiveDate())
-        .build();
+    return Services.builder().health(servicesHealth()).lastUpdated(atcEffectiveDate()).build();
   }
 
-  private List<Facility.HealthService> servicesHealth() {
-    List<Facility.HealthService> services =
+  private List<HealthService> servicesHealth() {
+    List<HealthService> services =
         accessToCareEntries().stream()
             .map(ace -> serviceName(ace))
             .filter(Objects::nonNull)
             .collect(toCollection(ArrayList::new));
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.emergencyCare()))) {
-      services.add(Facility.HealthService.EmergencyCare);
+      services.add(HealthService.EmergencyCare);
     }
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.urgentCare()))) {
-      services.add(Facility.HealthService.UrgentCare);
+      services.add(HealthService.UrgentCare);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.DENTISTRY.contains(trimToEmpty(sc.code())))) {
-      services.add(Facility.HealthService.DentalServices);
+      services.add(HealthService.DentalServices);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.NUTRITION.contains(trimToEmpty(sc.code())))) {
-      services.add(Facility.HealthService.Nutrition);
+      services.add(HealthService.Nutrition);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.PODIATRY.contains(trimToEmpty(sc.code())))) {
-      services.add(Facility.HealthService.Podiatry);
+      services.add(HealthService.Podiatry);
     }
     if (hasCaregiverSupport()) {
-      services.add(Facility.HealthService.CaregiverSupport);
+      services.add(HealthService.CaregiverSupport);
     }
     Collections.sort(services, (left, right) -> left.name().compareToIgnoreCase(right.name()));
     return emptyToNull(services);
@@ -364,17 +363,14 @@ final class HealthTransformer {
         .build();
   }
 
-  private Facility.WaitTimes waitTimes() {
+  private WaitTimes waitTimes() {
     if (allBlank(waitTimesHealth(), atcEffectiveDate())) {
       return null;
     }
-    return Facility.WaitTimes.builder()
-        .health(waitTimesHealth())
-        .effectiveDate(atcEffectiveDate())
-        .build();
+    return WaitTimes.builder().health(waitTimesHealth()).effectiveDate(atcEffectiveDate()).build();
   }
 
-  private List<Facility.PatientWaitTime> waitTimesHealth() {
+  private List<PatientWaitTime> waitTimesHealth() {
     List<PatientWaitTime> results =
         accessToCareEntries().stream()
             .map(ace -> waitTime(ace))

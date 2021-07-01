@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.model.Services;
+import gov.va.api.lighthouse.facilities.api.model.WaitTimes;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
@@ -117,7 +119,7 @@ public final class GeoFacility {
 
     @Schema(nullable = true)
     @Valid
-    Facility.Services services;
+    Services services;
 
     @Schema(nullable = true)
     @Valid
@@ -126,7 +128,7 @@ public final class GeoFacility {
     @Valid
     @Schema(nullable = true)
     @JsonProperty("wait_times")
-    Facility.WaitTimes waitTimes;
+    WaitTimes waitTimes;
 
     @Schema(example = "false", nullable = true)
     Boolean mobile;
