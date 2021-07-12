@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.List;
@@ -69,14 +68,33 @@ final class CemeteriesCollector {
   }
 
   /** Collects and transforms all national cemeteries into a list of facilities. */
-  public Collection<Facility> collect() {
+  public Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> collect() {
     List<NationalCemeteries.NationalCemetery> cemeteries = xmlCemeteries();
     try {
       return queryCdwCemeteries().stream()
           .filter(c -> !equalsIgnoreCase(c.siteType(), "office"))
           .map(
               facility ->
-                  CemeteriesTransformer.builder()
+                  CemeteriesTransformerV0.builder()
+                      .cdwFacility(facility)
+                      .externalFacilityName(xmlFacilityName(cemeteries, facility.siteId()))
+                      .externalWebsite(xmlOrCsvWebsite(cemeteries, facility.siteId()))
+                      .build()
+                      .toFacility())
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.CemeteriesCollectorException(e);
+    }
+  }
+
+  public Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    List<NationalCemeteries.NationalCemetery> cemeteries = xmlCemeteries();
+    try {
+      return queryCdwCemeteries().stream()
+          .filter(c -> !equalsIgnoreCase(c.siteType(), "office"))
+          .map(
+              facility ->
+                  CemeteriesTransformerV1.builder()
                       .cdwFacility(facility)
                       .externalFacilityName(xmlFacilityName(cemeteries, facility.siteId()))
                       .externalWebsite(xmlOrCsvWebsite(cemeteries, facility.siteId()))

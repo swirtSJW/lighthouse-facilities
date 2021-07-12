@@ -8,7 +8,7 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -163,7 +163,7 @@ public class FacilitiesCollector {
 
   /** Collect facilities. */
   @SneakyThrows
-  public List<Facility> collectFacilities() {
+  public List<FacilityPair> collectFacilities() {
     Map<String, String> websites;
     Collection<VastEntity> vastEntities;
     ArrayList<String> cscFacilities;
@@ -177,7 +177,7 @@ public class FacilitiesCollector {
       throw new CollectorExceptions.CollectorException(e);
     }
 
-    Collection<Facility> healths =
+    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> healthsV0 =
         HealthsCollector.builder()
             .atcBaseUrl(atcBaseUrl)
             .atpBaseUrl(atpBaseUrl)
@@ -189,7 +189,19 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
-    Collection<Facility> stateCems =
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> healthsV1 =
+        HealthsCollector.builder()
+            .atcBaseUrl(atcBaseUrl)
+            .atpBaseUrl(atpBaseUrl)
+            .cscFacilities(cscFacilities)
+            .jdbcTemplate(jdbcTemplate)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
+            .vastEntities(vastEntities)
+            .websites(websites)
+            .build()
+            .collectV1();
+
+    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> stateCemsV0 =
         StateCemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
@@ -197,17 +209,39 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
-    Collection<Facility> vetCenters =
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> stateCemsV1 =
+        StateCemeteriesCollector.builder()
+            .baseUrl(cemeteriesBaseUrl)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
+            .websites(websites)
+            .build()
+            .collectV1();
+
+    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> vetCentersV0 =
         VetCentersCollector.builder()
             .vastEntities(vastEntities)
             .websites(websites)
             .build()
             .collect();
 
-    Collection<Facility> benefits =
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> vetCentersV1 =
+        VetCentersCollector.builder()
+            .vastEntities(vastEntities)
+            .websites(websites)
+            .build()
+            .collectV1();
+
+    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> benefitsV0 =
         BenefitsCollector.builder().websites(websites).jdbcTemplate(jdbcTemplate).build().collect();
 
-    Collection<Facility> cemeteries =
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> benefitsV1 =
+        BenefitsCollector.builder()
+            .websites(websites)
+            .jdbcTemplate(jdbcTemplate)
+            .build()
+            .collectV1();
+
+    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> cemeteriesV0 =
         CemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
@@ -216,18 +250,53 @@ public class FacilitiesCollector {
             .build()
             .collect();
 
-    log.info(
-        "Collected: Health {},  Benefits {},  Vet centers {}, "
-            + "Non-national cemeteries {}, Cemeteries {}",
-        healths.size(),
-        benefits.size(),
-        vetCenters.size(),
-        stateCems.size(),
-        cemeteries.size());
+    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> cemeteriesV1 =
+        CemeteriesCollector.builder()
+            .baseUrl(cemeteriesBaseUrl)
+            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
+            .websites(websites)
+            .jdbcTemplate(jdbcTemplate)
+            .build()
+            .collectV1();
 
-    return Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
-        .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
-        .collect(toList());
+    log.info(
+        "Collected V0: Health {},  Benefits {},  Vet centers {}, "
+            + "Non-national cemeteries {}, Cemeteries {}",
+        healthsV0.size(),
+        benefitsV0.size(),
+        vetCentersV0.size(),
+        stateCemsV0.size(),
+        cemeteriesV0.size());
+
+    log.info(
+        "Collected V1: Health {},  Benefits {},  Vet centers {}, "
+            + "Non-national cemeteries {}, Cemeteries {}",
+        healthsV1.size(),
+        benefitsV1.size(),
+        vetCentersV1.size(),
+        stateCemsV1.size(),
+        cemeteriesV1.size());
+
+    List<FacilityPair> facilityPairs = new ArrayList<>();
+
+    List<gov.va.api.lighthouse.facilities.api.v0.Facility> facilitiesV0 =
+        Streams.stream(
+                Iterables.concat(benefitsV0, cemeteriesV0, healthsV0, stateCemsV0, vetCentersV0))
+            .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
+            .collect(toList());
+
+    List<gov.va.api.lighthouse.facilities.api.v1.Facility> facilitiesV1 =
+        Streams.stream(
+                Iterables.concat(benefitsV1, cemeteriesV1, healthsV1, stateCemsV1, vetCentersV1))
+            .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
+            .collect(toList());
+
+    for (int i = 0; i < facilitiesV0.size(); i++) {
+      facilityPairs.add(
+          FacilityPair.builder().v0(facilitiesV0.get(i)).v1(facilitiesV1.get(i)).build());
+    }
+
+    return facilityPairs;
   }
 
   private List<VastEntity> loadVast() {

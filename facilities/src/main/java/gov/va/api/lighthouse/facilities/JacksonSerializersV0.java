@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.FacilityUtils.writeNonNull;
 import static java.util.Collections.emptyList;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -86,13 +87,6 @@ final class JacksonSerializersV0 {
     mod.addSerializer(GeoFacility.Properties.class, new PropertiesSerializer());
     mod.addSerializer(PageLinks.class, new PageLinksSerializer());
     return mod;
-  }
-
-  @SneakyThrows
-  private static void writeNonNull(JsonGenerator jgen, String fieldName, Object value) {
-    if (value != null) {
-      jgen.writeObjectField(fieldName, value);
-    }
   }
 
   private static final class AddressSerializer extends StdSerializer<Facility.Address> {

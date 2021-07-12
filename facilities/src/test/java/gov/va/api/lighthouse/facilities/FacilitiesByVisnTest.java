@@ -15,8 +15,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class FacilitiesByVisnTest {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV0 controller() {
+    return FacilitiesControllerV0.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -38,6 +38,6 @@ public class FacilitiesByVisnTest {
   void json_searchVisn() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByVisn("10", 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 }

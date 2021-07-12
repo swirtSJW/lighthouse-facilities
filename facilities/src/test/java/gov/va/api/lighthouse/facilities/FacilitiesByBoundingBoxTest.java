@@ -21,8 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class FacilitiesByBoundingBoxTest {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV0 controller() {
+    return FacilitiesControllerV0.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -55,7 +55,7 @@ public class FacilitiesByBoundingBoxTest {
   @Test
   void json_invalidBBox() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () ->
             controller()
                 .jsonFacilitiesByBoundingBox(
@@ -75,7 +75,7 @@ public class FacilitiesByBoundingBoxTest {
   @Test
   void json_invalidService() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () ->
             controller()
                 .jsonFacilitiesByBoundingBox(
@@ -94,7 +94,7 @@ public class FacilitiesByBoundingBoxTest {
   @Test
   void json_invalidType() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () ->
             controller()
                 .jsonFacilitiesByBoundingBox(
@@ -127,7 +127,7 @@ public class FacilitiesByBoundingBoxTest {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -184,7 +184,7 @@ public class FacilitiesByBoundingBoxTest {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -208,7 +208,7 @@ public class FacilitiesByBoundingBoxTest {
                     1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB")))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_691GB").v0()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=2&per_page=1")
@@ -246,6 +246,6 @@ public class FacilitiesByBoundingBoxTest {
                     1,
                     1)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 }

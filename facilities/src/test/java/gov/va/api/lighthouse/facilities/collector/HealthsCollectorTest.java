@@ -49,6 +49,27 @@ class HealthsCollectorTest {
   }
 
   @Test
+  void collectV1Exception() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    when(insecureRestTemplate.exchange(
+            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+        .thenThrow(new RestClientException("oh noez"));
+    assertThrows(
+        CollectorExceptions.HealthsCollectorException.class,
+        () ->
+            HealthsCollector.builder()
+                .atcBaseUrl("http://atc/")
+                .atpBaseUrl("http://atp/")
+                .cscFacilities(new ArrayList<>())
+                .vastEntities(emptyList())
+                .jdbcTemplate(mock(JdbcTemplate.class))
+                .insecureRestTemplate(insecureRestTemplate)
+                .websites(emptyMap())
+                .build()
+                .collectV1());
+  }
+
+  @Test
   @SneakyThrows
   void mentalHealthContact_blankPhone() {
     ResultSet rs = mock(ResultSet.class);

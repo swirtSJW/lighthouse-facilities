@@ -16,7 +16,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -118,7 +117,7 @@ final class HealthsCollector {
             .build());
   }
 
-  Collection<Facility> collect() {
+  Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> collect() {
     try {
       ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
       ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
@@ -129,7 +128,35 @@ final class HealthsCollector {
           .filter(v -> !v.isVetCenter())
           .map(
               v ->
-                  HealthTransformer.builder()
+                  HealthTransformerV0.builder()
+                      .vast(v)
+                      .accessToCare(accessToCareEntries)
+                      .accessToPwt(accessToPwtEntries)
+                      .cscFacilities(cscFacilities)
+                      .mentalHealthPhoneNumbers(mentalHealthPhoneNumbers)
+                      .stopCodesMap(stopCodesMap)
+                      .websites(websites)
+                      .build()
+                      .toFacility())
+          .filter(Objects::nonNull)
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.HealthsCollectorException(e);
+    }
+  }
+
+  Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    try {
+      ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
+      ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
+      Map<String, String> mentalHealthPhoneNumbers = loadMentalHealthPhoneNumbers();
+      ListMultimap<String, StopCode> stopCodesMap = loadStopCodes();
+      return vastEntities.stream()
+          .filter(Objects::nonNull)
+          .filter(v -> !v.isVetCenter())
+          .map(
+              v ->
+                  HealthTransformerV1.builder()
                       .vast(v)
                       .accessToCare(accessToCareEntries)
                       .accessToPwt(accessToPwtEntries)

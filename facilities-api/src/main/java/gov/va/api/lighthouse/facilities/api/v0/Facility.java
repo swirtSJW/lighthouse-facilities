@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.v0;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
@@ -95,12 +96,6 @@ public final class Facility {
     LIMITED,
     CLOSED
   }
-
-  /**
-   * This marker interface is used to indicate that an enumeration, such as HealthService, is a type
-   * of service offered at a facility.
-   */
-  public interface ServiceType {}
 
   @Data
   @Builder

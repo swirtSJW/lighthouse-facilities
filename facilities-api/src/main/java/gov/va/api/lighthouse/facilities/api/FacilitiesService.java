@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
-import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.ws.rs.Path;
 
@@ -110,12 +109,10 @@ import javax.ws.rs.Path;
     servers = {
       @Server(
           url = "https://sandbox-api.va.gov/services/va_facilities/{version}",
-          description = "Sandbox",
-          variables = @ServerVariable(name = "version", defaultValue = "v0")),
+          description = "Sandbox"),
       @Server(
           url = "https://api.va.gov/services/va_facilities/{version}",
-          description = "Production",
-          variables = @ServerVariable(name = "version", defaultValue = "v0"))
+          description = "Production")
     })
 @SecurityScheme(
     paramName = "apikey",

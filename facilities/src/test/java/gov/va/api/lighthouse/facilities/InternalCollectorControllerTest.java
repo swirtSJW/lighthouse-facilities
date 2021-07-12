@@ -1,6 +1,10 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Map;
@@ -11,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -48,6 +53,21 @@ public class InternalCollectorControllerTest {
 
   @Test
   @SneakyThrows
+  void mentalHealthContactsException() {
+    JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    when(mockTemplate.query(any(String.class), any(ResultSetExtractor.class)))
+        .thenThrow(new IllegalArgumentException("oh noes"));
+    assertThrows(
+        InternalCollectorController.CdwException.class,
+        () ->
+            InternalCollectorController.builder()
+                .jdbc(mockTemplate)
+                .build()
+                .mentalHealthContacts());
+  }
+
+  @Test
+  @SneakyThrows
   void nca() {
     template.execute(
         "CREATE TABLE App.FacilityLocator_NCA (" + "FULL_NAME VARCHAR," + "SITE_ID VARCHAR" + ")");
@@ -61,6 +81,17 @@ public class InternalCollectorControllerTest {
             + ")");
     assertThat(InternalCollectorController.builder().jdbc(template).build().nca())
         .isEqualTo(List.of(Map.of("FULL_NAME", "Some NCA", "SITE_ID", "123")));
+  }
+
+  @Test
+  @SneakyThrows
+  void ncaException() {
+    JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    when(mockTemplate.query(any(String.class), any(ResultSetExtractor.class)))
+        .thenThrow(new IllegalArgumentException("oh noes"));
+    assertThrows(
+        InternalCollectorController.CdwException.class,
+        () -> InternalCollectorController.builder().jdbc(mockTemplate).build().nca());
   }
 
   @Test
@@ -101,6 +132,17 @@ public class InternalCollectorControllerTest {
 
   @Test
   @SneakyThrows
+  void stopCodesException() {
+    JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    when(mockTemplate.query(any(String.class), any(ResultSetExtractor.class)))
+        .thenThrow(new IllegalArgumentException("oh noes"));
+    assertThrows(
+        InternalCollectorController.CdwException.class,
+        () -> InternalCollectorController.builder().jdbc(mockTemplate).build().stopCodes());
+  }
+
+  @Test
+  @SneakyThrows
   void vast() {
     template.execute(
         "CREATE TABLE App.Vast (" + "StationNumber VARCHAR," + "StationName VARCHAR" + ")");
@@ -114,6 +156,17 @@ public class InternalCollectorControllerTest {
             + ")");
     assertThat(InternalCollectorController.builder().jdbc(template).build().vast())
         .isEqualTo(List.of(Map.of("STATIONNUMBER", "123", "STATIONNAME", "Some VAMC")));
+  }
+
+  @Test
+  @SneakyThrows
+  void vastException() {
+    JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    when(mockTemplate.query(any(String.class), any(ResultSetExtractor.class)))
+        .thenThrow(new IllegalArgumentException("oh noes"));
+    assertThrows(
+        InternalCollectorController.CdwException.class,
+        () -> InternalCollectorController.builder().jdbc(mockTemplate).build().vast());
   }
 
   @Test
@@ -134,5 +187,16 @@ public class InternalCollectorControllerTest {
             + ")");
     assertThat(InternalCollectorController.builder().jdbc(template).build().vba())
         .isEqualTo(List.of(Map.of("FACILITY_NAME", "Some VBA", "FACILITY_NUMBER", "123")));
+  }
+
+  @Test
+  @SneakyThrows
+  void vbaException() {
+    JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    when(mockTemplate.query(any(String.class), any(ResultSetExtractor.class)))
+        .thenThrow(new IllegalArgumentException("oh noes"));
+    assertThrows(
+        InternalCollectorController.CdwException.class,
+        () -> InternalCollectorController.builder().jdbc(mockTemplate).build().vba());
   }
 }

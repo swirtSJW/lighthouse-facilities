@@ -32,8 +32,8 @@ public final class WebExceptionHandlerV0 {
     return ResponseEntity.status(status).headers(headers).body(error);
   }
 
-  @ExceptionHandler(ExceptionsV0.BingException.class)
-  ResponseEntity<ApiError> handleBing(ExceptionsV0.BingException ex) {
+  @ExceptionHandler(ExceptionsUtils.BingException.class)
+  ResponseEntity<ApiError> handleBing(ExceptionsUtils.BingException ex) {
     ApiError response =
         ApiError.builder()
             .errors(
@@ -48,8 +48,8 @@ public final class WebExceptionHandlerV0 {
     return response(HttpStatus.SERVICE_UNAVAILABLE, ex, response);
   }
 
-  @ExceptionHandler(ExceptionsV0.InvalidParameter.class)
-  ResponseEntity<ApiError> handleInvalidParameter(ExceptionsV0.InvalidParameter ex) {
+  @ExceptionHandler(ExceptionsUtils.InvalidParameter.class)
+  ResponseEntity<ApiError> handleInvalidParameter(ExceptionsUtils.InvalidParameter ex) {
     ApiError response =
         ApiError.builder()
             .errors(
@@ -116,8 +116,8 @@ public final class WebExceptionHandlerV0 {
     return response(HttpStatus.NOT_ACCEPTABLE, ex, error);
   }
 
-  @ExceptionHandler(ExceptionsV0.NotFound.class)
-  ResponseEntity<ApiError> handleNotFound(ExceptionsV0.NotFound ex) {
+  @ExceptionHandler(ExceptionsUtils.NotFound.class)
+  ResponseEntity<ApiError> handleNotFound(ExceptionsUtils.NotFound ex) {
     ApiError error =
         ApiError.builder()
             .errors(

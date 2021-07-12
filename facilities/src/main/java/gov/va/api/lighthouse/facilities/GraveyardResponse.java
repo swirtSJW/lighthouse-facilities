@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,9 @@ final class GraveyardResponse {
   @Value
   @Builder
   static final class Item {
-    private Facility facility;
+    private gov.va.api.lighthouse.facilities.api.v0.Facility facility;
+
+    //    private gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1;
 
     private CmsOverlay cmsOverlay;
 

@@ -20,8 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class FacilitiesByStateTest {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV0 controller() {
+    return FacilitiesControllerV0.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -42,14 +42,14 @@ public class FacilitiesByStateTest {
   @Test
   void json_invalidService() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () -> controller().jsonFacilitiesByState("FL", null, List.of("unknown"), null, 1, 1));
   }
 
   @Test
   void json_invalidType() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () -> controller().jsonFacilitiesByState("FL", "xxx", null, null, 1, 1));
   }
 
@@ -57,7 +57,7 @@ public class FacilitiesByStateTest {
   void json_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByState("oh", null, null, null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -65,7 +65,7 @@ public class FacilitiesByStateTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller().jsonFacilitiesByState("oh", null, List.of("urology"), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class FacilitiesByStateTest {
             controller().jsonFacilitiesByState("oh", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757")))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=1")
@@ -100,7 +100,7 @@ public class FacilitiesByStateTest {
   void json_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByState("oh", "HEALTH", emptyList(), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test

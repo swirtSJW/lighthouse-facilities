@@ -119,7 +119,7 @@ public class CmsOverlayControllerTest {
     }
 
     entity.cmsOperatingStatus(
-        FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()));
+        FacilitiesJacksonConfigV0.createMapper().writeValueAsString(overlay.operatingStatus()));
     entity.overlayServices(detailedServices);
     verify(repository).save(entity);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

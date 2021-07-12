@@ -14,9 +14,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.time.Instant;
@@ -77,7 +78,9 @@ public class InternalFacilitiesController {
 
   private static final Pattern ZIP_PATTERN = Pattern.compile(ZIP_REGEX);
 
-  private static final ObjectMapper MAPPER = FacilitiesJacksonConfig.createMapper();
+  private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
+
+  //  private static final ObjectMapper MAPPER_V1 = FacilitiesJacksonConfigV1.createMapper();
 
   private final FacilitiesCollector collector;
 
@@ -85,38 +88,48 @@ public class InternalFacilitiesController {
 
   private final FacilityGraveyardRepository graveyardRepository;
 
-  private static Optional<Facility.Address> addressMailing(Facility facility) {
+  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Address> addressMailing(
+      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return addresses(facility).map(a -> a.mailing());
   }
 
-  private static Optional<Facility.Address> addressPhysical(Facility facility) {
+  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Address> addressPhysical(
+      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return addresses(facility).map(a -> a.physical());
   }
 
-  private static Optional<Facility.Addresses> addresses(Facility facility) {
+  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses> addresses(
+      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return attributes(facility).map(a -> a.address());
   }
 
-  private static Optional<Facility.FacilityAttributes> attributes(Facility facility) {
+  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes>
+      attributes(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return Optional.ofNullable(facility.attributes());
   }
 
-  private static boolean isHoursNull(Facility facility) {
+  private static boolean isHoursNull(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return facility.attributes().hours() == null;
   }
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
-  static FacilityEntity populate(FacilityEntity record, Facility facility) {
+  static FacilityEntity populate(FacilityEntity record, FacilityPair facilityPair) {
+
+    gov.va.api.lighthouse.facilities.api.v0.Facility facilityV0 = facilityPair.v0();
+
     checkArgument(record.id() != null);
-    record.latitude(facility.attributes().latitude().doubleValue());
-    record.longitude(facility.attributes().longitude().doubleValue());
-    record.state(stateOf(facility));
-    record.zip(zipOf(facility));
-    record.servicesFromServiceTypes(serviceTypesOf(facility));
-    record.facility(MAPPER.writeValueAsString(facility));
-    record.visn(facility.attributes().visn());
-    record.mobile(facility.attributes().mobile());
+    record.latitude(facilityV0.attributes().latitude().doubleValue());
+    record.longitude(facilityV0.attributes().longitude().doubleValue());
+    record.state(stateOf(facilityV0));
+    record.zip(zipOf(facilityV0));
+    record.servicesFromServiceTypes(serviceTypesOf(facilityV0));
+    record.facility(MAPPER_V0.writeValueAsString(facilityV0));
+    record.visn(facilityV0.attributes().visn());
+    record.mobile(facilityV0.attributes().mobile());
+
+    //    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1();
+    //    record.facilityV1(MAPPER_V1.writeValueAsString(facilityV1));
     return record;
   }
 
@@ -124,12 +137,13 @@ public class InternalFacilitiesController {
    * Determine the total collection of service types by combining health, benefits, and other
    * services types. This is guaranteed to return a non-null, but potentially empty collection.
    */
-  static Set<Facility.ServiceType> serviceTypesOf(Facility facility) {
+  static Set<ServiceType> serviceTypesOf(
+      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     var services = facility.attributes().services();
     if (services == null) {
       return Set.of();
     }
-    var allServices = new HashSet<Facility.ServiceType>();
+    var allServices = new HashSet<ServiceType>();
     if (services.health() != null) {
       allServices.addAll(services.health());
     }
@@ -142,12 +156,13 @@ public class InternalFacilitiesController {
     return allServices;
   }
 
-  private static Optional<Facility.Services> services(Facility facility) {
+  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Services> services(
+      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return attributes(facility).map(a -> a.services());
   }
 
   /** Determine the state if available in a physical address, otherwise return null. */
-  static String stateOf(Facility facility) {
+  static String stateOf(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     if (facility.attributes().address() != null
         && facility.attributes().address().physical() != null
         && isNotBlank(facility.attributes().address().physical().state())) {
@@ -157,7 +172,7 @@ public class InternalFacilitiesController {
   }
 
   /** Determine the 5 digit zip if available in a physical address, otherwise return null. */
-  static String zipOf(Facility facility) {
+  static String zipOf(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     if (facility.attributes().address() != null
         && facility.attributes().address().physical() != null
         && isNotBlank(facility.attributes().address().physical().zip())) {
@@ -266,23 +281,32 @@ public class InternalFacilitiesController {
                     z ->
                         GraveyardResponse.Item.builder()
                             .facility(
-                                FacilitiesJacksonConfig.quietlyMap(
-                                    MAPPER, z.facility(), Facility.class))
+                                FacilitiesJacksonConfigV0.quietlyMap(
+                                    MAPPER_V0,
+                                    z.facility(),
+                                    gov.va.api.lighthouse.facilities.api.v0.Facility.class))
+                            //                            .facilityV1(
+                            //                                FacilitiesJacksonConfigV1.quietlyMap(
+                            //                                    MAPPER_V1,
+                            //                                    z.facilityV1(),
+                            //
+                            // gov.va.api.lighthouse.facilities.api.v1.Facility.class))
                             .cmsOverlay(
                                 CmsOverlay.builder()
                                     .operatingStatus(
                                         z.cmsOperatingStatus() == null
                                             ? null
-                                            : FacilitiesJacksonConfig.quietlyMap(
-                                                MAPPER,
+                                            : FacilitiesJacksonConfigV0.quietlyMap(
+                                                MAPPER_V0,
                                                 z.cmsOperatingStatus(),
-                                                Facility.OperatingStatus.class))
+                                                gov.va.api.lighthouse.facilities.api.v0.Facility
+                                                    .OperatingStatus.class))
                                     .detailedServices(
                                         z.cmsServices() == null
                                             ? null
                                             : List.of(
-                                                FacilitiesJacksonConfig.quietlyMap(
-                                                    MAPPER,
+                                                FacilitiesJacksonConfigV0.quietlyMap(
+                                                    MAPPER_V0,
                                                     z.cmsServices(),
                                                     DetailedService[].class)))
                                     .build())
@@ -297,10 +321,10 @@ public class InternalFacilitiesController {
         .build();
   }
 
-  private Set<FacilityEntity.Pk> missingIds(List<Facility> collectedFacilities) {
+  private Set<FacilityEntity.Pk> missingIds(List<FacilityPair> collectedFacilities) {
     Set<FacilityEntity.Pk> newIds =
         collectedFacilities.stream()
-            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.id()).orElse(null))
+            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.v0().id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(toCollection(LinkedHashSet::new));
     Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
@@ -317,6 +341,7 @@ public class InternalFacilitiesController {
           FacilityGraveyardEntity.builder()
               .id(id)
               .facility(entity.facility())
+              //              .facilityV1(entity.facilityV1())
               .cmsOperatingStatus(entity.cmsOperatingStatus())
               .cmsServices(entity.cmsServices())
               .graveyardOverlayServices(
@@ -337,7 +362,7 @@ public class InternalFacilitiesController {
   }
 
   private ResponseEntity<ReloadResponse> process(
-      ReloadResponse response, List<Facility> collectedFacilities) {
+      ReloadResponse response, List<FacilityPair> collectedFacilities) {
     response.timing().markCompleteCollection();
     log.info("Facilities collected: {}", collectedFacilities.size());
     try {
@@ -396,14 +421,17 @@ public class InternalFacilitiesController {
   }
 
   @SneakyThrows
-  void updateAndSave(ReloadResponse response, FacilityEntity record, Facility facility) {
+  void updateAndSave(ReloadResponse response, FacilityEntity record, FacilityPair facilityPair) {
+
+    gov.va.api.lighthouse.facilities.api.v0.Facility facility = facilityPair.v0();
+
     facility
         .attributes()
         .operationalHoursSpecialInstructions(
             findAndReplaceOperationalHoursSpecialInstructions(
                 facility.attributes().operationalHoursSpecialInstructions()));
 
-    populate(record, facility);
+    populate(record, facilityPair);
     record.missingTimestamp(null);
     record.lastUpdated(response.timing().completeCollection());
     /*
@@ -435,7 +463,8 @@ public class InternalFacilitiesController {
                   facility.id(), "Missing physical address street information"));
     }
     // Mailing addresses only exist for cemeteries
-    if (facility.attributes().facilityType() == Facility.FacilityType.va_cemetery) {
+    if (facility.attributes().facilityType()
+        == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_cemetery) {
       if (isBlank(addressMailing(facility).map(a -> a.zip()))
           || !ZIP_PATTERN.matcher(facility.attributes().address().mailing().zip()).matches()) {
         response
@@ -491,7 +520,8 @@ public class InternalFacilitiesController {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Sunday"));
     }
     // Currently classification is not populated for vet centers
-    if (facility.attributes().facilityType() != Facility.FacilityType.vet_center
+    if (facility.attributes().facilityType()
+            != gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center
         && isBlank(facility.attributes().classification())) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing classification"));
     }
@@ -505,16 +535,20 @@ public class InternalFacilitiesController {
           .problems()
           .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid location longitude"));
     }
-    if ((facility.attributes().facilityType() == Facility.FacilityType.va_benefits_facility)
+    if ((facility.attributes().facilityType()
+            == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_benefits_facility)
         && isBlank(services(facility).map(s -> s.benefits()))) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
-    if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility)
+    if ((facility.attributes().facilityType()
+            == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_health_facility)
         && isBlank(services(facility).map(s -> s.health()))) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
     }
-    if ((facility.attributes().facilityType() == Facility.FacilityType.va_health_facility
-            || facility.attributes().facilityType() == Facility.FacilityType.vet_center)
+    if ((facility.attributes().facilityType()
+                == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_health_facility
+            || facility.attributes().facilityType()
+                == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center)
         && isBlank(record.visn())) {
       response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing VISN"));
     }
@@ -531,8 +565,11 @@ public class InternalFacilitiesController {
     }
   }
 
-  private void updateFacility(ReloadResponse response, Facility facility) {
+  private void updateFacility(ReloadResponse response, FacilityPair facilityPair) {
     FacilityEntity.Pk pk;
+
+    gov.va.api.lighthouse.facilities.api.v0.Facility facility = facilityPair.v0();
+
     try {
       pk = FacilityEntity.Pk.fromIdString(facility.id());
     } catch (IllegalArgumentException e) {
@@ -549,7 +586,7 @@ public class InternalFacilitiesController {
     if (existing.isPresent()) {
       response.facilitiesUpdated().add(facility.id());
       log.warn("Updating facility {}", facility.id());
-      updateAndSave(response, existing.get(), facility);
+      updateAndSave(response, existing.get(), facilityPair);
       return;
     }
     var zombie = graveyardRepository.findById(pk);
@@ -569,18 +606,18 @@ public class InternalFacilitiesController {
                       ? null
                       : new HashSet<>(zombieEntity.graveyardOverlayServices()))
               .build();
-      updateAndSave(response, facilityEntity, facility);
+      updateAndSave(response, facilityEntity, facilityPair);
       deleteFromGraveyard(response, zombieEntity);
       return;
     }
     response.facilitiesCreated().add(facility.id());
     log.warn("Creating new facility {}", facility.id());
-    updateAndSave(response, FacilityEntity.builder().id(pk).build(), facility);
+    updateAndSave(response, FacilityEntity.builder().id(pk).build(), facilityPair);
   }
 
   @PostMapping(value = "/reload")
   @Loggable(arguments = false)
-  ResponseEntity<ReloadResponse> upload(@RequestBody List<Facility> collectedFacilities) {
+  ResponseEntity<ReloadResponse> upload(@RequestBody List<FacilityPair> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
   }

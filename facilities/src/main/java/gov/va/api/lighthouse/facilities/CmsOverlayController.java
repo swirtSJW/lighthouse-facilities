@@ -44,7 +44,7 @@ public class CmsOverlayController {
   }
 
   @PostMapping(
-      value = "/v0/facilities/{id}/cms-overlay",
+      value = {"/v0/facilities/{id}/cms-overlay", "/v1/facilities/{id}/cms-overlay"},
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows
@@ -61,7 +61,7 @@ public class CmsOverlayController {
 
     if (overlay.operatingStatus() != null) {
       entity.cmsOperatingStatus(
-          FacilitiesJacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()));
+          FacilitiesJacksonConfigV0.createMapper().writeValueAsString(overlay.operatingStatus()));
     }
 
     if (overlay.detailedServices() != null) {
@@ -93,7 +93,7 @@ public class CmsOverlayController {
       // Save the full payload if there are any active services
       entity.cmsServices(
           activeServices.size() > 0
-              ? FacilitiesJacksonConfig.createMapper().writeValueAsString(activeServices)
+              ? FacilitiesJacksonConfigV0.createMapper().writeValueAsString(activeServices)
               : null);
     }
 

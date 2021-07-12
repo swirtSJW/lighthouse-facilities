@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
@@ -67,7 +69,6 @@ public class FacilitiesCollectorTest {
             + "LONG VARCHAR,"
             + "WEBSITE_URL VARCHAR"
             + ")");
-
     jdbcTemplate.execute(
         "CREATE TABLE App.FacilityLocator_NCA ("
             + "SITE_ID VARCHAR,"
@@ -91,7 +92,6 @@ public class FacilitiesCollectorTest {
             + "LONGITUDE_DD VARCHAR,"
             + "Website_URL VARCHAR"
             + ")");
-
     jdbcTemplate.execute(
         "CREATE TABLE App.Vast ("
             + "VCTR2 VARCHAR,"
@@ -128,14 +128,12 @@ public class FacilitiesCollectorTest {
             + "VISN VARCHAR,"
             + "LASTUPDATED VARCHAR"
             + ")");
-
     jdbcTemplate.execute(
         "CREATE TABLE App.VHA_Mental_Health_Contact_Info ("
             + "StationNumber VARCHAR,"
             + "MHPhone VARCHAR,"
             + "Extension FLOAT"
             + ")");
-
     jdbcTemplate.execute(
         "CREATE TABLE App.VSSC_ClinicalServices ("
             + "Sta6a VARCHAR,"
@@ -177,6 +175,27 @@ public class FacilitiesCollectorTest {
   }
 
   @Test
+  void loadVastException() {
+    RestTemplate insecureRestTemplate = mock(RestTemplate.class);
+    InsecureRestTemplateProvider mockInsecureRestTemplateProvider =
+        mock(InsecureRestTemplateProvider.class);
+    when(mockInsecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
+    JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    when(mockTemplate.query(any(String.class), any(RowMapper.class)))
+        .thenThrow(new CollectorExceptions.CollectorException(new Throwable("oh noes")));
+    assertThrows(
+        CollectorExceptions.CollectorException.class,
+        () ->
+            new FacilitiesCollector(
+                    mockInsecureRestTemplateProvider,
+                    mockTemplate,
+                    "http://atc",
+                    "http://atp",
+                    "http://statecems")
+                .collectFacilities());
+  }
+
+  @Test
   @SneakyThrows
   void verifyResponse() {
     _initDatabase();
@@ -185,12 +204,10 @@ public class FacilitiesCollectorTest {
     _saveMentalHealthContact("666", "867-5309", 5555D);
     _saveStopCode("666", "123", "", "10");
     _saveVast("456");
-
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     InsecureRestTemplateProvider insecureRestTemplateProvider =
         mock(InsecureRestTemplateProvider.class);
     when(insecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
-
     when(insecureRestTemplate.exchange(
             startsWith("http://atc/atcapis"),
             eq(HttpMethod.GET),
@@ -202,7 +219,6 @@ public class FacilitiesCollectorTest {
                     JacksonConfig.createMapper()
                         .writeValueAsString(
                             List.of(AccessToCareEntry.builder().facilityId("x").build())))));
-
     when(insecureRestTemplate.exchange(
             startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenReturn(
@@ -217,7 +233,6 @@ public class FacilitiesCollectorTest {
             any(HttpEntity.class),
             eq(String.class)))
         .thenReturn(ResponseEntity.of(Optional.of("<cems><cem fac_id=\"1001\"/></cems>")));
-
     when(insecureRestTemplate.exchange(
             matches("http://statecems/cems/national.xml"),
             eq(HttpMethod.GET),
@@ -229,7 +244,6 @@ public class FacilitiesCollectorTest {
                     "<cems>"
                         + "<cem station=\"910\" cem_url=\"https://www.cem.va.gov/cems/nchp/FtRichardson.asp\"/>"
                         + "</cems>")));
-
     assertThat(
             new FacilitiesCollector(
                     insecureRestTemplateProvider,

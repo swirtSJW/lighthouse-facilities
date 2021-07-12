@@ -20,8 +20,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class FacilitiesByZipTest {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV0 controller() {
+    return FacilitiesControllerV0.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -42,14 +42,14 @@ public class FacilitiesByZipTest {
   @Test
   void jsonFacilitiesByZip_invalidService() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () -> controller().jsonFacilitiesByZip("33333", null, List.of("unknown"), null, 1, 1));
   }
 
   @Test
   void jsonFacilitiesByZip_invalidType() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () -> controller().jsonFacilitiesByZip("33333", "xxx", null, null, 1, 1));
   }
 
@@ -57,7 +57,7 @@ public class FacilitiesByZipTest {
   void jsonFacilitiesByZip_noFilter() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", null, null, null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -89,7 +89,7 @@ public class FacilitiesByZipTest {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(
             controller().jsonFacilitiesByZip("43219", null, List.of("urology"), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
@@ -99,7 +99,7 @@ public class FacilitiesByZipTest {
             controller().jsonFacilitiesByZip("43219", "HEALTH", List.of("primarycare"), null, 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
-                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757")))
+                .data(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()))
                 .links(
                     PageLinks.builder()
                         .self(
@@ -126,6 +126,6 @@ public class FacilitiesByZipTest {
   void jsonFacilitiesByZip_typeOnly() {
     repo.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     assertThat(controller().jsonFacilitiesByZip("43219", "HEALTH", emptyList(), null, 1, 1).data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 }

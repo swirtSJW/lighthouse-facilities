@@ -21,8 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class FacilitiesByLatLongTest {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV0 controller() {
+    return FacilitiesControllerV0.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("")
@@ -96,13 +96,13 @@ public class FacilitiesByLatLongTest {
                     1,
                     10)
                 .data())
-        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757")));
+        .isEqualTo(List.of(FacilitySamples.defaultSamples().facility("vha_757").v0()));
   }
 
   @Test
   void json_invalidService() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () ->
             controller()
                 .jsonFacilitiesByLatLong(
@@ -119,7 +119,7 @@ public class FacilitiesByLatLongTest {
   @Test
   void json_invalidType() {
     assertThrows(
-        ExceptionsV0.InvalidParameter.class,
+        ExceptionsUtils.InvalidParameter.class,
         () ->
             controller()
                 .jsonFacilitiesByLatLong(
@@ -152,9 +152,9 @@ public class FacilitiesByLatLongTest {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757"),
-                FacilitySamples.defaultSamples().facility("vha_740GA"),
-                FacilitySamples.defaultSamples().facility("vha_691GB")));
+                FacilitySamples.defaultSamples().facility("vha_757").v0(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").v0(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").v0()));
   }
 
   @Test
@@ -214,9 +214,9 @@ public class FacilitiesByLatLongTest {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757"),
-                FacilitySamples.defaultSamples().facility("vha_740GA"),
-                FacilitySamples.defaultSamples().facility("vha_691GB")));
+                FacilitySamples.defaultSamples().facility("vha_757").v0(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").v0(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").v0()));
   }
 
   @Test
@@ -241,9 +241,9 @@ public class FacilitiesByLatLongTest {
             FacilitiesResponse.builder()
                 .data(
                     List.of(
-                        FacilitySamples.defaultSamples().facility("vha_757"),
-                        FacilitySamples.defaultSamples().facility("vha_740GA"),
-                        FacilitySamples.defaultSamples().facility("vha_691GB")))
+                        FacilitySamples.defaultSamples().facility("vha_757").v0(),
+                        FacilitySamples.defaultSamples().facility("vha_740GA").v0(),
+                        FacilitySamples.defaultSamples().facility("vha_691GB").v0()))
                 .links(
                     PageLinks.builder()
                         .self(linkBase + "&page=1&per_page=10")
@@ -296,8 +296,8 @@ public class FacilitiesByLatLongTest {
                 .data())
         .isEqualTo(
             List.of(
-                FacilitySamples.defaultSamples().facility("vha_757"),
-                FacilitySamples.defaultSamples().facility("vha_740GA"),
-                FacilitySamples.defaultSamples().facility("vha_691GB")));
+                FacilitySamples.defaultSamples().facility("vha_757").v0(),
+                FacilitySamples.defaultSamples().facility("vha_740GA").v0(),
+                FacilitySamples.defaultSamples().facility("vha_691GB").v0()));
   }
 }

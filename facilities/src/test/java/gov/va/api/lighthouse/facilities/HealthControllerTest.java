@@ -212,6 +212,28 @@ public class HealthControllerTest {
             .build());
   }
 
+  @Test
+  void healthResourceAccessException() {
+    setRequestAttributes(mock(RequestAttributes.class));
+    when(insecureRestTemplateProvider.restTemplate()).thenReturn(restTemplate);
+    when(restTemplate.exchange(
+            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+        .thenThrow(ResourceAccessException.class);
+    when(restTemplate.exchange(
+            startsWith("http://atp"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+        .thenReturn(ok());
+    when(restTemplate.exchange(
+            startsWith("http://statecems"),
+            eq(HttpMethod.GET),
+            any(HttpEntity.class),
+            eq(String.class)))
+        .thenReturn(ok());
+    when(jdbcTemplate.queryForObject(any(String.class), eq(Timestamp.class)))
+        .thenReturn(Timestamp.from(Instant.now()));
+    ResponseEntity<Health> response = _controller().collectorBackendHealth();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+  }
+
   @Value
   @Builder
   private static final class ExpectedStatus {

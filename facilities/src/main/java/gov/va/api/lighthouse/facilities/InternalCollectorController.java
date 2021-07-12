@@ -1,7 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class InternalCollectorController {
   }
 
   @GetMapping(value = "/facilities")
-  List<Facility> collectFacilities() {
+  List<FacilityPair> collectFacilities() {
     return collector.collectFacilities();
   }
 

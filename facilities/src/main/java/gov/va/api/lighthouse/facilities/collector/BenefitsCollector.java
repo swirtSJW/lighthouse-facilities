@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.sql.ResultSet;
 import java.util.Collection;
 import java.util.List;
@@ -68,12 +67,29 @@ final class BenefitsCollector {
   }
 
   /** Collects and transforms all benefits into a list of facilities. */
-  public Collection<Facility> collect() {
+  public Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> collect() {
     try {
       return requestCdwBenefits().stream()
           .map(
               facility ->
-                  BenefitsTransformer.builder()
+                  BenefitsTransformerV0.builder()
+                      .cdwFacility(facility)
+                      .csvWebsite(websites.get("vba_" + facility.facilityNumber()))
+                      .build()
+                      .toFacility())
+          .collect(toList());
+    } catch (Exception e) {
+      throw new CollectorExceptions.BenefitsCollectorException(e);
+    }
+  }
+
+  /** Collects and transforms all benefits into a list of facilities. */
+  public Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
+    try {
+      return requestCdwBenefits().stream()
+          .map(
+              facility ->
+                  BenefitsTransformerV1.builder()
                       .cdwFacility(facility)
                       .csvWebsite(websites.get("vba_" + facility.facilityNumber()))
                       .build()

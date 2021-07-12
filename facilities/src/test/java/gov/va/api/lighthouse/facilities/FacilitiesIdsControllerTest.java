@@ -17,8 +17,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class FacilitiesIdsControllerTest {
   @Autowired private FacilityRepository repo;
 
-  private FacilitiesController controller() {
-    return FacilitiesController.builder()
+  private FacilitiesControllerV0 controller() {
+    return FacilitiesControllerV0.builder()
         .facilityRepository(repo)
         .baseUrl("http://foo/")
         .basePath("bp")
@@ -34,7 +34,8 @@ public class FacilitiesIdsControllerTest {
 
   @Test
   void invalidType() {
-    assertThrows(ExceptionsV0.InvalidParameter.class, () -> controller().facilityIdsByType("xxx"));
+    assertThrows(
+        ExceptionsUtils.InvalidParameter.class, () -> controller().facilityIdsByType("xxx"));
   }
 
   @Test

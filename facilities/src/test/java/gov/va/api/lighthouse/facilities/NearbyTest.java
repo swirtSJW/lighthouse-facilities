@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -41,10 +42,10 @@ public class NearbyTest {
 
   @Mock RestTemplate restTemplate = mock(RestTemplate.class);
 
-  private NearbyController _controller() {
+  private NearbyControllerV0 _controller() {
     InsecureRestTemplateProvider restTemplateProvider = mock(InsecureRestTemplateProvider.class);
     when(restTemplateProvider.restTemplate()).thenReturn(restTemplate);
-    return NearbyController.builder()
+    return NearbyControllerV0.builder()
         .facilityRepository(facilityRepository)
         .driveTimeBandRepository(driveTimeBandRepository)
         .restTemplateProvider(restTemplateProvider)
@@ -126,28 +127,47 @@ public class NearbyTest {
         .build();
   }
 
-  private FacilityEntity _facilityEntity(Facility fac) {
+  private FacilityEntity _facilityEntity(FacilityPair facilityPair) {
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
-            .id(FacilityEntity.Pk.fromIdString(fac.id()))
+            .id(FacilityEntity.Pk.fromIdString(facilityPair.v0().id()))
             .lastUpdated(Instant.now())
             .build(),
-        fac);
+        facilityPair);
   }
 
-  private Facility _facilityHealth(String id) {
-    return Facility.builder()
-        .id(id)
-        .attributes(
-            Facility.FacilityAttributes.builder()
-                .latitude(BigDecimal.ONE)
-                .longitude(BigDecimal.ONE)
-                .services(
-                    Facility.Services.builder()
-                        .health(List.of(Facility.HealthService.PrimaryCare))
-                        .build())
-                .build())
-        .build();
+  private FacilityPair _facilityHealth(String id) {
+    Facility facility =
+        Facility.builder()
+            .id(id)
+            .attributes(
+                Facility.FacilityAttributes.builder()
+                    .latitude(BigDecimal.ONE)
+                    .longitude(BigDecimal.ONE)
+                    .services(
+                        Facility.Services.builder()
+                            .health(List.of(Facility.HealthService.PrimaryCare))
+                            .build())
+                    .build())
+            .build();
+
+    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 =
+        gov.va.api.lighthouse.facilities.api.v1.Facility.builder()
+            .id(id)
+            .attributes(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes.builder()
+                    .latitude(BigDecimal.ONE)
+                    .longitude(BigDecimal.ONE)
+                    .services(
+                        gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
+                            .health(
+                                List.of(
+                                    gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
+                                        .PrimaryCare))
+                            .build())
+                    .build())
+            .build();
+    return FacilityPair.builder().v0(facility).v1(facilityV1).build();
   }
 
   @Test
@@ -227,7 +247,7 @@ public class NearbyTest {
             eq(String.class)))
         .thenThrow(new IllegalStateException("Google instead?"));
     assertThrows(
-        ExceptionsV0.BingException.class,
+        ExceptionsUtils.BingException.class,
         () ->
             _controller()
                 .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null));
@@ -268,7 +288,7 @@ public class NearbyTest {
                                             .build()))
                                 .build()))));
     assertThrows(
-        ExceptionsV0.BingException.class,
+        ExceptionsUtils.BingException.class,
         () ->
             _controller()
                 .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null));
