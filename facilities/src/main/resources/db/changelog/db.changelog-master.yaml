@@ -299,3 +299,38 @@ databaseChangeLog:
                   name: station_number
               - column:
                   name: type
+
+  - changeSet:
+      id: 9
+      author: shanktopus
+      changes:
+        - createTable:
+            tableName: facility_urgent_contact
+            schemaName: app
+            columns:
+              - column:
+                  name: id
+                  type: varchar(50)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: station_number
+                  type: varchar(16)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: facility_type
+                  type: varchar(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payload
+                  type: clob
+                  constraints:
+                    nullable: false
