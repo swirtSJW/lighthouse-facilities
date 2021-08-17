@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
@@ -28,6 +29,8 @@ import org.springframework.web.client.RestTemplate;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class FacilitiesCollectorTest {
   @Autowired JdbcTemplate jdbcTemplate;
+
+  @Autowired CmsOverlayRepository cmsOverlayRepository;
 
   private void _initDatabase() {
     jdbcTemplate.execute(
@@ -181,6 +184,7 @@ public class FacilitiesCollectorTest {
         mock(InsecureRestTemplateProvider.class);
     when(mockInsecureRestTemplateProvider.restTemplate()).thenReturn(insecureRestTemplate);
     JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
+    CmsOverlayRepository mockCmsOverlayRepository = mock(CmsOverlayRepository.class);
     when(mockTemplate.query(any(String.class), any(RowMapper.class)))
         .thenThrow(new CollectorExceptions.CollectorException(new Throwable("oh noes")));
     assertThrows(
@@ -189,6 +193,7 @@ public class FacilitiesCollectorTest {
             new FacilitiesCollector(
                     mockInsecureRestTemplateProvider,
                     mockTemplate,
+                    mockCmsOverlayRepository,
                     "http://atc",
                     "http://atp",
                     "http://statecems")
@@ -248,6 +253,7 @@ public class FacilitiesCollectorTest {
             new FacilitiesCollector(
                     insecureRestTemplateProvider,
                     jdbcTemplate,
+                    cmsOverlayRepository,
                     "http://atc",
                     "http://atp",
                     "http://statecems")

@@ -1,12 +1,15 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.cms.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
 import java.util.HashSet;
@@ -23,10 +26,49 @@ import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
 public class CmsOverlayControllerTest {
-  @Mock FacilityRepository repository;
+  @Mock FacilityRepository mockFacilityRepository;
+
+  @Mock CmsOverlayRepository mockCmsOverlayRepository;
 
   CmsOverlayController controller() {
-    return CmsOverlayController.builder().repository(repository).build();
+    return CmsOverlayController.builder()
+        .facilityRepository(mockFacilityRepository)
+        .cmsOverlayRepository(mockCmsOverlayRepository)
+        .build();
+  }
+
+  @Test
+  @SneakyThrows
+  void getExistingOverlay() {
+    CmsOverlay overlay = overlay();
+    var pk = FacilityEntity.Pk.fromIdString("vha_402");
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                FacilitiesJacksonConfigV0.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                FacilitiesJacksonConfigV0.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    // active will ALWAYS be false when retrieving from the database, the fact the overlay
+    // exists means that active was true at the time of insertion
+    for (DetailedService d : overlay.detailedServices()) {
+      d.active(false);
+    }
+    ResponseEntity<CmsOverlayResponse> response = controller().getOverlay("vha_402");
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().overlay()).isEqualTo(overlay);
+  }
+
+  @Test
+  void getNonExistingOverlay() {
+    assertThatThrownBy(() -> controller().getOverlay("vha_041"))
+        .isInstanceOf(ExceptionsUtils.NotFound.class)
+        .hasMessage("The record identified by vha_041 could not be found");
   }
 
   private CmsOverlay overlay() {
@@ -41,7 +83,7 @@ public class CmsOverlayControllerTest {
                 DetailedService.builder()
                     .name(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)
                     .active(true)
-                    .changed("2021-02-04T22:36:49+00:00")
+                    .changed(null)
                     .descriptionFacility(null)
                     .appointmentLeadIn(
                         "Your VA health care team will contact you if you...more text")
@@ -105,52 +147,109 @@ public class CmsOverlayControllerTest {
   @Test
   @SneakyThrows
   void updateIsAcceptedForKnownStation() {
+    Facility f =
+        Facility.builder()
+            .id("vha_402")
+            .attributes(Facility.FacilityAttributes.builder().website("va.gov").build())
+            .build();
     var pk = FacilityEntity.Pk.fromIdString("vha_402");
-    FacilityEntity entity = FacilityEntity.builder().id(pk).build();
-    when(repository.findById(pk)).thenReturn(Optional.of(entity));
+    FacilityEntity entity =
+        FacilityEntity.builder()
+            .id(pk)
+            .facility(FacilitiesJacksonConfigV0.createMapper().writeValueAsString(f))
+            .build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
     ResponseEntity<Void> response = controller().saveOverlay("vha_402", overlay);
     Set<String> detailedServices = new HashSet<>();
-
     for (DetailedService service : overlay.detailedServices()) {
       if (service.active()) {
         detailedServices.add(service.name());
       }
     }
-
     entity.cmsOperatingStatus(
         FacilitiesJacksonConfigV0.createMapper().writeValueAsString(overlay.operatingStatus()));
     entity.overlayServices(detailedServices);
-    verify(repository).save(entity);
+    verify(mockFacilityRepository).save(entity);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
   @Test
   void updateIsSkippedForUnknownStation() {
     var pk = FacilityEntity.Pk.fromIdString("vha_666");
-    when(repository.findById(pk)).thenReturn(Optional.empty());
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.empty());
     ResponseEntity<Void> response = controller().saveOverlay("vha_666", overlay());
-    verifyNoMoreInteractions(repository);
+    verifyNoMoreInteractions(mockFacilityRepository);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
   }
 
   @Test
   @SneakyThrows
-  void verifyServicePathUpdated() {
-    var pk = FacilityEntity.Pk.fromIdString("vha_402");
-    FacilityEntity entity = FacilityEntity.builder().id(pk).build();
-    when(repository.findById(pk)).thenReturn(Optional.of(entity));
-
+  void updateWithExistingOverlay() {
     CmsOverlay overlay = overlay();
 
+    var pk = FacilityEntity.Pk.fromIdString("vha_402");
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                FacilitiesJacksonConfigV0.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                FacilitiesJacksonConfigV0.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+
+    List<DetailedService> additionalServices =
+        List.of(
+            DetailedService.builder().name("additional service1").active(true).build(),
+            DetailedService.builder().name("additional service2").active(true).build());
+
+    overlay.detailedServices(additionalServices);
+    controller().saveOverlay("vha_402", overlay);
+
+    CmsOverlay updatedCovidPathOverlay = overlay();
+
+    controller().updateServiceUrlPaths("vha_402", updatedCovidPathOverlay.detailedServices());
+
+    List<DetailedService> combinedServices =
+        Streams.stream(
+                Iterables.concat(updatedCovidPathOverlay.detailedServices(), additionalServices))
+            .toList();
+    // active will ALWAYS be false when retrieving from the database, the fact the overlay
+    // exists means that active was true at the time of insertion
+    for (DetailedService d : combinedServices) {
+      d.active(false);
+    }
+    ResponseEntity<CmsOverlayResponse> response = controller().getOverlay("vha_402");
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().overlay().detailedServices()).containsAll(combinedServices);
+  }
+
+  @Test
+  @SneakyThrows
+  void verifyServicePathUpdated() {
+    Facility f =
+        Facility.builder()
+            .id("vha_402")
+            .attributes(Facility.FacilityAttributes.builder().website("va.gov").build())
+            .build();
+    var pk = FacilityEntity.Pk.fromIdString("vha_402");
+    FacilityEntity entity =
+        FacilityEntity.builder()
+            .id(pk)
+            .facility(FacilitiesJacksonConfigV0.createMapper().writeValueAsString(f))
+            .build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
+    CmsOverlay overlay = overlay();
     for (DetailedService d : overlay.detailedServices()) {
       if (d.name().equals(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path()).isEqualTo("replaceable path here");
       }
     }
-
     controller().saveOverlay("vha_402", overlay);
-
     for (DetailedService d : overlay.detailedServices()) {
       if (d.name().equals(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path()).isEqualTo("https://www.maine.va.gov/services/covid-19-vaccines.asp");

@@ -455,3 +455,44 @@ databaseChangeLog:
             - column:
                 name: month_year
                 type: varchar(7)
+
+  - changeSet:
+      id: 16
+      author: axolotl
+      changes:
+        - createTable:
+            tableName: cms_overlay
+            schemaName: app
+            columns:
+              - column:
+                  name: station_number
+                  type: varchar(16)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: type
+                  type: varchar(3)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cms_operating_status
+                  type: clob
+                  constraints:
+                    nullable: true
+              - column:
+                  name: cms_services
+                  type: clob
+                  constraints:
+                    nullable: true
+        - createIndex:
+            tableName: cms_overlay
+            schemaName: app
+            clustered: false
+            indexName: cms_overlay_id_idx
+            columns:
+              - column:
+                  name: station_number
+              - column:
+                  name: type

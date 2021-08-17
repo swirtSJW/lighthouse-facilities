@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
@@ -21,20 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FacilityOverlayV0 implements Function<HasFacilityPayload, Facility> {
   @NonNull ObjectMapper mapper;
-
-  private static void applyCmsOverlayOperatingStatus(
-      Facility facility, Facility.OperatingStatus operatingStatus) {
-    if (operatingStatus == null) {
-      log.warn("CMS Overlay for facility {} is missing operating status", facility.id());
-    } else {
-      facility.attributes().operatingStatus(operatingStatus);
-      if (operatingStatus.code() == OperatingStatusCode.CLOSED) {
-        facility.attributes().activeStatus(ActiveStatus.T);
-      } else {
-        facility.attributes().activeStatus(ActiveStatus.A);
-      }
-    }
-  }
 
   private static void applyCmsOverlayServices(Facility facility, Set<String> overlayServices) {
     if (overlayServices == null) {
@@ -61,15 +46,6 @@ public class FacilityOverlayV0 implements Function<HasFacilityPayload, Facility>
     }
   }
 
-  private static void applyDetailedServices(
-      Facility facility, List<DetailedService> detailedServices) {
-    if (detailedServices == null) {
-      log.warn("CMS Overlay for facility {} is missing Detailed CMS Services", facility.id());
-    } else {
-      facility.attributes().detailedServices(detailedServices);
-    }
-  }
-
   private static OperatingStatus determineOperatingStatusFromActiveStatus(
       ActiveStatus activeStatus) {
     if (activeStatus == ActiveStatus.T) {
@@ -83,23 +59,17 @@ public class FacilityOverlayV0 implements Function<HasFacilityPayload, Facility>
   public Facility apply(HasFacilityPayload entity) {
     Facility facility = mapper.readValue(entity.facility(), Facility.class);
 
-    if (entity.cmsOperatingStatus() != null) {
-      applyCmsOverlayOperatingStatus(
-          facility, mapper.readValue(entity.cmsOperatingStatus(), Facility.OperatingStatus.class));
-    }
     if (facility.attributes().operatingStatus() == null) {
       facility
           .attributes()
           .operatingStatus(
               determineOperatingStatusFromActiveStatus(facility.attributes().activeStatus()));
     }
+
     if (entity.overlayServices() != null) {
       applyCmsOverlayServices(facility, entity.overlayServices());
     }
-    if (entity.cmsServices() != null) {
-      applyDetailedServices(
-          facility, List.of(mapper.readValue(entity.cmsServices(), DetailedService[].class)));
-    }
+
     return facility;
   }
 }

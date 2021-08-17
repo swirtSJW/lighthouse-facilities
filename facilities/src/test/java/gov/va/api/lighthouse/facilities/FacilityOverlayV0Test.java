@@ -19,38 +19,6 @@ import org.junit.jupiter.api.Test;
 public class FacilityOverlayV0Test {
   private static final ObjectMapper mapper = FacilitiesJacksonConfigV0.createMapper();
 
-  @Test
-  void activeStatusIsPopulatedByOperatingStatusWhenAvailable() {
-    assertStatus(
-        ActiveStatus.A,
-        op(OperatingStatusCode.NORMAL, "neato"),
-        null,
-        entity(
-            fromActiveStatus(ActiveStatus.T),
-            overlay(op(OperatingStatusCode.NORMAL, "neato"), false)));
-    assertStatus(
-        ActiveStatus.A,
-        op(OperatingStatusCode.NOTICE, "neato"),
-        null,
-        entity(
-            fromActiveStatus(ActiveStatus.T),
-            overlay(op(OperatingStatusCode.NOTICE, "neato"), false)));
-    assertStatus(
-        ActiveStatus.A,
-        op(OperatingStatusCode.LIMITED, "neato"),
-        List.of(Facility.HealthService.Covid19Vaccine),
-        entity(
-            fromActiveStatus(ActiveStatus.T),
-            overlay(op(OperatingStatusCode.LIMITED, "neato"), true)));
-    assertStatus(
-        ActiveStatus.T,
-        op(OperatingStatusCode.CLOSED, "neato"),
-        List.of(Facility.HealthService.Covid19Vaccine),
-        entity(
-            fromActiveStatus(ActiveStatus.A),
-            overlay(op(OperatingStatusCode.CLOSED, "neato"), true)));
-  }
-
   private void assertStatus(
       ActiveStatus expectedActiveStatus,
       OperatingStatus expectedOperatingStatus,

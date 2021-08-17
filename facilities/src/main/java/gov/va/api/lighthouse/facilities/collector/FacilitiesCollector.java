@@ -8,7 +8,12 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
+import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
+import gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV0;
 import gov.va.api.lighthouse.facilities.api.FacilityPair;
+import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +21,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +49,8 @@ public class FacilitiesCollector {
 
   private final JdbcTemplate jdbcTemplate;
 
+  private final CmsOverlayRepository cmsOverlayRepository;
+
   private final String atcBaseUrl;
 
   private final String atpBaseUrl;
@@ -53,11 +61,13 @@ public class FacilitiesCollector {
   public FacilitiesCollector(
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
+      @Autowired CmsOverlayRepository cmsOverlayRepository,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${cemeteries.url}") String cemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
+    this.cmsOverlayRepository = cmsOverlayRepository;
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
@@ -67,9 +77,7 @@ public class FacilitiesCollector {
   @SneakyThrows
   public static ArrayList<String> loadCaregiverSupport(String resourceName) {
     final Stopwatch totalWatch = Stopwatch.createStarted();
-
     ArrayList<String> cscFacilities = new ArrayList<>();
-
     try (BufferedReader reader =
         new BufferedReader(
             new InputStreamReader(
@@ -79,7 +87,6 @@ public class FacilitiesCollector {
         cscFacilities.add("vha_" + line);
       }
     }
-
     log.info(
         "Loading caregiver support facilities took {} millis for {} entries",
         totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
@@ -167,16 +174,15 @@ public class FacilitiesCollector {
     Map<String, String> websites;
     Collection<VastEntity> vastEntities;
     ArrayList<String> cscFacilities;
-
+    HashMap<String, CmsOverlay> cmsOverlays;
     try {
       websites = loadWebsites(WEBSITES_CSV_RESOURCE_NAME);
       vastEntities = loadVast();
       cscFacilities = loadCaregiverSupport(CSC_STATIONS_RESOURCE_NAME);
-
+      cmsOverlays = loadCmsOverlays();
     } catch (Exception e) {
       throw new CollectorExceptions.CollectorException(e);
     }
-
     Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> healthsV0 =
         HealthsCollector.builder()
             .atcBaseUrl(atcBaseUrl)
@@ -188,7 +194,6 @@ public class FacilitiesCollector {
             .websites(websites)
             .build()
             .collect();
-
     Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> healthsV1 =
         HealthsCollector.builder()
             .atcBaseUrl(atcBaseUrl)
@@ -200,7 +205,6 @@ public class FacilitiesCollector {
             .websites(websites)
             .build()
             .collectV1();
-
     Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> stateCemsV0 =
         StateCemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
@@ -208,7 +212,6 @@ public class FacilitiesCollector {
             .websites(websites)
             .build()
             .collect();
-
     Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> stateCemsV1 =
         StateCemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
@@ -216,31 +219,26 @@ public class FacilitiesCollector {
             .websites(websites)
             .build()
             .collectV1();
-
     Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> vetCentersV0 =
         VetCentersCollector.builder()
             .vastEntities(vastEntities)
             .websites(websites)
             .build()
             .collect();
-
     Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> vetCentersV1 =
         VetCentersCollector.builder()
             .vastEntities(vastEntities)
             .websites(websites)
             .build()
             .collectV1();
-
     Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> benefitsV0 =
         BenefitsCollector.builder().websites(websites).jdbcTemplate(jdbcTemplate).build().collect();
-
     Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> benefitsV1 =
         BenefitsCollector.builder()
             .websites(websites)
             .jdbcTemplate(jdbcTemplate)
             .build()
             .collectV1();
-
     Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> cemeteriesV0 =
         CemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
@@ -249,7 +247,6 @@ public class FacilitiesCollector {
             .jdbcTemplate(jdbcTemplate)
             .build()
             .collect();
-
     Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> cemeteriesV1 =
         CemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
@@ -258,7 +255,6 @@ public class FacilitiesCollector {
             .jdbcTemplate(jdbcTemplate)
             .build()
             .collectV1();
-
     log.info(
         "Collected V0: Health {},  Benefits {},  Vet centers {}, "
             + "Non-national cemeteries {}, Cemeteries {}",
@@ -267,7 +263,6 @@ public class FacilitiesCollector {
         vetCentersV0.size(),
         stateCemsV0.size(),
         cemeteriesV0.size());
-
     log.info(
         "Collected V1: Health {},  Benefits {},  Vet centers {}, "
             + "Non-national cemeteries {}, Cemeteries {}",
@@ -276,27 +271,66 @@ public class FacilitiesCollector {
         vetCentersV1.size(),
         stateCemsV1.size(),
         cemeteriesV1.size());
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
-
     List<gov.va.api.lighthouse.facilities.api.v0.Facility> facilitiesV0 =
         Streams.stream(
                 Iterables.concat(benefitsV0, cemeteriesV0, healthsV0, stateCemsV0, vetCentersV0))
             .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
             .collect(toList());
-
+    // todo: This only needs to be done for v1 in the future. Necessary changes coming in future
+    // work
+    for (gov.va.api.lighthouse.facilities.api.v0.Facility facility : facilitiesV0) {
+      if (cmsOverlays.containsKey(facility.id())) {
+        CmsOverlay cmsOverlay = cmsOverlays.get(facility.id());
+        facility.attributes().operatingStatus(cmsOverlay.operatingStatus());
+        facility.attributes().detailedServices(cmsOverlay.detailedServices());
+      } else {
+        log.warn("No cms overlay for facility: {}", facility.id());
+      }
+    }
     List<gov.va.api.lighthouse.facilities.api.v1.Facility> facilitiesV1 =
         Streams.stream(
                 Iterables.concat(benefitsV1, cemeteriesV1, healthsV1, stateCemsV1, vetCentersV1))
             .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
             .collect(toList());
-
     for (int i = 0; i < facilitiesV0.size(); i++) {
       facilityPairs.add(
           FacilityPair.builder().v0(facilitiesV0.get(i)).v1(facilitiesV1.get(i)).build());
     }
-
     return facilityPairs;
+  }
+
+  private HashMap<String, CmsOverlay> loadCmsOverlays() {
+    HashMap<String, CmsOverlay> returnMap = new HashMap<>();
+    Streams.stream(cmsOverlayRepository.findAll())
+        .parallel()
+        .forEach(
+            cmsOverlayEntity -> {
+              try {
+                returnMap.put(
+                    cmsOverlayEntity.id().toIdString(),
+                    CmsOverlay.builder()
+                        .operatingStatus(
+                            cmsOverlayEntity.cmsOperatingStatus() != null
+                                ? FacilitiesJacksonConfigV0.createMapper()
+                                    .readValue(
+                                        cmsOverlayEntity.cmsOperatingStatus(),
+                                        Facility.OperatingStatus.class)
+                                : null)
+                        .detailedServices(
+                            cmsOverlayEntity.cmsServices() != null
+                                ? List.of(
+                                    FacilitiesJacksonConfigV0.createMapper()
+                                        .readValue(
+                                            cmsOverlayEntity.cmsServices(),
+                                            DetailedService[].class))
+                                : null)
+                        .build());
+              } catch (Exception e) {
+                log.error("Failed to load cms overlay data. {}", e.getMessage());
+              }
+            });
+    return returnMap;
   }
 
   private List<VastEntity> loadVast() {
@@ -340,7 +374,6 @@ public class FacilitiesCollector {
                     + "LASTUPDATED"
                     + " FROM App.Vast",
                 (rs, rowNum) -> toVastEntity(rs)));
-
     log.info(
         "Loading VAST took {} millis for {} entries",
         watch.stop().elapsed(TimeUnit.MILLISECONDS),

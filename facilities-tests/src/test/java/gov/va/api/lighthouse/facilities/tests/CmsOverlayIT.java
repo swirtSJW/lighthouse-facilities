@@ -10,6 +10,8 @@ import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.cms.CmsOverlayResponse;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
@@ -18,6 +20,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import io.restassured.specification.RequestSpecification;
 import java.time.Instant;
+import java.util.List;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -33,7 +36,7 @@ public class CmsOverlayIT {
       "{    \"detailed_services\":["
           + "{"
           + "\"name\":\"COVID-19 vaccines\","
-          + "\"active\":false,"
+          + "\"active\":true,"
           + "\"changed\": \"2021-02-04T22:36:49+00:00\","
           + "\"description_facility\":\"I'm a facility service!\","
           + "\"health_service_api_id\":\"12435\","
@@ -164,11 +167,8 @@ public class CmsOverlayIT {
   @SneakyThrows
   void deleteOverlayAndFacility() {
     var id = systemDefinition().ids().facility();
-
     SystemDefinitions.Service svc = systemDefinition().facilities();
-
     SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
-
     // Create detailed service for facility then remove it
     ExpectedResponse.of(
             requestSpecification()
@@ -177,7 +177,6 @@ public class CmsOverlayIT {
                 .request(
                     Method.POST, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
         .expect(200);
-
     ExpectedResponse.of(
             requestSpecificationInternal()
                 .request(
@@ -187,19 +186,194 @@ public class CmsOverlayIT {
                         + id
                         + "/cms-overlay"))
         .expect(200);
-
     ExpectedResponse.of(
             requestSpecificationInternal()
                 .request(
                     Method.DELETE,
                     svcInternal.urlWithApiPath() + "internal/management/facilities/" + id))
         .expect(200);
-
     // Call reload since we deleted the facility
     ExpectedResponse.of(
             requestSpecificationInternal()
                 .request(Method.GET, svcInternal.urlWithApiPath() + "internal/management/reload"))
         .expect(200);
+  }
+
+  @Test
+  @SneakyThrows
+  void multiOverlayUpdate() {
+    OperatingStatus ops =
+        OperatingStatus.builder()
+            .code(OperatingStatusCode.NOTICE)
+            .additionalInfo("Update1")
+            .build();
+
+    DetailedService detailedService =
+        DetailedService.builder()
+            .name("COVID-19 vaccines")
+            .descriptionFacility("I'm a facility service!")
+            .appointmentLeadIn("Your VA health care team will contact you if you...more text")
+            .onlineSchedulingAvailable("Unknown")
+            .phoneNumbers(
+                List.of(
+                    DetailedService.AppointmentPhoneNumber.builder()
+                        .extension("123")
+                        .label("Main phone changed")
+                        .number("555-555-1212")
+                        .type("tel")
+                        .build(),
+                    DetailedService.AppointmentPhoneNumber.builder()
+                        .label("Main Fax")
+                        .number("444-444-1212")
+                        .type("fax")
+                        .build()))
+            .referralRequired("False")
+            .serviceLocations(
+                List.of(
+                    DetailedService.DetailedServiceLocation.builder()
+                        .additionalHoursInfo("Please use call for an apt outside...")
+                        .emailContacts(
+                            List.of(
+                                DetailedService.DetailedServiceEmailContact.builder()
+                                    .emailAddress("georgea@va.gov")
+                                    .emailLabel("George Anderson")
+                                    .build(),
+                                DetailedService.DetailedServiceEmailContact.builder()
+                                    .emailAddress("confirmations@va.gov")
+                                    .emailLabel("Confirm your appointment")
+                                    .build()))
+                        .facilityServiceHours(
+                            DetailedService.DetailedServiceHours.builder()
+                                .monday("830AM-700PM")
+                                .tuesday("830AM-700PM")
+                                .wednesday("ANY STRING b")
+                                .thursday("830AM-600PM")
+                                .friday("830AM-430PM")
+                                .saturday("Closed")
+                                .sunday("Closed")
+                                .build())
+                        .appointmentPhoneNumbers(
+                            List.of(
+                                DetailedService.AppointmentPhoneNumber.builder()
+                                    .extension("123")
+                                    .label("Appointment phone")
+                                    .number("555-555-1212")
+                                    .type("tel")
+                                    .build(),
+                                DetailedService.AppointmentPhoneNumber.builder()
+                                    .label("TTY")
+                                    .number("222-222-1212")
+                                    .type("tty")
+                                    .build()))
+                        .serviceLocationAddress(
+                            DetailedService.DetailedServiceAddress.builder()
+                                .address1("122 Main St.")
+                                .state("NY")
+                                .buildingNameNumber("Baxter Bulding")
+                                .clinicName("Baxter Clinic")
+                                .countryCode("US")
+                                .city("Rochester")
+                                .zipCode("14623-1345")
+                                .wingFloorOrRoomNumber("Wing East")
+                                .build())
+                        .build()))
+            .walkInsAccepted("True")
+            .build();
+
+    var id = systemDefinition().ids().facility();
+
+    SystemDefinitions.Service svc = systemDefinition().facilities();
+    SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
+
+    // make sure the overlay doesn't exist is cleaned up before running the rest of the test
+    ExpectedResponse.of(
+        requestSpecificationInternal()
+            .request(
+                Method.DELETE,
+                svcInternal.urlWithApiPath() + "internal/management/cms-overlay/" + id));
+
+    ExpectedResponse.of(
+        requestSpecificationInternal()
+            .request(
+                Method.DELETE,
+                svcInternal.urlWithApiPath()
+                    + "internal/management/facilities/"
+                    + id
+                    + "/cms-overlay"));
+
+    ExpectedResponse.of(
+            requestSpecificationInternal()
+                .request(Method.GET, svcInternal.urlWithApiPath() + "internal/management/reload"))
+        .expect(200);
+
+    // Attempt to get an overlay that does not exist
+    ExpectedResponse.of(
+            requestSpecification()
+                .contentType("application/json")
+                .request(Method.GET, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
+        .expect(404);
+
+    // Create an overlay
+    ExpectedResponse.of(
+            requestSpecification()
+                .contentType("application/json")
+                .body(MAPPER.writeValueAsString(CmsOverlay.builder().operatingStatus(ops).build()))
+                .request(
+                    Method.POST, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
+        .expect(200);
+
+    // Retrieve the overlay
+    var cmsOverlay =
+        ExpectedResponse.of(
+                requestSpecification()
+                    .request(
+                        Method.GET, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
+            .expect(200)
+            .expectValid(CmsOverlayResponse.class);
+
+    assertThat(cmsOverlay.overlay().operatingStatus()).isEqualTo(ops);
+    assertThat(cmsOverlay.overlay().detailedServices()).isNull();
+
+    var facility =
+        ExpectedResponse.of(
+                requestSpecification()
+                    .request(Method.GET, svc.urlWithApiPath() + "v0/facilities/" + id))
+            .expect(200)
+            .expectValid(FacilityReadResponse.class)
+            .facility();
+
+    assertThat(facility.attributes().operatingStatus()).isEqualTo(ops);
+    assertThat(facility.attributes().detailedServices()).isNull();
+
+    ExpectedResponse.of(
+            requestSpecification()
+                .contentType("application/json")
+                .body(DETAILED_SERVICE_JSON_BODY)
+                .request(
+                    Method.POST, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
+        .expect(200);
+
+    cmsOverlay =
+        ExpectedResponse.of(
+                requestSpecification()
+                    .request(
+                        Method.GET, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
+            .expect(200)
+            .expectValid(CmsOverlayResponse.class);
+
+    assertThat(cmsOverlay.overlay().operatingStatus()).isEqualTo(ops);
+    assertThat(cmsOverlay.overlay().detailedServices()).isEqualTo(List.of(detailedService));
+
+    facility =
+        ExpectedResponse.of(
+                requestSpecification()
+                    .request(Method.GET, svc.urlWithApiPath() + "v0/facilities/" + id))
+            .expect(200)
+            .expectValid(FacilityReadResponse.class)
+            .facility();
+
+    assertThat(facility.attributes().operatingStatus()).isEqualTo(ops);
+    assertThat(facility.attributes().detailedServices()).isEqualTo(List.of(detailedService));
   }
 
   @Test
@@ -217,6 +391,14 @@ public class CmsOverlayIT {
                 .request(
                     Method.POST, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
         .expect(202);
+    var cmsOverlay =
+        ExpectedResponse.of(
+                requestSpecification()
+                    .request(
+                        Method.GET, svc.urlWithApiPath() + "v0/facilities/" + id + "/cms-overlay"))
+            .expect(200)
+            .expectValid(CmsOverlayResponse.class);
+    assertThat(cmsOverlay.overlay().operatingStatus()).isEqualTo(ops);
   }
 
   @Test

@@ -84,6 +84,8 @@ public class InternalFacilitiesController {
 
   private final FacilitiesCollector collector;
 
+  private final CmsOverlayRepository cmsOverlayRepository;
+
   private final FacilityRepository facilityRepository;
 
   private final FacilityGraveyardRepository graveyardRepository;
@@ -187,9 +189,19 @@ public class InternalFacilitiesController {
     return null;
   }
 
+  private Optional<CmsOverlayEntity> cmsOverlayEntityById(String id) {
+    FacilityEntity.Pk pk = null;
+    try {
+      pk = FacilityEntity.Pk.fromIdString(id);
+    } catch (IllegalArgumentException ex) {
+      return Optional.empty();
+    }
+    return cmsOverlayRepository.findById(pk);
+  }
+
   @DeleteMapping(value = "/facilities/{id}/cms-overlay")
   ResponseEntity<Void> deleteCmsOverlayById(@PathVariable("id") String id) {
-    Optional<FacilityEntity> entity = entityById(id);
+    Optional<FacilityEntity> entity = facilityEntityById(id);
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
@@ -201,9 +213,21 @@ public class InternalFacilitiesController {
     return ResponseEntity.ok().build();
   }
 
+  @DeleteMapping(value = "/cms-overlay/{id}")
+  ResponseEntity<String> deleteCmsOverlayEntityById(@PathVariable("id") String id) {
+    Optional<CmsOverlayEntity> entity = cmsOverlayEntityById(id);
+    if (entity.isEmpty()) {
+      log.info("CmsOverlay {} does not exist, ignoring request.", sanitize(id));
+      return ResponseEntity.accepted().build();
+    }
+    log.info("Deleting cms overlay for id: {}", sanitize(id));
+    cmsOverlayRepository.delete(entity.get());
+    return ResponseEntity.ok().build();
+  }
+
   @DeleteMapping(value = "/facilities/{id}")
   ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
-    Optional<FacilityEntity> entity = entityById(id);
+    Optional<FacilityEntity> entity = facilityEntityById(id);
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
@@ -241,7 +265,7 @@ public class InternalFacilitiesController {
     }
   }
 
-  private Optional<FacilityEntity> entityById(String id) {
+  private Optional<FacilityEntity> facilityEntityById(String id) {
     FacilityEntity.Pk pk = null;
     try {
       pk = FacilityEntity.Pk.fromIdString(id);
@@ -358,6 +382,38 @@ public class InternalFacilitiesController {
               ReloadResponse.Problem.of(
                   id.toIdString(), "Failed to move facility to graveyard: " + e.getMessage()));
       throw e;
+    }
+  }
+
+  @GetMapping(value = "/populate-cms-overlay-table")
+  void populateCmsOverlayTable() {
+    // parallel stream all facilities response
+    // build entity for cms_overlay table
+    // operating status AND/OR detailed services exist add to entity otherwise it will just be null
+    // save entity
+    // done after all processing completes
+    boolean noErrors = true;
+    try {
+      log.warn("Attempting to save all facility overlay info to cms_overlay table.");
+      Streams.stream(facilityRepository.findAll())
+          .parallel()
+          .filter(f -> f.cmsOperatingStatus() != null || f.cmsServices() != null)
+          .forEach(
+              f ->
+                  cmsOverlayRepository.save(
+                      CmsOverlayEntity.builder()
+                          .id(f.id())
+                          .cmsOperatingStatus(f.cmsOperatingStatus())
+                          .cmsServices(f.cmsServices())
+                          .build()));
+    } catch (Exception e) {
+      noErrors = false;
+      log.error(
+          "Failed to save all facility overlay info to cms_overlay table. {}", e.getMessage());
+    }
+
+    if (noErrors) {
+      log.warn("Completed saving all facility overlay info to cms_overlay table!");
     }
   }
 
