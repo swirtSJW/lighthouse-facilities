@@ -199,10 +199,14 @@ public class InternalFacilitiesController {
     return cmsOverlayRepository.findById(pk);
   }
 
-  /** Delete an overlay if thisNodeOnly is not specified or partial overlay identified by thisNodeOnly. */
+  /**
+   * Delete an overlay if thisNodeOnly is not specified or partial overlay identified by
+   * thisNodeOnly.
+   */
   @DeleteMapping(value = {"/facilities/{id}/cms-overlay", "/facilities/{id}/cms-overlay/{node}"})
   ResponseEntity<Void> deleteCmsOverlayById(
-      @PathVariable("id") String id, @PathVariable(value = "node", required = false) String thisNodeOnly) {
+      @PathVariable("id") String id,
+      @PathVariable(value = "node", required = false) String thisNodeOnly) {
     CmsOverlayEntity overlayEntity = cmsOverlayEntityById(id).orElse(null);
     if (overlayEntity == null) {
       log.info("CmsOverlay {} does not exist, ignoring request.", sanitize(id));
