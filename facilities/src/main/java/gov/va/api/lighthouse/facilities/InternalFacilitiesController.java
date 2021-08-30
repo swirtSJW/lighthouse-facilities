@@ -199,29 +199,44 @@ public class InternalFacilitiesController {
     return cmsOverlayRepository.findById(pk);
   }
 
-  @DeleteMapping(value = "/facilities/{id}/cms-overlay")
-  ResponseEntity<Void> deleteCmsOverlayById(@PathVariable("id") String id) {
-    Optional<FacilityEntity> entity = facilityEntityById(id);
-    if (entity.isEmpty()) {
-      log.info("Facility {} does not exist, ignoring request.", sanitize(id));
-      return ResponseEntity.accepted().build();
-    }
-    log.info("Removing cmsOverlay from facility {}", sanitize(id));
-    facilityRepository.save(entity.get().cmsOperatingStatus(null));
-    facilityRepository.save(entity.get().overlayServices(null));
-    facilityRepository.save(entity.get().cmsServices(null));
-    return ResponseEntity.ok().build();
-  }
-
-  @DeleteMapping(value = "/cms-overlay/{id}")
-  ResponseEntity<String> deleteCmsOverlayEntityById(@PathVariable("id") String id) {
-    Optional<CmsOverlayEntity> entity = cmsOverlayEntityById(id);
-    if (entity.isEmpty()) {
+  /** Delete an overlay if thisNodeOnly is not specified or partial overlay identified by thisNodeOnly. */
+  @DeleteMapping(value = {"/facilities/{id}/cms-overlay", "/facilities/{id}/cms-overlay/{node}"})
+  ResponseEntity<Void> deleteCmsOverlayById(
+      @PathVariable("id") String id, @PathVariable(value = "node", required = false) String thisNodeOnly) {
+    CmsOverlayEntity overlayEntity = cmsOverlayEntityById(id).orElse(null);
+    if (overlayEntity == null) {
       log.info("CmsOverlay {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-    log.info("Deleting cms overlay for id: {}", sanitize(id));
-    cmsOverlayRepository.delete(entity.get());
+
+    if (thisNodeOnly == null) {
+      log.info("Deleting cms overlay for id: {}", sanitize(id));
+      overlayEntity.cmsOperatingStatus(null);
+      overlayEntity.cmsServices(null);
+    } else if (thisNodeOnly.equalsIgnoreCase("operating_status")) {
+      if (overlayEntity.cmsOperatingStatus() == null) {
+        log.info("CmsOverlay {} does not have an operating_status, ignoring request", sanitize(id));
+        return ResponseEntity.accepted().build();
+      }
+      log.info("Deleting operating_status node from overlay for id: {}", sanitize(id));
+      overlayEntity.cmsOperatingStatus(null);
+    } else if (thisNodeOnly.equalsIgnoreCase("detailed_services")) {
+      if (overlayEntity.cmsServices() == null) {
+        log.info("CmsOverlay {} does not have detailed_services, ignoring request", sanitize(id));
+        return ResponseEntity.accepted().build();
+      }
+      log.info("Deleting detailed_services node from overlay for id: {}", sanitize(id));
+      overlayEntity.cmsServices(null);
+    } else {
+      log.info("CmsOverlay field {} does not exist.", sanitize(thisNodeOnly));
+      throw new ExceptionsUtils.NotFound(thisNodeOnly);
+    }
+
+    if (overlayEntity.cmsOperatingStatus() == null && overlayEntity.cmsServices() == null) {
+      cmsOverlayRepository.delete(overlayEntity);
+    } else {
+      cmsOverlayRepository.save(overlayEntity);
+    }
     return ResponseEntity.ok().build();
   }
 
@@ -231,16 +246,6 @@ public class InternalFacilitiesController {
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
-    }
-    if (entity.get().cmsOperatingStatus() != null
-        || (entity.get().overlayServices() != null && entity.get().overlayServices().size() != 0)
-        || entity.get().cmsServices() != null) {
-      log.info(
-          "Failed to delete facility {}. cmsOperatingStatus, "
-              + "overlayServices, or cmsServices are not null",
-          sanitize(id));
-      return ResponseEntity.status(409)
-          .body("{\"message\":\"CMS Overlay must be deleted first.\"}");
     }
     log.info("Deleting facility {}", sanitize(id));
     facilityRepository.delete(entity.get());

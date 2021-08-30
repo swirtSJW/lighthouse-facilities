@@ -5,6 +5,7 @@ import static gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_h
 import static gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
@@ -40,6 +41,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -48,6 +51,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class InternalFacilitiesControllerTest {
   @Autowired FacilityRepository facilityRepository;
+
+  @Autowired CmsOverlayRepository overlayRepository;
 
   @Autowired FacilityGraveyardRepository graveyardRepository;
 
@@ -111,72 +116,77 @@ public class InternalFacilitiesControllerTest {
 
   private static CmsOverlay _overlay() {
     return CmsOverlay.builder()
-        .operatingStatus(
-            Facility.OperatingStatus.builder()
-                .code(Facility.OperatingStatusCode.LIMITED)
-                .additionalInfo("Limited")
-                .build())
-        .detailedServices(
-            List.of(
-                DetailedService.builder()
-                    .active(true)
-                    .name("Covid19Vaccine")
-                    .descriptionFacility(null)
-                    .appointmentLeadIn(
-                        "Your VA health care team will contact you if you...more text")
-                    .onlineSchedulingAvailable("True")
-                    .phoneNumbers(
-                        List.of(
-                            DetailedService.AppointmentPhoneNumber.builder()
-                                .extension("123")
-                                .label("Main phone")
-                                .number("555-555-1212")
-                                .type("tel")
-                                .build()))
-                    .referralRequired("True")
-                    .walkInsAccepted("False")
-                    .serviceLocations(
-                        List.of(
-                            DetailedService.DetailedServiceLocation.builder()
-                                .serviceLocationAddress(
-                                    DetailedService.DetailedServiceAddress.builder()
-                                        .buildingNameNumber("Baxter Building")
-                                        .clinicName("Baxter Clinic")
-                                        .wingFloorOrRoomNumber("Wing East")
-                                        .address1("122 Main St.")
-                                        .address2(null)
-                                        .city("Rochester")
-                                        .state("NY")
-                                        .zipCode("14623-1345")
-                                        .countryCode("US")
-                                        .build())
-                                .appointmentPhoneNumbers(
-                                    List.of(
-                                        DetailedService.AppointmentPhoneNumber.builder()
-                                            .extension("567")
-                                            .label("Alt phone")
-                                            .number("556-565-1119")
-                                            .type("tel")
-                                            .build()))
-                                .emailContacts(
-                                    List.of(
-                                        DetailedService.DetailedServiceEmailContact.builder()
-                                            .emailAddress("georgea@va.gov")
-                                            .emailLabel("George Anderson")
-                                            .build()))
-                                .facilityServiceHours(
-                                    DetailedService.DetailedServiceHours.builder()
-                                        .monday("8:30AM-7:00PM")
-                                        .tuesday("8:30AM-7:00PM")
-                                        .wednesday("8:30AM-7:00PM")
-                                        .thursday("8:30AM-7:00PM")
-                                        .friday("8:30AM-7:00PM")
-                                        .saturday("8:30AM-7:00PM")
-                                        .sunday("CLOSED")
-                                        .build())
-                                .additionalHoursInfo("Please call for an appointment outside...")
-                                .build()))
-                    .build()))
+        .operatingStatus(_overlay_operating_status())
+        .detailedServices(_overlay_detailed_services())
+        .build();
+  }
+
+  private static List<DetailedService> _overlay_detailed_services() {
+    return List.of(
+        DetailedService.builder()
+            .active(true)
+            .name("Covid19Vaccine")
+            .descriptionFacility(null)
+            .appointmentLeadIn("Your VA health care team will contact you if you...more text")
+            .onlineSchedulingAvailable("True")
+            .phoneNumbers(
+                List.of(
+                    DetailedService.AppointmentPhoneNumber.builder()
+                        .extension("123")
+                        .label("Main phone")
+                        .number("555-555-1212")
+                        .type("tel")
+                        .build()))
+            .referralRequired("True")
+            .walkInsAccepted("False")
+            .serviceLocations(
+                List.of(
+                    DetailedService.DetailedServiceLocation.builder()
+                        .serviceLocationAddress(
+                            DetailedService.DetailedServiceAddress.builder()
+                                .buildingNameNumber("Baxter Building")
+                                .clinicName("Baxter Clinic")
+                                .wingFloorOrRoomNumber("Wing East")
+                                .address1("122 Main St.")
+                                .address2(null)
+                                .city("Rochester")
+                                .state("NY")
+                                .zipCode("14623-1345")
+                                .countryCode("US")
+                                .build())
+                        .appointmentPhoneNumbers(
+                            List.of(
+                                DetailedService.AppointmentPhoneNumber.builder()
+                                    .extension("567")
+                                    .label("Alt phone")
+                                    .number("556-565-1119")
+                                    .type("tel")
+                                    .build()))
+                        .emailContacts(
+                            List.of(
+                                DetailedService.DetailedServiceEmailContact.builder()
+                                    .emailAddress("georgea@va.gov")
+                                    .emailLabel("George Anderson")
+                                    .build()))
+                        .facilityServiceHours(
+                            DetailedService.DetailedServiceHours.builder()
+                                .monday("8:30AM-7:00PM")
+                                .tuesday("8:30AM-7:00PM")
+                                .wednesday("8:30AM-7:00PM")
+                                .thursday("8:30AM-7:00PM")
+                                .friday("8:30AM-7:00PM")
+                                .saturday("8:30AM-7:00PM")
+                                .sunday("CLOSED")
+                                .build())
+                        .additionalHoursInfo("Please call for an appointment outside...")
+                        .build()))
+            .build());
+  }
+
+  private static Facility.OperatingStatus _overlay_operating_status() {
+    return Facility.OperatingStatus.builder()
+        .code(Facility.OperatingStatusCode.LIMITED)
+        .additionalInfo("Limited")
         .build();
   }
 
@@ -184,17 +194,18 @@ public class InternalFacilitiesControllerTest {
     return InternalFacilitiesController.builder()
         .collector(collector)
         .facilityRepository(facilityRepository)
+        .cmsOverlayRepository(overlayRepository)
         .graveyardRepository(graveyardRepository)
         .build();
   }
 
-  private FacilityEntity _entity(
+  private FacilityEntity _facilityEntity(
       Facility fac, gov.va.api.lighthouse.facilities.api.v1.Facility facV1) {
-    return _entityWithOverlay(fac, facV1, null);
+    return _facilityEntity(fac, facV1, null);
   }
 
   @SneakyThrows
-  private FacilityEntity _entityWithOverlay(
+  private FacilityEntity _facilityEntity(
       Facility fac, gov.va.api.lighthouse.facilities.api.v1.Facility facV1, CmsOverlay overlay) {
     String operatingStatusString = null;
     Set<String> cmsServicesNames = null;
@@ -217,7 +228,6 @@ public class InternalFacilitiesControllerTest {
         }
       }
     }
-
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
             .id(FacilityEntity.Pk.fromIdString(fac.id()))
@@ -264,13 +274,30 @@ public class InternalFacilitiesControllerTest {
         .build();
   }
 
+  @SneakyThrows
+  private CmsOverlayEntity _overlayEntity(CmsOverlay overlay, String id) {
+    return CmsOverlayEntity.builder()
+        .id(FacilityEntity.Pk.fromIdString(id))
+        .cmsOperatingStatus(
+            JacksonConfig.createMapper()
+                .writeValueAsString(
+                    overlay.operatingStatus() == null
+                        ? null
+                        : JacksonConfig.createMapper()
+                            .writeValueAsString(overlay.operatingStatus())))
+        .cmsServices(
+            overlay.detailedServices() == null || overlay.detailedServices().isEmpty()
+                ? null
+                : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices()))
+        .build();
+  }
+
   @Test
   @SneakyThrows
   void collect_createUpdate() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f2 = _facility("vha_f2", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -288,15 +315,11 @@ public class InternalFacilitiesControllerTest {
             5.6,
             6.7,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
-
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
     facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
-
     Facility f2Old =
         _facility("vha_f2", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f2OldV1 =
         _facilityV1(
             "vha_f2",
@@ -305,14 +328,13 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
-    facilityRepository.save(_entity(f2Old, f2OldV1));
+    facilityRepository.save(_facilityEntity(f2Old, f2OldV1));
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f2"));
     assertThat(facilityRepository.findAll())
-        .containsExactlyInAnyOrder(_entity(f1, f1V1), _entity(f2, f2V1));
+        .containsExactlyInAnyOrder(_facilityEntity(f1, f1V1), _facilityEntity(f2, f2V1));
   }
 
   @Test
@@ -322,7 +344,6 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -340,11 +361,8 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
-
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
-
     FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1Old, f1OldV1, _overlay());
     graveyardRepository.save(entity);
     when(collector.collectFacilities()).thenReturn(facilityPairs);
@@ -367,7 +385,6 @@ public class InternalFacilitiesControllerTest {
   void collect_invalidLatLong() {
     Facility f1 =
         _facility("vha_f1", "FL", "999", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -377,17 +394,12 @@ public class InternalFacilitiesControllerTest {
             3.4,
             List.of(
                 gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-
     f1.attributes().latitude(null);
     f1.attributes().longitude(null);
-
     f1V1.attributes().latitude(null);
     f1V1.attributes().longitude(null);
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
-
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
-
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.problems())
@@ -407,7 +419,6 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f3", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     Facility f4Old =
         _facility("vha_f4", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -449,15 +460,12 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
-
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
-
-    facilityRepository.save(_entity(f1Old, f1OldV1));
-    facilityRepository.save(_entity(f2Old, f2OldV1));
-    facilityRepository.save(_entity(f3Old, f3OldV1));
-    facilityRepository.save(_entity(f4Old, f4OldV1));
+    facilityRepository.save(_facilityEntity(f1Old, f1OldV1));
+    facilityRepository.save(_facilityEntity(f2Old, f2OldV1));
+    facilityRepository.save(_facilityEntity(f3Old, f3OldV1));
+    facilityRepository.save(_facilityEntity(f4Old, f4OldV1));
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
@@ -478,7 +486,6 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -496,11 +503,10 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
-
-    facilityRepository.save(_entity(f1Old, f1OldV1).missingTimestamp(Instant.now().toEpochMilli()));
+    facilityRepository.save(
+        _facilityEntity(f1Old, f1OldV1).missingTimestamp(Instant.now().toEpochMilli()));
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
@@ -514,7 +520,6 @@ public class InternalFacilitiesControllerTest {
   void collect_missingTimestampPreserved() {
     Facility f1Old =
         _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1OldV1 =
         _facilityV1(
             "vha_f1",
@@ -523,9 +528,8 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
     long early = Instant.now().minusSeconds(60).toEpochMilli();
-    facilityRepository.save(_entity(f1Old, f1OldV1).missingTimestamp(early));
+    facilityRepository.save(_facilityEntity(f1Old, f1OldV1).missingTimestamp(early));
     when(collector.collectFacilities()).thenReturn(emptyList());
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesMissing()).isEqualTo(List.of("vha_f1"));
@@ -538,7 +542,6 @@ public class InternalFacilitiesControllerTest {
   void collect_noStateOrZip() {
     Facility f1 =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -548,20 +551,16 @@ public class InternalFacilitiesControllerTest {
             3.4,
             List.of(
                 gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-
     f1.attributes().address().physical().state(null);
     f1.attributes().address().physical().zip(null);
     f1.attributes().latitude(BigDecimal.valueOf(91.4));
     f1.attributes().longitude(BigDecimal.valueOf(181.4));
-
     f1V1.attributes().address().physical().state(null);
     f1V1.attributes().address().physical().zip(null);
     f1V1.attributes().latitude(BigDecimal.valueOf(91.4));
     f1V1.attributes().longitude(BigDecimal.valueOf(181.4));
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
-
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
@@ -595,15 +594,12 @@ public class InternalFacilitiesControllerTest {
     Facility f1 = _facility("vha_f1", "FL", "32934", 91.4, 181.4, List.of());
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1("vha_f1", "FL", "32934", 91.4, 181.4, List.of());
-
     f1.attributes().facilityType(va_health_facility);
     f1V1.attributes()
         .facilityType(
             gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityType.va_health_facility);
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
-
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse responseHealth = _controller().reload().getBody();
     assertThat(responseHealth.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
@@ -615,10 +611,8 @@ public class InternalFacilitiesControllerTest {
     f2.attributes().facilityType(vet_center);
     f2V1.attributes()
         .facilityType(gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityType.vet_center);
-
     facilityPairs = new ArrayList<>();
     facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
-
     when(collector.collectFacilities()).thenReturn(facilityPairs);
     ReloadResponse responseVetCenter = _controller().reload().getBody();
     assertThat(responseVetCenter.facilitiesCreated()).isEqualTo(List.of("vc_f1"));
@@ -639,10 +633,9 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
     long threeDaysAgo = LocalDateTime.now().minusDays(3).toInstant(ZoneOffset.UTC).toEpochMilli();
     FacilityEntity entity =
-        _entityWithOverlay(f1Old, f1OldV1, _overlay()).missingTimestamp(threeDaysAgo);
+        _facilityEntity(f1Old, f1OldV1, _overlay()).missingTimestamp(threeDaysAgo);
     facilityRepository.save(entity);
     when(collector.collectFacilities()).thenReturn(emptyList());
     ReloadResponse response = _controller().reload().getBody();
@@ -671,12 +664,13 @@ public class InternalFacilitiesControllerTest {
             3.4,
             List.of(
                 gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-
-    facilityRepository.save(_entityWithOverlay(f, f1V1, _overlay()));
-    Integer status = _controller().deleteFacilityById("vha_f1").getStatusCodeValue();
-    assertThat(status).isEqualTo(409);
-    assertThat(facilityRepository.findAll())
-        .isEqualTo(List.of(_entityWithOverlay(f, f1V1, _overlay())));
+    facilityRepository.save(_facilityEntity(f, f1V1, _overlay()));
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    ResponseEntity<String> response = _controller().deleteFacilityById("vha_f1");
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(facilityRepository.findAll()).isEmpty();
+    assertThat(overlayRepository.findAll())
+        .isEqualTo((List.of(_overlayEntity(_overlay(), "vha_f1"))));
   }
 
   @Test
@@ -692,9 +686,9 @@ public class InternalFacilitiesControllerTest {
             3.4,
             List.of(
                 gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    facilityRepository.save(_entity(f, f1V1));
-    Integer status = _controller().deleteFacilityById("vha_f1").getStatusCodeValue();
-    assertThat(status).isEqualTo(200);
+    facilityRepository.save(_facilityEntity(f, f1V1));
+    ResponseEntity<String> response = _controller().deleteFacilityById("vha_f1");
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(facilityRepository.findAll()).isEmpty();
   }
 
@@ -702,7 +696,6 @@ public class InternalFacilitiesControllerTest {
   void deleteFacilityOverlayById() {
     Facility f =
         _facility("vha_f1", "FL", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -712,16 +705,69 @@ public class InternalFacilitiesControllerTest {
             3.4,
             List.of(
                 gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    ResponseEntity<Void> response = null;
+    facilityRepository.save(_facilityEntity(f, f1V1, _overlay()));
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    response = _controller().deleteCmsOverlayById("vha_f1", "operating_status");
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_facilityEntity(f, f1V1, null)));
+    assertThat(overlayRepository.findAll())
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    CmsOverlay.builder().detailedServices(_overlay_detailed_services()).build(),
+                    "vha_f1")));
+    overlayRepository.deleteAll();
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    response = _controller().deleteCmsOverlayById("vha_f1", "detailed_services");
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(facilityRepository.findAll())
+        .isEqualTo(List.of(_facilityEntity(f, f1V1, CmsOverlay.builder().build())));
+    assertThat(overlayRepository.findAll())
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    CmsOverlay.builder().operatingStatus(_overlay_operating_status()).build(),
+                    "vha_f1")));
+    overlayRepository.deleteAll();
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    response = _controller().deleteCmsOverlayById("vha_f1", null);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(facilityRepository.findAll())
+        .isEqualTo(List.of(_facilityEntity(f, f1V1, CmsOverlay.builder().build())));
+    assertThat(overlayRepository.findAll()).isEmpty();
+  }
 
-    facilityRepository.save(_entityWithOverlay(f, f1V1, _overlay()));
-    Integer status = _controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue();
-    assertThat(status).isEqualTo(200);
-    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_entityWithOverlay(f, f1V1, null)));
+  @Test
+  void deleteFacilityOverlayMissingNode() {
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", "operating_status").getStatusCode())
+        .isEqualTo(HttpStatus.OK);
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", "operating_status").getStatusCode())
+        .isEqualTo(HttpStatus.ACCEPTED);
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", "detailed_services").getStatusCode())
+        .isEqualTo(HttpStatus.OK);
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", "detailed_services").getStatusCode())
+        .isEqualTo(HttpStatus.ACCEPTED);
   }
 
   @Test
   void deleteFacilityOverlayNotFound() {
-    assertThat(_controller().deleteCmsOverlayById("vha_f1").getStatusCodeValue()).isEqualTo(202);
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", null).getStatusCode())
+        .isEqualTo(HttpStatus.ACCEPTED);
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", "operating_status").getStatusCode())
+        .isEqualTo(HttpStatus.ACCEPTED);
+    assertThat(_controller().deleteCmsOverlayById("vha_f1", "detailed_services").getStatusCode())
+        .isEqualTo(HttpStatus.ACCEPTED);
+  }
+
+  @Test
+  void deleteFacilityOverlayUnrecognizedNode() {
+    overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
+    assertThatThrownBy(() -> _controller().deleteCmsOverlayById("vha_f1", "foo"))
+        .isInstanceOf(ExceptionsUtils.NotFound.class)
+        .hasMessage("The record identified by foo could not be found");
   }
 
   @Test
@@ -763,7 +809,6 @@ public class InternalFacilitiesControllerTest {
             9.0,
             9.1,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.SpecialtyCare));
-
     CmsOverlay overlay = _overlay();
     FacilityGraveyardEntity entity = _graveyardEntityWithOverlay(f1, fV1, overlay);
     graveyardRepository.save(entity);
@@ -897,7 +942,6 @@ public class InternalFacilitiesControllerTest {
         InternalFacilitiesController.builder().facilityRepository(repo).build();
     Facility f1 =
         _facility("vha_f1", "CO", "5319", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -907,7 +951,6 @@ public class InternalFacilitiesControllerTest {
             3.4,
             List.of(
                 gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-
     f1.attributes().address().mailing(Address.builder().zip("12345-56").build());
     f1V1.attributes()
         .address()
@@ -915,7 +958,6 @@ public class InternalFacilitiesControllerTest {
             gov.va.api.lighthouse.facilities.api.v1.Facility.Address.builder()
                 .zip("12345-56")
                 .build());
-
     ReloadResponse response = ReloadResponse.start();
     assertThrows(
         RuntimeException.class,
@@ -952,7 +994,6 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f1", "FL", "32934", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f2 = _facility("vha_f2", "FL", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
     Facility f3 = _facility("vha_f3", "FL", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -978,15 +1019,12 @@ public class InternalFacilitiesControllerTest {
             5.6,
             6.7,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
-
     f1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_1);
     f2.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_2);
     f3.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_3);
-
     f1V1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_1);
     f2V1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_2);
     f3V1.attributes().operationalHoursSpecialInstructions(SPECIAL_INSTRUCTION_OLD_3);
-
     ReloadResponse response = ReloadResponse.start();
     _controller()
         .updateAndSave(
@@ -995,11 +1033,9 @@ public class InternalFacilitiesControllerTest {
             FacilityPair.builder().v0(f1).v1(f1V1).build());
     assertThat(f1.attributes().operationalHoursSpecialInstructions())
         .isEqualTo(SPECIAL_INSTRUCTION_UPDATED_1);
-
     assertThat(
             facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1")).get().facility())
         .contains(SPECIAL_INSTRUCTION_UPDATED_1);
-
     _controller()
         .updateAndSave(
             response,
@@ -1010,7 +1046,6 @@ public class InternalFacilitiesControllerTest {
     assertThat(
             facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2")).get().facility())
         .contains(SPECIAL_INSTRUCTION_UPDATED_2);
-
     _controller()
         .updateAndSave(
             response,
@@ -1030,7 +1065,6 @@ public class InternalFacilitiesControllerTest {
         _facility("vha_f91", "FU", "South", 1.2, 3.4, List.of(HealthService.MentalHealthCare));
     Facility f2 =
         _facility("vha_f92", "NEAT", "32934", 5.6, 6.7, List.of(HealthService.UrgentCare));
-
     gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
         _facilityV1(
             "vha_f1",
@@ -1048,15 +1082,12 @@ public class InternalFacilitiesControllerTest {
             5.6,
             6.7,
             List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.UrgentCare));
-
     List<FacilityPair> facilityPairs = new ArrayList<>();
-
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
     facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
-
     _controller().upload(facilityPairs);
     assertThat(facilityRepository.findAll())
-        .isEqualTo(List.of(_entity(f1, f1V1), _entity(f2, f2V1)));
+        .isEqualTo(List.of(_facilityEntity(f1, f1V1), _facilityEntity(f2, f2V1)));
   }
 
   @Test

@@ -13,7 +13,7 @@
   <packaging>jar</packaging>
   <properties>
     <commons-csv.version>1.8</commons-csv.version>
-    <guava.version>29.0-jre</guava.version>
+    <guava.version>[30.0-jre,)</guava.version>
     <populator.sqlserver>false</populator.sqlserver>
     <jts.version>1.16.1</jts.version>
   </properties>
