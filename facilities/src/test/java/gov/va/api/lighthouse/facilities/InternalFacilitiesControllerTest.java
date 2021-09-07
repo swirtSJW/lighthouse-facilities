@@ -279,12 +279,11 @@ public class InternalFacilitiesControllerTest {
     return CmsOverlayEntity.builder()
         .id(FacilityEntity.Pk.fromIdString(id))
         .cmsOperatingStatus(
-            JacksonConfig.createMapper()
-                .writeValueAsString(
-                    overlay.operatingStatus() == null
-                        ? null
-                        : JacksonConfig.createMapper()
-                            .writeValueAsString(overlay.operatingStatus())))
+            overlay.operatingStatus() == null
+                ? null
+                : JacksonConfig.createMapper()
+                    .writeValueAsString(
+                        JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus())))
         .cmsServices(
             overlay.detailedServices() == null || overlay.detailedServices().isEmpty()
                 ? null
@@ -670,6 +669,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(facilityRepository.findAll()).isEmpty();
     assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
         .isEqualTo((List.of(_overlayEntity(_overlay(), "vha_f1"))));
   }
 
@@ -712,6 +712,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(facilityRepository.findAll()).isEqualTo(List.of(_facilityEntity(f, f1V1, null)));
     assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
         .isEqualTo(
             List.of(
                 _overlayEntity(
@@ -724,6 +725,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(facilityRepository.findAll())
         .isEqualTo(List.of(_facilityEntity(f, f1V1, CmsOverlay.builder().build())));
     assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
         .isEqualTo(
             List.of(
                 _overlayEntity(
