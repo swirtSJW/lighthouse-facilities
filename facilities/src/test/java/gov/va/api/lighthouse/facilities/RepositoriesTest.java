@@ -35,7 +35,7 @@ public class RepositoriesTest {
     var b1230to10Saved = driveTimeBandRepository.save(b1230to10);
     entityManager.flush();
     var b1230to10Found = driveTimeBandRepository.findById(b1230to10.id()).get();
-    assertThat(b1230to10Found).isEqualTo(b1230to10Saved);
+    assertThat(b1230to10Found).usingRecursiveComparison().isEqualTo(b1230to10Saved);
   }
 
   @Test
