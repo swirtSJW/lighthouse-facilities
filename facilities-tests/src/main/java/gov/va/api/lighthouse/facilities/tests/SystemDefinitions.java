@@ -13,8 +13,8 @@ class SystemDefinitions {
 
   private static Ids ids() {
     return Ids.builder()
-        .facility("vba_322b")
-        .facilityIdsCsv("nca_055,nca_s1001,vba_322b,vc_0101V,vha_402GA")
+        .facility("vba_322c")
+        .facilityIdsCsv("nca_055,nca_s1001,vba_322c,vc_0101V,vha_402GA")
         .latitude("28.112464")
         .longitude("-80.7015994")
         .bbox("bbox[]=-81.47&bbox[]=27.48&bbox[]=-79.97&bbox[]=28.98")
