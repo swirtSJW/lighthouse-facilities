@@ -35,7 +35,7 @@ public class WebExceptionHandlerV0Test {
 
   @Test
   void bing() {
-    assertThat(new WebExceptionHandlerV0().handleBing(new ExceptionsUtils.BingException("foo")))
+    assertThat(new WebExceptionHandlerV0().handleBing(new ExceptionsUtilsV0.BingException("foo")))
         .isEqualTo(
             ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .headers(jsonHeaders())

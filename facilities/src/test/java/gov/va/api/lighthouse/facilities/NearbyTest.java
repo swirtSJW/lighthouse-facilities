@@ -247,7 +247,7 @@ public class NearbyTest {
             eq(String.class)))
         .thenThrow(new IllegalStateException("Google instead?"));
     assertThrows(
-        ExceptionsUtils.BingException.class,
+        ExceptionsUtilsV0.BingException.class,
         () ->
             _controller()
                 .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null));
@@ -288,7 +288,7 @@ public class NearbyTest {
                                             .build()))
                                 .build()))));
     assertThrows(
-        ExceptionsUtils.BingException.class,
+        ExceptionsUtilsV0.BingException.class,
         () ->
             _controller()
                 .nearbyAddress("505 N John Rodes Blvd", "Melbourne", "FL", "32934", null, null));

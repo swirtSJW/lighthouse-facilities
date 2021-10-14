@@ -86,10 +86,10 @@ public class NearbyControllerV0 {
                   bingUriString, HttpMethod.GET, new HttpEntity<>(new HttpHeaders()), String.class)
               .getBody();
     } catch (Exception ex) {
-      throw new ExceptionsUtils.BingException(ex);
+      throw new ExceptionsUtilsV0.BingException(ex);
     }
     if (isBlank(body)) {
-      throw new ExceptionsUtils.BingException("Empty response");
+      throw new ExceptionsUtilsV0.BingException("Empty response");
     }
     BingResponse response = JacksonConfig.createMapper().readValue(body, BingResponse.class);
     Optional<List<BigDecimal>> coordinates =
@@ -102,7 +102,7 @@ public class NearbyControllerV0 {
             .findFirst();
 
     if (coordinates.isEmpty()) {
-      throw new ExceptionsUtils.BingException(
+      throw new ExceptionsUtilsV0.BingException(
           String.format(
               "Failed to geocode street_address '%s', city '%s', state '%s', zip '%s'",
               street, city, state, zip));

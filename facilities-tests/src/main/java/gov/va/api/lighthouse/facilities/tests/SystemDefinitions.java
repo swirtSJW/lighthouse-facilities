@@ -8,7 +8,7 @@ import lombok.Value;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-class SystemDefinitions {
+public class SystemDefinitions {
   static final String CLIENT_KEY_DEFAULT = "axolotl";
 
   private static Ids ids() {
@@ -90,7 +90,8 @@ class SystemDefinitions {
         .build();
   }
 
-  static SystemDefinition systemDefinition() {
+  /** Gets SystemDefinition based on Sentinel env. */
+  public static SystemDefinition systemDefinition() {
     switch (Environment.get()) {
       case LOCAL:
         return local();
@@ -112,7 +113,7 @@ class SystemDefinitions {
 
   @Value
   @Builder
-  static final class Ids {
+  public static final class Ids {
     @NonNull String facility;
 
     @NonNull String facilityIdsCsv;
@@ -162,7 +163,7 @@ class SystemDefinitions {
 
   @Value
   @Builder
-  static final class SystemDefinition {
+  public static final class SystemDefinition {
     @NonNull Service facilities;
 
     @NonNull Service facilitiesInternal;

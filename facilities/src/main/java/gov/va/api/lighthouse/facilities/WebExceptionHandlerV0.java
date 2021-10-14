@@ -32,8 +32,8 @@ public final class WebExceptionHandlerV0 {
     return ResponseEntity.status(status).headers(headers).body(error);
   }
 
-  @ExceptionHandler(ExceptionsUtils.BingException.class)
-  ResponseEntity<ApiError> handleBing(ExceptionsUtils.BingException ex) {
+  @ExceptionHandler(ExceptionsUtilsV0.BingException.class)
+  ResponseEntity<ApiError> handleBing(ExceptionsUtilsV0.BingException ex) {
     ApiError response =
         ApiError.builder()
             .errors(
