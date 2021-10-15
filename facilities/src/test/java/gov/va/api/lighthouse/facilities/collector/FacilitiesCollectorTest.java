@@ -193,11 +193,21 @@ public class FacilitiesCollectorTest {
             new FacilitiesCollector(
                     mockInsecureRestTemplateProvider,
                     mockTemplate,
-                    mockCmsOverlayRepository,
+                    new CmsOverlayCollector(mockCmsOverlayRepository),
                     "http://atc",
                     "http://atp",
                     "http://statecems")
                 .collectFacilities());
+  }
+
+  @Test
+  void verifyMissingTrailingSlashAppended() {
+    String urlMissingTrailingSlash = "https://developer.va.gov";
+    String urlWithTrailingSlash = "https://developer.va.gov/";
+    assertThat(FacilitiesCollector.withTrailingSlash(urlMissingTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
+    assertThat(FacilitiesCollector.withTrailingSlash(urlWithTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
   }
 
   @Test
@@ -253,7 +263,7 @@ public class FacilitiesCollectorTest {
             new FacilitiesCollector(
                     insecureRestTemplateProvider,
                     jdbcTemplate,
-                    cmsOverlayRepository,
+                    new CmsOverlayCollector(cmsOverlayRepository),
                     "http://atc",
                     "http://atp",
                     "http://statecems")

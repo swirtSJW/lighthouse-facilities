@@ -1,37 +1,29 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static com.google.common.base.Preconditions.checkState;
+import static gov.va.api.lighthouse.facilities.collector.CsvLoader.loadWebsites;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
-import gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV0;
 import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -49,7 +41,7 @@ public class FacilitiesCollector {
 
   private final JdbcTemplate jdbcTemplate;
 
-  private final CmsOverlayRepository cmsOverlayRepository;
+  private final CmsOverlayCollector cmsOverlayCollector;
 
   private final String atcBaseUrl;
 
@@ -61,13 +53,13 @@ public class FacilitiesCollector {
   public FacilitiesCollector(
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
-      @Autowired CmsOverlayRepository cmsOverlayRepository,
+      @Autowired CmsOverlayCollector cmsOverlayCollector,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${cemeteries.url}") String cemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
-    this.cmsOverlayRepository = cmsOverlayRepository;
+    this.cmsOverlayCollector = cmsOverlayCollector;
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
@@ -93,33 +85,6 @@ public class FacilitiesCollector {
         cscFacilities.size());
     checkState(!cscFacilities.isEmpty(), "No caregiver support entries");
     return cscFacilities;
-  }
-
-  /** Load websites given a resource name. */
-  @SneakyThrows
-  public static Map<String, String> loadWebsites(String resourceName) {
-    final Stopwatch totalWatch = Stopwatch.createStarted();
-    try (InputStreamReader reader =
-        new InputStreamReader(
-            new ClassPathResource(resourceName).getInputStream(), StandardCharsets.UTF_8)) {
-      Iterable<CSVRecord> rows = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
-      Map<String, String> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-      for (CSVRecord row : rows) {
-        String id = trimToNull(row.get("id"));
-        String url = trimToNull(row.get("url"));
-        checkState(id != null, "Website %s missing ID", url);
-        checkState(url != null, "Website %s missing url", id);
-        checkState(!map.containsKey(id), "Website %s duplicate", id);
-        map.put(id, url);
-      }
-      Map<String, String> websites = Collections.unmodifiableMap(map);
-      log.info(
-          "Loading websites took {} millis for {} entries",
-          totalWatch.stop().elapsed(TimeUnit.MILLISECONDS),
-          websites.size());
-      checkState(!websites.isEmpty(), "No website entries");
-      return websites;
-    }
   }
 
   @SneakyThrows
@@ -179,7 +144,7 @@ public class FacilitiesCollector {
       websites = loadWebsites(WEBSITES_CSV_RESOURCE_NAME);
       vastEntities = loadVast();
       cscFacilities = loadCaregiverSupport(CSC_STATIONS_RESOURCE_NAME);
-      cmsOverlays = loadCmsOverlays();
+      cmsOverlays = cmsOverlayCollector.loadAndUpdateCmsOverlays();
     } catch (Exception e) {
       throw new CollectorExceptions.CollectorException(e);
     }
@@ -298,39 +263,6 @@ public class FacilitiesCollector {
           FacilityPair.builder().v0(facilitiesV0.get(i)).v1(facilitiesV1.get(i)).build());
     }
     return facilityPairs;
-  }
-
-  private HashMap<String, CmsOverlay> loadCmsOverlays() {
-    HashMap<String, CmsOverlay> returnMap = new HashMap<>();
-    Streams.stream(cmsOverlayRepository.findAll())
-        .parallel()
-        .forEach(
-            cmsOverlayEntity -> {
-              try {
-                returnMap.put(
-                    cmsOverlayEntity.id().toIdString(),
-                    CmsOverlay.builder()
-                        .operatingStatus(
-                            cmsOverlayEntity.cmsOperatingStatus() != null
-                                ? FacilitiesJacksonConfigV0.createMapper()
-                                    .readValue(
-                                        cmsOverlayEntity.cmsOperatingStatus(),
-                                        Facility.OperatingStatus.class)
-                                : null)
-                        .detailedServices(
-                            cmsOverlayEntity.cmsServices() != null
-                                ? List.of(
-                                    FacilitiesJacksonConfigV0.createMapper()
-                                        .readValue(
-                                            cmsOverlayEntity.cmsServices(),
-                                            DetailedService[].class))
-                                : null)
-                        .build());
-              } catch (Exception e) {
-                log.error("Failed to load cms overlay data. {}", e.getMessage());
-              }
-            });
-    return returnMap;
   }
 
   private List<VastEntity> loadVast() {

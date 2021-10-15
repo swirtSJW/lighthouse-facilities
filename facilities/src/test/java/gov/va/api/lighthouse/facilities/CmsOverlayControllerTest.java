@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -81,7 +83,7 @@ public class CmsOverlayControllerTest {
         .detailedServices(
             List.of(
                 DetailedService.builder()
-                    .name(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)
+                    .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
                     .active(true)
                     .changed(null)
                     .descriptionFacility(null)
@@ -187,7 +189,6 @@ public class CmsOverlayControllerTest {
   @SneakyThrows
   void updateWithExistingOverlay() {
     CmsOverlay overlay = overlay();
-
     var pk = FacilityEntity.Pk.fromIdString("vha_402");
     CmsOverlayEntity cmsOverlayEntity =
         CmsOverlayEntity.builder()
@@ -200,19 +201,14 @@ public class CmsOverlayControllerTest {
                     .writeValueAsString(overlay.detailedServices()))
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
-
     List<DetailedService> additionalServices =
         List.of(
             DetailedService.builder().name("additional service1").active(true).build(),
             DetailedService.builder().name("additional service2").active(true).build());
-
     overlay.detailedServices(additionalServices);
     controller().saveOverlay("vha_402", overlay);
-
     CmsOverlay updatedCovidPathOverlay = overlay();
-
-    controller().updateServiceUrlPaths("vha_402", updatedCovidPathOverlay.detailedServices());
-
+    updateServiceUrlPaths("vha_402", updatedCovidPathOverlay.detailedServices());
     List<DetailedService> combinedServices =
         Streams.stream(
                 Iterables.concat(updatedCovidPathOverlay.detailedServices(), additionalServices))
@@ -245,13 +241,13 @@ public class CmsOverlayControllerTest {
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
     for (DetailedService d : overlay.detailedServices()) {
-      if (d.name().equals(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+      if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path()).isEqualTo("replaceable path here");
       }
     }
     controller().saveOverlay("vha_402", overlay);
     for (DetailedService d : overlay.detailedServices()) {
-      if (d.name().equals(CmsOverlayController.CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+      if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path()).isEqualTo("https://www.maine.va.gov/services/covid-19-vaccines.asp");
       }
     }

@@ -1,7 +1,8 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
-import static gov.va.api.lighthouse.facilities.collector.FacilitiesCollector.loadWebsites;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
@@ -13,7 +14,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -39,11 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CmsOverlayController {
-  public static final String CMS_OVERLAY_SERVICE_NAME_COVID_19 = "COVID-19 vaccines";
-
   private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
-
-  private static final String COVID_CSV_WEBSITES_RESOURCE_NAME = "COVID-19-Facility-URLs.csv";
 
   private final FacilityRepository facilityRepository;
 
@@ -230,14 +226,5 @@ public class CmsOverlayController {
       facilityEntity.overlayServices(detailedServices);
     }
     facilityRepository.save(facilityEntity);
-  }
-
-  void updateServiceUrlPaths(String id, List<DetailedService> detailedServices) {
-    for (DetailedService service : detailedServices) {
-      if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
-        Map<String, String> websites = loadWebsites(COVID_CSV_WEBSITES_RESOURCE_NAME);
-        service.path(websites.get(id));
-      }
-    }
   }
 }
