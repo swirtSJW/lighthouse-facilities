@@ -55,6 +55,6 @@ public class RepositoriesTest {
     var f123VhaSaved = facilityRepository.save(f123Vha);
     entityManager.flush();
     var f123VhaFound = facilityRepository.findById(f123Vha.id()).get();
-    assertThat(f123VhaFound).isEqualTo(f123VhaSaved);
+    assertThat(f123VhaFound).usingRecursiveComparison().isEqualTo(f123VhaSaved);
   }
 }

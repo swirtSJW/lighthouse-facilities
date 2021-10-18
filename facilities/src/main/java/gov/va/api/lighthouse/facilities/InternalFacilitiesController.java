@@ -241,6 +241,18 @@ public class InternalFacilitiesController {
     } else {
       cmsOverlayRepository.save(overlayEntity);
     }
+
+    FacilityEntity facilityEntity = facilityEntityById(id).orElse(null);
+    if (facilityEntity != null) {
+      facilityEntity
+          .cmsOperatingStatus(overlayEntity.cmsOperatingStatus())
+          .cmsServices(overlayEntity.cmsServices());
+      if (overlayEntity.cmsServices() == null) {
+        facilityEntity.overlayServices(new HashSet<>());
+      }
+      facilityRepository.save(facilityEntity);
+    }
+
     return ResponseEntity.ok().build();
   }
 

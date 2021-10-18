@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toSet;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import javax.persistence.Basic;
@@ -25,6 +26,7 @@ import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -85,13 +87,14 @@ public class FacilityEntity implements HasFacilityPayload {
   @Column(name = "cms_services")
   private String cmsServices;
 
+  @Default
   @ElementCollection(targetClass = String.class)
   @CollectionTable(
       name = "cms_overlay_detailed_services",
       schema = "app",
       joinColumns = {@JoinColumn(name = "station_number"), @JoinColumn(name = "type")})
   @Column(length = 48, name = "overlay_detailed_services")
-  private Set<String> overlayServices;
+  private Set<String> overlayServices = new HashSet<>();
 
   @Version private Integer version;
 

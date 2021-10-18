@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,7 +209,7 @@ public class InternalFacilitiesControllerTest {
   private FacilityEntity _facilityEntity(
       Facility fac, gov.va.api.lighthouse.facilities.api.v1.Facility facV1, CmsOverlay overlay) {
     String operatingStatusString = null;
-    Set<String> cmsServicesNames = null;
+    Set<String> cmsServicesNames = new HashSet<>();
     String cmsServicesString = null;
     if (overlay != null) {
       operatingStatusString =
@@ -220,7 +221,6 @@ public class InternalFacilitiesControllerTest {
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices());
       if (overlay.detailedServices() != null) {
-        cmsServicesNames = new HashSet<>();
         for (DetailedService service : overlay.detailedServices()) {
           if (service.active()) {
             cmsServicesNames.add(service.name());
@@ -281,9 +281,7 @@ public class InternalFacilitiesControllerTest {
         .cmsOperatingStatus(
             overlay.operatingStatus() == null
                 ? null
-                : JacksonConfig.createMapper()
-                    .writeValueAsString(
-                        JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus())))
+                : JacksonConfig.createMapper().writeValueAsString(overlay.operatingStatus()))
         .cmsServices(
             overlay.detailedServices() == null || overlay.detailedServices().isEmpty()
                 ? null
@@ -332,7 +330,12 @@ public class InternalFacilitiesControllerTest {
     ReloadResponse response = _controller().reload().getBody();
     assertThat(response.facilitiesCreated()).isEqualTo(List.of("vha_f1"));
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f2"));
+    RecursiveComparisonConfiguration comparisonConfig =
+        RecursiveComparisonConfiguration.builder()
+            .withIgnoredFields("version", "lastUpdated")
+            .build();
     assertThat(facilityRepository.findAll())
+        .usingRecursiveFieldByFieldElementComparator(comparisonConfig)
         .containsExactlyInAnyOrder(_facilityEntity(f1, f1V1), _facilityEntity(f2, f2V1));
   }
 
@@ -710,7 +713,17 @@ public class InternalFacilitiesControllerTest {
     overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
     response = _controller().deleteCmsOverlayById("vha_f1", "operating_status");
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    assertThat(facilityRepository.findAll()).isEqualTo(List.of(_facilityEntity(f, f1V1, null)));
+    RecursiveComparisonConfiguration facilityEntityCompConfig =
+        RecursiveComparisonConfiguration.builder()
+            .withIgnoredFields("version", "lastUpdated")
+            .build();
+    assertThat(facilityRepository.findAll())
+        .usingRecursiveFieldByFieldElementComparator(facilityEntityCompConfig)
+        .containsOnly(
+            _facilityEntity(
+                f,
+                f1V1,
+                CmsOverlay.builder().detailedServices(_overlay_detailed_services()).build()));
     assertThat(overlayRepository.findAll())
         .usingRecursiveComparison()
         .isEqualTo(
@@ -723,7 +736,12 @@ public class InternalFacilitiesControllerTest {
     response = _controller().deleteCmsOverlayById("vha_f1", "detailed_services");
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(facilityRepository.findAll())
-        .isEqualTo(List.of(_facilityEntity(f, f1V1, CmsOverlay.builder().build())));
+        .usingRecursiveFieldByFieldElementComparator(facilityEntityCompConfig)
+        .containsOnly(
+            _facilityEntity(
+                f,
+                f1V1,
+                CmsOverlay.builder().operatingStatus(_overlay_operating_status()).build()));
     assertThat(overlayRepository.findAll())
         .usingRecursiveComparison()
         .isEqualTo(
@@ -736,7 +754,8 @@ public class InternalFacilitiesControllerTest {
     response = _controller().deleteCmsOverlayById("vha_f1", null);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(facilityRepository.findAll())
-        .isEqualTo(List.of(_facilityEntity(f, f1V1, CmsOverlay.builder().build())));
+        .usingRecursiveFieldByFieldElementComparator(facilityEntityCompConfig)
+        .containsOnly(_facilityEntity(f, f1V1, CmsOverlay.builder().build()));
     assertThat(overlayRepository.findAll()).isEmpty();
   }
 
@@ -1088,8 +1107,13 @@ public class InternalFacilitiesControllerTest {
     facilityPairs.add(FacilityPair.builder().v0(f1).v1(f1V1).build());
     facilityPairs.add(FacilityPair.builder().v0(f2).v1(f2V1).build());
     _controller().upload(facilityPairs);
+    RecursiveComparisonConfiguration comparisonConfig =
+        RecursiveComparisonConfiguration.builder()
+            .withIgnoredFields("version", "lastUpdated")
+            .build();
     assertThat(facilityRepository.findAll())
-        .isEqualTo(List.of(_facilityEntity(f1, f1V1), _facilityEntity(f2, f2V1)));
+        .usingRecursiveFieldByFieldElementComparator(comparisonConfig)
+        .containsExactlyInAnyOrder(_facilityEntity(f1, f1V1), _facilityEntity(f2, f2V1));
   }
 
   @Test
