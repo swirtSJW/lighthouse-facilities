@@ -102,8 +102,7 @@ import javax.ws.rs.Path;
                     + "\n\n## Reference\n\n"
                     + "- [Raw VA Facilities Open API Spec]"
                     + "(https://api.va.gov/services/va_facilities/docs/v0/api)\n"
-                    + "- [GeoJSON Format](https://tools.ietf.org/html/rfc7946)\n"
-                    + "- [JSON API Format](https://jsonapi.org/format/)\n",
+                    + "- [GeoJSON Format](https://tools.ietf.org/html/rfc7946)\n",
             contact = @Contact(name = "developer.va.gov")),
     tags = @Tag(name = "facilities", description = "VA Facilities API"),
     servers = {
