@@ -21,6 +21,7 @@ import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -90,6 +91,11 @@ public class InternalFacilitiesController {
 
   private final FacilityGraveyardRepository graveyardRepository;
 
+  //Max distance in miles where two facilities are considered to be duplicates
+  private final Double duplicateFacilityOverlapRange = 0.02;
+
+  private final Set<FacilityEntity> facilityEntities = new HashSet<>();
+
   private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Address> addressMailing(
       gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
     return addresses(facility).map(a -> a.mailing());
@@ -114,12 +120,15 @@ public class InternalFacilitiesController {
     return facility.attributes().hours() == null;
   }
 
+  private static Boolean isMobileCenter(FacilityEntity facility) {
+    return Optional.ofNullable(facility.mobile()).orElse(false)
+        && facility.id().stationNumber().contains("MVC");
+  }
+
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
   static FacilityEntity populate(FacilityEntity record, FacilityPair facilityPair) {
-
     gov.va.api.lighthouse.facilities.api.v0.Facility facilityV0 = facilityPair.v0();
-
     checkArgument(record.id() != null);
     record.latitude(facilityV0.attributes().latitude().doubleValue());
     record.longitude(facilityV0.attributes().longitude().doubleValue());
@@ -129,9 +138,8 @@ public class InternalFacilitiesController {
     record.facility(MAPPER_V0.writeValueAsString(facilityV0));
     record.visn(facilityV0.attributes().visn());
     record.mobile(facilityV0.attributes().mobile());
-
-    //    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1();
-    //    record.facilityV1(MAPPER_V1.writeValueAsString(facilityV1));
+    // gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1();
+    // record.facilityV1(MAPPER_V1.writeValueAsString(facilityV1));
     return record;
   }
 
@@ -212,7 +220,6 @@ public class InternalFacilitiesController {
       log.info("CmsOverlay {} does not exist, ignoring request.", sanitize(id));
       return ResponseEntity.accepted().build();
     }
-
     if (thisNodeOnly == null) {
       log.info("Deleting cms overlay for id: {}", sanitize(id));
       overlayEntity.cmsOperatingStatus(null);
@@ -235,13 +242,11 @@ public class InternalFacilitiesController {
       log.info("CmsOverlay field {} does not exist.", sanitize(thisNodeOnly));
       throw new ExceptionsUtils.NotFound(thisNodeOnly);
     }
-
     if (overlayEntity.cmsOperatingStatus() == null && overlayEntity.cmsServices() == null) {
       cmsOverlayRepository.delete(overlayEntity);
     } else {
       cmsOverlayRepository.save(overlayEntity);
     }
-
     FacilityEntity facilityEntity = facilityEntityById(id).orElse(null);
     if (facilityEntity != null) {
       facilityEntity
@@ -252,7 +257,6 @@ public class InternalFacilitiesController {
       }
       facilityRepository.save(facilityEntity);
     }
-
     return ResponseEntity.ok().build();
   }
 
@@ -317,6 +321,13 @@ public class InternalFacilitiesController {
     return instructions;
   }
 
+  private Set<FacilityEntity> getAllFacilities() {
+    if (facilityEntities.isEmpty()) {
+      facilityRepository.findAll().forEach(facilityEntities::add);
+    }
+    return facilityEntities;
+  }
+
   @GetMapping("/graveyard")
   GraveyardResponse graveyardAll() {
     return GraveyardResponse.builder()
@@ -330,12 +341,12 @@ public class InternalFacilitiesController {
                                     MAPPER_V0,
                                     z.facility(),
                                     gov.va.api.lighthouse.facilities.api.v0.Facility.class))
-                            //                            .facilityV1(
-                            //                                FacilitiesJacksonConfigV1.quietlyMap(
-                            //                                    MAPPER_V1,
-                            //                                    z.facilityV1(),
-                            //
-                            // gov.va.api.lighthouse.facilities.api.v1.Facility.class))
+                                //                            .facilityV1(
+                                //                                FacilitiesJacksonConfigV1.quietlyMap(
+                                //                                    MAPPER_V1,
+                                //                                    z.facilityV1(),
+                                //
+                                // gov.va.api.lighthouse.facilities.api.v1.Facility.class))
                             .cmsOverlay(
                                 CmsOverlay.builder()
                                     .operatingStatus(
@@ -386,7 +397,7 @@ public class InternalFacilitiesController {
           FacilityGraveyardEntity.builder()
               .id(id)
               .facility(entity.facility())
-              //              .facilityV1(entity.facilityV1())
+                  //              .facilityV1(entity.facilityV1())
               .cmsOperatingStatus(entity.cmsOperatingStatus())
               .cmsServices(entity.cmsServices())
               .graveyardOverlayServices(
@@ -432,7 +443,6 @@ public class InternalFacilitiesController {
       log.error(
           "Failed to save all facility overlay info to cms_overlay table. {}", e.getMessage());
     }
-
     if (noErrors) {
       log.warn("Completed saving all facility overlay info to cms_overlay table!");
     }
@@ -499,21 +509,26 @@ public class InternalFacilitiesController {
 
   @SneakyThrows
   void updateAndSave(ReloadResponse response, FacilityEntity record, FacilityPair facilityPair) {
-
     gov.va.api.lighthouse.facilities.api.v0.Facility facility = facilityPair.v0();
-
     facility
         .attributes()
         .operationalHoursSpecialInstructions(
             findAndReplaceOperationalHoursSpecialInstructions(
                 facility.attributes().operationalHoursSpecialInstructions()));
-
     populate(record, facilityPair);
     record.missingTimestamp(null);
     record.lastUpdated(response.timing().completeCollection());
     /*
      * Determine if there is something wrong with the record, but it is still usable.
      */
+    List<String> duplicateFacilities = detectDuplicateFacilities(record);
+    if (!duplicateFacilities.isEmpty()) {
+      response
+          .problems()
+          .add(
+              ReloadResponse.Problem.of(
+                  facility.id(), "Duplicate Facilities", String.join(";", duplicateFacilities)));
+    }
     if (isBlank(record.zip()) || !ZIP_PATTERN.matcher(record.zip()).matches()) {
       response
           .problems()
@@ -644,9 +659,7 @@ public class InternalFacilitiesController {
 
   private void updateFacility(ReloadResponse response, FacilityPair facilityPair) {
     FacilityEntity.Pk pk;
-
     gov.va.api.lighthouse.facilities.api.v0.Facility facility = facilityPair.v0();
-
     try {
       pk = FacilityEntity.Pk.fromIdString(facility.id());
     } catch (IllegalArgumentException e) {
@@ -697,5 +710,18 @@ public class InternalFacilitiesController {
   ResponseEntity<ReloadResponse> upload(@RequestBody List<FacilityPair> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
+  }
+
+  //Checks a facility to make sure it is not within 0.02 miles of another
+  private List<String> detectDuplicateFacilities(FacilityEntity newFacility) {
+    List<String> duplicateIds = new ArrayList<>();
+    getAllFacilities().stream()
+            .filter(f -> f.id().type() == newFacility.id().type())
+            .filter(f -> !f.id().stationNumber().equals(newFacility.id().stationNumber()))
+            .filter(f -> !isMobileCenter(f) && !isMobileCenter(newFacility))
+            .filter(f -> FacilityUtils.haversine(newFacility, f.longitude(), f.latitude()) <= duplicateFacilityOverlapRange)
+            .map(f -> f.id().toIdString())
+            .forEachOrdered(duplicateIds::add);
+    return duplicateIds;
   }
 }
