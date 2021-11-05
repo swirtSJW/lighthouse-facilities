@@ -265,7 +265,6 @@ public class InternalFacilitiesControllerTest {
     return FacilityGraveyardEntity.builder()
         .id(FacilityEntity.Pk.fromIdString(fac.id()))
         .facility(FacilitiesJacksonConfigV0.createMapper().writeValueAsString(fac))
-        //        .facilityV1(FacilitiesJacksonConfigV1.createMapper().writeValueAsString(facV1))
         .cmsOperatingStatus(operatingStatusString)
         .graveyardOverlayServices(cmsServicesNames)
         .cmsServices(cmsServicesString)
@@ -820,6 +819,175 @@ public class InternalFacilitiesControllerTest {
 
   @Test
   @SneakyThrows
+  void duplicateFacility_invalidDuplicate() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "32934", 100.00, 100.00, List.of(HealthService.MentalHealthCare));
+    Facility f2 =
+        _facility("vha_f2", "FL", "32934", 50.00, 50.00, List.of(HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
+        _facilityV1(
+            "vha_f1",
+            "FL",
+            "South",
+            100.00,
+            100.00,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
+        _facilityV1(
+            "vha_f2",
+            "FL",
+            "South",
+            50.00,
+            50.00,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    Facility f1Duplicate =
+        _facility(
+            "vha_f1dup", "FL", "32934", 102.00, 102.00, List.of(HealthService.MentalHealthCare));
+    Facility f2Duplicate =
+        _facility(
+            "vha_f2dup", "FL", "32934", 52.00, 52.00, List.of(HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f1DuplicateV1 =
+        _facilityV1(
+            "vha_f1dup",
+            "FL",
+            "South",
+            102.00,
+            102.00,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f2DuplicateV2 =
+        _facilityV1(
+            "vha_f2dup",
+            "FL",
+            "South",
+            52.00,
+            52.00,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    ReloadResponse response = ReloadResponse.start();
+    facilityRepository.save(_facilityEntity(f1, f1V1));
+    facilityRepository.save(_facilityEntity(f2, f2V1));
+    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1"))).isNotNull();
+    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2"))).isNotNull();
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1dup")).build(),
+            FacilityPair.builder().v0(f1Duplicate).v1(f1DuplicateV1).build());
+    assertThat(
+            response.problems().stream()
+                .filter(
+                    f ->
+                        f.facilityId().equalsIgnoreCase("vha_f1dup")
+                            && f.description().equalsIgnoreCase("Duplicate Facilities"))
+                .toList())
+        .isEmpty();
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f2dup")).build(),
+            FacilityPair.builder().v0(f2Duplicate).v1(f2DuplicateV2).build());
+    assertThat(
+            response.problems().stream()
+                .filter(
+                    f ->
+                        f.facilityId().equalsIgnoreCase("vha_f2dup")
+                            && f.description().equalsIgnoreCase("Duplicate Facilities"))
+                .toList())
+        .isEmpty();
+  }
+
+  @Test
+  @SneakyThrows
+  void duplicateFacility_validDuplicate() {
+    Facility f1 =
+        _facility("vha_f1", "FL", "32934", 100.00, 100.00, List.of(HealthService.MentalHealthCare));
+    Facility f2 =
+        _facility("vha_f2", "FL", "32934", 50.00, 50.00, List.of(HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
+        _facilityV1(
+            "vha_f1",
+            "FL",
+            "South",
+            100.00,
+            100.00,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
+        _facilityV1(
+            "vha_f2",
+            "FL",
+            "South",
+            50.00,
+            50.00,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    Facility f1Duplicate =
+        _facility(
+            "vha_f1dup",
+            "FL",
+            "32934",
+            100.0002,
+            100.0002,
+            List.of(HealthService.MentalHealthCare));
+    Facility f2Duplicate =
+        _facility(
+            "vha_f2dup", "FL", "32934", 50.0002, 50.0002, List.of(HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f1DuplicateV1 =
+        _facilityV1(
+            "vha_f1dup",
+            "FL",
+            "South",
+            100.0002,
+            100.0002,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    gov.va.api.lighthouse.facilities.api.v1.Facility f2DuplicateV2 =
+        _facilityV1(
+            "vha_f2dup",
+            "FL",
+            "South",
+            50.0002,
+            50.0002,
+            List.of(
+                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+    facilityRepository.save(_facilityEntity(f1, f1V1));
+    facilityRepository.save(_facilityEntity(f2, f2V1));
+    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1"))).isNotNull();
+    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2"))).isNotNull();
+    ReloadResponse response = ReloadResponse.start();
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1dup")).build(),
+            FacilityPair.builder().v0(f1Duplicate).v1(f1DuplicateV1).build());
+    assertThat(
+            response.problems().stream()
+                .filter(
+                    f ->
+                        f.facilityId().equalsIgnoreCase("vha_f1dup")
+                            && f.description().equalsIgnoreCase("Duplicate Facilities"))
+                .toList())
+        .isNotEmpty();
+    _controller()
+        .updateAndSave(
+            response,
+            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f2dup")).build(),
+            FacilityPair.builder().v0(f2Duplicate).v1(f2DuplicateV2).build());
+    assertThat(
+            response.problems().stream()
+                .filter(
+                    f ->
+                        f.facilityId().equalsIgnoreCase("vha_f2dup")
+                            && f.description().equalsIgnoreCase("Duplicate Facilities"))
+                .toList())
+        .isNotEmpty();
+  }
+
+  @Test
+  @SneakyThrows
   void graveyardAll() {
     Facility f1 = _facility("vha_f1", "NO", "666", 9.0, 9.1, List.of(HealthService.SpecialtyCare));
     gov.va.api.lighthouse.facilities.api.v1.Facility fV1 =
@@ -846,12 +1014,6 @@ public class InternalFacilitiesControllerTest {
                             .facility(
                                 JacksonConfig.createMapper()
                                     .readValue(entity.facility(), Facility.class))
-                            //                            .facilityV1(
-                            //                                JacksonConfig.createMapper()
-                            //                                    .readValue(
-                            //                                        entity.facilityV1(),
-                            //
-                            // gov.va.api.lighthouse.facilities.api.v1.Facility.class))
                             .cmsOverlay(overlay)
                             .overlayServices(entity.graveyardOverlayServices())
                             .missing(Instant.ofEpochMilli(entity.missingTimestamp()))
@@ -1077,146 +1239,6 @@ public class InternalFacilitiesControllerTest {
     assertThat(
             facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f3")).get().facility())
         .contains(SPECIAL_INSTRUCTION_UPDATED_3);
-  }
-
-  @Test
-  @SneakyThrows
-  void duplicateFacility_validDuplicate(){
-    Facility f1 =
-            _facility("vha_f1", "FL", "32934", 100.00, 100.00, List.of(HealthService.MentalHealthCare));
-    Facility f2 =
-            _facility("vha_f2", "FL", "32934", 50.00, 50.00, List.of(HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-            _facilityV1(
-                    "vha_f1",
-                    "FL",
-                    "South",
-                    100.00,
-                    100.00,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
-            _facilityV1(
-                    "vha_f2",
-                    "FL",
-                    "South",
-                    50.00,
-                    50.00,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    Facility f1Duplicate =
-            _facility("vha_f1dup", "FL", "32934", 100.0002, 100.0002, List.of(HealthService.MentalHealthCare));
-    Facility f2Duplicate =
-            _facility("vha_f2dup", "FL", "32934", 50.0002, 50.0002, List.of(HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f1DuplicateV1 =
-            _facilityV1(
-                    "vha_f1dup",
-                    "FL",
-                    "South",
-                    100.0002,
-                    100.0002,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f2DuplicateV2 =
-            _facilityV1(
-                    "vha_f2dup",
-                    "FL",
-                    "South",
-                    50.0002,
-                    50.0002,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    facilityRepository.save(_facilityEntity(f1, f1V1));
-    facilityRepository.save(_facilityEntity(f2, f2V1));
-    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1"))).isNotNull();
-    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2"))).isNotNull();
-    ReloadResponse response = ReloadResponse.start();
-    _controller().updateAndSave(
-            response,
-            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1dup")).build(),
-            FacilityPair.builder().v0(f1Duplicate).v1(f1DuplicateV1).build());
-    assertThat(response.problems()
-            .stream()
-            .filter(f -> f.facilityId().equalsIgnoreCase("vha_f1dup") && f.description().equalsIgnoreCase("Duplicate Facilities"))
-            .toList()).isNotEmpty();
-    _controller().updateAndSave(
-            response,
-            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f2dup")).build(),
-            FacilityPair.builder().v0(f2Duplicate).v1(f2DuplicateV2).build());
-    assertThat(response.problems()
-            .stream()
-            .filter(f -> f.facilityId().equalsIgnoreCase("vha_f2dup") && f.description().equalsIgnoreCase("Duplicate Facilities"))
-            .toList()).isNotEmpty();
-  }
-
-  @Test
-  @SneakyThrows
-  void duplicateFacility_invalidDuplicate(){
-    Facility f1 =
-            _facility("vha_f1", "FL", "32934", 100.00, 100.00, List.of(HealthService.MentalHealthCare));
-    Facility f2 =
-            _facility("vha_f2", "FL", "32934", 50.00, 50.00, List.of(HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f1V1 =
-            _facilityV1(
-                    "vha_f1",
-                    "FL",
-                    "South",
-                    100.00,
-                    100.00,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f2V1 =
-            _facilityV1(
-                    "vha_f2",
-                    "FL",
-                    "South",
-                    50.00,
-                    50.00,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    Facility f1Duplicate =
-            _facility("vha_f1dup", "FL", "32934", 102.00, 102.00, List.of(HealthService.MentalHealthCare));
-    Facility f2Duplicate =
-            _facility("vha_f2dup", "FL", "32934", 52.00, 52.00, List.of(HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f1DuplicateV1 =
-            _facilityV1(
-                    "vha_f1dup",
-                    "FL",
-                    "South",
-                    102.00,
-                    102.00,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    gov.va.api.lighthouse.facilities.api.v1.Facility f2DuplicateV2 =
-            _facilityV1(
-                    "vha_f2dup",
-                    "FL",
-                    "South",
-                    52.00,
-                    52.00,
-                    List.of(
-                            gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
-    ReloadResponse response = ReloadResponse.start();
-    facilityRepository.save(_facilityEntity(f1, f1V1));
-    facilityRepository.save(_facilityEntity(f2, f2V1));
-    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f1"))).isNotNull();
-    assertThat(facilityRepository.findById(FacilityEntity.Pk.fromIdString("vha_f2"))).isNotNull();
-    _controller().updateAndSave(
-            response,
-            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f1dup")).build(),
-            FacilityPair.builder().v0(f1Duplicate).v1(f1DuplicateV1).build());
-    assertThat(response.problems()
-            .stream()
-            .filter(f -> f.facilityId().equalsIgnoreCase("vha_f1dup") && f.description().equalsIgnoreCase("Duplicate Facilities"))
-            .toList()).isEmpty();
-    _controller().updateAndSave(
-            response,
-            FacilityEntity.builder().id(FacilityEntity.Pk.fromIdString("vha_f2dup")).build(),
-            FacilityPair.builder().v0(f2Duplicate).v1(f2DuplicateV2).build());
-    assertThat(response.problems()
-            .stream()
-            .filter(f -> f.facilityId().equalsIgnoreCase("vha_f2dup") && f.description().equalsIgnoreCase("Duplicate Facilities"))
-            .toList()).isEmpty();
   }
 
   @Test

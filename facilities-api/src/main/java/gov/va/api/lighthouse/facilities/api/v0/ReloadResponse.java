@@ -4,7 +4,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -56,7 +55,7 @@ public class ReloadResponse {
 
     String data;
 
-    public static Problem of(String facilityId, String description){
+    public static Problem of(String facilityId, String description) {
       return Problem.of(facilityId, description, "");
     }
   }

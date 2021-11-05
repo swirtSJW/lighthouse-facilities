@@ -81,8 +81,7 @@ public class InternalFacilitiesController {
 
   private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
 
-  //  private static final ObjectMapper MAPPER_V1 = FacilitiesJacksonConfigV1.createMapper();
-
+  // private static final ObjectMapper MAPPER_V1 = FacilitiesJacksonConfigV1.createMapper();
   private final FacilitiesCollector collector;
 
   private final CmsOverlayRepository cmsOverlayRepository;
@@ -91,7 +90,7 @@ public class InternalFacilitiesController {
 
   private final FacilityGraveyardRepository graveyardRepository;
 
-  //Max distance in miles where two facilities are considered to be duplicates
+  // Max distance in miles where two facilities are considered to be duplicates
   private final Double duplicateFacilityOverlapRange = 0.02;
 
   private final Set<FacilityEntity> facilityEntities = new HashSet<>();
@@ -290,6 +289,22 @@ public class InternalFacilitiesController {
     }
   }
 
+  // Checks a facility to make sure it is not within 0.02 miles of another
+  private List<String> detectDuplicateFacilities(FacilityEntity newFacility) {
+    List<String> duplicateIds = new ArrayList<>();
+    getAllFacilities().stream()
+        .filter(f -> f.id().type() == newFacility.id().type())
+        .filter(f -> !f.id().stationNumber().equals(newFacility.id().stationNumber()))
+        .filter(f -> !isMobileCenter(f) && !isMobileCenter(newFacility))
+        .filter(
+            f ->
+                FacilityUtils.haversine(newFacility, f.longitude(), f.latitude())
+                    <= duplicateFacilityOverlapRange)
+        .map(f -> f.id().toIdString())
+        .forEachOrdered(duplicateIds::add);
+    return duplicateIds;
+  }
+
   private Optional<FacilityEntity> facilityEntityById(String id) {
     FacilityEntity.Pk pk = null;
     try {
@@ -341,12 +356,6 @@ public class InternalFacilitiesController {
                                     MAPPER_V0,
                                     z.facility(),
                                     gov.va.api.lighthouse.facilities.api.v0.Facility.class))
-                                //                            .facilityV1(
-                                //                                FacilitiesJacksonConfigV1.quietlyMap(
-                                //                                    MAPPER_V1,
-                                //                                    z.facilityV1(),
-                                //
-                                // gov.va.api.lighthouse.facilities.api.v1.Facility.class))
                             .cmsOverlay(
                                 CmsOverlay.builder()
                                     .operatingStatus(
@@ -397,7 +406,6 @@ public class InternalFacilitiesController {
           FacilityGraveyardEntity.builder()
               .id(id)
               .facility(entity.facility())
-                  //              .facilityV1(entity.facilityV1())
               .cmsOperatingStatus(entity.cmsOperatingStatus())
               .cmsServices(entity.cmsServices())
               .graveyardOverlayServices(
@@ -710,18 +718,5 @@ public class InternalFacilitiesController {
   ResponseEntity<ReloadResponse> upload(@RequestBody List<FacilityPair> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
-  }
-
-  //Checks a facility to make sure it is not within 0.02 miles of another
-  private List<String> detectDuplicateFacilities(FacilityEntity newFacility) {
-    List<String> duplicateIds = new ArrayList<>();
-    getAllFacilities().stream()
-            .filter(f -> f.id().type() == newFacility.id().type())
-            .filter(f -> !f.id().stationNumber().equals(newFacility.id().stationNumber()))
-            .filter(f -> !isMobileCenter(f) && !isMobileCenter(newFacility))
-            .filter(f -> FacilityUtils.haversine(newFacility, f.longitude(), f.latitude()) <= duplicateFacilityOverlapRange)
-            .map(f -> f.id().toIdString())
-            .forEachOrdered(duplicateIds::add);
-    return duplicateIds;
   }
 }
