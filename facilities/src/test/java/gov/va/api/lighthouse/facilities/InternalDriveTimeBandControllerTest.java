@@ -25,6 +25,13 @@ public class InternalDriveTimeBandControllerTest {
   }
 
   @Test
+  void findBandVersions() {
+    var e = Entities.diamond("a-1-2", 100);
+    when(repo.findAllBandVersions()).thenReturn(List.of(e.monthYear()));
+    assertThat(controller().bandVersions()).containsExactly("MAR2021");
+  }
+
+  @Test
   void getAllBands() {
     when(repo.findAllIds())
         .thenReturn(
@@ -60,13 +67,6 @@ public class InternalDriveTimeBandControllerTest {
     when(repo.findById(DriveTimeBandEntity.Pk.fromName("a-1-2"))).thenReturn(Optional.empty());
     assertThatExceptionOfType(ExceptionsUtils.NotFound.class)
         .isThrownBy(() -> controller().band("a-1-2"));
-  }
-
-  @Test
-  void getBandVersions() {
-    var e = Entities.diamond("a-1-2", 100);
-    when(repo.findAll()).thenReturn(List.of(e));
-    assertThat(controller().bandVersions()).containsExactly("MAR2021");
   }
 
   @Test

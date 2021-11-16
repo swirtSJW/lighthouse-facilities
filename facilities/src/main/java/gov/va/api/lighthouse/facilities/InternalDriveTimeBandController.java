@@ -61,10 +61,7 @@ public class InternalDriveTimeBandController {
 
   @GetMapping("/versions")
   List<String> bandVersions() {
-    return StreamSupport.stream(repository.findAll().spliterator(), false)
-        .map(b -> b.monthYear().strip())
-        .distinct()
-        .collect(toList());
+    return repository.findAllBandVersions();
   }
 
   private Rectangle2D boundsOf(PssgDriveTimeBand band) {

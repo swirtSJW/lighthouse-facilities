@@ -23,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 public interface DriveTimeBandRepository
     extends CrudRepository<DriveTimeBandEntity, DriveTimeBandEntity.Pk>,
         JpaSpecificationExecutor<DriveTimeBandEntity> {
+  @Query("select distinct e.monthYear from #{#entityName} e")
+  List<String> findAllBandVersions();
+
   @Query("select e.id from #{#entityName} e")
   List<DriveTimeBandEntity.Pk> findAllIds();
 
@@ -44,17 +47,14 @@ public interface DriveTimeBandRepository
         CriteriaQuery<?> criteriaQuery,
         CriteriaBuilder criteriaBuilder) {
       List<Predicate> predicates = new ArrayList<>(5);
-
       predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("minLongitude"), longitude));
       predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("maxLongitude"), longitude));
       predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("minLatitude"), latitude));
       predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("maxLatitude"), latitude));
-
       if (maxDriveTime != null) {
         predicates.add(
             criteriaBuilder.lessThanOrEqualTo(root.get("id").get("toMinutes"), maxDriveTime));
       }
-
       return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
   }
