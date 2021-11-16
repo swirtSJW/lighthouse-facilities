@@ -89,6 +89,13 @@ public class InternalDriveTimeBandControllerTest {
     verify(repo).save(a34);
   }
 
+  @Test
+  void getBandVersions() {
+    var e = Entities.diamond("a-1-2", 100);
+    when(repo.findAll()).thenReturn(List.of(e));
+    assertThat(controller().bandVersions()).containsExactly("MAR2021");
+  }
+
   static final class Entities {
     static DriveTimeBandEntity diamond(String name, int offset) {
       return DriveTimeBandEntity.builder()

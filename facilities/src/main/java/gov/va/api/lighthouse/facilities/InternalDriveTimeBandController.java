@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.StreamSupport;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
@@ -56,6 +57,14 @@ public class InternalDriveTimeBandController {
                     .version(result.version() == null ? 0 : result.version())
                     .build())
         .orElseThrow(() -> new ExceptionsUtils.NotFound(name));
+  }
+
+  @GetMapping("/versions")
+  List<String> bandVersions() {
+    return StreamSupport.stream(repository.findAll().spliterator(), false)
+        .map(b -> b.monthYear().strip())
+        .distinct()
+        .collect(toList());
   }
 
   private Rectangle2D boundsOf(PssgDriveTimeBand band) {
