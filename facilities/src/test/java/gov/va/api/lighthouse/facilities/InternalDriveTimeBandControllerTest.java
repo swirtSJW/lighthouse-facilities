@@ -63,17 +63,27 @@ public class InternalDriveTimeBandControllerTest {
   }
 
   @Test
-  void updateBandCreatesNewRecord() {
-    var existingA12 = Entities.diamond("a-1-2", 900); // exists
-    var existingA23 = Entities.diamond("a-2-3", 800); // exists
-    var a12 = Entities.diamond("a-1-2", 100); // update
-    var a23 = Entities.diamond("a-2-3", 200); // update
-    var a34 = Entities.diamond("a-3-4", 300); // create
+  void getBandVersions() {
+    var e = Entities.diamond("a-1-2", 100);
+    when(repo.findAll()).thenReturn(List.of(e));
+    assertThat(controller().bandVersions()).containsExactly("MAR2021");
+  }
 
+  @Test
+  void updateBandCreatesNewRecord() {
+    // exists
+    var existingA12 = Entities.diamond("a-1-2", 900);
+    // exists
+    var existingA23 = Entities.diamond("a-2-3", 800);
+    // update
+    var a12 = Entities.diamond("a-1-2", 100);
+    // update
+    var a23 = Entities.diamond("a-2-3", 200);
+    // create
+    var a34 = Entities.diamond("a-3-4", 300);
     when(repo.findById(a12.id())).thenReturn(Optional.of(existingA12));
     when(repo.findById(a23.id())).thenReturn(Optional.of(existingA23));
     when(repo.findById(a34.id())).thenReturn(Optional.empty());
-
     controller()
         .update(
             PssgResponse.builder()
@@ -83,17 +93,9 @@ public class InternalDriveTimeBandControllerTest {
                         Entities.diamondBand("a-2-3", 200),
                         Entities.diamondBand("a-3-4", 300)))
                 .build());
-
     verify(repo).save(a12);
     verify(repo).save(a23);
     verify(repo).save(a34);
-  }
-
-  @Test
-  void getBandVersions() {
-    var e = Entities.diamond("a-1-2", 100);
-    when(repo.findAll()).thenReturn(List.of(e));
-    assertThat(controller().bandVersions()).containsExactly("MAR2021");
   }
 
   static final class Entities {
