@@ -47,54 +47,56 @@ public class CmsOverlayCollector {
   /** Load and return map of CMS overlays for each facility id. */
   public HashMap<String, CmsOverlay> loadAndUpdateCmsOverlays() {
     final ObjectMapper mapper = FacilitiesJacksonConfigV0.createMapper();
-    HashMap<String, CmsOverlay> overlays = Streams.stream(cmsOverlayRepository.findAll())
-        .parallel()
-        .map(
-            cmsOverlayEntity -> {
-              CmsOverlay overlay =
-                  CmsOverlay.builder()
-                      .operatingStatus(
-                          cmsOverlayEntity.cmsOperatingStatus() != null
-                              ? FacilitiesJacksonConfigV0.quietlyMap(
-                                  mapper,
-                                  cmsOverlayEntity.cmsOperatingStatus(),
-                                  Facility.OperatingStatus.class)
-                              : null)
-                      .detailedServices(
-                          cmsOverlayEntity.cmsServices() != null
-                              ? updateServiceUrlPaths(
-                                  cmsOverlayEntity.id().toIdString(),
-                                  List.of(
-                                      FacilitiesJacksonConfigV0.quietlyMap(
-                                          mapper,
-                                          cmsOverlayEntity.cmsServices(),
-                                          DetailedService[].class)))
-                              : null)
-                      .build();
-              // Save updates made to overlay with Covid services
-              final Facility.OperatingStatus operatingStatus = overlay.operatingStatus();
-              final List<DetailedService> detailedServices = overlay.detailedServices();
-              if (containsCovidService(detailedServices)) {
-                cmsOverlayRepository.save(
-                    CmsOverlayEntity.builder()
-                        .id(cmsOverlayEntity.id())
-                        .cmsOperatingStatus(
-                            operatingStatus != null
-                                ? FacilitiesJacksonConfigV0.quietlyWriteValueAsString(
-                                    mapper, operatingStatus)
-                                : null)
-                        .cmsServices(
-                            FacilitiesJacksonConfigV0.quietlyWriteValueAsString(
-                                mapper, detailedServices))
-                        .build());
-                log.info(
-                    "CMS overlay updated for {} facility",
-                    sanitize(cmsOverlayEntity.id().toIdString()));
-              }
-              return new AbstractMap.SimpleEntry<>(cmsOverlayEntity.id().toIdString(), overlay);
-            })
-        .collect(convertOverlayToMap());
-    log.info("Loaded {} overlays from {} db entities", overlays.size(), cmsOverlayRepository.count());
+    HashMap<String, CmsOverlay> overlays =
+        Streams.stream(cmsOverlayRepository.findAll())
+            .parallel()
+            .map(
+                cmsOverlayEntity -> {
+                  CmsOverlay overlay =
+                      CmsOverlay.builder()
+                          .operatingStatus(
+                              cmsOverlayEntity.cmsOperatingStatus() != null
+                                  ? FacilitiesJacksonConfigV0.quietlyMap(
+                                      mapper,
+                                      cmsOverlayEntity.cmsOperatingStatus(),
+                                      Facility.OperatingStatus.class)
+                                  : null)
+                          .detailedServices(
+                              cmsOverlayEntity.cmsServices() != null
+                                  ? updateServiceUrlPaths(
+                                      cmsOverlayEntity.id().toIdString(),
+                                      List.of(
+                                          FacilitiesJacksonConfigV0.quietlyMap(
+                                              mapper,
+                                              cmsOverlayEntity.cmsServices(),
+                                              DetailedService[].class)))
+                                  : null)
+                          .build();
+                  // Save updates made to overlay with Covid services
+                  final Facility.OperatingStatus operatingStatus = overlay.operatingStatus();
+                  final List<DetailedService> detailedServices = overlay.detailedServices();
+                  if (containsCovidService(detailedServices)) {
+                    cmsOverlayRepository.save(
+                        CmsOverlayEntity.builder()
+                            .id(cmsOverlayEntity.id())
+                            .cmsOperatingStatus(
+                                operatingStatus != null
+                                    ? FacilitiesJacksonConfigV0.quietlyWriteValueAsString(
+                                        mapper, operatingStatus)
+                                    : null)
+                            .cmsServices(
+                                FacilitiesJacksonConfigV0.quietlyWriteValueAsString(
+                                    mapper, detailedServices))
+                            .build());
+                    log.info(
+                        "CMS overlay updated for {} facility",
+                        sanitize(cmsOverlayEntity.id().toIdString()));
+                  }
+                  return new AbstractMap.SimpleEntry<>(cmsOverlayEntity.id().toIdString(), overlay);
+                })
+            .collect(convertOverlayToMap());
+    log.info(
+        "Loaded {} overlays from {} db entities", overlays.size(), cmsOverlayRepository.count());
     return overlays;
   }
 }
