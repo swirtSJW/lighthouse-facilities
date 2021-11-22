@@ -49,7 +49,7 @@ public class CmsOverlayCollector {
     final ObjectMapper mapper = FacilitiesJacksonConfigV0.createMapper();
     HashMap<String, CmsOverlay> overlays =
         Streams.stream(cmsOverlayRepository.findAll())
-            .parallel()
+            // .parallel()
             .map(
                 cmsOverlayEntity -> {
                   CmsOverlay overlay =
