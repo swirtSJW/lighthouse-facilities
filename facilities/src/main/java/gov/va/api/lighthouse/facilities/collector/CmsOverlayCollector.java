@@ -49,7 +49,7 @@ public class CmsOverlayCollector {
   public HashMap<String, CmsOverlay> loadAndUpdateCmsOverlays() {
     HashMap<String, CmsOverlay> overlays =
         Streams.stream(cmsOverlayRepository.findAll())
-            //.parallel()
+            // .parallel()
             .map(this::makeOverlayFromEntity)
             .filter(Objects::nonNull)
             .collect(convertOverlayToMap());
@@ -72,11 +72,11 @@ public class CmsOverlayCollector {
                       : null)
               .detailedServices(
                   cmsOverlayEntity.cmsServices() != null
-                      ? //updateServiceUrlPaths(
-                        //  cmsOverlayEntity.id().toIdString(),
-                          List.of(
-                              mapper.readValue(
-                                  cmsOverlayEntity.cmsServices(), DetailedService[].class))//)
+                      ? // updateServiceUrlPaths(
+                      //  cmsOverlayEntity.id().toIdString(),
+                      List.of(
+                          mapper.readValue(
+                              cmsOverlayEntity.cmsServices(), DetailedService[].class)) // )
                       : null)
               .build();
       // Save updates made to overlay with Covid services

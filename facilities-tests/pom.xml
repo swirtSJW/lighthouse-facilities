@@ -9,7 +9,7 @@
   </parent>
   <groupId>gov.va.api.lighthouse</groupId>
   <artifactId>facilities-tests</artifactId>
-  <version>3.0.54-SNAPSHOT</version>
+  <version>3.0.54</version>
   <packaging>jar</packaging>
   <properties>
     <docker.imageName>lighthouse-${project.artifactId}</docker.imageName>
@@ -187,8 +187,8 @@
             <executions>
               <execution>
                 <id>deploy-test</id>
-		<configuration>
-		  <skipPush>true</skipPush>
+                <configuration>
+                  <skipPush>true</skipPush>
                   <images>
                     <image>
                       <name>${docker.organization}/${docker.imageName}</name>

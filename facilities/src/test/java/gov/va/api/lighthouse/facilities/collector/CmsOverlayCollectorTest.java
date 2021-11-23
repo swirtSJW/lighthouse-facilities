@@ -79,7 +79,7 @@ public class CmsOverlayCollectorTest {
     DetailedService updatedCovidService =
         DetailedService.builder()
             .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-            //.path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
+            // .path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
             .path("replace_this_path")
             .build();
     CmsOverlay updatedOverlay =
