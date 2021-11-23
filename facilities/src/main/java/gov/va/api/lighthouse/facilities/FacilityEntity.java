@@ -191,7 +191,7 @@ public class FacilityEntity implements HasFacilityPayload {
     public static Pk fromIdString(@NonNull String typeAndStationNumber) {
       int separator = typeAndStationNumber.indexOf('_');
       checkArgument(separator > 0, typeAndStationNumber);
-      checkArgument(separator + 1 < typeAndStationNumber.length() - 1, typeAndStationNumber);
+      checkArgument(separator + 1 < typeAndStationNumber.length(), typeAndStationNumber);
       String typeValue = typeAndStationNumber.substring(0, separator);
       String stationNumber = typeAndStationNumber.substring(separator + 1);
       checkArgument(!stationNumber.isBlank(), typeAndStationNumber);

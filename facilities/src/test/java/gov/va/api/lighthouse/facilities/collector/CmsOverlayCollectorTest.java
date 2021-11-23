@@ -12,8 +12,10 @@ import gov.va.api.lighthouse.facilities.FacilityEntity;
 import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.IntStream;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,10 +55,23 @@ public class CmsOverlayCollectorTest {
                 FacilitiesJacksonConfigV0.createMapper()
                     .writeValueAsString(overlay.detailedServices()))
             .build();
+    List<CmsOverlayEntity> mockOverlays = new ArrayList<CmsOverlayEntity>();
+    IntStream.range(1, 5000)
+        .forEachOrdered(
+            n -> {
+              CmsOverlayEntity entity =
+                  CmsOverlayEntity.builder()
+                      .id(FacilityEntity.Pk.fromIdString("vha_" + Integer.toString(n)))
+                      .cmsOperatingStatus(overlayEntity.cmsOperatingStatus())
+                      .cmsServices(overlayEntity.cmsServices())
+                      .build();
+              mockOverlays.add(entity);
+            });
+    mockOverlays.add(overlayEntity);
     InsecureRestTemplateProvider mockInsecureRestTemplateProvider =
         mock(InsecureRestTemplateProvider.class);
     JdbcTemplate mockTemplate = mock(JdbcTemplate.class);
-    when(mockCmsOverlayRepository.findAll()).thenReturn(List.of(overlayEntity));
+    when(mockCmsOverlayRepository.findAll()).thenReturn(mockOverlays); // List.of(overlayEntity));
     CmsOverlayCollector cmsOverlayCollector = new CmsOverlayCollector(mockCmsOverlayRepository);
     HashMap<String, CmsOverlay> cmsOverlays = cmsOverlayCollector.loadAndUpdateCmsOverlays();
     // Verify loaded CMS overlay
@@ -64,7 +79,8 @@ public class CmsOverlayCollectorTest {
     DetailedService updatedCovidService =
         DetailedService.builder()
             .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-            .path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
+            //.path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
+            .path("replace_this_path")
             .build();
     CmsOverlay updatedOverlay =
         CmsOverlay.builder()

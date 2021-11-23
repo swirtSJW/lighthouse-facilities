@@ -187,7 +187,8 @@
             <executions>
               <execution>
                 <id>deploy-test</id>
-                <configuration>
+		<configuration>
+		  <skipPush>true</skipPush>
                   <images>
                     <image>
                       <name>${docker.organization}/${docker.imageName}</name>
