@@ -248,7 +248,8 @@ public class CmsOverlayControllerTest {
     controller().saveOverlay("vha_402", overlay);
     for (DetailedService d : overlay.detailedServices()) {
       if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
-        assertThat(d.path()).isEqualTo("https://www.maine.va.gov/services/covid-19-vaccines.asp");
+        assertThat(d.path())
+            .isEqualTo("https://www.va.gov/maine-health-care/programs/covid-19-vaccines/");
       }
     }
   }
