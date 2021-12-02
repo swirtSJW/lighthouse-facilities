@@ -1,5 +1,8 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService.ApplyingForBenefits;
+import static gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.PrimaryCare;
+import static gov.va.api.lighthouse.facilities.api.v1.NearbyResponse.Type.NearbyFacility;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -7,10 +10,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.pssg.PathEncoder;
 import gov.va.api.lighthouse.facilities.api.pssg.PssgDriveTimeBand;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
 import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
 import java.math.BigDecimal;
@@ -109,54 +111,33 @@ public class NearbyV1Test {
                 .latitude(BigDecimal.ONE)
                 .longitude(BigDecimal.ONE)
                 .services(
-                    Facility.Services.builder()
-                        .benefits(List.of(Facility.BenefitsService.ApplyingForBenefits))
-                        .build())
+                    Facility.Services.builder().benefits(List.of(ApplyingForBenefits)).build())
                 .build())
         .build();
   }
 
-  private FacilityEntity _facilityEntity(FacilityPair facilityPair) {
+  private FacilityEntity _facilityEntity(DatamartFacility datamartFacility) {
     return InternalFacilitiesController.populate(
         FacilityEntity.builder()
-            .id(FacilityEntity.Pk.fromIdString(facilityPair.v0().id()))
+            .id(FacilityEntity.Pk.fromIdString(datamartFacility.id()))
             .lastUpdated(Instant.now())
             .build(),
-        facilityPair);
+        datamartFacility);
   }
 
-  private FacilityPair _facilityHealth(String id) {
-    Facility facility =
-        Facility.builder()
-            .id(id)
-            .attributes(
-                Facility.FacilityAttributes.builder()
-                    .latitude(BigDecimal.ONE)
-                    .longitude(BigDecimal.ONE)
-                    .services(
-                        Facility.Services.builder()
-                            .health(List.of(Facility.HealthService.PrimaryCare))
-                            .build())
-                    .build())
-            .build();
-
-    gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 =
-        gov.va.api.lighthouse.facilities.api.v1.Facility.builder()
-            .id(id)
-            .attributes(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes.builder()
-                    .latitude(BigDecimal.ONE)
-                    .longitude(BigDecimal.ONE)
-                    .services(
-                        gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
-                            .health(
-                                List.of(
-                                    gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
-                                        .PrimaryCare))
-                            .build())
-                    .build())
-            .build();
-    return FacilityPair.builder().v0(facility).v1(facilityV1).build();
+  private DatamartFacility _facilityHealth(String id) {
+    DatamartFacility facilityV1 =
+        FacilityTransformerV1.toVersionAgnostic(
+            Facility.builder()
+                .id(id)
+                .attributes(
+                    Facility.FacilityAttributes.builder()
+                        .latitude(BigDecimal.ONE)
+                        .longitude(BigDecimal.ONE)
+                        .services(Facility.Services.builder().health(List.of(PrimaryCare)).build())
+                        .build())
+                .build());
+    return facilityV1;
   }
 
   @Test
@@ -203,7 +184,7 @@ public class NearbyV1Test {
                     List.of(
                         NearbyResponse.Nearby.builder()
                             .id("vha_666")
-                            .type(NearbyResponse.Type.NearbyFacility)
+                            .type(NearbyFacility)
                             .attributes(
                                 NearbyResponse.NearbyAttributes.builder()
                                     .minTime(0)
@@ -231,7 +212,7 @@ public class NearbyV1Test {
             List.of(
                 NearbyResponse.Nearby.builder()
                     .id("vha_666")
-                    .type(NearbyResponse.Type.NearbyFacility)
+                    .type(NearbyFacility)
                     .attributes(
                         NearbyResponse.NearbyAttributes.builder().minTime(0).maxTime(10).build())
                     .build()))

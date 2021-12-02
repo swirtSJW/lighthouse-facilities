@@ -8,15 +8,13 @@ import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import gov.va.api.lighthouse.facilities.api.FacilityPair;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,42 +22,35 @@ import java.util.concurrent.TimeUnit;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 
+/** Base facilities collector. */
 @Slf4j
-@Component
-public class FacilitiesCollector {
+public abstract class FacilitiesCollector {
   private static final String WEBSITES_CSV_RESOURCE_NAME = "websites.csv";
 
   private static final String CSC_STATIONS_RESOURCE_NAME = "csc_stations.txt";
 
-  private final InsecureRestTemplateProvider insecureRestTemplateProvider;
+  protected final InsecureRestTemplateProvider insecureRestTemplateProvider;
 
-  private final JdbcTemplate jdbcTemplate;
+  protected final JdbcTemplate jdbcTemplate;
 
-  private final CmsOverlayCollector cmsOverlayCollector;
+  protected final String atcBaseUrl;
 
-  private final String atcBaseUrl;
+  protected final String atpBaseUrl;
 
-  private final String atpBaseUrl;
+  protected final String cemeteriesBaseUrl;
 
-  private final String cemeteriesBaseUrl;
-
-  /** Autowired constructor. */
+  /** Primary facilities collector constructor. */
   public FacilitiesCollector(
-      @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
-      @Autowired JdbcTemplate jdbcTemplate,
-      @Autowired CmsOverlayCollector cmsOverlayCollector,
-      @Value("${access-to-care.url}") String atcBaseUrl,
-      @Value("${access-to-pwt.url}") String atpBaseUrl,
-      @Value("${cemeteries.url}") String cemeteriesBaseUrl) {
+      @NonNull InsecureRestTemplateProvider insecureRestTemplateProvider,
+      @NonNull JdbcTemplate jdbcTemplate,
+      @NonNull String atcBaseUrl,
+      @NonNull String atpBaseUrl,
+      @NonNull String cemeteriesBaseUrl) {
     this.insecureRestTemplateProvider = insecureRestTemplateProvider;
     this.jdbcTemplate = jdbcTemplate;
-    this.cmsOverlayCollector = cmsOverlayCollector;
     this.atcBaseUrl = withTrailingSlash(atcBaseUrl);
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
@@ -133,22 +124,20 @@ public class FacilitiesCollector {
     return url.endsWith("/") ? url : url + "/";
   }
 
-  /** Collect facilities. */
+  /** Collect datamart facilities. */
   @SneakyThrows
-  public List<FacilityPair> collectFacilities() {
+  public List<DatamartFacility> collectFacilities() {
     Map<String, String> websites;
     Collection<VastEntity> vastEntities;
     ArrayList<String> cscFacilities;
-    HashMap<String, CmsOverlay> cmsOverlays;
     try {
       websites = loadWebsites(WEBSITES_CSV_RESOURCE_NAME);
       vastEntities = loadVast();
       cscFacilities = loadCaregiverSupport(CSC_STATIONS_RESOURCE_NAME);
-      cmsOverlays = cmsOverlayCollector.loadAndUpdateCmsOverlays();
     } catch (Exception e) {
       throw new CollectorExceptions.CollectorException(e);
     }
-    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> healthsV0 =
+    Collection<DatamartFacility> healths =
         HealthsCollector.builder()
             .atcBaseUrl(atcBaseUrl)
             .atpBaseUrl(atpBaseUrl)
@@ -159,52 +148,22 @@ public class FacilitiesCollector {
             .websites(websites)
             .build()
             .collect();
-    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> healthsV1 =
-        HealthsCollector.builder()
-            .atcBaseUrl(atcBaseUrl)
-            .atpBaseUrl(atpBaseUrl)
-            .cscFacilities(cscFacilities)
-            .jdbcTemplate(jdbcTemplate)
-            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
-            .vastEntities(vastEntities)
-            .websites(websites)
-            .build()
-            .collectV1();
-    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> stateCemsV0 =
+    Collection<DatamartFacility> stateCems =
         StateCemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
             .websites(websites)
             .build()
             .collect();
-    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> stateCemsV1 =
-        StateCemeteriesCollector.builder()
-            .baseUrl(cemeteriesBaseUrl)
-            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
-            .websites(websites)
-            .build()
-            .collectV1();
-    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> vetCentersV0 =
+    Collection<DatamartFacility> vetCenters =
         VetCentersCollector.builder()
             .vastEntities(vastEntities)
             .websites(websites)
             .build()
             .collect();
-    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> vetCentersV1 =
-        VetCentersCollector.builder()
-            .vastEntities(vastEntities)
-            .websites(websites)
-            .build()
-            .collectV1();
-    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> benefitsV0 =
+    Collection<DatamartFacility> benefits =
         BenefitsCollector.builder().websites(websites).jdbcTemplate(jdbcTemplate).build().collect();
-    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> benefitsV1 =
-        BenefitsCollector.builder()
-            .websites(websites)
-            .jdbcTemplate(jdbcTemplate)
-            .build()
-            .collectV1();
-    Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> cemeteriesV0 =
+    Collection<DatamartFacility> cemeteries =
         CemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
             .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
@@ -212,57 +171,20 @@ public class FacilitiesCollector {
             .jdbcTemplate(jdbcTemplate)
             .build()
             .collect();
-    Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> cemeteriesV1 =
-        CemeteriesCollector.builder()
-            .baseUrl(cemeteriesBaseUrl)
-            .insecureRestTemplate(insecureRestTemplateProvider.restTemplate())
-            .websites(websites)
-            .jdbcTemplate(jdbcTemplate)
-            .build()
-            .collectV1();
     log.info(
         "Collected V0: Health {},  Benefits {},  Vet centers {}, "
             + "Non-national cemeteries {}, Cemeteries {}",
-        healthsV0.size(),
-        benefitsV0.size(),
-        vetCentersV0.size(),
-        stateCemsV0.size(),
-        cemeteriesV0.size());
-    log.info(
-        "Collected V1: Health {},  Benefits {},  Vet centers {}, "
-            + "Non-national cemeteries {}, Cemeteries {}",
-        healthsV1.size(),
-        benefitsV1.size(),
-        vetCentersV1.size(),
-        stateCemsV1.size(),
-        cemeteriesV1.size());
-    List<FacilityPair> facilityPairs = new ArrayList<>();
-    List<gov.va.api.lighthouse.facilities.api.v0.Facility> facilitiesV0 =
-        Streams.stream(
-                Iterables.concat(benefitsV0, cemeteriesV0, healthsV0, stateCemsV0, vetCentersV0))
+        healths.size(),
+        benefits.size(),
+        vetCenters.size(),
+        stateCems.size(),
+        cemeteries.size());
+    List<DatamartFacility> datamartFacilities =
+        Streams.stream(Iterables.concat(benefits, cemeteries, healths, stateCems, vetCenters))
             .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
             .collect(toList());
-    // todo: This only needs to be done for v1 in the future. Necessary changes coming in future
-    // work
-    for (gov.va.api.lighthouse.facilities.api.v0.Facility facility : facilitiesV0) {
-      if (cmsOverlays.containsKey(facility.id())) {
-        CmsOverlay cmsOverlay = cmsOverlays.get(facility.id());
-        facility.attributes().operatingStatus(cmsOverlay.operatingStatus());
-        facility.attributes().detailedServices(cmsOverlay.detailedServices());
-      } else {
-        log.warn("No cms overlay for facility: {}", facility.id());
-      }
-    }
-    List<gov.va.api.lighthouse.facilities.api.v1.Facility> facilitiesV1 =
-        Streams.stream(
-                Iterables.concat(benefitsV1, cemeteriesV1, healthsV1, stateCemsV1, vetCentersV1))
-            .sorted((left, right) -> left.id().compareToIgnoreCase(right.id()))
-            .collect(toList());
-    for (int i = 0; i < facilitiesV0.size(); i++) {
-      facilityPairs.add(
-          FacilityPair.builder().v0(facilitiesV0.get(i)).v1(facilitiesV1.get(i)).build());
-    }
-    return facilityPairs;
+    updateOperatingStatusFromCmsOverlay(datamartFacilities);
+    return datamartFacilities;
   }
 
   private List<VastEntity> loadVast() {
@@ -313,4 +235,7 @@ public class FacilitiesCollector {
     checkState(!entities.isEmpty(), "No App.Vast entries");
     return entities;
   }
+
+  protected abstract void updateOperatingStatusFromCmsOverlay(
+      List<DatamartFacility> datamartFacilities);
 }

@@ -57,7 +57,9 @@ public class FacilityOverlayV0 implements Function<HasFacilityPayload, Facility>
   @Override
   @SneakyThrows
   public Facility apply(HasFacilityPayload entity) {
-    Facility facility = mapper.readValue(entity.facility(), Facility.class);
+    Facility facility =
+        FacilityTransformerV0.toFacility(
+            mapper.readValue(entity.facility(), DatamartFacility.class));
 
     if (facility.attributes().operatingStatus() == null) {
       facility

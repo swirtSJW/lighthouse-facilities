@@ -1,6 +1,14 @@
 package gov.va.api.lighthouse.facilities.collector;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_cemetery;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -37,22 +45,19 @@ class CemeteriesSamples {
 
   @AllArgsConstructor(staticName = "create")
   static final class Facilities {
-    private Facility.FacilityAttributes attributes() {
-      return Facility.FacilityAttributes.builder()
+    private FacilityAttributes attributes() {
+      return FacilityAttributes.builder()
           .name("Shanktopus Lot")
-          .facilityType(Facility.FacilityType.va_cemetery)
+          .facilityType(va_cemetery)
           .classification("Lot")
           .latitude(new BigDecimal("-73.776232849999985"))
           .longitude(new BigDecimal("42.651408840000045"))
           .timeZone("Antarctica/Syowa")
           .address(
-              Facility.Addresses.builder()
-                  .physical(physicalAddress())
-                  .mailing(mailingAddress())
-                  .build())
-          .phone(Facility.Phone.builder().main("123-789-0456").fax("123-456-7890").build())
+              Addresses.builder().physical(physicalAddress()).mailing(mailingAddress()).build())
+          .phone(Phone.builder().main("123-789-0456").fax("123-456-7890").build())
           .hours(
-              Facility.Hours.builder()
+              Hours.builder()
                   .monday("Sunrise-Sunset")
                   .tuesday("Sunrise-Sunset")
                   .wednesday("Sunrise-Sunset")
@@ -64,17 +69,17 @@ class CemeteriesSamples {
           .build();
     }
 
-    List<Facility> cemeteriesFacilities() {
+    List<DatamartFacility> cemeteriesFacilities() {
       return List.of(
-          Facility.builder()
+          DatamartFacility.builder()
               .id("nca_088")
-              .type(Facility.Type.va_facilities)
+              .type(va_facilities)
               .attributes(attributes())
               .build());
     }
 
-    private Facility.Address mailingAddress() {
-      return Facility.Address.builder()
+    private Address mailingAddress() {
+      return Address.builder()
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("South")
@@ -83,8 +88,8 @@ class CemeteriesSamples {
           .build();
     }
 
-    private Facility.Address physicalAddress() {
-      return Facility.Address.builder()
+    private Address physicalAddress() {
+      return Address.builder()
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("North")

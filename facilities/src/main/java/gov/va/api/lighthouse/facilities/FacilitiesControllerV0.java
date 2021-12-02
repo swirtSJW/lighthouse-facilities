@@ -50,10 +50,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/v0")
 public class FacilitiesControllerV0 {
-  private static final ObjectMapper MAPPER = FacilitiesJacksonConfigV0.createMapper();
+  private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
 
   private static final FacilityOverlayV0 FACILITY_OVERLAY =
-      FacilityOverlayV0.builder().mapper(MAPPER).build();
+      FacilityOverlayV0.builder().mapper(DatamartFacilitiesJacksonConfig.createMapper()).build();
 
   private final FacilityRepository facilityRepository;
 
@@ -94,7 +94,7 @@ public class FacilitiesControllerV0 {
           .map(
               e ->
                   FacilitiesJacksonConfigV0.quietlyWriteValueAsString(
-                      MAPPER, geoFacility(facility(e))))
+                      MAPPER_V0, geoFacility(facility(e))))
           .forEachOrdered(g -> sb.append(g).append(","));
       sb.deleteCharAt(sb.length() - 1);
     }

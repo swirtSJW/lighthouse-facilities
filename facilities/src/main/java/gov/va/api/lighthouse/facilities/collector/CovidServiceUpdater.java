@@ -6,6 +6,7 @@ import static gov.va.api.lighthouse.facilities.collector.CsvLoader.loadWebsites;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import java.util.List;
 import java.util.Map;
+import javax.validation.constraints.NotNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +21,15 @@ public final class CovidServiceUpdater {
   /** Utility method for updating Covid related service URLs for facilities. */
   @SneakyThrows
   public static List<DetailedService> updateServiceUrlPaths(
-      String id, List<DetailedService> detailedServices) {
-    for (final DetailedService service : detailedServices) {
-      if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
-        Map<String, String> websites = loadWebsites(COVID_CSV_WEBSITES_RESOURCE_NAME);
-        service.path(websites.get(id));
-        log.info("Covid URL updated for facility {}", sanitize(id));
-      }
-    }
+      @NotNull String id, @NotNull List<DetailedService> detailedServices) {
+    final Map<String, String> websites = loadWebsites(COVID_CSV_WEBSITES_RESOURCE_NAME);
+    detailedServices.parallelStream()
+        .filter(d -> d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19))
+        .forEach(
+            d -> {
+              d.path(websites.get(id));
+              log.info("Covid URL updated for facility {}", sanitize(id));
+            });
     return detailedServices;
   }
 }

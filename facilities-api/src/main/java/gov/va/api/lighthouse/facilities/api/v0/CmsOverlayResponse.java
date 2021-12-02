@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilities.api.cms;
+package gov.va.api.lighthouse.facilities.api.v0;
 
 import lombok.Builder;
 import lombok.Value;

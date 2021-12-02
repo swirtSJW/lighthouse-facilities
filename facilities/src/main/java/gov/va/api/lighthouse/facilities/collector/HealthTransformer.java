@@ -1,5 +1,26 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_health_facility;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Audiology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Cardiology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.CaregiverSupport;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.DentalServices;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Dermatology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.EmergencyCare;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Gastroenterology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Gynecology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.MentalHealthCare;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Nutrition;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Ophthalmology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Optometry;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Orthopedics;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Podiatry;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.PrimaryCare;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.SpecialtyCare;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.UrgentCare;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Urology;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.WomensHealth;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.emptyToNull;
@@ -15,8 +36,19 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import com.google.common.collect.ListMultimap;
-import gov.va.api.lighthouse.facilities.api.v1.Facility;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.ActiveStatus;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
+import gov.va.api.lighthouse.facilities.DatamartFacility.PatientSatisfaction;
+import gov.va.api.lighthouse.facilities.DatamartFacility.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Satisfaction;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
+import gov.va.api.lighthouse.facilities.DatamartFacility.WaitTimes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,9 +64,8 @@ import lombok.NonNull;
 import org.apache.commons.lang3.BooleanUtils;
 
 @Builder
-final class HealthTransformerV1 {
-  private static final Map<String, Facility.HealthService> HEALTH_SERVICES =
-      initHealthServicesMap();
+final class HealthTransformer {
+  private static final Map<String, HealthService> HEALTH_SERVICES = initHealthServicesMap();
 
   @NonNull private final VastEntity vast;
 
@@ -50,25 +81,25 @@ final class HealthTransformerV1 {
 
   @NonNull private final ArrayList<String> cscFacilities;
 
-  private static Map<String, Facility.HealthService> initHealthServicesMap() {
-    Map<String, Facility.HealthService> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    map.put("AUDIOLOGY", Facility.HealthService.Audiology);
-    map.put("CARDIOLOGY", Facility.HealthService.Cardiology);
-    map.put("COMP WOMEN'S HLTH", Facility.HealthService.WomensHealth);
-    map.put("DERMATOLOGY", Facility.HealthService.Dermatology);
-    map.put("GASTROENTEROLOGY", Facility.HealthService.Gastroenterology);
-    map.put("GYNECOLOGY", Facility.HealthService.Gynecology);
-    map.put("MENTAL HEALTH", Facility.HealthService.MentalHealthCare);
-    map.put("OPHTHALMOLOGY", Facility.HealthService.Ophthalmology);
-    map.put("OPTOMETRY", Facility.HealthService.Optometry);
-    map.put("ORTHOPEDICS", Facility.HealthService.Orthopedics);
-    map.put("PRIMARY CARE", Facility.HealthService.PrimaryCare);
-    map.put("SPECIALTY CARE", Facility.HealthService.SpecialtyCare);
-    map.put("UROLOGY CLINIC", Facility.HealthService.Urology);
+  private static Map<String, HealthService> initHealthServicesMap() {
+    Map<String, HealthService> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    map.put("AUDIOLOGY", Audiology);
+    map.put("CARDIOLOGY", Cardiology);
+    map.put("COMP WOMEN'S HLTH", WomensHealth);
+    map.put("DERMATOLOGY", Dermatology);
+    map.put("GASTROENTEROLOGY", Gastroenterology);
+    map.put("GYNECOLOGY", Gynecology);
+    map.put("MENTAL HEALTH", MentalHealthCare);
+    map.put("OPHTHALMOLOGY", Ophthalmology);
+    map.put("OPTOMETRY", Optometry);
+    map.put("ORTHOPEDICS", Orthopedics);
+    map.put("PRIMARY CARE", PrimaryCare);
+    map.put("SPECIALTY CARE", SpecialtyCare);
+    map.put("UROLOGY CLINIC", Urology);
     return map;
   }
 
-  private static Facility.HealthService serviceName(AccessToCareEntry atc) {
+  private static HealthService serviceName(AccessToCareEntry atc) {
     return atc == null ? null : HEALTH_SERVICES.get(trimToEmpty(atc.apptTypeName()));
   }
 
@@ -104,18 +135,18 @@ final class HealthTransformerV1 {
     return accessToPwt.get(trimToEmpty(upperCase(id(), Locale.US)));
   }
 
-  private Facility.ActiveStatus activeStatus() {
+  private ActiveStatus activeStatus() {
     if (allBlank(vast.pod())) {
       return null;
     }
-    return vast.pod().equalsIgnoreCase("A") ? Facility.ActiveStatus.A : Facility.ActiveStatus.T;
+    return vast.pod().equalsIgnoreCase("A") ? ActiveStatus.A : ActiveStatus.T;
   }
 
-  private Facility.Addresses address() {
+  private Addresses address() {
     if (allBlank(physical())) {
       return null;
     }
-    return Facility.Addresses.builder().physical(physical()).build();
+    return Addresses.builder().physical(physical()).build();
   }
 
   private LocalDate atcEffectiveDate() {
@@ -136,7 +167,7 @@ final class HealthTransformerV1 {
         .orElse(null);
   }
 
-  private Facility.FacilityAttributes attributes() {
+  private FacilityAttributes attributes() {
     if (allBlank(
         vast.stationName(),
         classification(),
@@ -155,9 +186,9 @@ final class HealthTransformerV1 {
         vast.visn())) {
       return null;
     }
-    return Facility.FacilityAttributes.builder()
+    return FacilityAttributes.builder()
         .name(vast.stationName())
-        .facilityType(Facility.FacilityType.va_health_facility)
+        .facilityType(va_health_facility)
         .classification(classification())
         .website(website())
         .latitude(vast.latitude())
@@ -204,7 +235,7 @@ final class HealthTransformerV1 {
     return !allBlank(id()) && cscFacilities.contains(id());
   }
 
-  private Facility.Hours hours() {
+  private Hours hours() {
     String mon = hoursToClosed(vast.monday());
     String tue = hoursToClosed(vast.tuesday());
     String wed = hoursToClosed(vast.wednesday());
@@ -215,7 +246,7 @@ final class HealthTransformerV1 {
     if (allBlank(mon, tue, wed, thu, fri, sat, sun)) {
       return null;
     }
-    return Facility.Hours.builder()
+    return Hours.builder()
         .monday(mon)
         .tuesday(tue)
         .wednesday(wed)
@@ -233,7 +264,7 @@ final class HealthTransformerV1 {
     return "vha_" + vast.stationNumber();
   }
 
-  private Facility.Phone phone() {
+  private Phone phone() {
     String fax = phoneTrim(vast.staFax());
     String main = phoneTrim(vast.staPhone());
     String pharmacy = phoneTrim(vast.pharmacyPhone());
@@ -245,7 +276,7 @@ final class HealthTransformerV1 {
         fax, main, pharmacy, afterHours, patientAdvocate, mentalHealth, enrollmentCoordinator)) {
       return null;
     }
-    return Facility.Phone.builder()
+    return Phone.builder()
         .fax(fax)
         .main(main)
         .pharmacy(pharmacy)
@@ -256,7 +287,7 @@ final class HealthTransformerV1 {
         .build();
   }
 
-  private Facility.Address physical() {
+  private Address physical() {
     if (allBlank(
         zip(),
         vast.city(),
@@ -267,7 +298,7 @@ final class HealthTransformerV1 {
       return null;
     }
     // address1 and address2 swapped
-    return Facility.Address.builder()
+    return Address.builder()
         .zip(zip())
         .city(vast.city())
         .state(upperCase(vast.state(), Locale.US))
@@ -277,11 +308,11 @@ final class HealthTransformerV1 {
         .build();
   }
 
-  private Facility.Satisfaction satisfaction() {
+  private Satisfaction satisfaction() {
     if (allBlank(satisfactionScores(), atpEffectiveDate())) {
       return null;
     }
-    return Facility.Satisfaction.builder()
+    return Satisfaction.builder()
         .health(satisfactionScores())
         .effectiveDate(atpEffectiveDate())
         .build();
@@ -295,7 +326,7 @@ final class HealthTransformerV1 {
         .orElse(null);
   }
 
-  private Facility.PatientSatisfaction satisfactionScores() {
+  private PatientSatisfaction satisfactionScores() {
     if (allBlank(
         satisfactionScore("Primary Care (Urgent)"),
         satisfactionScore("Primary Care (Routine)"),
@@ -303,7 +334,7 @@ final class HealthTransformerV1 {
         satisfactionScore("Specialty Care (Routine)"))) {
       return null;
     }
-    return Facility.PatientSatisfaction.builder()
+    return PatientSatisfaction.builder()
         .primaryCareUrgent(satisfactionScore("Primary Care (Urgent)"))
         .primaryCareRoutine(satisfactionScore("Primary Care (Routine)"))
         .specialtyCareUrgent(satisfactionScore("Specialty Care (Urgent)"))
@@ -311,39 +342,36 @@ final class HealthTransformerV1 {
         .build();
   }
 
-  private Facility.Services services() {
+  private Services services() {
     if (allBlank(servicesHealth(), atcEffectiveDate())) {
       return null;
     }
-    return Facility.Services.builder()
-        .health(servicesHealth())
-        .lastUpdated(atcEffectiveDate())
-        .build();
+    return Services.builder().health(servicesHealth()).lastUpdated(atcEffectiveDate()).build();
   }
 
-  private List<Facility.HealthService> servicesHealth() {
-    List<Facility.HealthService> services =
+  private List<HealthService> servicesHealth() {
+    List<HealthService> services =
         accessToCareEntries().stream()
             .map(ace -> serviceName(ace))
             .filter(Objects::nonNull)
             .collect(toCollection(ArrayList::new));
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.emergencyCare()))) {
-      services.add(Facility.HealthService.EmergencyCare);
+      services.add(EmergencyCare);
     }
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.urgentCare()))) {
-      services.add(Facility.HealthService.UrgentCare);
+      services.add(UrgentCare);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.DENTISTRY.contains(trimToEmpty(sc.code())))) {
-      services.add(Facility.HealthService.DentalServices);
+      services.add(DentalServices);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.NUTRITION.contains(trimToEmpty(sc.code())))) {
-      services.add(Facility.HealthService.Nutrition);
+      services.add(Nutrition);
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.PODIATRY.contains(trimToEmpty(sc.code())))) {
-      services.add(Facility.HealthService.Podiatry);
+      services.add(Podiatry);
     }
     if (hasCaregiverSupport()) {
-      services.add(Facility.HealthService.CaregiverSupport);
+      services.add(CaregiverSupport);
     }
     Collections.sort(services, (left, right) -> left.name().compareToIgnoreCase(right.name()));
     return emptyToNull(services);
@@ -353,25 +381,18 @@ final class HealthTransformerV1 {
     return stopCodesMap.get(trimToEmpty(upperCase(id(), Locale.US)));
   }
 
-  Facility toFacility() {
+  DatamartFacility toDatamartFacility() {
     if (allBlank(id())) {
       return null;
     }
-    return Facility.builder()
-        .id(id())
-        .type(Facility.Type.va_facilities)
-        .attributes(attributes())
-        .build();
+    return DatamartFacility.builder().id(id()).type(va_facilities).attributes(attributes()).build();
   }
 
-  private Facility.WaitTimes waitTimes() {
+  private WaitTimes waitTimes() {
     if (allBlank(waitTimesHealth(), atcEffectiveDate())) {
       return null;
     }
-    return Facility.WaitTimes.builder()
-        .health(waitTimesHealth())
-        .effectiveDate(atcEffectiveDate())
-        .build();
+    return WaitTimes.builder().health(waitTimesHealth()).effectiveDate(atcEffectiveDate()).build();
   }
 
   private List<PatientWaitTime> waitTimesHealth() {

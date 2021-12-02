@@ -2,21 +2,16 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
-import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,91 +33,40 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class CmsOverlayController {
+public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
   private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
+
+  private static final ObjectMapper DATAMART_MAPPER =
+      DatamartFacilitiesJacksonConfig.createMapper();
 
   private final FacilityRepository facilityRepository;
 
   private final CmsOverlayRepository cmsOverlayRepository;
 
-  @SneakyThrows
-  List<DetailedService> findServicesToSave(
-      CmsOverlayEntity cmsOverlayEntity, String id, CmsOverlay overlay) {
-    List<DetailedService> currentDetailedServices =
-        cmsOverlayEntity.cmsServices() == null
-            ? Collections.emptyList()
-            : List.of(MAPPER_V0.readValue(cmsOverlayEntity.cmsServices(), DetailedService[].class));
-    List<DetailedService> finalDetailedServices = new ArrayList<>();
-    List<String> overlayServiceNames = new ArrayList<>();
-    if (overlay.detailedServices() != null) {
-      overlayServiceNames =
-          overlay.detailedServices().stream()
-              .map(DetailedService::name)
-              .collect(Collectors.toList());
-    }
-    for (DetailedService currentDetailedService : currentDetailedServices) {
-      if (!overlayServiceNames.contains(currentDetailedService.name())) {
-        finalDetailedServices.add(currentDetailedService);
-      }
-    }
-    if (overlay.detailedServices() != null) {
-      for (DetailedService newDetailedService : overlay.detailedServices()) {
-        if (newDetailedService.active()) {
-          finalDetailedServices.add(newDetailedService);
-        }
-      }
-    }
-    updateServiceUrlPaths(id, finalDetailedServices);
-    finalDetailedServices.sort(Comparator.comparing(DetailedService::name));
-    return finalDetailedServices;
-  }
-
-  private List<DetailedService> getActiveServicesFromOverlay(String id, CmsOverlay overlay) {
-    List<DetailedService> activeServices = new ArrayList<>();
-    if (overlay.detailedServices() != null) {
-      for (DetailedService d : overlay.detailedServices()) {
-        if (d.active()) {
-          activeServices.add(d);
-        }
-      }
-    }
-    if (!activeServices.isEmpty()) {
-      updateServiceUrlPaths(id, activeServices);
-      activeServices.sort(Comparator.comparing(DetailedService::name));
-    }
-    return activeServices;
-  }
-
   @GetMapping(
-      value = {"/v0/facilities/{id}/cms-overlay", "/v1/facilities/{id}/cms-overlay"},
+      value = {"/v0/facilities/{id}/cms-overlay"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<CmsOverlayResponse> getOverlay(@PathVariable("id") String id) {
     FacilityEntity.Pk pk = FacilityEntity.Pk.fromIdString(id);
     Optional<CmsOverlayEntity> existingOverlayEntity = cmsOverlayRepository.findById(pk);
-    if (existingOverlayEntity.isPresent()) {
-      CmsOverlayEntity cmsOverlayEntity = existingOverlayEntity.get();
-      CmsOverlayResponse response =
-          CmsOverlayResponse.builder()
-              .overlay(
-                  CmsOverlay.builder()
-                      .operatingStatus(
-                          cmsOverlayEntity.cmsOperatingStatus() == null
-                              ? null
-                              : MAPPER_V0.readValue(
-                                  cmsOverlayEntity.cmsOperatingStatus(),
-                                  Facility.OperatingStatus.class))
-                      .detailedServices(
-                          cmsOverlayEntity.cmsServices() == null
-                              ? null
-                              : List.of(
-                                  MAPPER_V0.readValue(
-                                      cmsOverlayEntity.cmsServices(), DetailedService[].class)))
-                      .build())
-              .build();
-      return ResponseEntity.ok(response);
+    if (!existingOverlayEntity.isPresent()) {
+      throw new ExceptionsUtils.NotFound(id);
     }
-    throw new ExceptionsUtils.NotFound(id);
+    CmsOverlayEntity cmsOverlayEntity = existingOverlayEntity.get();
+    CmsOverlayResponse response =
+        CmsOverlayResponse.builder()
+            .overlay(
+                CmsOverlay.builder()
+                    .operatingStatus(
+                        CmsOverlayHelperV0.getOperatingStatus(
+                            MAPPER_V0, cmsOverlayEntity.cmsOperatingStatus()))
+                    .detailedServices(
+                        CmsOverlayHelperV0.getDetailedServices(
+                            MAPPER_V0, cmsOverlayEntity.cmsServices()))
+                    .build())
+            .build();
+    return ResponseEntity.ok(response);
   }
 
   @InitBinder
@@ -131,7 +75,7 @@ public class CmsOverlayController {
   }
 
   @PostMapping(
-      value = {"/v0/facilities/{id}/cms-overlay", "/v1/facilities/{id}/cms-overlay"},
+      value = {"/v0/facilities/{id}/cms-overlay"},
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows
@@ -156,28 +100,27 @@ public class CmsOverlayController {
       Optional<CmsOverlayEntity> existingCmsOverlayEntity, String id, CmsOverlay overlay) {
     CmsOverlayEntity cmsOverlayEntity;
     if (existingCmsOverlayEntity.isEmpty()) {
-      List<DetailedService> activeServices = getActiveServicesFromOverlay(id, overlay);
+      List<DetailedService> activeServices =
+          getActiveServicesFromOverlay(id, overlay.detailedServices());
       cmsOverlayEntity =
           CmsOverlayEntity.builder()
               .id(FacilityEntity.Pk.fromIdString(id))
-              .cmsOperatingStatus(MAPPER_V0.writeValueAsString(overlay.operatingStatus()))
-              .cmsServices(
-                  activeServices.isEmpty() ? null : MAPPER_V0.writeValueAsString(activeServices))
+              .cmsOperatingStatus(
+                  CmsOverlayHelperV0.serializeOperatingStatus(MAPPER_V0, overlay.operatingStatus()))
+              .cmsServices(CmsOverlayHelperV0.serializeDetailedServices(MAPPER_V0, activeServices))
               .build();
     } else {
       cmsOverlayEntity = existingCmsOverlayEntity.get();
       if (overlay.operatingStatus() != null) {
         cmsOverlayEntity.cmsOperatingStatus(
-            MAPPER_V0.writeValueAsString(overlay.operatingStatus()));
+            CmsOverlayHelperV0.serializeOperatingStatus(MAPPER_V0, overlay.operatingStatus()));
       }
       List<DetailedService> overlayServices = overlay.detailedServices();
       if (overlayServices != null) {
         List<DetailedService> toSaveDetailedServices =
-            findServicesToSave(cmsOverlayEntity, id, overlay);
+            findServicesToSave(cmsOverlayEntity, id, overlay.detailedServices(), MAPPER_V0);
         cmsOverlayEntity.cmsServices(
-            toSaveDetailedServices.isEmpty()
-                ? null
-                : MAPPER_V0.writeValueAsString(toSaveDetailedServices));
+            CmsOverlayHelperV0.serializeDetailedServices(MAPPER_V0, toSaveDetailedServices));
       }
     }
     cmsOverlayRepository.save(cmsOverlayEntity);
@@ -189,13 +132,17 @@ public class CmsOverlayController {
       Optional<CmsOverlayEntity> existingCmsOverlayEntity,
       String id,
       CmsOverlay overlay) {
-    Facility facility = MAPPER_V0.readValue(facilityEntity.facility(), Facility.class);
+    Facility facility =
+        FacilityTransformerV0.toFacility(
+            DATAMART_MAPPER.readValue(facilityEntity.facility(), DatamartFacility.class));
     // Only save active services from the overlay if they exist
     List<DetailedService> toSaveDetailedServices;
     if (existingCmsOverlayEntity.isEmpty()) {
-      toSaveDetailedServices = getActiveServicesFromOverlay(id, overlay);
+      toSaveDetailedServices = getActiveServicesFromOverlay(id, overlay.detailedServices());
     } else {
-      toSaveDetailedServices = findServicesToSave(existingCmsOverlayEntity.get(), id, overlay);
+      toSaveDetailedServices =
+          findServicesToSave(
+              existingCmsOverlayEntity.get(), id, overlay.detailedServices(), MAPPER_V0);
     }
     if (facility != null) {
       Facility.OperatingStatus operatingStatus = overlay.operatingStatus();
@@ -212,8 +159,9 @@ public class CmsOverlayController {
             .attributes()
             .detailedServices(toSaveDetailedServices.isEmpty() ? null : toSaveDetailedServices);
       }
+      facilityEntity.facility(
+          DATAMART_MAPPER.writeValueAsString(FacilityTransformerV0.toVersionAgnostic(facility)));
     }
-    facilityEntity.facility(MAPPER_V0.writeValueAsString(facility));
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DetailedService service : toSaveDetailedServices) {

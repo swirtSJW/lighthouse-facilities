@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.web.context.request.RequestContextHolder.setRequestAttributes;
 
 import gov.va.api.lighthouse.facilities.collector.InsecureRestTemplateProvider;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -232,6 +233,34 @@ public class HealthControllerTest {
         .thenReturn(Timestamp.from(Instant.now()));
     ResponseEntity<Health> response = _controller().collectorBackendHealth();
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
+  }
+
+  @Test
+  @SneakyThrows
+  void verifyMissingTrailingSlashAppended() {
+    String urlMissingTrailingSlash = "https://developer.va.gov";
+    String urlWithTrailingSlash = "https://developer.va.gov/";
+
+    Method withTrailingSlashMethod =
+        HealthController.class.getDeclaredMethod("withTrailingSlash", String.class);
+    withTrailingSlashMethod.setAccessible(true);
+    HealthController controller =
+        new HealthController(
+            repository,
+            insecureRestTemplateProvider,
+            jdbcTemplate,
+            "http://atc",
+            "http://atp",
+            "http://cemeteries");
+
+    assertThat(withTrailingSlashMethod.invoke(controller, urlMissingTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
+    assertThat(withTrailingSlashMethod.invoke(controller, urlWithTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
+    assertThat(withTrailingSlashMethod.invoke(controller, urlMissingTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
+    assertThat(withTrailingSlashMethod.invoke(controller, urlWithTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
   }
 
   @Value

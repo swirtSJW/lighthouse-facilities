@@ -3,8 +3,8 @@ package gov.va.api.lighthouse.facilities;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
@@ -17,14 +17,17 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class FacilityOverlayV0Test {
-  private static final ObjectMapper mapper = FacilitiesJacksonConfigV0.createMapper();
+  private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
+
+  private static final ObjectMapper DATAMART_MAPPER =
+      DatamartFacilitiesJacksonConfig.createMapper();
 
   private void assertStatus(
       ActiveStatus expectedActiveStatus,
       OperatingStatus expectedOperatingStatus,
       List<Facility.HealthService> expectedHealthServices,
       FacilityEntity entity) {
-    Facility facility = FacilityOverlayV0.builder().mapper(mapper).build().apply(entity);
+    Facility facility = FacilityOverlayV0.builder().mapper(DATAMART_MAPPER).build().apply(entity);
     assertThat(facility.attributes().activeStatus()).isEqualTo(expectedActiveStatus);
     assertThat(facility.attributes().operatingStatus()).isEqualTo(expectedOperatingStatus);
     assertThat(facility.attributes().services().health()).isEqualTo(expectedHealthServices);
@@ -119,11 +122,13 @@ public class FacilityOverlayV0Test {
       }
     }
     return FacilityEntity.builder()
-        .facility(mapper.writeValueAsString(facility))
+        .facility(
+            DATAMART_MAPPER.writeValueAsString(FacilityTransformerV0.toVersionAgnostic(facility)))
         .cmsOperatingStatus(
-            overlay == null ? null : mapper.writeValueAsString(overlay.operatingStatus()))
+            overlay == null ? null : MAPPER_V0.writeValueAsString(overlay.operatingStatus()))
         .overlayServices(overlay == null ? null : detailedServices)
-        .cmsServices(overlay == null ? null : mapper.writeValueAsString(overlay.detailedServices()))
+        .cmsServices(
+            overlay == null ? null : MAPPER_V0.writeValueAsString(overlay.detailedServices()))
         .build();
   }
 

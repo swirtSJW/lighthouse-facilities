@@ -13,7 +13,7 @@ import lombok.Value;
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public final class FacilitiesResponse {
-  @Valid List<Facility> data;
+  List<@Valid Facility> data;
 
   @Valid @NotNull PageLinks links;
 
@@ -35,6 +35,6 @@ public final class FacilitiesResponse {
   public static final class FacilitiesMetadata {
     @Valid @NotNull Pagination pagination;
 
-    @Valid @NotNull List<Distance> distances;
+    List<@Valid @NotNull Distance> distances;
   }
 }

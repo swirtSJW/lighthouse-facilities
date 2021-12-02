@@ -12,8 +12,11 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,24 +52,33 @@ class HealthsCollectorTest {
   }
 
   @Test
-  void collectV1Exception() {
+  @SneakyThrows
+  public void exceptions() {
+    ResultSet mockRs = mock(ResultSet.class);
+    when(mockRs.getString("StationNumber")).thenThrow(new SQLException("oh noes"));
+    assertThrows(SQLException.class, () -> HealthsCollector.putMentalHealthContact(mockRs, null));
+    when(mockRs.getString("Sta6a")).thenThrow(new SQLException("oh noes"));
+    assertThrows(SQLException.class, () -> HealthsCollector.putStopCode(mockRs, null));
+
+    Method loadAccessToPwtMethod =
+        HealthsCollector.class.getDeclaredMethod("loadAccessToPwt", null);
+    loadAccessToPwtMethod.setAccessible(true);
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     when(insecureRestTemplate.exchange(
-            startsWith("http://atc"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
+            startsWith("http"), eq(HttpMethod.GET), any(HttpEntity.class), eq(String.class)))
         .thenThrow(new RestClientException("oh noez"));
+    HealthsCollector collector =
+        HealthsCollector.builder()
+            .atcBaseUrl("http://atc/")
+            .atpBaseUrl("http://atp/")
+            .cscFacilities(new ArrayList<>())
+            .vastEntities(emptyList())
+            .jdbcTemplate(mock(JdbcTemplate.class))
+            .insecureRestTemplate(insecureRestTemplate)
+            .websites(emptyMap())
+            .build();
     assertThrows(
-        CollectorExceptions.HealthsCollectorException.class,
-        () ->
-            HealthsCollector.builder()
-                .atcBaseUrl("http://atc/")
-                .atpBaseUrl("http://atp/")
-                .cscFacilities(new ArrayList<>())
-                .vastEntities(emptyList())
-                .jdbcTemplate(mock(JdbcTemplate.class))
-                .insecureRestTemplate(insecureRestTemplate)
-                .websites(emptyMap())
-                .build()
-                .collectV1());
+        InvocationTargetException.class, () -> loadAccessToPwtMethod.invoke(collector, null));
   }
 
   @Test

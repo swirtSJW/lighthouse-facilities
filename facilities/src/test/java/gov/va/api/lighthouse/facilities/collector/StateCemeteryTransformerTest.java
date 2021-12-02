@@ -1,94 +1,92 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.common.collect.ImmutableMap;
-import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
-public class StateCemeteryTransformerV1Test {
+public class StateCemeteryTransformerTest {
   @Test
   void asAddress_parseLine1() {
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "Spanish Fort, AL, 36577-1234", "", ""))
-        .isEqualTo(
-            Facility.Address.builder().zip("36577-1234").city("Spanish Fort").state("AL").build());
+    assertThat(StateCemeteryTransformer.asAddress("AL", "Spanish Fort, AL, 36577-1234", "", ""))
+        .isEqualTo(Address.builder().zip("36577-1234").city("Spanish Fort").state("AL").build());
 
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "blah", "", ""))
-        .isEqualTo(Facility.Address.builder().address1("blah").build());
+    assertThat(StateCemeteryTransformer.asAddress("AL", "blah", "", ""))
+        .isEqualTo(Address.builder().address1("blah").build());
 
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "", "", "")).isNull();
+    assertThat(StateCemeteryTransformer.asAddress("AL", "", "", "")).isNull();
   }
 
   @Test
   void asAddress_parseLine2() {
     assertThat(
-            StateCemeteryTransformerV1.asAddress(
+            StateCemeteryTransformer.asAddress(
                 "AL", "34904 State Highway 225", "Spanish Fort, AL, 365771234", ""))
         .isEqualTo(
-            Facility.Address.builder()
+            Address.builder()
                 .zip("365771234")
                 .city("Spanish Fort")
                 .state("AL")
                 .address1("34904 State Highway 225")
                 .build());
 
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "34904 State Highway 225", "blah", ""))
-        .isEqualTo(
-            Facility.Address.builder().state("AL").address1("34904 State Highway 225").build());
+    assertThat(StateCemeteryTransformer.asAddress("AL", "34904 State Highway 225", "blah", ""))
+        .isEqualTo(Address.builder().state("AL").address1("34904 State Highway 225").build());
 
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "", "blah", "")).isNull();
+    assertThat(StateCemeteryTransformer.asAddress("AL", "", "blah", "")).isNull();
   }
 
   @Test
   void asAddress_parseLine3() {
     assertThat(
-            StateCemeteryTransformerV1.asAddress(
+            StateCemeteryTransformer.asAddress(
                 "AL", "34904 State Highway 225", "blah", "Spanish Fort, AL 36577"))
         .isEqualTo(
-            Facility.Address.builder()
+            Address.builder()
                 .zip("36577")
                 .city("Spanish Fort")
                 .state("AL")
                 .address1("34904 State Highway 225")
                 .address2("blah")
                 .build());
-    assertThat(
-            StateCemeteryTransformerV1.asAddress("AL", "34904 State Highway 225", "blah", "blah"))
+    assertThat(StateCemeteryTransformer.asAddress("AL", "34904 State Highway 225", "blah", "blah"))
         .isEqualTo(
-            Facility.Address.builder()
+            Address.builder()
                 .state("AL")
                 .address1("34904 State Highway 225")
                 .address2("blah")
                 .build());
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "blah", "blah", "blah"))
-        .isEqualTo(
-            Facility.Address.builder().state("AL").address1("blah").address2("blah").build());
-    assertThat(StateCemeteryTransformerV1.asAddress("AL", "", "", "blah")).isNull();
+    assertThat(StateCemeteryTransformer.asAddress("AL", "blah", "blah", "blah"))
+        .isEqualTo(Address.builder().state("AL").address1("blah").address2("blah").build());
+    assertThat(StateCemeteryTransformer.asAddress("AL", "", "", "blah")).isNull();
   }
 
   @Test
   void empty() {
     assertThat(
-            StateCemeteryTransformerV1.builder()
+            StateCemeteryTransformer.builder()
                 .xml(StateCemeteries.StateCemetery.builder().build())
                 .websites(Collections.emptyMap())
                 .build()
-                .toFacility())
+                .toDatamartFacility())
         .isNull();
     assertThat(
-            StateCemeteryTransformerV1.builder()
+            StateCemeteryTransformer.builder()
                 .xml(StateCemeteries.StateCemetery.builder().id("aBc123").build())
                 .websites(Collections.emptyMap())
                 .build()
-                .toFacility())
-        .isEqualTo(Facility.builder().id("nca_saBc123").type(Facility.Type.va_facilities).build());
+                .toDatamartFacility())
+        .isEqualTo(DatamartFacility.builder().id("nca_saBc123").type(va_facilities).build());
   }
 
   @Test
   void website() {
     assertThat(
-            StateCemeteryTransformerV1.builder()
+            StateCemeteryTransformer.builder()
                 .xml(
                     StateCemeteries.StateCemetery.builder()
                         .id("aBc123")
@@ -100,7 +98,7 @@ public class StateCemeteryTransformerV1Test {
         .isEqualTo("orig-website");
 
     assertThat(
-            StateCemeteryTransformerV1.builder()
+            StateCemeteryTransformer.builder()
                 .xml(StateCemeteries.StateCemetery.builder().id("abc123").build())
                 .websites(ImmutableMap.of("nca_sabc123", "csv-website"))
                 .build()

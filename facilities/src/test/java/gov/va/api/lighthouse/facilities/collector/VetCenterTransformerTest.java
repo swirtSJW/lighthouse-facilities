@@ -1,28 +1,29 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
 import org.junit.jupiter.api.Test;
 
-public class VetCenterTransformerV1Test {
+public class VetCenterTransformerTest {
   @Test
   void empty() {
     assertThat(
-            VetCenterTransformerV1.builder()
+            VetCenterTransformer.builder()
                 .vast(VastEntity.builder().build())
                 .websites(emptyMap())
                 .build()
-                .toFacility())
+                .toDatamartFacility())
         .isNull();
 
     assertThat(
-            VetCenterTransformerV1.builder()
+            VetCenterTransformer.builder()
                 .vast(VastEntity.builder().stationNumber("x").build())
                 .websites(emptyMap())
                 .build()
-                .toFacility())
-        .isEqualTo(Facility.builder().id("vc_x").type(Facility.Type.va_facilities).build());
+                .toDatamartFacility())
+        .isEqualTo(DatamartFacility.builder().id("vc_x").type(va_facilities).build());
   }
 }

@@ -1,27 +1,34 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_cemetery;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
-import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import java.util.Locale;
 import lombok.Builder;
 import lombok.NonNull;
 
 @Builder
-final class CemeteriesTransformerV1 {
+final class CemeteriesTransformer {
   @NonNull CdwCemetery cdwFacility;
 
   String externalFacilityName;
 
   String externalWebsite;
 
-  private Facility.FacilityAttributes attributes() {
-    return Facility.FacilityAttributes.builder()
+  private FacilityAttributes attributes() {
+    return FacilityAttributes.builder()
         .name(facilityName(cdwFacility.fullName()))
-        .facilityType(Facility.FacilityType.va_cemetery)
+        .facilityType(va_cemetery)
         .classification(cdwFacility.siteType())
         .latitude(cdwFacility.latitude())
         .longitude(cdwFacility.longitude())
@@ -30,9 +37,9 @@ final class CemeteriesTransformerV1 {
                 cdwFacility.latitude(), cdwFacility.longitude(), "nca_" + cdwFacility.siteId()))
         .website(website(cdwFacility.websiteUrl()))
         .address(
-            Facility.Addresses.builder()
+            Addresses.builder()
                 .physical(
-                    Facility.Address.builder()
+                    Address.builder()
                         .address1(checkAngleBracketNull(cdwFacility.siteAddress1()))
                         .address2(checkAngleBracketNull(cdwFacility.siteAddress2()))
                         .city(cdwFacility.siteCity())
@@ -40,7 +47,7 @@ final class CemeteriesTransformerV1 {
                         .zip(cdwFacility.siteZip())
                         .build())
                 .mailing(
-                    Facility.Address.builder()
+                    Address.builder()
                         .address1(checkAngleBracketNull(cdwFacility.mailAddress1()))
                         .address2(checkAngleBracketNull(cdwFacility.mailAddress2()))
                         .city(cdwFacility.mailCity())
@@ -50,7 +57,7 @@ final class CemeteriesTransformerV1 {
                 .build())
         .phone(phone(cdwFacility.phone(), cdwFacility.fax()))
         .hours(
-            Facility.Hours.builder()
+            Hours.builder()
                 .monday(cdwFacility.visitationHoursWeekday())
                 .tuesday(cdwFacility.visitationHoursWeekday())
                 .wednesday(cdwFacility.visitationHoursWeekday())
@@ -66,20 +73,20 @@ final class CemeteriesTransformerV1 {
     return externalFacilityName != null ? externalFacilityName : cdwName;
   }
 
-  private Facility.Phone phone(String attPhone, String attFax) {
+  private Phone phone(String attPhone, String attFax) {
     String main = phoneTrim(attPhone);
     String fax = phoneTrim(attFax);
     if (allBlank(main, fax)) {
       return null;
     } else {
-      return Facility.Phone.builder().main(main).fax(fax).build();
+      return Phone.builder().main(main).fax(fax).build();
     }
   }
 
-  Facility toFacility() {
-    return Facility.builder()
+  DatamartFacility toDatamartFacility() {
+    return DatamartFacility.builder()
         .id("nca_" + cdwFacility.siteId())
-        .type(Facility.Type.va_facilities)
+        .type(va_facilities)
         .attributes(attributes())
         .build();
   }

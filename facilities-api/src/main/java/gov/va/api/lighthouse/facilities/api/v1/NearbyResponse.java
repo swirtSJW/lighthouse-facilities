@@ -15,7 +15,7 @@ import lombok.Value;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonPropertyOrder({"data", "meta"})
 public final class NearbyResponse {
-  @Valid @NotNull List<Nearby> data;
+  List<@Valid @NotNull Nearby> data;
 
   @Schema(nullable = true)
   Meta meta;

@@ -50,6 +50,13 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>facilities</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <classifier>library</classifier>
+    </dependency>
   </dependencies>
   <!--
     Launch process for services

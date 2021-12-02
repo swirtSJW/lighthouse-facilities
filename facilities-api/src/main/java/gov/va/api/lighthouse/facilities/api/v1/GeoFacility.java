@@ -143,10 +143,9 @@ public final class GeoFacility {
     @JsonProperty(value = "operating_status", required = true)
     Facility.OperatingStatus operatingStatus;
 
-    @Valid
     @JsonProperty(value = "detailed_services")
     @Schema(nullable = true)
-    List<DetailedService> detailedServices;
+    List<@Valid DetailedService> detailedServices;
 
     @Schema(example = "20", nullable = true)
     String visn;

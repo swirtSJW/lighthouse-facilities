@@ -1,11 +1,36 @@
 package gov.va.api.lighthouse.facilities.collector;
 
-import gov.va.api.lighthouse.facilities.api.v1.Facility;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.ApplyingForBenefits;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.DisabilityClaimAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.EducationAndCareerCounseling;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.EducationClaimAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.FamilyMemberClaimAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.HomelessAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.Pensions;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.PreDischargeClaimAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.TransitionAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.UpdatingDirectDepositInformation;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.VAHomeLoanAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.eBenefitsRegistrationAssistance;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_benefits_facility;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
+@Deprecated
 @UtilityClass
 class BenefitsSamplesV1 {
 
@@ -54,8 +79,8 @@ class BenefitsSamplesV1 {
 
   @AllArgsConstructor(staticName = "create")
   static final class Facilities {
-    private Facility.Address address() {
-      return Facility.Address.builder()
+    private Address address() {
+      return Address.builder()
           .address1("8 Shanktopus Lane")
           .address2("Apartment 8")
           .city("North")
@@ -64,18 +89,18 @@ class BenefitsSamplesV1 {
           .build();
     }
 
-    private Facility.FacilityAttributes attributes() {
-      return Facility.FacilityAttributes.builder()
+    private FacilityAttributes attributes() {
+      return FacilityAttributes.builder()
           .name("Shanktopus VAMC")
-          .facilityType(Facility.FacilityType.va_benefits_facility)
+          .facilityType(va_benefits_facility)
           .classification("VAMC")
           .latitude(new BigDecimal("-73.776232849999985"))
           .longitude(new BigDecimal("42.651408840000045"))
           .timeZone("Antarctica/Syowa")
-          .address(Facility.Addresses.builder().physical(address()).build())
-          .phone(Facility.Phone.builder().main("123-789-0456").fax("123-456-7890").build())
+          .address(Addresses.builder().physical(address()).build())
+          .phone(Phone.builder().main("123-789-0456").fax("123-456-7890").build())
           .hours(
-              Facility.Hours.builder()
+              Hours.builder()
                   .monday("8AM-8PM")
                   .tuesday("8AM-8PM")
                   .wednesday("8AM-8PM")
@@ -85,33 +110,33 @@ class BenefitsSamplesV1 {
                   .sunday("Closed")
                   .build())
           .services(
-              Facility.Services.builder()
+              Services.builder()
                   .benefits(
                       List.of(
-                          Facility.BenefitsService.ApplyingForBenefits,
-                          Facility.BenefitsService.DisabilityClaimAssistance,
-                          Facility.BenefitsService.eBenefitsRegistrationAssistance,
-                          Facility.BenefitsService.EducationAndCareerCounseling,
-                          Facility.BenefitsService.EducationClaimAssistance,
-                          Facility.BenefitsService.FamilyMemberClaimAssistance,
-                          Facility.BenefitsService.HomelessAssistance,
-                          Facility.BenefitsService.VAHomeLoanAssistance,
-                          Facility.BenefitsService.InsuranceClaimAssistanceAndFinancialCounseling,
-                          Facility.BenefitsService.IntegratedDisabilityEvaluationSystemAssistance,
-                          Facility.BenefitsService.PreDischargeClaimAssistance,
-                          Facility.BenefitsService.TransitionAssistance,
-                          Facility.BenefitsService.UpdatingDirectDepositInformation,
-                          Facility.BenefitsService.VocationalRehabilitationAndEmploymentAssistance,
-                          Facility.BenefitsService.Pensions))
+                          ApplyingForBenefits,
+                          DisabilityClaimAssistance,
+                          eBenefitsRegistrationAssistance,
+                          EducationAndCareerCounseling,
+                          EducationClaimAssistance,
+                          FamilyMemberClaimAssistance,
+                          HomelessAssistance,
+                          VAHomeLoanAssistance,
+                          InsuranceClaimAssistanceAndFinancialCounseling,
+                          IntegratedDisabilityEvaluationSystemAssistance,
+                          PreDischargeClaimAssistance,
+                          TransitionAssistance,
+                          UpdatingDirectDepositInformation,
+                          VocationalRehabilitationAndEmploymentAssistance,
+                          Pensions))
                   .build())
           .build();
     }
 
-    List<Facility> benefitsFacilities() {
+    List<DatamartFacility> benefitsFacilities() {
       return List.of(
-          Facility.builder()
+          DatamartFacility.builder()
               .id("vba_306e")
-              .type(Facility.Type.va_facilities)
+              .type(va_facilities)
               .attributes(attributes())
               .build());
     }

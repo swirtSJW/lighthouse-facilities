@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-public class CemeteriesTransformerV0Test {
+public class CemeteriesTransformerTest {
   @Test
   void toFacility() {
-    assertThat(tx().toFacility())
+    assertThat(tx().toDatamartFacility())
         .isEqualTo(CemeteriesSamples.Facilities.create().cemeteriesFacilities().get(0));
   }
 
@@ -27,12 +27,12 @@ public class CemeteriesTransformerV0Test {
     assertThat(tx(xmlWebsite, null).website(cdwWebsite)).isEqualTo(xmlWebsite);
   }
 
-  private CemeteriesTransformerV0 tx() {
+  private CemeteriesTransformer tx() {
     return tx(null, null);
   }
 
-  private CemeteriesTransformerV0 tx(String xmlWebsite, String xmlFacilityName) {
-    return CemeteriesTransformerV0.builder()
+  private CemeteriesTransformer tx(String xmlWebsite, String xmlFacilityName) {
+    return CemeteriesTransformer.builder()
         .cdwFacility(CemeteriesSamples.Cdw.create().cdwCemeteries())
         .externalFacilityName(xmlFacilityName)
         .externalWebsite(xmlWebsite)
@@ -42,6 +42,6 @@ public class CemeteriesTransformerV0Test {
   @Test
   void websiteInCsvReturnsValueWhenCdwIsNull() {
     String url = "https://shanktopus.com/vha/facility";
-    assertThat(tx(url, null).toFacility().attributes().website()).isEqualTo(url);
+    assertThat(tx(url, null).toDatamartFacility().attributes().website()).isEqualTo(url);
   }
 }

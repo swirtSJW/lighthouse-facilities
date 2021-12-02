@@ -16,7 +16,7 @@ import lombok.Value;
 public final class GeoFacilitiesResponse {
   @NotNull Type type;
 
-  @Valid List<GeoFacility> features;
+  List<@Valid GeoFacility> features;
 
   public enum Type {
     FeatureCollection

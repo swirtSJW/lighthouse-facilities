@@ -8,9 +8,9 @@ import static org.mockito.Mockito.*;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
@@ -27,13 +27,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @ExtendWith(MockitoExtension.class)
-public class CmsOverlayControllerTest {
+public class CmsOverlayControllerV0Test {
   @Mock FacilityRepository mockFacilityRepository;
 
   @Mock CmsOverlayRepository mockCmsOverlayRepository;
 
-  CmsOverlayController controller() {
-    return CmsOverlayController.builder()
+  CmsOverlayControllerV0 controller() {
+    return CmsOverlayControllerV0.builder()
         .facilityRepository(mockFacilityRepository)
         .cmsOverlayRepository(mockCmsOverlayRepository)
         .build();
@@ -158,7 +158,9 @@ public class CmsOverlayControllerTest {
     FacilityEntity entity =
         FacilityEntity.builder()
             .id(pk)
-            .facility(FacilitiesJacksonConfigV0.createMapper().writeValueAsString(f))
+            .facility(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(FacilityTransformerV0.toVersionAgnostic(f)))
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();
@@ -236,7 +238,9 @@ public class CmsOverlayControllerTest {
     FacilityEntity entity =
         FacilityEntity.builder()
             .id(pk)
-            .facility(FacilitiesJacksonConfigV0.createMapper().writeValueAsString(f))
+            .facility(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(FacilityTransformerV0.toVersionAgnostic(f)))
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     CmsOverlay overlay = overlay();

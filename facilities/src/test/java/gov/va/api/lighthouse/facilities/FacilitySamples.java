@@ -4,7 +4,6 @@ import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV0.quietly
 import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import gov.va.api.lighthouse.facilities.api.FacilityPair;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility;
@@ -53,13 +52,10 @@ public class FacilitySamples {
         .build();
   }
 
-  FacilityPair facility(String id) {
+  Facility facility(String id) {
     var f = facilities.get(id);
     assertThat(f).describedAs(id).isNotNull();
-
-    var fV1 = facilitiesV1.get(id);
-    assertThat(fV1).describedAs(id).isNotNull();
-    return FacilityPair.builder().v0(f).v1(fV1).build();
+    return f;
   }
 
   FacilityEntity facilityEntity(String id) {
@@ -68,7 +64,7 @@ public class FacilitySamples {
             .id(FacilityEntity.Pk.fromIdString(id))
             .lastUpdated(Instant.now())
             .build(),
-        facility(id));
+        FacilityTransformerV0.toVersionAgnostic(facility(id)));
   }
 
   GeoFacility geoFacility(String id) {

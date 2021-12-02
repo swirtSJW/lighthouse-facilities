@@ -1,8 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.api.FacilityPair;
-import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
+import gov.va.api.lighthouse.facilities.collector.FacilitiesCollectorV0;
 import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -22,11 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class InternalCollectorController {
   private final JdbcTemplate jdbc;
 
-  private final FacilitiesCollector collector;
+  private final FacilitiesCollectorV0 collector;
 
   @Builder
   InternalCollectorController(
-      @Autowired JdbcTemplate jdbc, @Autowired FacilitiesCollector collector) {
+      @Autowired JdbcTemplate jdbc, @Autowired FacilitiesCollectorV0 collector) {
     this.jdbc = jdbc;
     this.collector = collector;
   }
@@ -51,7 +50,7 @@ public class InternalCollectorController {
   }
 
   @GetMapping(value = "/facilities")
-  List<FacilityPair> collectFacilities() {
+  List<DatamartFacility> collectFacilities() {
     return collector.collectFacilities();
   }
 

@@ -8,9 +8,12 @@ public interface HasFacilityPayload {
 
   String cmsServices();
 
+  /**
+   * In order to be API version agnostic, facility data is persisted as a JSON string representing a
+   * DatamartFacility object. When retrieved from the facility entity, the JSON string is then
+   * transformed into the appropriate versioned facility object.
+   */
   String facility();
-
-  //  String facilityV1();
 
   Set<String> overlayServices();
 }

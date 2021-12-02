@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_cemetery;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
@@ -8,7 +10,12 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Map;
@@ -20,7 +27,7 @@ import lombok.Builder;
 import lombok.NonNull;
 
 @Builder
-final class StateCemeteryTransformerV0 {
+final class StateCemeteryTransformer {
   private static final Pattern ZIP_PATTERN =
       Pattern.compile(".*(\\d{5}-\\d{4}$)|.*(\\d{9}$)|.*(\\d{5}$)");
 
@@ -28,13 +35,13 @@ final class StateCemeteryTransformerV0 {
 
   @NonNull private final Map<String, String> websites;
 
-  static Facility.Address asAddress(String state, String line1, String line2, String line3) {
+  static Address asAddress(String state, String line1, String line2, String line3) {
     // Zip and city must be parsed out of the last nonblank line
     if (isNotBlank(line3)) {
       if (allBlank(parseZip(line3), parseCity(line3), line1, line2)) {
         return null;
       }
-      return Facility.Address.builder()
+      return Address.builder()
           .zip(parseZip(line3))
           .city(parseCity(line3))
           .state(state)
@@ -46,7 +53,7 @@ final class StateCemeteryTransformerV0 {
       if (allBlank(parseZip(line2), parseCity(line2), line1)) {
         return null;
       }
-      return Facility.Address.builder()
+      return Address.builder()
           .zip(parseZip(line2))
           .city(parseCity(line2))
           .state(state)
@@ -55,13 +62,9 @@ final class StateCemeteryTransformerV0 {
     }
     if (isNotBlank(line1)) {
       if (allBlank(parseZip(line1), parseCity(line1))) {
-        return Facility.Address.builder().address1(line1).build();
+        return Address.builder().address1(line1).build();
       }
-      return Facility.Address.builder()
-          .zip(parseZip(line1))
-          .city(parseCity(line1))
-          .state(state)
-          .build();
+      return Address.builder().zip(parseZip(line1)).city(parseCity(line1)).state(state).build();
     }
     return null;
   }
@@ -85,20 +88,20 @@ final class StateCemeteryTransformerV0 {
         .orElse(null);
   }
 
-  private Facility.Addresses address() {
+  private Addresses address() {
     if (allBlank(mailing(), physical())) {
       return null;
     }
-    return Facility.Addresses.builder().mailing(mailing()).physical(physical()).build();
+    return Addresses.builder().mailing(mailing()).physical(physical()).build();
   }
 
-  private Facility.FacilityAttributes attributes() {
+  private FacilityAttributes attributes() {
     if (allBlank(xml.name(), website(), latitude(), longitude(), address(), phone())) {
       return null;
     }
-    return Facility.FacilityAttributes.builder()
+    return FacilityAttributes.builder()
         .name(xml.name())
-        .facilityType(Facility.FacilityType.va_cemetery)
+        .facilityType(va_cemetery)
         .classification("State Cemetery")
         .website(website())
         .latitude(latitude())
@@ -110,9 +113,9 @@ final class StateCemeteryTransformerV0 {
         .build();
   }
 
-  private Facility.Hours defaultHours() {
+  private Hours defaultHours() {
     String hours = "Sunrise - Sunset";
-    return Facility.Hours.builder()
+    return Hours.builder()
         .monday(hours)
         .tuesday(hours)
         .wednesday(hours)
@@ -144,7 +147,7 @@ final class StateCemeteryTransformerV0 {
     return new BigDecimal(xml.longitude());
   }
 
-  private Facility.Address mailing() {
+  private Address mailing() {
     return asAddress(
         upperCase(xml.stateCode(), Locale.US),
         checkAngleBracketNull(xml.mailingLine1()),
@@ -152,16 +155,16 @@ final class StateCemeteryTransformerV0 {
         xml.mailingLine3());
   }
 
-  private Facility.Phone phone() {
+  private Phone phone() {
     String fax = phoneTrim(xml.fax());
     String main = phoneTrim(xml.phone());
     if (allBlank(fax, main)) {
       return null;
     }
-    return Facility.Phone.builder().fax(fax).main(main).build();
+    return Phone.builder().fax(fax).main(main).build();
   }
 
-  private Facility.Address physical() {
+  private Address physical() {
     return asAddress(
         upperCase(xml.stateCode(), Locale.US),
         checkAngleBracketNull(xml.addressLine1()),
@@ -169,15 +172,11 @@ final class StateCemeteryTransformerV0 {
         xml.addressLine3());
   }
 
-  Facility toFacility() {
+  DatamartFacility toDatamartFacility() {
     if (allBlank(id())) {
       return null;
     }
-    return Facility.builder()
-        .id(id())
-        .type(Facility.Type.va_facilities)
-        .attributes(attributes())
-        .build();
+    return DatamartFacility.builder().id(id()).type(va_facilities).attributes(attributes()).build();
   }
 
   String website() {

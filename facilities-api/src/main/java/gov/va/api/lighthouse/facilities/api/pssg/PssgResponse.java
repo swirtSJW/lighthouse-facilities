@@ -17,5 +17,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public final class PssgResponse {
-  @Valid private List<PssgDriveTimeBand> features;
+  private List<@Valid PssgDriveTimeBand> features;
 }

@@ -8,6 +8,9 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
@@ -178,6 +181,105 @@ public class FacilitiesCollectorTest {
   }
 
   @Test
+  @SneakyThrows
+  public void exceptions() {
+    InsecureRestTemplateProvider mockInsecureRestTemplateProvider =
+        mock(InsecureRestTemplateProvider.class);
+    JdbcTemplate mockJdbcTemplate = mock(JdbcTemplate.class);
+    CmsOverlayCollectorV0 mockCmsOverlayCollector = mock(CmsOverlayCollectorV0.class);
+    String mockAtcBaseUrl = "atcBaseUrl";
+    String mockAtpBaseUrl = "atpBaseUrl";
+    String mockCemeteriesBaseUrl = "cemeteriesBaseUrl";
+    assertThrows(
+        NullPointerException.class,
+        () ->
+            new FacilitiesCollectorV0(
+                null,
+                mockJdbcTemplate,
+                mockCmsOverlayCollector,
+                mockAtcBaseUrl,
+                mockAtpBaseUrl,
+                mockCemeteriesBaseUrl));
+    assertThrows(
+        NullPointerException.class,
+        () ->
+            new FacilitiesCollectorV0(
+                mockInsecureRestTemplateProvider,
+                null,
+                mockCmsOverlayCollector,
+                mockAtcBaseUrl,
+                mockAtpBaseUrl,
+                mockCemeteriesBaseUrl));
+    assertThrows(
+        NullPointerException.class,
+        () ->
+            new FacilitiesCollectorV0(
+                mockInsecureRestTemplateProvider,
+                mockJdbcTemplate,
+                mockCmsOverlayCollector,
+                null,
+                mockAtpBaseUrl,
+                mockCemeteriesBaseUrl));
+    assertThrows(
+        NullPointerException.class,
+        () ->
+            new FacilitiesCollectorV0(
+                mockInsecureRestTemplateProvider,
+                mockJdbcTemplate,
+                mockCmsOverlayCollector,
+                mockAtcBaseUrl,
+                null,
+                mockCemeteriesBaseUrl));
+    assertThrows(
+        NullPointerException.class,
+        () ->
+            new FacilitiesCollectorV0(
+                mockInsecureRestTemplateProvider,
+                mockJdbcTemplate,
+                mockCmsOverlayCollector,
+                mockAtcBaseUrl,
+                mockAtpBaseUrl,
+                null));
+
+    when(mockCmsOverlayCollector.loadAndUpdateCmsOverlays())
+        .thenThrow(new NullPointerException("oh noes"));
+    FacilitiesCollectorV0 collectorV0 =
+        new FacilitiesCollectorV0(
+            mockInsecureRestTemplateProvider,
+            mockJdbcTemplate,
+            mockCmsOverlayCollector,
+            mockAtcBaseUrl,
+            mockAtpBaseUrl,
+            mockCemeteriesBaseUrl);
+    assertThrows(
+        CollectorExceptions.CollectorException.class,
+        () -> collectorV0.updateOperatingStatusFromCmsOverlay(new ArrayList<>()));
+
+    CmsOverlayCollectorV1 mockCmsOverlayCollectorV1 = mock(CmsOverlayCollectorV1.class);
+    when(mockCmsOverlayCollectorV1.loadAndUpdateCmsOverlays())
+        .thenThrow(new NullPointerException("oh noes"));
+    FacilitiesCollectorV1 collectorV1 =
+        new FacilitiesCollectorV1(
+            mockInsecureRestTemplateProvider,
+            mockJdbcTemplate,
+            mockCmsOverlayCollectorV1,
+            mockAtcBaseUrl,
+            mockAtpBaseUrl,
+            mockCemeteriesBaseUrl);
+    assertThrows(
+        CollectorExceptions.CollectorException.class,
+        () -> collectorV1.updateOperatingStatusFromCmsOverlay(new ArrayList<>()));
+
+    ResultSet mockRs = mock(ResultSet.class);
+    when(mockRs.getBoolean("VCTR2")).thenThrow(new SQLException("oh noes"));
+    assertThrows(SQLException.class, () -> FacilitiesCollector.toVastEntity(mockRs));
+    assertThrows(NullPointerException.class, () -> FacilitiesCollector.withTrailingSlash(null));
+
+    assertThrows(
+        IllegalArgumentException.class, () -> FacilitiesCollector.loadCaregiverSupport(null));
+  }
+
+  @Test
   void loadVastException() {
     RestTemplate insecureRestTemplate = mock(RestTemplate.class);
     InsecureRestTemplateProvider mockInsecureRestTemplateProvider =
@@ -190,10 +292,21 @@ public class FacilitiesCollectorTest {
     assertThrows(
         CollectorExceptions.CollectorException.class,
         () ->
-            new FacilitiesCollector(
+            new FacilitiesCollectorV0(
                     mockInsecureRestTemplateProvider,
                     mockTemplate,
-                    new CmsOverlayCollector(mockCmsOverlayRepository),
+                    new CmsOverlayCollectorV0(mockCmsOverlayRepository),
+                    "http://atc",
+                    "http://atp",
+                    "http://statecems")
+                .collectFacilities());
+    assertThrows(
+        CollectorExceptions.CollectorException.class,
+        () ->
+            new FacilitiesCollectorV1(
+                    mockInsecureRestTemplateProvider,
+                    mockTemplate,
+                    new CmsOverlayCollectorV1(mockCmsOverlayRepository),
                     "http://atc",
                     "http://atp",
                     "http://statecems")
@@ -204,9 +317,13 @@ public class FacilitiesCollectorTest {
   void verifyMissingTrailingSlashAppended() {
     String urlMissingTrailingSlash = "https://developer.va.gov";
     String urlWithTrailingSlash = "https://developer.va.gov/";
-    assertThat(FacilitiesCollector.withTrailingSlash(urlMissingTrailingSlash))
+    assertThat(FacilitiesCollectorV0.withTrailingSlash(urlMissingTrailingSlash))
         .isEqualTo(urlWithTrailingSlash);
-    assertThat(FacilitiesCollector.withTrailingSlash(urlWithTrailingSlash))
+    assertThat(FacilitiesCollectorV0.withTrailingSlash(urlWithTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
+    assertThat(FacilitiesCollectorV1.withTrailingSlash(urlMissingTrailingSlash))
+        .isEqualTo(urlWithTrailingSlash);
+    assertThat(FacilitiesCollectorV1.withTrailingSlash(urlWithTrailingSlash))
         .isEqualTo(urlWithTrailingSlash);
   }
 
@@ -260,10 +377,21 @@ public class FacilitiesCollectorTest {
                         + "<cem station=\"910\" cem_url=\"https://www.cem.va.gov/cems/nchp/FtRichardson.asp\"/>"
                         + "</cems>")));
     assertThat(
-            new FacilitiesCollector(
+            new FacilitiesCollectorV0(
                     insecureRestTemplateProvider,
                     jdbcTemplate,
-                    new CmsOverlayCollector(cmsOverlayRepository),
+                    new CmsOverlayCollectorV0(cmsOverlayRepository),
+                    "http://atc",
+                    "http://atp",
+                    "http://statecems")
+                .collectFacilities()
+                .size())
+        .isEqualTo(4);
+    assertThat(
+            new FacilitiesCollectorV1(
+                    insecureRestTemplateProvider,
+                    jdbcTemplate,
+                    new CmsOverlayCollectorV1(cmsOverlayRepository),
                     "http://atc",
                     "http://atp",
                     "http://statecems")

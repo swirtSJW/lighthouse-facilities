@@ -3,6 +3,10 @@ package gov.va.api.lighthouse.facilities;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_benefits_facility;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_cemetery;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_health_facility;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.vet_center;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.isBlank;
 import static java.util.stream.Collectors.toCollection;
@@ -14,12 +18,15 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import gov.va.api.health.autoconfig.logging.Loggable;
-import gov.va.api.lighthouse.facilities.api.FacilityPair;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
-import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
+import gov.va.api.lighthouse.facilities.collector.FacilitiesCollectorV0;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -81,8 +88,10 @@ public class InternalFacilitiesController {
 
   private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
 
-  // private static final ObjectMapper MAPPER_V1 = FacilitiesJacksonConfigV1.createMapper();
-  private final FacilitiesCollector collector;
+  private static final ObjectMapper DATAMART_MAPPER =
+      DatamartFacilitiesJacksonConfig.createMapper();
+
+  private final FacilitiesCollectorV0 collector;
 
   private final CmsOverlayRepository cmsOverlayRepository;
 
@@ -95,28 +104,24 @@ public class InternalFacilitiesController {
 
   private final Set<FacilityEntity> facilityEntities = new HashSet<>();
 
-  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Address> addressMailing(
-      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    return addresses(facility).map(a -> a.mailing());
+  private static Optional<Address> addressMailing(DatamartFacility datamartFacility) {
+    return addresses(datamartFacility).map(a -> a.mailing());
   }
 
-  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Address> addressPhysical(
-      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    return addresses(facility).map(a -> a.physical());
+  private static Optional<Address> addressPhysical(DatamartFacility datamartFacility) {
+    return addresses(datamartFacility).map(a -> a.physical());
   }
 
-  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses> addresses(
-      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    return attributes(facility).map(a -> a.address());
+  private static Optional<Addresses> addresses(DatamartFacility datamartFacility) {
+    return attributes(datamartFacility).map(a -> a.address());
   }
 
-  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes>
-      attributes(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    return Optional.ofNullable(facility.attributes());
+  private static Optional<FacilityAttributes> attributes(DatamartFacility datamartFacility) {
+    return Optional.ofNullable(datamartFacility.attributes());
   }
 
-  private static boolean isHoursNull(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    return facility.attributes().hours() == null;
+  private static boolean isHoursNull(DatamartFacility datamartFacility) {
+    return datamartFacility.attributes().hours() == null;
   }
 
   private static Boolean isMobileCenter(FacilityEntity facility) {
@@ -126,19 +131,16 @@ public class InternalFacilitiesController {
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
   @SneakyThrows
-  static FacilityEntity populate(FacilityEntity record, FacilityPair facilityPair) {
-    gov.va.api.lighthouse.facilities.api.v0.Facility facilityV0 = facilityPair.v0();
+  static FacilityEntity populate(FacilityEntity record, DatamartFacility datamartFacility) {
     checkArgument(record.id() != null);
-    record.latitude(facilityV0.attributes().latitude().doubleValue());
-    record.longitude(facilityV0.attributes().longitude().doubleValue());
-    record.state(stateOf(facilityV0));
-    record.zip(zipOf(facilityV0));
-    record.servicesFromServiceTypes(serviceTypesOf(facilityV0));
-    record.facility(MAPPER_V0.writeValueAsString(facilityV0));
-    record.visn(facilityV0.attributes().visn());
-    record.mobile(facilityV0.attributes().mobile());
-    // gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1 = facilityPair.v1();
-    // record.facilityV1(MAPPER_V1.writeValueAsString(facilityV1));
+    record.latitude(datamartFacility.attributes().latitude().doubleValue());
+    record.longitude(datamartFacility.attributes().longitude().doubleValue());
+    record.state(stateOf(datamartFacility));
+    record.zip(zipOf(datamartFacility));
+    record.servicesFromServiceTypes(serviceTypesOf(datamartFacility));
+    record.facility(DATAMART_MAPPER.writeValueAsString(datamartFacility));
+    record.visn(datamartFacility.attributes().visn());
+    record.mobile(datamartFacility.attributes().mobile());
     return record;
   }
 
@@ -146,9 +148,8 @@ public class InternalFacilitiesController {
    * Determine the total collection of service types by combining health, benefits, and other
    * services types. This is guaranteed to return a non-null, but potentially empty collection.
    */
-  static Set<ServiceType> serviceTypesOf(
-      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    var services = facility.attributes().services();
+  static Set<ServiceType> serviceTypesOf(DatamartFacility datamartFacility) {
+    var services = datamartFacility.attributes().services();
     if (services == null) {
       return Set.of();
     }
@@ -165,33 +166,33 @@ public class InternalFacilitiesController {
     return allServices;
   }
 
-  private static Optional<gov.va.api.lighthouse.facilities.api.v0.Facility.Services> services(
-      gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    return attributes(facility).map(a -> a.services());
+  private static Optional<Services> services(DatamartFacility datamartFacility) {
+    return attributes(datamartFacility).map(a -> a.services());
   }
 
   /** Determine the state if available in a physical address, otherwise return null. */
-  static String stateOf(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    if (facility.attributes().address() != null
-        && facility.attributes().address().physical() != null
-        && isNotBlank(facility.attributes().address().physical().state())) {
-      return facility.attributes().address().physical().state();
+  static String stateOf(DatamartFacility datamartFacility) {
+    if (datamartFacility.attributes().address() != null
+        && datamartFacility.attributes().address().physical() != null
+        && isNotBlank(datamartFacility.attributes().address().physical().state())) {
+      return datamartFacility.attributes().address().physical().state();
     }
     return null;
   }
 
   /** Determine the 5 digit zip if available in a physical address, otherwise return null. */
-  static String zipOf(gov.va.api.lighthouse.facilities.api.v0.Facility facility) {
-    if (facility.attributes().address() != null
-        && facility.attributes().address().physical() != null
-        && isNotBlank(facility.attributes().address().physical().zip())) {
+  static String zipOf(DatamartFacility datamartFacility) {
+    if (datamartFacility.attributes().address() != null
+        && datamartFacility.attributes().address().physical() != null
+        && isNotBlank(datamartFacility.attributes().address().physical().zip())) {
       /* We only store the destination portion of the zip code, we do not store the route. */
-      return facility
+      return datamartFacility
           .attributes()
           .address()
           .physical()
           .zip()
-          .substring(0, Math.min(5, facility.attributes().address().physical().zip().length()));
+          .substring(
+              0, Math.min(5, datamartFacility.attributes().address().physical().zip().length()));
     }
     return null;
   }
@@ -352,10 +353,9 @@ public class InternalFacilitiesController {
                     z ->
                         GraveyardResponse.Item.builder()
                             .facility(
-                                FacilitiesJacksonConfigV0.quietlyMap(
-                                    MAPPER_V0,
-                                    z.facility(),
-                                    gov.va.api.lighthouse.facilities.api.v0.Facility.class))
+                                FacilityTransformerV0.toFacility(
+                                    DatamartFacilitiesJacksonConfig.quietlyMap(
+                                        DATAMART_MAPPER, z.facility(), DatamartFacility.class)))
                             .cmsOverlay(
                                 CmsOverlay.builder()
                                     .operatingStatus(
@@ -386,10 +386,10 @@ public class InternalFacilitiesController {
         .build();
   }
 
-  private Set<FacilityEntity.Pk> missingIds(List<FacilityPair> collectedFacilities) {
+  private Set<FacilityEntity.Pk> missingIds(List<DatamartFacility> collectedFacilities) {
     Set<FacilityEntity.Pk> newIds =
         collectedFacilities.stream()
-            .map(f -> FacilityEntity.Pk.optionalFromIdString(f.v0().id()).orElse(null))
+            .map(df -> FacilityEntity.Pk.optionalFromIdString(df.id()).orElse(null))
             .filter(Objects::nonNull)
             .collect(toCollection(LinkedHashSet::new));
     Set<FacilityEntity.Pk> oldIds = new LinkedHashSet<>(facilityRepository.findAllIds());
@@ -457,7 +457,7 @@ public class InternalFacilitiesController {
   }
 
   private ResponseEntity<ReloadResponse> process(
-      ReloadResponse response, List<FacilityPair> collectedFacilities) {
+      ReloadResponse response, List<DatamartFacility> collectedFacilities) {
     response.timing().markCompleteCollection();
     log.info("Facilities collected: {}", collectedFacilities.size());
     try {
@@ -474,6 +474,7 @@ public class InternalFacilitiesController {
     return ResponseEntity.ok(response);
   }
 
+  @SneakyThrows
   private void processMissingFacility(ReloadResponse response, FacilityEntity.Pk id) {
     Optional<FacilityEntity> optEntity = facilityRepository.findById(id);
     checkState(optEntity.isPresent());
@@ -497,6 +498,7 @@ public class InternalFacilitiesController {
     return process(response, collectedFacilities);
   }
 
+  @SneakyThrows
   private void saveAsMissing(ReloadResponse response, FacilityEntity entity) {
     FacilityEntity.Pk id = entity.id();
     try {
@@ -516,14 +518,14 @@ public class InternalFacilitiesController {
   }
 
   @SneakyThrows
-  void updateAndSave(ReloadResponse response, FacilityEntity record, FacilityPair facilityPair) {
-    gov.va.api.lighthouse.facilities.api.v0.Facility facility = facilityPair.v0();
-    facility
+  void updateAndSave(
+      ReloadResponse response, FacilityEntity record, DatamartFacility datamartFacility) {
+    datamartFacility
         .attributes()
         .operationalHoursSpecialInstructions(
             findAndReplaceOperationalHoursSpecialInstructions(
-                facility.attributes().operationalHoursSpecialInstructions()));
-    populate(record, facilityPair);
+                datamartFacility.attributes().operationalHoursSpecialInstructions()));
+    populate(record, datamartFacility);
     record.missingTimestamp(null);
     record.lastUpdated(response.timing().completeCollection());
     /*
@@ -535,122 +537,147 @@ public class InternalFacilitiesController {
           .problems()
           .add(
               ReloadResponse.Problem.of(
-                  facility.id(), "Duplicate Facilities", String.join(";", duplicateFacilities)));
+                  datamartFacility.id(),
+                  "Duplicate Facilities",
+                  String.join(";", duplicateFacilities)));
     }
     if (isBlank(record.zip()) || !ZIP_PATTERN.matcher(record.zip()).matches()) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid physical address zip"));
+          .add(
+              ReloadResponse.Problem.of(
+                  datamartFacility.id(), "Missing or invalid physical address zip"));
     }
     if (isBlank(record.state())) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing physical address state"));
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing physical address state"));
     }
-    if (isBlank(addressPhysical(facility).map(a -> a.city()))) {
+    if (isBlank(addressPhysical(datamartFacility).map(a -> a.city()))) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing physical address city"));
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing physical address city"));
     }
     if (allBlank(
-        addressPhysical(facility).map(a -> a.address1()),
-        addressPhysical(facility).map(a -> a.address2()),
-        addressPhysical(facility).map(a -> a.address3()))) {
+        addressPhysical(datamartFacility).map(a -> a.address1()),
+        addressPhysical(datamartFacility).map(a -> a.address2()),
+        addressPhysical(datamartFacility).map(a -> a.address3()))) {
       response
           .problems()
           .add(
               ReloadResponse.Problem.of(
-                  facility.id(), "Missing physical address street information"));
+                  datamartFacility.id(), "Missing physical address street information"));
     }
     // Mailing addresses only exist for cemeteries
-    if (facility.attributes().facilityType()
-        == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_cemetery) {
-      if (isBlank(addressMailing(facility).map(a -> a.zip()))
-          || !ZIP_PATTERN.matcher(facility.attributes().address().mailing().zip()).matches()) {
-        response
-            .problems()
-            .add(
-                ReloadResponse.Problem.of(facility.id(), "Missing or invalid mailing address zip"));
-      }
-      if (isBlank(addressMailing(facility).map(a -> a.state()))) {
-        response
-            .problems()
-            .add(ReloadResponse.Problem.of(facility.id(), "Missing mailing address state"));
-      }
-      if (isBlank(addressMailing(facility).map(a -> a.city()))) {
-        response
-            .problems()
-            .add(ReloadResponse.Problem.of(facility.id(), "Missing mailing address city"));
-      }
-      if (allBlank(
-          addressMailing(facility).map(a -> a.address1()),
-          addressMailing(facility).map(a -> a.address2()),
-          addressMailing(facility).map(a -> a.address3()))) {
+    if (datamartFacility.attributes().facilityType() == va_cemetery) {
+      if (isBlank(addressMailing(datamartFacility).map(a -> a.zip()))
+          || !ZIP_PATTERN
+              .matcher(datamartFacility.attributes().address().mailing().zip())
+              .matches()) {
         response
             .problems()
             .add(
                 ReloadResponse.Problem.of(
-                    facility.id(), "Missing mailing address street information"));
+                    datamartFacility.id(), "Missing or invalid mailing address zip"));
+      }
+      if (isBlank(addressMailing(datamartFacility).map(a -> a.state()))) {
+        response
+            .problems()
+            .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing mailing address state"));
+      }
+      if (isBlank(addressMailing(datamartFacility).map(a -> a.city()))) {
+        response
+            .problems()
+            .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing mailing address city"));
+      }
+      if (allBlank(
+          addressMailing(datamartFacility).map(a -> a.address1()),
+          addressMailing(datamartFacility).map(a -> a.address2()),
+          addressMailing(datamartFacility).map(a -> a.address3()))) {
+        response
+            .problems()
+            .add(
+                ReloadResponse.Problem.of(
+                    datamartFacility.id(), "Missing mailing address street information"));
       }
     }
-    if (facility.attributes().phone() == null || isBlank(facility.attributes().phone().main())) {
+    if (datamartFacility.attributes().phone() == null
+        || isBlank(datamartFacility.attributes().phone().main())) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing main phone number"));
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing main phone number"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().monday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Monday"));
+    if (isHoursNull(datamartFacility) || isBlank(datamartFacility.attributes().hours().monday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Monday"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().tuesday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Tuesday"));
+    if (isHoursNull(datamartFacility) || isBlank(datamartFacility.attributes().hours().tuesday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Tuesday"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().wednesday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Wednesday"));
+    if (isHoursNull(datamartFacility)
+        || isBlank(datamartFacility.attributes().hours().wednesday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Wednesday"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().thursday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Thursday"));
+    if (isHoursNull(datamartFacility)
+        || isBlank(datamartFacility.attributes().hours().thursday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Thursday"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().friday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Friday"));
+    if (isHoursNull(datamartFacility) || isBlank(datamartFacility.attributes().hours().friday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Friday"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().saturday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Saturday"));
+    if (isHoursNull(datamartFacility)
+        || isBlank(datamartFacility.attributes().hours().saturday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Saturday"));
     }
-    if (isHoursNull(facility) || isBlank(facility.attributes().hours().sunday())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing hours Sunday"));
+    if (isHoursNull(datamartFacility) || isBlank(datamartFacility.attributes().hours().sunday())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing hours Sunday"));
     }
     // Currently classification is not populated for vet centers
-    if (facility.attributes().facilityType()
-            != gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center
-        && isBlank(facility.attributes().classification())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing classification"));
+    if (datamartFacility.attributes().facilityType() != vet_center
+        && isBlank(datamartFacility.attributes().classification())) {
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing classification"));
     }
     if (record.latitude() > 90 || record.latitude() < -90) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid location latitude"));
+          .add(
+              ReloadResponse.Problem.of(
+                  datamartFacility.id(), "Missing or invalid location latitude"));
     }
     if (record.longitude() > 180 || record.longitude() < -180) {
       response
           .problems()
-          .add(ReloadResponse.Problem.of(facility.id(), "Missing or invalid location longitude"));
+          .add(
+              ReloadResponse.Problem.of(
+                  datamartFacility.id(), "Missing or invalid location longitude"));
     }
-    if ((facility.attributes().facilityType()
-            == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_benefits_facility)
-        && isBlank(services(facility).map(s -> s.benefits()))) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
+    if ((datamartFacility.attributes().facilityType() == va_benefits_facility)
+        && isBlank(services(datamartFacility).map(s -> s.benefits()))) {
+      response.problems().add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing services"));
     }
-    if ((facility.attributes().facilityType()
-            == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_health_facility)
-        && isBlank(services(facility).map(s -> s.health()))) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing services"));
+    if ((datamartFacility.attributes().facilityType() == va_health_facility)
+        && isBlank(services(datamartFacility).map(s -> s.health()))) {
+      response.problems().add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing services"));
     }
-    if ((facility.attributes().facilityType()
-                == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.va_health_facility
-            || facility.attributes().facilityType()
-                == gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityType.vet_center)
+    if ((datamartFacility.attributes().facilityType() == va_health_facility
+            || datamartFacility.attributes().facilityType() == vet_center)
         && isBlank(record.visn())) {
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing VISN"));
+      response.problems().add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing VISN"));
     }
     try {
       facilityRepository.save(record);
@@ -660,37 +687,41 @@ public class InternalFacilitiesController {
       response
           .problems()
           .add(
-              ReloadResponse.Problem.of(facility.id(), "Failed to save record: " + e.getMessage()));
+              ReloadResponse.Problem.of(
+                  datamartFacility.id(), "Failed to save record: " + e.getMessage()));
       throw e;
     }
   }
 
-  private void updateFacility(ReloadResponse response, FacilityPair facilityPair) {
+  private void updateFacility(ReloadResponse response, DatamartFacility datamartFacility) {
     FacilityEntity.Pk pk;
-    gov.va.api.lighthouse.facilities.api.v0.Facility facility = facilityPair.v0();
     try {
-      pk = FacilityEntity.Pk.fromIdString(facility.id());
+      pk = FacilityEntity.Pk.fromIdString(datamartFacility.id());
     } catch (IllegalArgumentException e) {
-      log.error("Cannot process facility {}, ID not understood", facility.id(), e);
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Cannot parse ID"));
+      log.error("Cannot process facility {}, ID not understood", datamartFacility.id(), e);
+      response.problems().add(ReloadResponse.Problem.of(datamartFacility.id(), "Cannot parse ID"));
       return;
     }
-    if (facility.attributes().latitude() == null || facility.attributes().longitude() == null) {
-      log.error("Cannot process facility {}, latitude and/or longitude is null", facility.id());
-      response.problems().add(ReloadResponse.Problem.of(facility.id(), "Missing coordinates"));
+    if (datamartFacility.attributes().latitude() == null
+        || datamartFacility.attributes().longitude() == null) {
+      log.error(
+          "Cannot process facility {}, latitude and/or longitude is null", datamartFacility.id());
+      response
+          .problems()
+          .add(ReloadResponse.Problem.of(datamartFacility.id(), "Missing coordinates"));
       return;
     }
     var existing = facilityRepository.findById(pk);
     if (existing.isPresent()) {
-      response.facilitiesUpdated().add(facility.id());
-      log.warn("Updating facility {}", facility.id());
-      updateAndSave(response, existing.get(), facilityPair);
+      response.facilitiesUpdated().add(datamartFacility.id());
+      log.warn("Updating facility {}", datamartFacility.id());
+      updateAndSave(response, existing.get(), datamartFacility);
       return;
     }
     var zombie = graveyardRepository.findById(pk);
     if (zombie.isPresent()) {
-      response.facilitiesRevived().add(facility.id());
-      log.warn("Reviving facility {}", facility.id());
+      response.facilitiesRevived().add(datamartFacility.id());
+      log.warn("Reviving facility {}", datamartFacility.id());
       FacilityGraveyardEntity zombieEntity = zombie.get();
       // only thing to retain from graveyard is CMS overlay
       // all other fields will be populated in updateAndSave()
@@ -704,18 +735,18 @@ public class InternalFacilitiesController {
                       ? null
                       : new HashSet<>(zombieEntity.graveyardOverlayServices()))
               .build();
-      updateAndSave(response, facilityEntity, facilityPair);
+      updateAndSave(response, facilityEntity, datamartFacility);
       deleteFromGraveyard(response, zombieEntity);
       return;
     }
-    response.facilitiesCreated().add(facility.id());
-    log.warn("Creating new facility {}", facility.id());
-    updateAndSave(response, FacilityEntity.builder().id(pk).build(), facilityPair);
+    response.facilitiesCreated().add(datamartFacility.id());
+    log.warn("Creating new facility {}", datamartFacility.id());
+    updateAndSave(response, FacilityEntity.builder().id(pk).build(), datamartFacility);
   }
 
   @PostMapping(value = "/reload")
   @Loggable(arguments = false)
-  ResponseEntity<ReloadResponse> upload(@RequestBody List<FacilityPair> collectedFacilities) {
+  ResponseEntity<ReloadResponse> upload(@RequestBody List<DatamartFacility> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
   }

@@ -3,14 +3,14 @@ package gov.va.api.lighthouse.facilities.collector;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.CmsOverlayEntity;
+import gov.va.api.lighthouse.facilities.CmsOverlayHelperV0;
 import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
 import gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV0;
-import gov.va.api.lighthouse.facilities.api.cms.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class CmsOverlayCollector {
+public class CmsOverlayCollectorV0 {
   private final CmsOverlayRepository cmsOverlayRepository;
 
   /** Method for determining whether Covid service is contained within detailed services. */
@@ -66,17 +66,14 @@ public class CmsOverlayCollector {
       overlay =
           CmsOverlay.builder()
               .operatingStatus(
-                  cmsOverlayEntity.cmsOperatingStatus() != null
-                      ? mapper.readValue(
-                          cmsOverlayEntity.cmsOperatingStatus(), Facility.OperatingStatus.class)
-                      : null)
+                  CmsOverlayHelperV0.getOperatingStatus(
+                      mapper, cmsOverlayEntity.cmsOperatingStatus()))
               .detailedServices(
                   cmsOverlayEntity.cmsServices() != null
                       ? // updateServiceUrlPaths(
                       //  cmsOverlayEntity.id().toIdString(),
-                      List.of(
-                          mapper.readValue(
-                              cmsOverlayEntity.cmsServices(), DetailedService[].class)) // )
+                      CmsOverlayHelperV0.getDetailedServices(
+                          mapper, cmsOverlayEntity.cmsServices()) // )
                       : null)
               .build();
       // Save updates made to overlay with Covid services
@@ -87,17 +84,13 @@ public class CmsOverlayCollector {
             CmsOverlayEntity.builder()
                 .id(cmsOverlayEntity.id())
                 .cmsOperatingStatus(
-                    operatingStatus != null
-                        ? FacilitiesJacksonConfigV0.quietlyWriteValueAsString(
-                            mapper, operatingStatus)
-                        : null)
-                .cmsServices(
-                    FacilitiesJacksonConfigV0.quietlyWriteValueAsString(mapper, detailedServices))
+                    CmsOverlayHelperV0.serializeOperatingStatus(mapper, operatingStatus))
+                .cmsServices(CmsOverlayHelperV0.serializeDetailedServices(mapper, detailedServices))
                 .build());
         log.info(
             "CMS overlay updated for {} facility", sanitize(cmsOverlayEntity.id().toIdString()));
       }
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       log.warn(
           "Could not create CmsOverlay from CmsOverlayEntity with id {}",
           cmsOverlayEntity.id().toIdString());

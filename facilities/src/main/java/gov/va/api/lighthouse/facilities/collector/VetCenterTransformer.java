@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.vet_center;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.hoursToClosed;
@@ -7,33 +9,39 @@ import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.upperCase;
 
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.DatamartFacility.ActiveStatus;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
+import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import java.util.Locale;
 import java.util.Map;
 import lombok.Builder;
 import lombok.NonNull;
 
 @Builder
-final class VetCenterTransformerV0 {
+final class VetCenterTransformer {
   @NonNull private final VastEntity vast;
 
   @NonNull private final Map<String, String> websites;
 
-  private Facility.ActiveStatus activeStatus() {
+  private ActiveStatus activeStatus() {
     if (allBlank(vast.pod())) {
       return null;
     }
-    return vast.pod().equalsIgnoreCase("A") ? Facility.ActiveStatus.A : Facility.ActiveStatus.T;
+    return vast.pod().equalsIgnoreCase("A") ? ActiveStatus.A : ActiveStatus.T;
   }
 
-  private Facility.Addresses address() {
+  private Addresses address() {
     if (allBlank(addressPhysical())) {
       return null;
     }
-    return Facility.Addresses.builder().physical(addressPhysical()).build();
+    return Addresses.builder().physical(addressPhysical()).build();
   }
 
-  private Facility.Address addressPhysical() {
+  private Address addressPhysical() {
     // address1 is repeat of station name
     if (allBlank(
         addressZip(),
@@ -43,7 +51,7 @@ final class VetCenterTransformerV0 {
         checkAngleBracketNull(vast.address3()))) {
       return null;
     }
-    return Facility.Address.builder()
+    return Address.builder()
         .zip(addressZip())
         .city(vast.city())
         .state(upperCase(vast.state(), Locale.US))
@@ -61,7 +69,7 @@ final class VetCenterTransformerV0 {
     return zip;
   }
 
-  private Facility.FacilityAttributes attributes() {
+  private FacilityAttributes attributes() {
     if (allBlank(
         vast.stationName(),
         website(),
@@ -76,9 +84,9 @@ final class VetCenterTransformerV0 {
         vast.visn())) {
       return null;
     }
-    return Facility.FacilityAttributes.builder()
+    return FacilityAttributes.builder()
         .name(vast.stationName())
-        .facilityType(Facility.FacilityType.vet_center)
+        .facilityType(vet_center)
         .website(website())
         .latitude(vast.latitude())
         .longitude(vast.longitude())
@@ -93,7 +101,7 @@ final class VetCenterTransformerV0 {
         .build();
   }
 
-  private Facility.Hours hours() {
+  private Hours hours() {
     String mon = hoursToClosed(vast.monday());
     String tue = hoursToClosed(vast.tuesday());
     String wed = hoursToClosed(vast.wednesday());
@@ -104,7 +112,7 @@ final class VetCenterTransformerV0 {
     if (allBlank(mon, tue, wed, thu, fri, sat, sun)) {
       return null;
     }
-    return Facility.Hours.builder()
+    return Hours.builder()
         .monday(mon)
         .tuesday(tue)
         .wednesday(wed)
@@ -122,24 +130,20 @@ final class VetCenterTransformerV0 {
     return "vc_" + vast.stationNumber();
   }
 
-  private Facility.Phone phone() {
+  private Phone phone() {
     String fax = phoneTrim(vast.staFax());
     String main = phoneTrim(vast.staPhone());
     if (allBlank(fax, main)) {
       return null;
     }
-    return Facility.Phone.builder().fax(fax).main(main).build();
+    return Phone.builder().fax(fax).main(main).build();
   }
 
-  Facility toFacility() {
+  DatamartFacility toDatamartFacility() {
     if (allBlank(id())) {
       return null;
     }
-    return Facility.builder()
-        .id(id())
-        .type(Facility.Type.va_facilities)
-        .attributes(attributes())
-        .build();
+    return DatamartFacility.builder().id(id()).type(va_facilities).attributes(attributes()).build();
   }
 
   String website() {

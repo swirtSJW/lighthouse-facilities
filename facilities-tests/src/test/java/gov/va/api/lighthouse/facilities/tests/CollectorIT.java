@@ -5,7 +5,7 @@ import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDef
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
-import gov.va.api.lighthouse.facilities.api.FacilityPair;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import java.util.Map;
@@ -29,7 +29,8 @@ public class CollectorIT {
 
   @Test
   void collectFacilities() {
-    var items = makeRequest("internal/collector/facilities", 200).expectListOf(FacilityPair.class);
+    var items =
+        makeRequest("internal/collector/facilities", 200).expectListOf(DatamartFacility.class);
     assertThat(items.size()).isGreaterThan(2000);
   }
 

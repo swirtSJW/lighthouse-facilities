@@ -1,8 +1,8 @@
-package gov.va.api.lighthouse.facilities.api.cms;
+package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
@@ -18,7 +18,6 @@ public class CmsOverlay {
   @JsonProperty("operating_status")
   Facility.OperatingStatus operatingStatus;
 
-  @Valid
   @JsonProperty("detailed_services")
-  List<DetailedService> detailedServices;
+  List<@Valid DetailedService> detailedServices;
 }

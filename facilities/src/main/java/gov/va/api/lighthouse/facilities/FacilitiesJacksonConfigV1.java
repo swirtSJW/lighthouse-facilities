@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-class FacilitiesJacksonConfigV1 {
-  static ObjectMapper createMapper() {
+public class FacilitiesJacksonConfigV1 {
+  public static ObjectMapper createMapper() {
     return new FacilitiesJacksonConfigV1().objectMapperV1();
   }
 

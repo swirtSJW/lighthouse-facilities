@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.base.Stopwatch;
+import gov.va.api.lighthouse.facilities.DatamartFacility;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -35,35 +36,17 @@ final class StateCemeteriesCollector {
 
   @NonNull final Map<String, String> websites;
 
-  Collection<gov.va.api.lighthouse.facilities.api.v0.Facility> collect() {
+  Collection<DatamartFacility> collect() {
     try {
       return xmlCemeteries().stream()
           .filter(Objects::nonNull)
           .map(
               c ->
-                  StateCemeteryTransformerV0.builder()
+                  StateCemeteryTransformer.builder()
                       .xml(c)
                       .websites(websites)
                       .build()
-                      .toFacility())
-          .filter(Objects::nonNull)
-          .collect(toList());
-    } catch (Exception e) {
-      throw new CollectorExceptions.StateCemeteriesCollectorException(e);
-    }
-  }
-
-  Collection<gov.va.api.lighthouse.facilities.api.v1.Facility> collectV1() {
-    try {
-      return xmlCemeteries().stream()
-          .filter(Objects::nonNull)
-          .map(
-              c ->
-                  StateCemeteryTransformerV1.builder()
-                      .xml(c)
-                      .websites(websites)
-                      .build()
-                      .toFacility())
+                      .toDatamartFacility())
           .filter(Objects::nonNull)
           .collect(toList());
     } catch (Exception e) {

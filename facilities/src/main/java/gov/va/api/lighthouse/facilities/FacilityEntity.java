@@ -72,11 +72,6 @@ public class FacilityEntity implements HasFacilityPayload {
   @Column
   private String facility;
 
-  //  @Lob
-  //  @Basic(fetch = FetchType.EAGER)
-  //  @Column(name = "facility_v1")
-  //  private String facilityV1;
-
   @Lob
   @Basic(fetch = FetchType.EAGER)
   @Column(name = "cms_operating_status")

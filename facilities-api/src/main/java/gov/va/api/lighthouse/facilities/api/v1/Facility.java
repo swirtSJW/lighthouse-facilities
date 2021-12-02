@@ -242,10 +242,9 @@ public final class Facility {
     @Schema(example = "NORMAL")
     OperatingStatus operatingStatus;
 
-    @Valid
     @JsonProperty(value = "detailed_services")
     @Schema(nullable = true)
-    List<DetailedService> detailedServices;
+    List<@Valid DetailedService> detailedServices;
 
     @Schema(example = "20", nullable = true)
     String visn;
@@ -511,8 +510,7 @@ public final class Facility {
   @Schema(nullable = true)
   public static final class WaitTimes {
     @Schema(nullable = true)
-    @Valid
-    List<PatientWaitTime> health;
+    List<@Valid PatientWaitTime> health;
 
     @Schema(example = "2018-01-01", nullable = true)
     @JsonProperty("effective_date")
