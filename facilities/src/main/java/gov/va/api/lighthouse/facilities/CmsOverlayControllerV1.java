@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedServiceResponse;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedServicesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
@@ -17,6 +18,7 @@ import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,17 +66,30 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
+      value = {"/facilities/{facility_id}/services/{service_id}"},
+      produces = "application/json")
+  @SneakyThrows
+  ResponseEntity<DetailedServiceResponse> getDetailedService(
+      @PathVariable("facility_id") String facilityId,
+      @PathVariable("service_id") String serviceId) {
+    return ResponseEntity.ok(
+        DetailedServiceResponse.builder()
+            .data(getOverlayDetailedService(facilityId, serviceId))
+            .build());
+  }
+
+  @GetMapping(
       value = {"/facilities/{id}/services"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<DetailedServicesResponse> getDetailedServices(
-      @PathVariable("id") String id,
+      @PathVariable("id") String facilityId,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
-    List<DetailedService> services = getOverlayDetailedServices(id);
+    List<DetailedService> services = getOverlayDetailedServices(facilityId);
     PageLinkerV1 linker =
         PageLinkerV1.builder()
-            .url(linkerUrl + "facilities/" + id + "/services")
+            .url(linkerUrl + "facilities/" + facilityId + "/services")
             .params(Parameters.builder().add("page", page).add("per_page", perPage).build())
             .totalEntries(services.size())
             .build();
@@ -92,7 +107,7 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @SneakyThrows
-  protected Optional<CmsOverlayEntity> getExistingOverlayEntity(FacilityEntity.Pk pk) {
+  protected Optional<CmsOverlayEntity> getExistingOverlayEntity(@NonNull FacilityEntity.Pk pk) {
     return cmsOverlayRepository.findById(pk);
   }
 

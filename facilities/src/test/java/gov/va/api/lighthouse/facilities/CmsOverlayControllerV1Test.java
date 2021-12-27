@@ -9,6 +9,7 @@ import static org.mockito.Mockito.*;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.cms.DetailedServiceResponse;
 import gov.va.api.lighthouse.facilities.api.cms.DetailedServicesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
@@ -196,10 +197,35 @@ public class CmsOverlayControllerV1Test {
 
   @Test
   @SneakyThrows
+  public void getDetailedService() {
+    DatamartCmsOverlay overlay = overlay();
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
+    var serviceId = CMS_OVERLAY_SERVICE_NAME_COVID_19;
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    assertThat(controller().getDetailedService(facilityId, serviceId))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            ResponseEntity.ok(
+                DetailedServiceResponse.builder().data(getCovid19DetailedService(false)).build()));
+  }
+
+  @Test
+  @SneakyThrows
   public void getDetailedServices() {
     DatamartCmsOverlay overlay = overlay();
-    var id = "vha_402";
-    var pk = FacilityEntity.Pk.fromIdString(id);
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
     var page = 1;
     var perPage = 1;
     CmsOverlayEntity cmsOverlayEntity =
@@ -214,7 +240,7 @@ public class CmsOverlayControllerV1Test {
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
     // Obtain first page of detailed services - cardiology detailed service
-    assertThat(controller().getDetailedServices(id, page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -241,7 +267,7 @@ public class CmsOverlayControllerV1Test {
                     .build()));
     // Obtain second page of detailed services - covid-19 detailed service
     page = 2;
-    assertThat(controller().getDetailedServices(id, page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -268,7 +294,7 @@ public class CmsOverlayControllerV1Test {
                     .build()));
     // Obtain third and final page of detailed services - urology detailed service
     page = 3;
-    assertThat(controller().getDetailedServices(id, page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(

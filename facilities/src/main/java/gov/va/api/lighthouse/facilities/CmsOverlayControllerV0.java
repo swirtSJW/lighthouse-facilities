@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
   private final CmsOverlayRepository cmsOverlayRepository;
 
   @SneakyThrows
-  protected Optional<CmsOverlayEntity> getExistingOverlayEntity(FacilityEntity.Pk pk) {
+  protected Optional<CmsOverlayEntity> getExistingOverlayEntity(@NonNull FacilityEntity.Pk pk) {
     return cmsOverlayRepository.findById(pk);
   }
 
