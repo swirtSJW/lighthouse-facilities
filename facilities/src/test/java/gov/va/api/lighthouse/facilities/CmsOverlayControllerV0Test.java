@@ -36,6 +36,85 @@ public class CmsOverlayControllerV0Test {
         .build();
   }
 
+  private List<DetailedService> detailedServices(boolean isActive) {
+    return List.of(
+        DetailedService.builder()
+            .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
+            .active(isActive)
+            .changed(null)
+            .descriptionFacility(null)
+            .appointmentLeadIn("Your VA health care team will contact you if you...more text")
+            .onlineSchedulingAvailable("True")
+            .path("replaceable path here")
+            .phoneNumbers(
+                List.of(
+                    DetailedService.AppointmentPhoneNumber.builder()
+                        .extension("123")
+                        .label("Main phone")
+                        .number("555-555-1212")
+                        .type("tel")
+                        .build()))
+            .referralRequired("True")
+            .walkInsAccepted("False")
+            .serviceLocations(
+                List.of(
+                    DetailedService.DetailedServiceLocation.builder()
+                        .serviceLocationAddress(
+                            DetailedService.DetailedServiceAddress.builder()
+                                .buildingNameNumber("Baxter Building")
+                                .clinicName("Baxter Clinic")
+                                .wingFloorOrRoomNumber("Wing East")
+                                .address1("122 Main St.")
+                                .address2(null)
+                                .city("Rochester")
+                                .state("NY")
+                                .zipCode("14623-1345")
+                                .countryCode("US")
+                                .build())
+                        .appointmentPhoneNumbers(
+                            List.of(
+                                DetailedService.AppointmentPhoneNumber.builder()
+                                    .extension("567")
+                                    .label("Alt phone")
+                                    .number("556-565-1119")
+                                    .type("tel")
+                                    .build()))
+                        .emailContacts(
+                            List.of(
+                                DetailedService.DetailedServiceEmailContact.builder()
+                                    .emailAddress("georgea@va.gov")
+                                    .emailLabel("George Anderson")
+                                    .build()))
+                        .facilityServiceHours(
+                            DetailedService.DetailedServiceHours.builder()
+                                .monday("8:30AM-7:00PM")
+                                .tuesday("8:30AM-7:00PM")
+                                .wednesday("8:30AM-7:00PM")
+                                .thursday("8:30AM-7:00PM")
+                                .friday("8:30AM-7:00PM")
+                                .saturday("8:30AM-7:00PM")
+                                .sunday("CLOSED")
+                                .build())
+                        .additionalHoursInfo("Please call for an appointment outside...")
+                        .build()))
+            .build());
+  }
+
+  @Test
+  public void exceptions() {
+    var id = "vha_041";
+    var pk = FacilityEntity.Pk.fromIdString(id);
+    when(mockCmsOverlayRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
+    assertThatThrownBy(() -> controller().getExistingOverlayEntity(pk))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("oh noes");
+    when(mockFacilityRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
+    assertThatThrownBy(
+            () -> controller().saveOverlay(id, CmsOverlayTransformerV0.toCmsOverlay(overlay())))
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("oh noes");
+  }
+
   @Test
   @SneakyThrows
   void getExistingOverlay() {
@@ -78,69 +157,7 @@ public class CmsOverlayControllerV0Test {
                 .code(DatamartFacility.OperatingStatusCode.NOTICE)
                 .additionalInfo("i need attention")
                 .build())
-        .detailedServices(
-            List.of(
-                DetailedService.builder()
-                    .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                    .active(true)
-                    .changed(null)
-                    .descriptionFacility(null)
-                    .appointmentLeadIn(
-                        "Your VA health care team will contact you if you...more text")
-                    .onlineSchedulingAvailable("True")
-                    .path("replaceable path here")
-                    .phoneNumbers(
-                        List.of(
-                            DetailedService.AppointmentPhoneNumber.builder()
-                                .extension("123")
-                                .label("Main phone")
-                                .number("555-555-1212")
-                                .type("tel")
-                                .build()))
-                    .referralRequired("True")
-                    .walkInsAccepted("False")
-                    .serviceLocations(
-                        List.of(
-                            DetailedService.DetailedServiceLocation.builder()
-                                .serviceLocationAddress(
-                                    DetailedService.DetailedServiceAddress.builder()
-                                        .buildingNameNumber("Baxter Building")
-                                        .clinicName("Baxter Clinic")
-                                        .wingFloorOrRoomNumber("Wing East")
-                                        .address1("122 Main St.")
-                                        .address2(null)
-                                        .city("Rochester")
-                                        .state("NY")
-                                        .zipCode("14623-1345")
-                                        .countryCode("US")
-                                        .build())
-                                .appointmentPhoneNumbers(
-                                    List.of(
-                                        DetailedService.AppointmentPhoneNumber.builder()
-                                            .extension("567")
-                                            .label("Alt phone")
-                                            .number("556-565-1119")
-                                            .type("tel")
-                                            .build()))
-                                .emailContacts(
-                                    List.of(
-                                        DetailedService.DetailedServiceEmailContact.builder()
-                                            .emailAddress("georgea@va.gov")
-                                            .emailLabel("George Anderson")
-                                            .build()))
-                                .facilityServiceHours(
-                                    DetailedService.DetailedServiceHours.builder()
-                                        .monday("8:30AM-7:00PM")
-                                        .tuesday("8:30AM-7:00PM")
-                                        .wednesday("8:30AM-7:00PM")
-                                        .thursday("8:30AM-7:00PM")
-                                        .friday("8:30AM-7:00PM")
-                                        .saturday("8:30AM-7:00PM")
-                                        .sunday("CLOSED")
-                                        .build())
-                                .additionalHoursInfo("Please call for an appointment outside...")
-                                .build()))
-                    .build()))
+        .detailedServices(detailedServices(true))
         .build();
   }
 
