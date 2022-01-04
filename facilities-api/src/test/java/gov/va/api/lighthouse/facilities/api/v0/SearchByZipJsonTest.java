@@ -185,6 +185,6 @@ public class SearchByZipJsonTest {
 
   @Test
   void unmarshallSample() {
-    assertReadable("/search-zip.json");
+    assertReadable("/v0/search-zip.json");
   }
 }

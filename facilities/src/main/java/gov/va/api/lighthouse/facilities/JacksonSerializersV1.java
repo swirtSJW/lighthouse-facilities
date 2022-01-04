@@ -78,7 +78,6 @@ final class JacksonSerializersV1 {
     mod.addSerializer(
         FacilitiesResponse.FacilitiesMetadata.class, new FacilitiesMetadataSerializer());
     mod.addSerializer(Facility.FacilityAttributes.class, new FacilityAttributesSerializer());
-    mod.addSerializer(Facility.Hours.class, new HoursSerializer());
     mod.addSerializer(Facility.PatientWaitTime.class, new PatientWaitTimeSerializer());
     mod.addSerializer(Facility.Phone.class, new PhoneSerializer());
     mod.addSerializer(Facility.Satisfaction.class, new SatisfactionSerializer());
@@ -250,100 +249,6 @@ final class JacksonSerializersV1 {
       jgen.writeObjectField("operating_status", value.operatingStatus());
       jgen.writeObjectField("detailed_services", value.detailedServices());
       jgen.writeObjectField("visn", value.visn());
-      jgen.writeEndObject();
-    }
-  }
-
-  private static final class HoursSerializer extends StdSerializer<Facility.Hours> {
-    public HoursSerializer() {
-      this(null);
-    }
-
-    public HoursSerializer(Class<Facility.Hours> t) {
-      super(t);
-    }
-
-    private static boolean empty(Facility.Hours value) {
-      return value.monday() == null
-          && value.tuesday() == null
-          && value.wednesday() == null
-          && value.thursday() == null
-          && value.friday() == null
-          && value.saturday() == null
-          && value.sunday() == null;
-    }
-
-    private static void writeLower(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "monday", value.monday());
-      writeNonNull(jgen, "tuesday", value.tuesday());
-      writeNonNull(jgen, "wednesday", value.wednesday());
-      writeNonNull(jgen, "thursday", value.thursday());
-      writeNonNull(jgen, "friday", value.friday());
-      writeNonNull(jgen, "saturday", value.saturday());
-      writeNonNull(jgen, "sunday", value.sunday());
-    }
-
-    private static void writeLowerByLength(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "friday", value.friday());
-      writeNonNull(jgen, "monday", value.monday());
-      writeNonNull(jgen, "sunday", value.sunday());
-      writeNonNull(jgen, "tuesday", value.tuesday());
-      writeNonNull(jgen, "saturday", value.saturday());
-      writeNonNull(jgen, "thursday", value.thursday());
-      writeNonNull(jgen, "wednesday", value.wednesday());
-    }
-
-    private static void writeUpper(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "Monday", value.monday());
-      writeNonNull(jgen, "Tuesday", value.tuesday());
-      writeNonNull(jgen, "Wednesday", value.wednesday());
-      writeNonNull(jgen, "Thursday", value.thursday());
-      writeNonNull(jgen, "Friday", value.friday());
-      writeNonNull(jgen, "Saturday", value.saturday());
-      writeNonNull(jgen, "Sunday", value.sunday());
-    }
-
-    private static void writeUpperByLength(Facility.Hours value, JsonGenerator jgen) {
-      writeNonNull(jgen, "Friday", value.friday());
-      writeNonNull(jgen, "Monday", value.monday());
-      writeNonNull(jgen, "Sunday", value.sunday());
-      writeNonNull(jgen, "Tuesday", value.tuesday());
-      writeNonNull(jgen, "Saturday", value.saturday());
-      writeNonNull(jgen, "Thursday", value.thursday());
-      writeNonNull(jgen, "Wednesday", value.wednesday());
-    }
-
-    @Override
-    @SneakyThrows
-    public void serialize(Facility.Hours value, JsonGenerator jgen, SerializerProvider provider) {
-      jgen.writeStartObject();
-      if (!empty(value)) {
-        if (hasParent(jgen, FacilityReadResponse.class)) {
-          writeLower(value, jgen);
-        } else if (hasParent(jgen, Facility.class)) {
-          writeLowerByLength(value, jgen);
-        } else if (hasParent(jgen, GeoFacilityReadResponse.class)) {
-          if (idStartsWith(jgen, "vc_")) {
-            writeLower(value, jgen);
-          } else {
-            writeUpper(value, jgen);
-          }
-        } else if (hasParent(jgen, GeoFacility.class)) {
-          if (idStartsWith(jgen, "vc_")) {
-            writeLowerByLength(value, jgen);
-          } else {
-            writeUpperByLength(value, jgen);
-          }
-        }
-      } else if (idStartsWith(jgen, "nca_")) {
-        jgen.writeObjectField("Friday", null);
-        jgen.writeObjectField("Monday", null);
-        jgen.writeObjectField("Sunday", null);
-        jgen.writeObjectField("Tuesday", null);
-        jgen.writeObjectField("Saturday", null);
-        jgen.writeObjectField("Thursday", null);
-        jgen.writeObjectField("Wednesday", null);
-      }
       jgen.writeEndObject();
     }
   }

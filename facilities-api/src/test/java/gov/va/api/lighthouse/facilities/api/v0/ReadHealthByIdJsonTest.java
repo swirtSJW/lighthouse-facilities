@@ -130,6 +130,6 @@ public class ReadHealthByIdJsonTest {
 
   @Test
   void unmarshallSample() {
-    assertReadable("/read-health.json");
+    assertReadable("/v0/read-health.json");
   }
 }

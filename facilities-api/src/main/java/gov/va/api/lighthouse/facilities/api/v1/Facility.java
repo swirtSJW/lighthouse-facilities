@@ -170,7 +170,6 @@ public final class Facility {
     @Schema(example = "Washington VA Medical Center")
     String name;
 
-    //    @NotNull
     @Schema(example = "va_health_facility")
     @JsonProperty("facility_type")
     FacilityType facilityType;
@@ -181,17 +180,14 @@ public final class Facility {
     @Schema(example = "http://www.washingtondc.va.gov", nullable = true)
     String website;
 
-    //    @NotNull
     @Schema(description = "Facility latitude", format = "float", example = "38.9311137")
     @JsonProperty("lat")
     BigDecimal latitude;
 
-    //    @NotNull
     @Schema(description = "Facility longitude", format = "float", example = "-77.0109110499999")
     @JsonProperty("long")
     BigDecimal longitude;
 
-    //    @NotNull
     @Schema(description = "Facility time zone", format = "String", example = "America/New_York")
     @JsonProperty("time_zone")
     String timeZone;
@@ -260,6 +256,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
   @Schema(
       description =
           "Standard hours of operation. Currently formatted as descriptive text suitable for "
@@ -268,62 +265,32 @@ public final class Facility {
       nullable = true)
   public static final class Hours {
     @Schema(example = "9AM-5PM", nullable = true)
+    @JsonProperty("Monday")
     String monday;
 
     @Schema(example = "9AM-5PM", nullable = true)
+    @JsonProperty("Tuesday")
     String tuesday;
 
     @Schema(example = "9AM-5PM", nullable = true)
+    @JsonProperty("Wednesday")
     String wednesday;
 
     @Schema(example = "9AM-5PM", nullable = true)
+    @JsonProperty("Thursday")
     String thursday;
 
     @Schema(example = "9AM-5PM", nullable = true)
+    @JsonProperty("Friday")
     String friday;
 
     @Schema(example = "Closed", nullable = true)
+    @JsonProperty("Saturday")
     String saturday;
 
     @Schema(example = "Closed", nullable = true)
+    @JsonProperty("Sunday")
     String sunday;
-
-    public static final class HoursBuilder {
-      @JsonProperty("Friday")
-      public HoursBuilder fri(String val) {
-        return friday(val);
-      }
-
-      @JsonProperty("Monday")
-      public HoursBuilder mon(String val) {
-        return monday(val);
-      }
-
-      @JsonProperty("Saturday")
-      public HoursBuilder sat(String val) {
-        return saturday(val);
-      }
-
-      @JsonProperty("Sunday")
-      public HoursBuilder sun(String val) {
-        return sunday(val);
-      }
-
-      @JsonProperty("Thursday")
-      public HoursBuilder thurs(String val) {
-        return thursday(val);
-      }
-
-      @JsonProperty("Tuesday")
-      public HoursBuilder tues(String val) {
-        return tuesday(val);
-      }
-
-      @JsonProperty("Wednesday")
-      public HoursBuilder wed(String val) {
-        return wednesday(val);
-      }
-    }
   }
 
   @Data
