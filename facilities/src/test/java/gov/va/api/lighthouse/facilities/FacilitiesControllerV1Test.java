@@ -121,6 +121,7 @@ public class FacilitiesControllerV1Test {
             "entitiesByLatLong",
             BigDecimal.class,
             BigDecimal.class,
+            Optional.class,
             String.class,
             String.class,
             List.class,
@@ -133,6 +134,7 @@ public class FacilitiesControllerV1Test {
                 controller(),
                 BigDecimal.valueOf(0.0),
                 BigDecimal.valueOf(0.0),
+                null,
                 "fake_ids",
                 "no_such_type",
                 new ArrayList<String>(),
@@ -212,11 +214,13 @@ public class FacilitiesControllerV1Test {
                 .mobile(Boolean.FALSE)
                 .build()))
         .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+    // Query for facilities without constraining to a specified radius
     assertThat(
             controller()
                 .geoFacilitiesByLatLong(
                     BigDecimal.valueOf(26.1745479800001),
                     BigDecimal.valueOf(-97.6667188),
+                    null,
                     "vha_740GA",
                     "health",
                     List.of("Cardiology", "Audiology", "Urology"),
@@ -227,6 +231,46 @@ public class FacilitiesControllerV1Test {
             GeoFacilitiesResponse.builder()
                 .type(GeoFacilitiesResponse.Type.FeatureCollection)
                 .features(List.of(FacilitySamples.defaultSamples().geoFacilityV1("vha_740GA")))
+                .build());
+    // Given that each degree of latitude is approximately 69 miles, query for facilities within a
+    // 75 mile radius of (27.1745479800001, -97.6667188), which is north of VA Health Care Center in
+    // Harlingen, TX: (26.1745479800001, -97.6667188). Confirm that one facility is found in current
+    // test scenario.
+    assertThat(
+            controller()
+                .geoFacilitiesByLatLong(
+                    BigDecimal.valueOf(27.1745479800001),
+                    BigDecimal.valueOf(-97.6667188),
+                    BigDecimal.valueOf(75),
+                    "vha_740GA",
+                    "health",
+                    List.of("Cardiology", "Audiology", "Urology"),
+                    Boolean.FALSE,
+                    1,
+                    1))
+        .isEqualTo(
+            GeoFacilitiesResponse.builder()
+                .type(GeoFacilitiesResponse.Type.FeatureCollection)
+                .features(List.of(FacilitySamples.defaultSamples().geoFacilityV1("vha_740GA")))
+                .build());
+    // Query for facilities within 50 miles of (27.1745479800001, -97.6667188). Confirm no
+    // facilities are found in current test scenario.
+    assertThat(
+            controller()
+                .geoFacilitiesByLatLong(
+                    BigDecimal.valueOf(27.1745479800001),
+                    BigDecimal.valueOf(-97.6667188),
+                    BigDecimal.valueOf(50),
+                    "vha_740GA",
+                    "health",
+                    List.of("Cardiology", "Audiology", "Urology"),
+                    Boolean.FALSE,
+                    1,
+                    1))
+        .isEqualTo(
+            GeoFacilitiesResponse.builder()
+                .type(GeoFacilitiesResponse.Type.FeatureCollection)
+                .features(emptyList())
                 .build());
   }
 
@@ -467,11 +511,13 @@ public class FacilitiesControllerV1Test {
                 .mobile(Boolean.FALSE)
                 .build()))
         .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+    // Query for facilities without constraining to a specified radius
     assertThat(
             controller()
                 .jsonFacilitiesByLatLong(
                     BigDecimal.valueOf(26.1745479800001),
                     BigDecimal.valueOf(-97.6667188),
+                    null,
                     "vha_740GA",
                     "health",
                     List.of("Cardiology", "Audiology", "Urology"),
@@ -507,6 +553,95 @@ public class FacilitiesControllerV1Test {
                                     .id("vha_740GA")
                                     .distance(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN))
                                     .build()))
+                        .build())
+                .build());
+    // Given that each degree of latitude is approximately 69 miles, query for facilities within a
+    // 75 mile radius of (27.1745479800001, -97.6667188), which is north of VA Health Care Center in
+    // Harlingen, TX: (26.1745479800001, -97.6667188). Confirm that one facility is found in current
+    // test scenario.
+    assertThat(
+            controller()
+                .jsonFacilitiesByLatLong(
+                    BigDecimal.valueOf(27.1745479800001),
+                    BigDecimal.valueOf(-97.6667188),
+                    BigDecimal.valueOf(75),
+                    "vha_740GA",
+                    "health",
+                    List.of("Cardiology", "Audiology", "Urology"),
+                    Boolean.FALSE,
+                    1,
+                    1))
+        .isEqualTo(
+            FacilitiesResponse.builder()
+                .data(List.of(FacilitySamples.defaultSamples().facilityV1("vha_740GA")))
+                .links(
+                    PageLinks.builder()
+                        .self(
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                        .first(
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                        .prev(null)
+                        .next(null)
+                        .last(
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                        .build())
+                .meta(
+                    FacilitiesResponse.FacilitiesMetadata.builder()
+                        .pagination(
+                            Pagination.builder()
+                                .currentPage(1)
+                                .entriesPerPage(1)
+                                .totalPages(1)
+                                .totalEntries(1)
+                                .build())
+                        .distances(
+                            List.of(
+                                FacilitiesResponse.Distance.builder()
+                                    .id("vha_740GA")
+                                    .distance(
+                                        BigDecimal.valueOf(69.09)
+                                            .setScale(2, RoundingMode.HALF_EVEN))
+                                    .build()))
+                        .build())
+                .build());
+    // Query for facilities within 50 miles of (27.1745479800001, -97.6667188). Confirm no
+    // facilities are found in current test scenario.
+    assertThat(
+            controller()
+                .jsonFacilitiesByLatLong(
+                    BigDecimal.valueOf(27.1745479800001),
+                    BigDecimal.valueOf(-97.6667188),
+                    BigDecimal.valueOf(50),
+                    "vha_740GA",
+                    "health",
+                    List.of("Cardiology", "Audiology", "Urology"),
+                    Boolean.FALSE,
+                    1,
+                    1))
+        .isEqualTo(
+            FacilitiesResponse.builder()
+                .data(emptyList())
+                .links(
+                    PageLinks.builder()
+                        .self(
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                        .first(
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                        .prev(null)
+                        .next(null)
+                        .last(
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                        .build())
+                .meta(
+                    FacilitiesResponse.FacilitiesMetadata.builder()
+                        .pagination(
+                            Pagination.builder()
+                                .currentPage(1)
+                                .entriesPerPage(1)
+                                .totalPages(1)
+                                .totalEntries(0)
+                                .build())
+                        .distances(emptyList())
                         .build())
                 .build());
   }
