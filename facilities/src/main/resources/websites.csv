@@ -232,6 +232,7 @@ vba_460,http://www.benefits.va.gov/wilmington/
 vba_463,http://www.benefits.va.gov/anchorage
 vc_0101V,https://www.va.gov/boston-vet-center/
 vc_0103V,https://www.va.gov/springfield-ma-vet-center/
+vc_0106V,https://www.va.gov/manhattan-ny-vet-center/
 vc_0109V,https://www.va.gov/queens-vet-center/
 vc_0115V,https://www.va.gov/portland-me-vet-center/
 vc_0116V,https://www.va.gov/new-haven-vet-center/
@@ -239,14 +240,18 @@ vc_0119V,https://www.va.gov/northern-maine-vet-center/
 vc_0120V,https://www.va.gov/babylon-vet-center/
 vc_0121V,https://www.va.gov/bangor-vet-center/
 vc_0124V,https://www.va.gov/rochester-vet-center/
+vc_0125V,https://www.va.gov/lowell-vet-center/
 vc_0128V,https://www.va.gov/new-bedford-vet-center/
 vc_0129V,https://www.va.gov/lewiston-vet-center/
+vc_0130V,https://www.va.gov/sanford-vet-center/
 vc_0136V,https://www.va.gov/cape-cod-vet-center/
 vc_0137V,https://www.va.gov/binghamton-vet-center/
 vc_0138V,https://www.va.gov/nassau-vet-center/
+vc_0140V,https://www.va.gov/danbury-vet-center/
 vc_0204V,https://www.va.gov/cinncinati-vet-center/
 vc_0207V,https://www.hampton.va.gov/locations/norfolk.asp
 vc_0208V,https://www.va.gov/huntington-vet-center/
+vc_0211V,https://www.va.gov/pittsburgh-vet-center/
 vc_0214V,https://www.va.gov/washington-dc-vet-center/
 vc_0215V,https://www.va.gov/wilmington-vet-center/
 vc_0216V,https://www.va.gov/morgantown-vet-center/
@@ -256,6 +261,7 @@ vc_0222V,https://www.va.gov/erie-vet-center/
 vc_0223V,https://www.va.gov/charleston-wv-vet-center/
 vc_0224V,https://www.va.gov/martinsburg-vet-center/
 vc_0227V,https://www.va.gov/dubois-vet-center/
+vc_0230V,https://www.va.gov/south-jersey-vet-center/
 vc_0231V,https://www.beckley.va.gov/locations/beckley_vet_center.asp
 vc_0232V,https://www.va.gov/princeton-vet-center/
 vc_0233V,https://www.va.gov/wheeling-vet-center/
@@ -274,6 +280,7 @@ vc_0505V,https://www.va.gov/las-vegas-vet-center/
 vc_0506V,https://www.va.gov/reno-vet-center/
 vc_0508V,https://www.va.gov/tacoma-vet-center/
 vc_0510V,https://www.va.gov/spokane-vet-center/
+vc_0511V,https://www.va.gov/fairbanks-vet-center
 vc_0512V,https://www.va.gov/wasilla-vet-center/
 vc_0515V,https://www.va.gov/albuquerque-vet-center/
 vc_0517V,https://www.va.gov/phoenix-vet-center/
