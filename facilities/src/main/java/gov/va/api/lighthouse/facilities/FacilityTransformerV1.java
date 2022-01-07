@@ -2,7 +2,9 @@ package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
@@ -44,7 +46,8 @@ public class FacilityTransformerV1 {
                     .operatingStatus(toFacilityOperatingStatus(df.attributes().operatingStatus()))
                     .detailedServices(df.attributes().detailedServices())
                     .operationalHoursSpecialInstructions(
-                        df.attributes().operationalHoursSpecialInstructions())
+                        transformOperationalHoursSpecialInstructions(
+                            df.attributes().operationalHoursSpecialInstructions()))
                     .build()
                 : null)
         .build();
@@ -97,7 +100,8 @@ public class FacilityTransformerV1 {
                         toVersionAgnosticFacilityOperatingStatus(f.attributes().operatingStatus()))
                     .detailedServices(f.attributes().detailedServices())
                     .operationalHoursSpecialInstructions(
-                        f.attributes().operationalHoursSpecialInstructions())
+                        toVersionAgnosticFacilityOperationalHoursSpecialInstructions(
+                            f.attributes().operationalHoursSpecialInstructions()))
                     .build()
                 : null)
         .build();
@@ -120,6 +124,19 @@ public class FacilityTransformerV1 {
             .additionalInfo(facilityOperatingStatus.additionalInfo())
             .build()
         : null;
+  }
+
+  /**
+   * Transform Facility operational hours special instructions to version agnostic operational hours
+   * special instructions.
+   */
+  public static String toVersionAgnosticFacilityOperationalHoursSpecialInstructions(
+      List<String> instructions) {
+    if (instructions != null) {
+      return String.join(" | ", instructions);
+    } else {
+      return null;
+    }
   }
 
   /** Transform DatamartFacility active status to version 1 facility active status. */
@@ -492,6 +509,18 @@ public class FacilityTransformerV1 {
             .effectiveDate(facilityWaitTimes.effectiveDate())
             .build()
         : DatamartFacility.WaitTimes.builder().build();
+  }
+
+  /**
+   * Transform DatamartFacility operational hours special instructions to version 1 operational
+   * hours special instructions.
+   */
+  public static List<String> transformOperationalHoursSpecialInstructions(String instructions) {
+    if (instructions != null) {
+      return Stream.of(instructions.split("\\|")).map(String::trim).collect(Collectors.toList());
+    } else {
+      return null;
+    }
   }
 
   /** Transform version 1 facility type to DatamartFacility facility type. */

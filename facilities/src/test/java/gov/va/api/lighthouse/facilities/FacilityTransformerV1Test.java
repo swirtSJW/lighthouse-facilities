@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -283,7 +284,8 @@ public class FacilityTransformerV1Test {
                                         .build()))
                             .changed("2021-02-04T22:36:49+00:00")
                             .build()))
-                .operationalHoursSpecialInstructions("test special instructions")
+                .operationalHoursSpecialInstructions(
+                    "Vet center 1 is available. | Vet center 2 is available. | Vet center 3 is available.")
                 .build())
         .build();
   }
@@ -567,7 +569,14 @@ public class FacilityTransformerV1Test {
                                         .build()))
                             .changed("2021-02-04T22:36:49+00:00")
                             .build()))
-                .operationalHoursSpecialInstructions("test special instructions")
+                .operationalHoursSpecialInstructions(
+                    new ArrayList<String>() {
+                      {
+                        add("Vet center 1 is available.");
+                        add("Vet center 2 is available.");
+                        add("Vet center 3 is available.");
+                      }
+                    })
                 .build())
         .build();
   }

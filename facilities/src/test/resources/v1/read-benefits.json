@@ -34,7 +34,11 @@
         "Saturday" : "Closed",
         "Sunday" : "Closed"
       },
-      "operational_hours_special_instructions" : "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
+      "operational_hours_special_instructions" : [
+        "Vet center 1 is available.",
+        "Vet center 2 is available.",
+        "Vet center 3 is available."
+      ],
       "services" : {
         "benefits" : [
           "EducationAndCareerCounseling",

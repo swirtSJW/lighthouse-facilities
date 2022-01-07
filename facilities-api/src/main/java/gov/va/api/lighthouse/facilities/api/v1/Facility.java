@@ -205,10 +205,13 @@ public final class Facility {
     Hours hours;
 
     @Schema(
-        example = "Normal business hours are Monday through Friday, 8:00 a.m. to 4:30 p.m.",
+        example =
+            "[\"More hours are available for some services.\","
+                + "\"If you need to talk to someone, call the Vet Center at 1-877-927-8387.\","
+                + "\"Vet Center hours are dependent upon outreach assignments.\" ]",
         nullable = true)
     @JsonProperty("operational_hours_special_instructions")
-    String operationalHoursSpecialInstructions;
+    List<String> operationalHoursSpecialInstructions;
 
     @Schema(nullable = true)
     @Valid
@@ -247,7 +250,7 @@ public final class Facility {
 
     public static final class FacilityAttributesBuilder {
       @JsonProperty("operationalHoursSpecialInstructions")
-      public FacilityAttributesBuilder instructions(String val) {
+      public FacilityAttributesBuilder instructions(List<String> val) {
         return operationalHoursSpecialInstructions(val);
       }
     }
