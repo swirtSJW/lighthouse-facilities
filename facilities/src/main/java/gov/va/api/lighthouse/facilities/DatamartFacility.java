@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -201,7 +200,7 @@ public class DatamartFacility {
     OperatingStatus operatingStatus;
 
     @JsonProperty(value = "detailed_services")
-    List<@Valid DetailedService> detailedServices;
+    List<@Valid DatamartDetailedService> detailedServices;
 
     String visn;
 

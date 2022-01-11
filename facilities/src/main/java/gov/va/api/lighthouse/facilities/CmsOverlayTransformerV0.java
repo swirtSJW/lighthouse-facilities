@@ -12,7 +12,7 @@ public final class CmsOverlayTransformerV0 {
   public static CmsOverlay toCmsOverlay(DatamartCmsOverlay dc) {
     return CmsOverlay.builder()
         .operatingStatus(toFacilityOperatingStatus(dc.operatingStatus()))
-        .detailedServices(dc.detailedServices())
+        .detailedServices(DetailedServiceTransformerV0.toDetailedServices(dc.detailedServices()))
         .build();
   }
 
@@ -20,7 +20,9 @@ public final class CmsOverlayTransformerV0 {
   public static DatamartCmsOverlay toVersionAgnostic(CmsOverlay overlay) {
     return DatamartCmsOverlay.builder()
         .operatingStatus(toVersionAgnosticFacilityOperatingStatus(overlay.operatingStatus()))
-        .detailedServices(overlay.detailedServices())
+        .detailedServices(
+            DetailedServiceTransformerV0.toVersionAgnosticDetailedServices(
+                overlay.detailedServices()))
         .build();
   }
 }

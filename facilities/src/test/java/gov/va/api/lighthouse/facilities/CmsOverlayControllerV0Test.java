@@ -4,12 +4,15 @@ import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
+import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.HashSet;
 import java.util.List;
@@ -29,8 +32,8 @@ public class CmsOverlayControllerV0Test {
 
   @Mock CmsOverlayRepository mockCmsOverlayRepository;
 
-  private DetailedService cardiologyDetailedService(boolean isActive) {
-    return DetailedService.builder()
+  private DatamartDetailedService cardiologyDetailedService(boolean isActive) {
+    return DatamartDetailedService.builder()
         .name("Cardiology")
         .active(isActive)
         .changed(null)
@@ -40,7 +43,7 @@ public class CmsOverlayControllerV0Test {
         .path("replaceable path here")
         .phoneNumbers(
             List.of(
-                DetailedService.AppointmentPhoneNumber.builder()
+                DatamartDetailedService.AppointmentPhoneNumber.builder()
                     .extension("123")
                     .label("Main phone")
                     .number("555-867-5309")
@@ -50,9 +53,9 @@ public class CmsOverlayControllerV0Test {
         .walkInsAccepted("False")
         .serviceLocations(
             List.of(
-                DetailedService.DetailedServiceLocation.builder()
+                DatamartDetailedService.DetailedServiceLocation.builder()
                     .serviceLocationAddress(
-                        DetailedService.DetailedServiceAddress.builder()
+                        DatamartDetailedService.DetailedServiceAddress.builder()
                             .buildingNameNumber("Walter Reed Building")
                             .clinicName("Walter Reed Clinic")
                             .wingFloorOrRoomNumber("Wing East")
@@ -65,7 +68,7 @@ public class CmsOverlayControllerV0Test {
                             .build())
                     .appointmentPhoneNumbers(
                         List.of(
-                            DetailedService.AppointmentPhoneNumber.builder()
+                            DatamartDetailedService.AppointmentPhoneNumber.builder()
                                 .extension("345")
                                 .label("Alt phone")
                                 .number("556-565-1119")
@@ -73,12 +76,12 @@ public class CmsOverlayControllerV0Test {
                                 .build()))
                     .emailContacts(
                         List.of(
-                            DetailedService.DetailedServiceEmailContact.builder()
+                            DatamartDetailedService.DetailedServiceEmailContact.builder()
                                 .emailAddress("georgea@va.gov")
                                 .emailLabel("George O'Kieffe")
                                 .build()))
                     .facilityServiceHours(
-                        DetailedService.DetailedServiceHours.builder()
+                        DatamartDetailedService.DetailedServiceHours.builder()
                             .monday("8:30AM-7:00PM")
                             .tuesday("8:30AM-7:00PM")
                             .wednesday("8:30AM-7:00PM")
@@ -99,8 +102,8 @@ public class CmsOverlayControllerV0Test {
         .build();
   }
 
-  private DetailedService covidDetailedService(boolean isActive) {
-    return DetailedService.builder()
+  private DatamartDetailedService covidDetailedService(boolean isActive) {
+    return DatamartDetailedService.builder()
         .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
         .active(isActive)
         .changed(null)
@@ -110,7 +113,7 @@ public class CmsOverlayControllerV0Test {
         .path("replaceable path here")
         .phoneNumbers(
             List.of(
-                DetailedService.AppointmentPhoneNumber.builder()
+                DatamartDetailedService.AppointmentPhoneNumber.builder()
                     .extension("123")
                     .label("Main phone")
                     .number("555-555-1212")
@@ -120,9 +123,9 @@ public class CmsOverlayControllerV0Test {
         .walkInsAccepted("False")
         .serviceLocations(
             List.of(
-                DetailedService.DetailedServiceLocation.builder()
+                DatamartDetailedService.DetailedServiceLocation.builder()
                     .serviceLocationAddress(
-                        DetailedService.DetailedServiceAddress.builder()
+                        DatamartDetailedService.DetailedServiceAddress.builder()
                             .buildingNameNumber("Baxter Building")
                             .clinicName("Baxter Clinic")
                             .wingFloorOrRoomNumber("Wing East")
@@ -135,7 +138,7 @@ public class CmsOverlayControllerV0Test {
                             .build())
                     .appointmentPhoneNumbers(
                         List.of(
-                            DetailedService.AppointmentPhoneNumber.builder()
+                            DatamartDetailedService.AppointmentPhoneNumber.builder()
                                 .extension("567")
                                 .label("Alt phone")
                                 .number("556-565-1119")
@@ -143,12 +146,12 @@ public class CmsOverlayControllerV0Test {
                                 .build()))
                     .emailContacts(
                         List.of(
-                            DetailedService.DetailedServiceEmailContact.builder()
+                            DatamartDetailedService.DetailedServiceEmailContact.builder()
                                 .emailAddress("georgea@va.gov")
                                 .emailLabel("George Anderson")
                                 .build()))
                     .facilityServiceHours(
-                        DetailedService.DetailedServiceHours.builder()
+                        DatamartDetailedService.DetailedServiceHours.builder()
                             .monday("8:30AM-7:00PM")
                             .tuesday("8:30AM-7:00PM")
                             .wednesday("8:30AM-7:00PM")
@@ -162,7 +165,7 @@ public class CmsOverlayControllerV0Test {
         .build();
   }
 
-  private List<DetailedService> detailedServices(boolean isActive) {
+  private List<DatamartDetailedService> detailedServices(boolean isActive) {
     return List.of(covidDetailedService(isActive), cardiologyDetailedService(isActive));
   }
 
@@ -199,7 +202,7 @@ public class CmsOverlayControllerV0Test {
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
     // active will ALWAYS be false when retrieving from the database, the fact the overlay
     // exists means that active was true at the time of insertion
-    for (DetailedService d : overlay.detailedServices()) {
+    for (DatamartDetailedService d : overlay.detailedServices()) {
       d.active(false);
     }
     ResponseEntity<CmsOverlayResponse> response = controller().getOverlay("vha_402");
@@ -248,7 +251,7 @@ public class CmsOverlayControllerV0Test {
     ResponseEntity<Void> response =
         controller().saveOverlay("vha_402", CmsOverlayTransformerV0.toCmsOverlay(overlay));
     Set<String> detailedServices = new HashSet<>();
-    for (DetailedService service : overlay.detailedServices()) {
+    for (DatamartDetailedService service : overlay.detailedServices()) {
       if (service.active()) {
         detailedServices.add(service.name());
       }
@@ -287,27 +290,33 @@ public class CmsOverlayControllerV0Test {
                     .writeValueAsString(overlay.detailedServices()))
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
-    List<DetailedService> additionalServices =
+    List<DatamartDetailedService> additionalServices =
         List.of(
-            DetailedService.builder().name("additional service1").active(true).build(),
-            DetailedService.builder().name("additional service2").active(true).build());
+            DatamartDetailedService.builder().name("additional service1").active(true).build(),
+            DatamartDetailedService.builder().name("additional service2").active(true).build());
     overlay.detailedServices(additionalServices);
     controller().saveOverlay("vha_402", CmsOverlayTransformerV0.toCmsOverlay(overlay));
     DatamartCmsOverlay updatedCovidPathOverlay = overlay();
-    updateServiceUrlPaths("vha_402", updatedCovidPathOverlay.detailedServices());
-    List<DetailedService> combinedServices =
+    List<DatamartDetailedService> datamartDetailedServices =
+        updatedCovidPathOverlay.detailedServices();
+    updateServiceUrlPaths("vha_402", datamartDetailedServices);
+    updatedCovidPathOverlay.detailedServices(datamartDetailedServices);
+    List<DatamartDetailedService> combinedServices =
         Streams.stream(
                 Iterables.concat(updatedCovidPathOverlay.detailedServices(), additionalServices))
             .toList();
     // active will ALWAYS be false when retrieving from the database, the fact the overlay
     // exists means that active was true at the time of insertion
-    for (DetailedService d : combinedServices) {
+    for (DatamartDetailedService d : combinedServices) {
       d.active(false);
     }
     ResponseEntity<CmsOverlayResponse> response = controller().getOverlay("vha_402");
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
-    assertThat(response.getBody().overlay().detailedServices()).containsAll(combinedServices);
+    assertThat(
+            DetailedServiceTransformerV0.toVersionAgnosticDetailedServices(
+                response.getBody().overlay().detailedServices()))
+        .containsAll(combinedServices);
   }
 
   @Test
@@ -328,13 +337,14 @@ public class CmsOverlayControllerV0Test {
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = overlay();
-    for (DetailedService d : overlay.detailedServices()) {
+    for (DatamartDetailedService d : overlay.detailedServices()) {
       if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path()).isEqualTo("replaceable path here");
       }
     }
-    controller().saveOverlay("vha_402", CmsOverlayTransformerV0.toCmsOverlay(overlay));
-    for (DetailedService d : overlay.detailedServices()) {
+    CmsOverlay cmsOverlay = CmsOverlayTransformerV0.toCmsOverlay(overlay);
+    controller().saveOverlay("vha_402", cmsOverlay);
+    for (DetailedService d : cmsOverlay.detailedServices()) {
       if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path())
             .isEqualTo("https://www.va.gov/maine-health-care/programs/covid-19-vaccines/");

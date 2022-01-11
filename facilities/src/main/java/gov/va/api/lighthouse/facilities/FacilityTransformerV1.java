@@ -44,7 +44,9 @@ public class FacilityTransformerV1 {
                     .satisfaction(transformFacilitySatisfaction(df.attributes().satisfaction()))
                     .waitTimes(transformFacilityWaitTimes(df.attributes().waitTimes()))
                     .operatingStatus(toFacilityOperatingStatus(df.attributes().operatingStatus()))
-                    .detailedServices(df.attributes().detailedServices())
+                    .detailedServices(
+                        DetailedServiceTransformerV1.toDetailedServices(
+                            df.attributes().detailedServices()))
                     .operationalHoursSpecialInstructions(
                         transformOperationalHoursSpecialInstructions(
                             df.attributes().operationalHoursSpecialInstructions()))
@@ -98,7 +100,9 @@ public class FacilityTransformerV1 {
                     .waitTimes(transformFacilityWaitTimes(f.attributes().waitTimes()))
                     .operatingStatus(
                         toVersionAgnosticFacilityOperatingStatus(f.attributes().operatingStatus()))
-                    .detailedServices(f.attributes().detailedServices())
+                    .detailedServices(
+                        DetailedServiceTransformerV1.toVersionAgnosticDetailedServices(
+                            f.attributes().detailedServices()))
                     .operationalHoursSpecialInstructions(
                         toVersionAgnosticFacilityOperationalHoursSpecialInstructions(
                             f.attributes().operationalHoursSpecialInstructions()))

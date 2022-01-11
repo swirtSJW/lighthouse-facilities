@@ -4,7 +4,6 @@ import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
 import java.util.HashSet;
@@ -94,6 +93,8 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
         getExistingOverlayEntity(FacilityEntity.Pk.fromIdString(id));
     DatamartCmsOverlay datamartCmsOverlay = CmsOverlayTransformerV0.toVersionAgnostic(overlay);
     updateCmsOverlayData(existingCmsOverlayEntity, id, datamartCmsOverlay);
+    overlay.detailedServices(
+        DetailedServiceTransformerV0.toDetailedServices(datamartCmsOverlay.detailedServices()));
     if (existingFacilityEntity.isEmpty()) {
       log.info("Received Unknown Facility ID ({}) for CMS Overlay", sanitize(id));
       return ResponseEntity.accepted().build();
@@ -109,7 +110,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
       Optional<CmsOverlayEntity> existingCmsOverlayEntity, String id, DatamartCmsOverlay overlay) {
     CmsOverlayEntity cmsOverlayEntity;
     if (existingCmsOverlayEntity.isEmpty()) {
-      List<DetailedService> activeServices =
+      List<DatamartDetailedService> activeServices =
           getActiveServicesFromOverlay(id, overlay.detailedServices());
       cmsOverlayEntity =
           CmsOverlayEntity.builder()
@@ -124,9 +125,9 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
         cmsOverlayEntity.cmsOperatingStatus(
             CmsOverlayHelper.serializeOperatingStatus(overlay.operatingStatus()));
       }
-      List<DetailedService> overlayServices = overlay.detailedServices();
+      List<DatamartDetailedService> overlayServices = overlay.detailedServices();
       if (overlayServices != null) {
-        List<DetailedService> toSaveDetailedServices =
+        List<DatamartDetailedService> toSaveDetailedServices =
             findServicesToSave(cmsOverlayEntity, id, overlay.detailedServices(), DATAMART_MAPPER);
         cmsOverlayEntity.cmsServices(
             CmsOverlayHelper.serializeDetailedServices(toSaveDetailedServices));
@@ -144,7 +145,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
     DatamartFacility facility =
         DATAMART_MAPPER.readValue(facilityEntity.facility(), DatamartFacility.class);
     // Only save active services from the overlay if they exist
-    List<DetailedService> toSaveDetailedServices;
+    List<DatamartDetailedService> toSaveDetailedServices;
     if (existingCmsOverlayEntity.isEmpty()) {
       toSaveDetailedServices = getActiveServicesFromOverlay(id, overlay.detailedServices());
     } else {
@@ -171,7 +172,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
     }
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
-      for (DetailedService service : toSaveDetailedServices) {
+      for (DatamartDetailedService service : toSaveDetailedServices) {
         if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
           detailedServices.add("Covid19Vaccine");
         } else {

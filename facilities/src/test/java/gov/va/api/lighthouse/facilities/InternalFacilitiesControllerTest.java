@@ -28,8 +28,6 @@ import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
-import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
@@ -120,16 +118,16 @@ public class InternalFacilitiesControllerTest {
             .build());
   }
 
-  private static CmsOverlay _overlay() {
-    return CmsOverlay.builder()
+  private static DatamartCmsOverlay _overlay() {
+    return DatamartCmsOverlay.builder()
         .operatingStatus(_overlay_operating_status())
         .detailedServices(_overlay_detailed_services())
         .build();
   }
 
-  private static List<DetailedService> _overlay_detailed_services() {
+  private static List<DatamartDetailedService> _overlay_detailed_services() {
     return List.of(
-        DetailedService.builder()
+        DatamartDetailedService.builder()
             .active(true)
             .name("Covid19Vaccine")
             .descriptionFacility(null)
@@ -137,7 +135,7 @@ public class InternalFacilitiesControllerTest {
             .onlineSchedulingAvailable("True")
             .phoneNumbers(
                 List.of(
-                    DetailedService.AppointmentPhoneNumber.builder()
+                    DatamartDetailedService.AppointmentPhoneNumber.builder()
                         .extension("123")
                         .label("Main phone")
                         .number("555-555-1212")
@@ -147,9 +145,9 @@ public class InternalFacilitiesControllerTest {
             .walkInsAccepted("False")
             .serviceLocations(
                 List.of(
-                    DetailedService.DetailedServiceLocation.builder()
+                    DatamartDetailedService.DetailedServiceLocation.builder()
                         .serviceLocationAddress(
-                            DetailedService.DetailedServiceAddress.builder()
+                            DatamartDetailedService.DetailedServiceAddress.builder()
                                 .buildingNameNumber("Baxter Building")
                                 .clinicName("Baxter Clinic")
                                 .wingFloorOrRoomNumber("Wing East")
@@ -162,7 +160,7 @@ public class InternalFacilitiesControllerTest {
                                 .build())
                         .appointmentPhoneNumbers(
                             List.of(
-                                DetailedService.AppointmentPhoneNumber.builder()
+                                DatamartDetailedService.AppointmentPhoneNumber.builder()
                                     .extension("567")
                                     .label("Alt phone")
                                     .number("556-565-1119")
@@ -170,12 +168,12 @@ public class InternalFacilitiesControllerTest {
                                     .build()))
                         .emailContacts(
                             List.of(
-                                DetailedService.DetailedServiceEmailContact.builder()
+                                DatamartDetailedService.DetailedServiceEmailContact.builder()
                                     .emailAddress("georgea@va.gov")
                                     .emailLabel("George Anderson")
                                     .build()))
                         .facilityServiceHours(
-                            DetailedService.DetailedServiceHours.builder()
+                            DatamartDetailedService.DetailedServiceHours.builder()
                                 .monday("8:30AM-7:00PM")
                                 .tuesday("8:30AM-7:00PM")
                                 .wednesday("8:30AM-7:00PM")
@@ -189,9 +187,9 @@ public class InternalFacilitiesControllerTest {
             .build());
   }
 
-  private static Facility.OperatingStatus _overlay_operating_status() {
-    return Facility.OperatingStatus.builder()
-        .code(Facility.OperatingStatusCode.LIMITED)
+  private static DatamartFacility.OperatingStatus _overlay_operating_status() {
+    return DatamartFacility.OperatingStatus.builder()
+        .code(DatamartFacility.OperatingStatusCode.LIMITED)
         .additionalInfo("Limited")
         .build();
   }
@@ -209,7 +207,7 @@ public class InternalFacilitiesControllerTest {
   }
 
   @SneakyThrows
-  private FacilityEntity _facilityEntity(DatamartFacility fac, CmsOverlay overlay) {
+  private FacilityEntity _facilityEntity(DatamartFacility fac, DatamartCmsOverlay overlay) {
     String operatingStatusString = null;
     Set<String> cmsServicesNames = new HashSet<>();
     String cmsServicesString = null;
@@ -223,7 +221,7 @@ public class InternalFacilitiesControllerTest {
               ? null
               : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices());
       if (overlay.detailedServices() != null) {
-        for (DetailedService service : overlay.detailedServices()) {
+        for (DatamartDetailedService service : overlay.detailedServices()) {
           if (service.active()) {
             cmsServicesNames.add(service.name());
           }
@@ -242,7 +240,7 @@ public class InternalFacilitiesControllerTest {
   }
 
   @SneakyThrows
-  private CmsOverlayEntity _overlayEntity(CmsOverlay overlay, String id) {
+  private CmsOverlayEntity _overlayEntity(DatamartCmsOverlay overlay, String id) {
     return CmsOverlayEntity.builder()
         .id(FacilityEntity.Pk.fromIdString(id))
         .cmsOperatingStatus(
@@ -485,13 +483,18 @@ public class InternalFacilitiesControllerTest {
         .usingRecursiveFieldByFieldElementComparator(facilityEntityCompConfig)
         .containsOnly(
             _facilityEntity(
-                f, CmsOverlay.builder().detailedServices(_overlay_detailed_services()).build()));
+                f,
+                DatamartCmsOverlay.builder()
+                    .detailedServices(_overlay_detailed_services())
+                    .build()));
     assertThat(overlayRepository.findAll())
         .usingRecursiveComparison()
         .isEqualTo(
             List.of(
                 _overlayEntity(
-                    CmsOverlay.builder().detailedServices(_overlay_detailed_services()).build(),
+                    DatamartCmsOverlay.builder()
+                        .detailedServices(_overlay_detailed_services())
+                        .build(),
                     "vha_f1")));
     overlayRepository.deleteAll();
     overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
@@ -501,13 +504,16 @@ public class InternalFacilitiesControllerTest {
         .usingRecursiveFieldByFieldElementComparator(facilityEntityCompConfig)
         .containsOnly(
             _facilityEntity(
-                f, CmsOverlay.builder().operatingStatus(_overlay_operating_status()).build()));
+                f,
+                DatamartCmsOverlay.builder().operatingStatus(_overlay_operating_status()).build()));
     assertThat(overlayRepository.findAll())
         .usingRecursiveComparison()
         .isEqualTo(
             List.of(
                 _overlayEntity(
-                    CmsOverlay.builder().operatingStatus(_overlay_operating_status()).build(),
+                    DatamartCmsOverlay.builder()
+                        .operatingStatus(_overlay_operating_status())
+                        .build(),
                     "vha_f1")));
     overlayRepository.deleteAll();
     overlayRepository.save(_overlayEntity(_overlay(), "vha_f1"));
@@ -515,7 +521,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(facilityRepository.findAll())
         .usingRecursiveFieldByFieldElementComparator(facilityEntityCompConfig)
-        .containsOnly(_facilityEntity(f, CmsOverlay.builder().build()));
+        .containsOnly(_facilityEntity(f, DatamartCmsOverlay.builder().build()));
     assertThat(overlayRepository.findAll()).isEmpty();
   }
 

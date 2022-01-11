@@ -8,8 +8,8 @@ import gov.va.api.lighthouse.facilities.CmsOverlayEntity;
 import gov.va.api.lighthouse.facilities.CmsOverlayHelper;
 import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
 import gov.va.api.lighthouse.facilities.DatamartCmsOverlay;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +28,7 @@ public class CmsOverlayCollector {
   private final CmsOverlayRepository cmsOverlayRepository;
 
   /** Method for determining whether Covid service is contained within detailed services. */
-  public static boolean containsCovidService(List<DetailedService> detailedServices) {
+  public static boolean containsCovidService(List<DatamartDetailedService> detailedServices) {
     return detailedServices != null
         && detailedServices.parallelStream()
             .anyMatch(f -> f.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19));
@@ -73,7 +73,7 @@ public class CmsOverlayCollector {
               .build();
       // Save updates made to overlay with Covid services
       final OperatingStatus operatingStatus = overlay.operatingStatus();
-      final List<DetailedService> detailedServices = overlay.detailedServices();
+      final List<DatamartDetailedService> detailedServices = overlay.detailedServices();
       if (containsCovidService(detailedServices)) {
         cmsOverlayRepository.save(
             CmsOverlayEntity.builder()

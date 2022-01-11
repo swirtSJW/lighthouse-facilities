@@ -2,7 +2,6 @@ package gov.va.api.lighthouse.facilities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import java.util.List;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
@@ -16,10 +15,10 @@ public final class CmsOverlayHelper {
 
   /** Obtain list of detailed services from JSON string. */
   @SneakyThrows
-  public static List<DetailedService> getDetailedServices(String detailedServices) {
+  public static List<DatamartDetailedService> getDetailedServices(String detailedServices) {
     return (detailedServices == null)
         ? List.of()
-        : List.of(DATAMART_MAPPER.readValue(detailedServices, DetailedService[].class));
+        : List.of(DATAMART_MAPPER.readValue(detailedServices, DatamartDetailedService[].class));
   }
 
   /** Obtain DatamartFacility operating status from JSON string. */
@@ -32,7 +31,7 @@ public final class CmsOverlayHelper {
 
   /** Obtain JSON string representation of detailed service list. */
   @SneakyThrows
-  public static String serializeDetailedServices(List<DetailedService> detailedServices) {
+  public static String serializeDetailedServices(List<DatamartDetailedService> detailedServices) {
     return (detailedServices == null || detailedServices.isEmpty())
         ? null
         : DATAMART_MAPPER.writeValueAsString(detailedServices);

@@ -8,10 +8,10 @@ import static org.mockito.Mockito.when;
 import gov.va.api.lighthouse.facilities.CmsOverlayEntity;
 import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
 import gov.va.api.lighthouse.facilities.DatamartCmsOverlay;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService;
 import gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig;
 import gov.va.api.lighthouse.facilities.DatamartFacility;
 import gov.va.api.lighthouse.facilities.FacilityEntity;
-import gov.va.api.lighthouse.facilities.api.cms.DetailedService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,8 +41,8 @@ public class CmsOverlayCollectorTest {
   @Test
   @SneakyThrows
   void loadCovidOverlay() {
-    DetailedService covidService =
-        DetailedService.builder()
+    DatamartDetailedService covidService =
+        DatamartDetailedService.builder()
             .name(CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19)
             .active(true)
             .path("replace_this_path")
@@ -88,8 +88,8 @@ public class CmsOverlayCollectorTest {
         cmsOverlayCollector.loadAndUpdateCmsOverlays();
     // Verify loaded CMS overlay
     assertThat(cmsOverlays.isEmpty()).isFalse();
-    DetailedService updatedCovidService =
-        DetailedService.builder()
+    DatamartDetailedService updatedCovidService =
+        DatamartDetailedService.builder()
             .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
             // .path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
             .path("replace_this_path")
@@ -141,9 +141,11 @@ public class CmsOverlayCollectorTest {
             new CmsOverlayCollector(mockCmsOverlayRepository)
                 .containsCovidService(
                     List.of(
-                        DetailedService.builder().name(CMS_OVERLAY_SERVICE_NAME_COVID_19).build(),
-                        DetailedService.builder().name("Cardiology").build(),
-                        DetailedService.builder().name("Dermatology").build())))
+                        DatamartDetailedService.builder()
+                            .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
+                            .build(),
+                        DatamartDetailedService.builder().name("Cardiology").build(),
+                        DatamartDetailedService.builder().name("Dermatology").build())))
         .isTrue();
   }
 
@@ -153,9 +155,9 @@ public class CmsOverlayCollectorTest {
             new CmsOverlayCollector(mockCmsOverlayRepository)
                 .containsCovidService(
                     List.of(
-                        DetailedService.builder().name("Optometry").build(),
-                        DetailedService.builder().name("Cardiology").build(),
-                        DetailedService.builder().name("Dermatology").build())))
+                        DatamartDetailedService.builder().name("Optometry").build(),
+                        DatamartDetailedService.builder().name("Cardiology").build(),
+                        DatamartDetailedService.builder().name("Dermatology").build())))
         .isFalse();
     assertThat(new CmsOverlayCollector(mockCmsOverlayRepository).containsCovidService(null))
         .isFalse();
