@@ -26,6 +26,7 @@ import gov.va.api.lighthouse.facilities.api.v0.ReloadResponse;
 import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -118,8 +119,7 @@ public class InternalFacilitiesController {
   }
 
   private static Boolean isMobileCenter(FacilityEntity facility) {
-    return Optional.ofNullable(facility.mobile()).orElse(false)
-        && facility.id().stationNumber().contains("MVC");
+    return Optional.ofNullable(facility.mobile()).orElse(false);
   }
 
   /** Populate the given record with facility data _EXCEPT_ of the PK. */
@@ -437,6 +437,7 @@ public class InternalFacilitiesController {
      * Determine if there is something wrong with the record, but it is still usable.
      */
     List<String> duplicateFacilities = detectDuplicateFacilities(record);
+    Collections.sort(duplicateFacilities);
     if (!duplicateFacilities.isEmpty()) {
       response
           .problems()

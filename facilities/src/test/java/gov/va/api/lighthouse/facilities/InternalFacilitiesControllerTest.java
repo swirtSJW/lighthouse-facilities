@@ -763,7 +763,7 @@ public class InternalFacilitiesControllerTest {
                     .id(FacilityEntity.Pk.fromIdString("vha_123"))
                     .mobile(true)
                     .build()))
-        .isEqualTo(Boolean.FALSE);
+        .isEqualTo(Boolean.TRUE);
     assertThat(
             isMobileCeneterMethod.invoke(
                 controller,
