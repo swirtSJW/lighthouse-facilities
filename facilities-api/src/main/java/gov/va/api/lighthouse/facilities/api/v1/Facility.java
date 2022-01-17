@@ -240,10 +240,6 @@ public final class Facility {
     @Schema(example = "NORMAL")
     OperatingStatus operatingStatus;
 
-    @JsonProperty(value = "detailed_services")
-    @Schema(nullable = true)
-    List<@Valid DetailedService> detailedServices;
-
     @Schema(example = "20", nullable = true)
     String visn;
 

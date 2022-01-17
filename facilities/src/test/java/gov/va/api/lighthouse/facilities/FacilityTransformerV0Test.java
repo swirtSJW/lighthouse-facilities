@@ -593,6 +593,7 @@ public class FacilityTransformerV0Test {
                     FacilityTransformerV1.toFacility(
                         FacilityTransformerV0.toVersionAgnostic(facility)))))
         .usingRecursiveComparison()
+        .ignoringFields("attributes.detailedServices")
         .isEqualTo(facility);
   }
 
