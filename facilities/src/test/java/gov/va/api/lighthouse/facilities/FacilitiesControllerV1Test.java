@@ -42,12 +42,33 @@ public class FacilitiesControllerV1Test {
                 samples.facilityEntity("vha_691GB"),
                 samples.facilityEntity("vha_740GA"),
                 samples.facilityEntity("vha_757")));
-    String actual = controller().all();
-    assertThat(
-            FacilitiesJacksonConfigV1.createMapper()
-                .readValue(actual, GeoFacilitiesResponse.class)
-                .features())
-        .hasSize(3);
+    assertThat(controller().all(1, 3))
+        .isEqualTo(
+            FacilitiesResponse.builder()
+                .data(
+                    List.of(
+                        samples.facilityV1("vha_691GB"),
+                        samples.facilityV1("vha_740GA"),
+                        samples.facilityV1("vha_757")))
+                .links(
+                    PageLinks.builder()
+                        .self("http://foo/bp/v1/facilities?page=1&per_page=3")
+                        .first("http://foo/bp/v1/facilities?page=1&per_page=3")
+                        .prev(null)
+                        .next(null)
+                        .last("http://foo/bp/v1/facilities?page=1&per_page=3")
+                        .build())
+                .meta(
+                    FacilitiesResponse.FacilitiesMetadata.builder()
+                        .pagination(
+                            Pagination.builder()
+                                .currentPage(1)
+                                .entriesPerPage(3)
+                                .totalPages(1)
+                                .totalEntries(3)
+                                .build())
+                        .build())
+                .build());
   }
 
   @Test
@@ -103,7 +124,7 @@ public class FacilitiesControllerV1Test {
     HasFacilityPayload nullPayload = null;
     assertThrows(InvocationTargetException.class, () -> facilityMethod.invoke(null, nullPayload));
     when(fr.findAllProjectedBy()).thenThrow(new NullPointerException("oh noes"));
-    assertThrows(NullPointerException.class, () -> controller().all());
+    assertThrows(NullPointerException.class, () -> controller().all(1, 2));
     assertThrows(NullPointerException.class, () -> controller().allCsv());
     // Nested exception ExceptionsUtils.InvalidParameter
     Method entitiesByBoundingBoxMethod =
