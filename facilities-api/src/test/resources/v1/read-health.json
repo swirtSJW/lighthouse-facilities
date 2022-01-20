@@ -11,13 +11,11 @@
       "long" : -68.00939541,
       "time_zone" : "America/New_York",
       "address" : {
-        "mailing" : { },
         "physical" : {
           "zip" : "04736-3567",
           "city" : "Caribou",
           "state" : "ME",
           "address_1" : "163 Van Buren Road",
-          "address_2" : null,
           "address_3" : "Suite 6"
         }
       },
@@ -40,7 +38,6 @@
         "Sunday" : "Closed"
       },
       "services" : {
-        "other" : [ ],
         "health" : [
           "EmergencyCare",
           "PrimaryCare",
@@ -61,8 +58,7 @@
         "health" : [
           {
             "service" : "Dermatology",
-            "new" : 3.714285,
-            "established" : null
+            "new" : 3.714285
           },
           {
             "service" : "PrimaryCare",

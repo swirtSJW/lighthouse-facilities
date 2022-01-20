@@ -722,6 +722,22 @@ public class InternalFacilitiesControllerTest {
 
   @Test
   @SneakyThrows
+  void exceptions() {
+    Method processMissingFacilityMethod =
+        InternalFacilitiesController.class.getDeclaredMethod(
+            "processMissingFacility", ReloadResponse.class, FacilityEntity.Pk.class);
+    processMissingFacilityMethod.setAccessible(true);
+    var response = ReloadResponse.builder().build();
+    var pk = FacilityEntity.Pk.fromIdString("vha_402");
+    FacilityRepository mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
+    assertThatThrownBy(() -> processMissingFacilityMethod.invoke(_controller(), response, pk))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(new IllegalStateException());
+  }
+
+  @Test
+  @SneakyThrows
   public void isHoursNull() {
     InternalFacilitiesController controller = InternalFacilitiesController.builder().build();
     Method isHoursNullMethod =
@@ -790,7 +806,6 @@ public class InternalFacilitiesControllerTest {
     assertThrows(
         IllegalArgumentException.class,
         () -> InternalFacilitiesController.populate(mockEntity, mockDatamartFacility));
-
     FacilityRepository mockRepo = mock(FacilityRepository.class);
     when(mockRepo.findAll()).thenThrow(new NullPointerException("oh noes"));
     assertDoesNotThrow(
@@ -837,9 +852,9 @@ public class InternalFacilitiesControllerTest {
     final InternalFacilitiesController controllerEx =
         InternalFacilitiesController.builder().facilityRepository(mockRepo).build();
     final ReloadResponse reloadResponseEx = ReloadResponse.start();
-    assertThrows(
-        InvocationTargetException.class,
-        () -> saveAsMissingMethod.invoke(controllerEx, reloadResponseEx, entityEx));
+    assertThatThrownBy(() -> saveAsMissingMethod.invoke(controllerEx, reloadResponseEx, entityEx))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(new NullPointerException("oh noes"));
     assertThat(reloadResponseEx.problems())
         .usingRecursiveComparison()
         .isEqualTo(

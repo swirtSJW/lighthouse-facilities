@@ -18,14 +18,11 @@
         "website" : "https://www.orlando.va.gov/locations/Viera.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32940-8007",
             "city" : "Viera",
             "state" : "FL",
-            "address_1" : "2900 Veterans Way",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "2900 Veterans Way"
           }
         },
         "phone" : {
@@ -52,7 +49,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -141,7 +137,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -158,18 +153,13 @@
         "id" : "vc_0332V",
         "name" : "Melbourne Vet Center",
         "facility_type" : "vet_center",
-        "classification" : null,
-        "website" : null,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32935",
             "city" : "Melbourne",
             "state" : "FL",
-            "address_1" : "2098 Sarno Road",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "2098 Sarno Road"
           }
         },
         "phone" : {
@@ -189,16 +179,9 @@
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "services" : { },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "detailed_services" : null,
-        "visn" : null
+        }
       }
     },
     {
@@ -222,22 +205,17 @@
             "zip" : "32754-4826",
             "city" : "Mims",
             "state" : "FL",
-            "address_1" : "5525 U.S. Highway 1",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "5525 U.S. Highway 1"
           },
           "physical" : {
             "zip" : "32754-4826",
             "city" : "Mims",
             "state" : "FL",
-            "address_1" : "5525 U.S. Highway 1",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "5525 U.S. Highway 1"
           }
         },
         "phone" : {
-          "fax" : "321-383-2642",
-          "main" : null
+          "fax" : "321-383-2642"
         },
         "hours" : {
           "Monday" : "Sunrise - Sunset",
@@ -253,16 +231,9 @@
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "services" : { },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "detailed_services" : null,
-        "visn" : null
+        }
       }
     },
     {
@@ -282,14 +253,11 @@
         "website" : "https://www.orlando.va.gov/locations/directions.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32827-5812",
             "city" : "Orlando",
             "state" : "FL",
-            "address_1" : "13800 Veterans Way",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "13800 Veterans Way"
           }
         },
         "phone" : {
@@ -316,7 +284,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -419,7 +386,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -440,14 +406,12 @@
         "website" : "NULL",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32827",
             "city" : "Orlando",
             "state" : "FL",
             "address_1" : "13800 Veterans Way",
-            "address_2" : "VBA Room #C102",
-            "address_3" : null
+            "address_2" : "VBA Room #C102"
           }
         },
         "phone" : {
@@ -481,15 +445,9 @@
             "VocationalRehabilitationAndEmploymentAssistance"
           ]
         },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "detailed_services" : null,
-        "visn" : null
+        }
       }
     },
     {
@@ -505,18 +463,14 @@
         "id" : "vc_0314V",
         "name" : "Orlando Vet Center",
         "facility_type" : "vet_center",
-        "classification" : null,
-        "website" : null,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32822",
             "city" : "Orlando",
             "state" : "FL",
             "address_1" : "5575 South Semoran Boulevard",
-            "address_2" : "Suite 30",
-            "address_3" : null
+            "address_2" : "Suite 30"
           }
         },
         "phone" : {
@@ -536,16 +490,9 @@
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "services" : { },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "detailed_services" : null,
-        "visn" : null
+        }
       }
     },
     {
@@ -565,13 +512,11 @@
         "website" : "https://www.orlando.va.gov/locations/Crossroads.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32792-5313",
             "city" : "Winter Park",
             "state" : "FL",
             "address_1" : "925 South Semoran Boulevard",
-            "address_2" : null,
             "address_3" : "Suites 112, 114 and 120"
           }
         },
@@ -598,16 +543,11 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "MentalHealthCare",
             "SpecialtyCare"
           ],
           "last_updated" : "2020-03-02"
-        },
-        "satisfaction" : {
-          "health" : { },
-          "effective_date" : null
         },
         "wait_times" : {
           "health" : [
@@ -629,7 +569,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -650,14 +589,11 @@
         "website" : "https://www.westpalmbeach.va.gov/locations/Vero_Beach_CBOC.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32960-5690",
             "city" : "Vero Beach",
             "state" : "FL",
-            "address_1" : "372 17th Street",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "372 17th Street"
           }
         },
         "phone" : {
@@ -684,7 +620,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -730,7 +665,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -751,14 +685,11 @@
         "website" : "https://www.orlando.va.gov/locations/Kissimmee.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34741-2342",
             "city" : "Kissimmee",
             "state" : "FL",
-            "address_1" : "2285 North Central Avenue",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "2285 North Central Avenue"
           }
         },
         "phone" : {
@@ -785,7 +716,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -805,8 +735,7 @@
           "health" : [
             {
               "service" : "Dermatology",
-              "new" : 1.5,
-              "established" : null
+              "new" : 1.5
             },
             {
               "service" : "PrimaryCare",
@@ -831,7 +760,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -852,14 +780,11 @@
         "website" : "https://www.orlando.va.gov/locations/LakeBaldwin.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32803-8208",
             "city" : "Orlando",
             "state" : "FL",
-            "address_1" : "5201 Raymond Street",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "5201 Raymond Street"
           }
         },
         "phone" : {
@@ -886,7 +811,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -950,7 +874,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     }

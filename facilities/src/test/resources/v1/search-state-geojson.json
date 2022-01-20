@@ -18,14 +18,11 @@
         "website" : "https://www.biloxi.va.gov/locations/JACC.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32507-1000",
             "city" : "Pensacola",
             "state" : "FL",
-            "address_1" : "790 Veterans Way",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "790 Veterans Way"
           }
         },
         "phone" : {
@@ -52,7 +49,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "EmergencyCare",
             "PrimaryCare",
@@ -148,7 +144,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "16"
       }
     },
@@ -169,14 +164,11 @@
         "website" : "https://www.baypines.va.gov/locations/directions.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33744-8200",
             "city" : "Bay Pines",
             "state" : "FL",
-            "address_1" : "10000 Bay Pines Boulevard",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "10000 Bay Pines Boulevard"
           }
         },
         "phone" : {
@@ -203,7 +195,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -306,7 +297,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -327,14 +317,11 @@
         "website" : "https://www.baypines.va.gov/locations/Lee_County_VA_Healthcare_Center_Cape_Coral_FL.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33909-5422",
             "city" : "Cape Coral",
             "state" : "FL",
-            "address_1" : "2489 Diplomat Parkway East",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "2489 Diplomat Parkway East"
           }
         },
         "phone" : {
@@ -361,7 +348,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -456,7 +442,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -477,13 +462,11 @@
         "website" : "https://www.baypines.va.gov/locations/Sarasota_Florida.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34233-1540",
             "city" : "Sarasota",
             "state" : "FL",
             "address_1" : "5682 Bee Ridge Road",
-            "address_2" : null,
             "address_3" : "Suite 100"
           }
         },
@@ -511,7 +494,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -565,8 +547,7 @@
             },
             {
               "service" : "Gastroenterology",
-              "new" : 29.0,
-              "established" : null
+              "new" : 29.0
             },
             {
               "service" : "MentalHealthCare",
@@ -581,7 +562,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -602,14 +582,11 @@
         "website" : "https://www.baypines.va.gov/locations/St_Petersburg_Florida.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33705-1214",
             "city" : "St. Petersburg",
             "state" : "FL",
-            "address_1" : "840 Dr. Martin Luther King Jr. Street North",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "840 Dr. Martin Luther King Jr. Street North"
           }
         },
         "phone" : {
@@ -630,9 +607,7 @@
           "Saturday" : "Closed",
           "Sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : null,
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -672,7 +647,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -693,13 +667,11 @@
         "website" : "https://www.baypines.va.gov/locations/Bradenton_Florida.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34208-5526",
             "city" : "Bradenton",
             "state" : "FL",
             "address_1" : "5520 State Route 64",
-            "address_2" : null,
             "address_3" : "Suite 101"
           }
         },
@@ -727,7 +699,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -804,7 +775,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -825,14 +795,11 @@
         "website" : "https://www.baypines.va.gov/locations/Sebring_Florida.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33870-2117",
             "city" : "Sebring",
             "state" : "FL",
-            "address_1" : "5901 US Highway 27 South",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "5901 US Highway 27 South"
           }
         },
         "phone" : {
@@ -859,7 +826,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -911,7 +877,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -932,14 +897,11 @@
         "website" : "https://www.baypines.va.gov/locations/Palm_Harbor_Florida.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34684-1908",
             "city" : "Palm Harbor",
             "state" : "FL",
-            "address_1" : "35209 US Hwy 19 North",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "35209 US Hwy 19 North"
           }
         },
         "phone" : {
@@ -966,7 +928,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -1018,7 +979,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -1039,14 +999,11 @@
         "website" : "https://www.northflorida.va.gov/locations/LakeCity.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32025-5808",
             "city" : "Lake City",
             "state" : "FL",
-            "address_1" : "619 South Marion Avenue",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "619 South Marion Avenue"
           }
         },
         "phone" : {
@@ -1073,7 +1030,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -1150,7 +1106,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     },
@@ -1171,13 +1126,11 @@
         "website" : "https://www.northflorida.va.gov/locations/Ocala.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34470-6856",
             "city" : "Ocala",
             "state" : "FL",
             "address_1" : "1515 East Silver Springs Boulevard",
-            "address_2" : null,
             "address_3" : "Suite 226"
           }
         },
@@ -1205,7 +1158,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -1227,7 +1179,6 @@
           "health" : [
             {
               "service" : "Gynecology",
-              "new" : null,
               "established" : 27.142857
             },
             {
@@ -1242,7 +1193,6 @@
             },
             {
               "service" : "WomensHealth",
-              "new" : null,
               "established" : 27.142857
             },
             {
@@ -1263,7 +1213,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     }

@@ -1,11 +1,21 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAddressSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAppointmentPhoneNumberSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceEmailContactSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceHoursSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceLocationSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
@@ -13,15 +23,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Data
 @Builder
-@JsonInclude()
 @JsonIgnoreProperties(
     ignoreUnknown = true,
     value = {"active"},
     allowSetters = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+@JsonSerialize(using = DetailedServiceSerializer.class)
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
@@ -35,7 +47,7 @@ import lombok.NoArgsConstructor;
   "service_locations"
 })
 @Schema(description = "Detailed information of a facility service.", nullable = true)
-public class DetailedService {
+public class DetailedService implements CanBeEmpty {
   @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
   String name;
 
@@ -105,10 +117,26 @@ public class DetailedService {
   @JsonProperty("walk_ins_accepted")
   String walkInsAccepted;
 
+  /** Empty elements will be omitted from JSON serialization. */
+  @JsonIgnore
+  public boolean isEmpty() {
+    return isBlank(name())
+        && isBlank(changed())
+        && isBlank(descriptionFacility())
+        && isBlank(appointmentLeadIn())
+        && isBlank(onlineSchedulingAvailable())
+        && isBlank(path())
+        && ObjectUtils.isEmpty(phoneNumbers())
+        && isBlank(referralRequired())
+        && ObjectUtils.isEmpty(serviceLocations())
+        && isBlank(walkInsAccepted());
+  }
+
   @Data
   @Builder
-  @JsonInclude()
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = DetailedServiceAddressSerializer.class)
   @JsonPropertyOrder({
     "building_name_number",
     "clinic_name",
@@ -121,7 +149,7 @@ public class DetailedService {
     "country_code"
   })
   @Schema(description = "Service location address.", nullable = true)
-  public static final class DetailedServiceAddress {
+  public static final class DetailedServiceAddress implements CanBeEmpty {
     @Schema(example = "50 Irving Street, Northwest", nullable = true)
     @JsonProperty("address_line1")
     String address1;
@@ -161,14 +189,29 @@ public class DetailedService {
         nullable = true)
     @JsonProperty("wing_floor_or_room_number")
     String wingFloorOrRoomNumber;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(address1())
+          && isBlank(address2())
+          && isBlank(state())
+          && isBlank(buildingNameNumber())
+          && isBlank(clinicName())
+          && isBlank(countryCode())
+          && isBlank(city())
+          && isBlank(zipCode())
+          && isBlank(wingFloorOrRoomNumber());
+    }
   }
 
   @Data
   @Builder
-  @JsonInclude()
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = DetailedServiceAppointmentPhoneNumberSerializer.class)
   @Schema(description = "Phone number information for scheduling an appointment.", nullable = true)
-  public static final class AppointmentPhoneNumber {
+  public static final class AppointmentPhoneNumber implements CanBeEmpty {
     @Schema(example = "71234", nullable = true)
     String extension;
 
@@ -180,11 +223,19 @@ public class DetailedService {
 
     @Schema(example = "tel", nullable = true)
     String type;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(extension()) && isBlank(label()) && isBlank(number()) && isBlank(type());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = DetailedServiceLocationSerializer.class)
   @JsonPropertyOrder({
     "service_location_address",
     "appointment_phones",
@@ -193,7 +244,7 @@ public class DetailedService {
     "additional_hours_info"
   })
   @Schema(description = "Details for a location offering a service.", nullable = true)
-  public static final class DetailedServiceLocation {
+  public static final class DetailedServiceLocation implements CanBeEmpty {
     @Schema(
         description = "Additional information related to service location hours.",
         example = "Location hours times may vary depending on staff availability",
@@ -217,13 +268,25 @@ public class DetailedService {
     @Schema(nullable = true)
     @JsonProperty("service_location_address")
     DetailedServiceAddress serviceLocationAddress;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(additionalHoursInfo())
+          && ObjectUtils.isEmpty(emailContacts())
+          && (facilityServiceHours() == null || facilityServiceHours().isEmpty())
+          && ObjectUtils.isEmpty(appointmentPhoneNumbers())
+          && (serviceLocationAddress() == null || serviceLocationAddress().isEmpty());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = DetailedServiceEmailContactSerializer.class)
   @Schema(description = "Email contact information.", nullable = true)
-  public static final class DetailedServiceEmailContact {
+  public static final class DetailedServiceEmailContact implements CanBeEmpty {
     @Schema(example = "georgea@va.gov", nullable = true)
     @JsonProperty("email_address")
     String emailAddress;
@@ -231,11 +294,19 @@ public class DetailedService {
     @Schema(example = "George Anderson", nullable = true)
     @JsonProperty("email_label")
     String emailLabel;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(emailAddress()) && isBlank(emailLabel());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = DetailedServiceHoursSerializer.class)
   @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
   @Schema(
       description =
@@ -243,7 +314,7 @@ public class DetailedService {
               + "display, with no guarantee of a standard parseable format. "
               + "Hours of operation may vary due to holidays or other events.",
       nullable = true)
-  public static final class DetailedServiceHours {
+  public static final class DetailedServiceHours implements CanBeEmpty {
     @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Monday")
     String monday;
@@ -271,5 +342,17 @@ public class DetailedService {
     @Schema(example = "Closed", nullable = true)
     @JsonProperty("Sunday")
     String sunday;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(monday())
+          && isBlank(tuesday())
+          && isBlank(wednesday())
+          && isBlank(thursday())
+          && isBlank(friday())
+          && isBlank(saturday())
+          && isBlank(sunday());
+    }
   }
 }

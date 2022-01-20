@@ -70,7 +70,7 @@ public class DriveTimeBandManagementIT {
                     .request(Method.POST, "internal/management/bands"))
             .expect(200)
             .expectValid(BandUpdateResponse.class);
-    assertThat(updateResponse.bandsUpdated()).isEmpty();
+    assertThat(updateResponse.bandsUpdated()).isNull();
     assertThat(updateResponse.bandsCreated()).containsExactly(name);
 
     var actual =

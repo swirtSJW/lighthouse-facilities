@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,12 +17,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@JsonInclude()
 @JsonIgnoreProperties(
     ignoreUnknown = true,
     value = {"active"},
     allowSetters = true)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
@@ -106,8 +107,8 @@ public class DetailedService {
 
   @Data
   @Builder
-  @JsonInclude()
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @JsonPropertyOrder({
     "building_name_number",
     "clinic_name",
@@ -164,8 +165,8 @@ public class DetailedService {
 
   @Data
   @Builder
-  @JsonInclude()
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(description = "Phone number information for scheduling an appointment.", nullable = true)
   public static final class AppointmentPhoneNumber {
     @Schema(example = "71234", nullable = true)
@@ -184,6 +185,7 @@ public class DetailedService {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @JsonPropertyOrder({
     "service_location_address",
     "appointment_phones",
@@ -221,6 +223,7 @@ public class DetailedService {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(description = "Email contact information.", nullable = true)
   public static final class DetailedServiceEmailContact {
     @Schema(example = "georgea@va.gov", nullable = true)
@@ -235,6 +238,7 @@ public class DetailedService {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
   @Schema(
       description =

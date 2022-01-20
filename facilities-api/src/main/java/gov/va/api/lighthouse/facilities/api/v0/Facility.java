@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
@@ -17,6 +19,7 @@ import lombok.Data;
 @Data
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
 @Schema(description = "JSON API-compliant object describing a VA facility")
 public final class Facility {
   @Schema(example = "vha_688")
@@ -99,6 +102,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class Address {
     @Schema(example = "50 Irving Street, Northwest", nullable = true)
@@ -126,6 +130,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class Addresses {
     @Schema(nullable = true)
@@ -140,6 +145,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @JsonPropertyOrder({
     "name",
     "facility_type",
@@ -256,6 +262,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(
       description =
           "Standard hours of operation. Currently formatted as descriptive text suitable for "
@@ -325,6 +332,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(
       description =
           "Current status of facility operations."
@@ -361,6 +369,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(
       description = "Veteran-reported satisfaction scores for health care services",
       nullable = true)
@@ -409,6 +418,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(
       description =
           "Expected wait times for new and established patients for a given health care service",
@@ -438,6 +448,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class Phone {
     @Schema(example = "202-555-1212", nullable = true)
@@ -469,6 +480,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class Satisfaction {
     @Schema(nullable = true)
@@ -483,6 +495,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class Services {
     @Schema(nullable = true)
@@ -502,6 +515,7 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class WaitTimes {
     @Schema(nullable = true)

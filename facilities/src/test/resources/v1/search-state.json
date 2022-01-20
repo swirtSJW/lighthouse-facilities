@@ -12,14 +12,11 @@
         "long" : -87.29290128,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32507-1000",
             "city" : "Pensacola",
             "state" : "FL",
-            "address_1" : "790 Veterans Way",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "790 Veterans Way"
           }
         },
         "phone" : {
@@ -46,7 +43,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "EmergencyCare",
             "PrimaryCare",
@@ -157,14 +153,11 @@
         "long" : -82.77945771,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33744-8200",
             "city" : "Bay Pines",
             "state" : "FL",
-            "address_1" : "10000 Bay Pines Boulevard",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "10000 Bay Pines Boulevard"
           }
         },
         "phone" : {
@@ -191,7 +184,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -309,14 +301,11 @@
         "long" : -81.92037569,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33909-5422",
             "city" : "Cape Coral",
             "state" : "FL",
-            "address_1" : "2489 Diplomat Parkway East",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "2489 Diplomat Parkway East"
           }
         },
         "phone" : {
@@ -343,7 +332,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -453,13 +441,11 @@
         "long" : -82.45619019,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34233-1540",
             "city" : "Sarasota",
             "state" : "FL",
             "address_1" : "5682 Bee Ridge Road",
-            "address_2" : null,
             "address_3" : "Suite 100"
           }
         },
@@ -487,7 +473,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -541,8 +526,7 @@
             },
             {
               "service" : "Gastroenterology",
-              "new" : 29.0,
-              "established" : null
+              "new" : 29.0
             },
             {
               "service" : "MentalHealthCare",
@@ -572,14 +556,11 @@
         "long" : -82.6467013399999,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33705-1214",
             "city" : "St. Petersburg",
             "state" : "FL",
-            "address_1" : "840 Dr. Martin Luther King Jr. Street North",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "840 Dr. Martin Luther King Jr. Street North"
           }
         },
         "phone" : {
@@ -606,7 +587,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -661,13 +641,11 @@
         "long" : -82.49214224,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34208-5526",
             "city" : "Bradenton",
             "state" : "FL",
             "address_1" : "5520 State Route 64",
-            "address_2" : null,
             "address_3" : "Suite 101"
           }
         },
@@ -695,7 +673,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -787,14 +764,11 @@
         "long" : -81.50267174,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "33870-2117",
             "city" : "Sebring",
             "state" : "FL",
-            "address_1" : "5901 US Highway 27 South",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "5901 US Highway 27 South"
           }
         },
         "phone" : {
@@ -821,7 +795,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -888,14 +861,11 @@
         "long" : -82.7393997299999,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34684-1908",
             "city" : "Palm Harbor",
             "state" : "FL",
-            "address_1" : "35209 US Hwy 19 North",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "35209 US Hwy 19 North"
           }
         },
         "phone" : {
@@ -922,7 +892,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -989,14 +958,11 @@
         "long" : -82.6369190199999,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32025-5808",
             "city" : "Lake City",
             "state" : "FL",
-            "address_1" : "619 South Marion Avenue",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "619 South Marion Avenue"
           }
         },
         "phone" : {
@@ -1023,7 +989,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -1115,13 +1080,11 @@
         "long" : -82.11769006,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "34470-6856",
             "city" : "Ocala",
             "state" : "FL",
             "address_1" : "1515 East Silver Springs Boulevard",
-            "address_2" : null,
             "address_3" : "Suite 226"
           }
         },
@@ -1149,7 +1112,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -1171,7 +1133,6 @@
           "health" : [
             {
               "service" : "Gynecology",
-              "new" : null,
               "established" : 27.142857
             },
             {
@@ -1186,7 +1147,6 @@
             },
             {
               "service" : "WomensHealth",
-              "new" : null,
               "established" : 27.142857
             },
             {
@@ -1214,7 +1174,6 @@
   "links" : {
     "self" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?state=FL",
     "first" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=1&per_page=10&state=FL",
-    "prev" : null,
     "next" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=2&per_page=10&state=FL",
     "last" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?page=15&per_page=10&state=FL"
   },
@@ -1224,7 +1183,6 @@
       "per_page" : 10,
       "total_pages" : 15,
       "total_entries" : 143
-    },
-    "distances" : [ ]
+    }
   }
 }

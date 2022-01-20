@@ -1,6 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;

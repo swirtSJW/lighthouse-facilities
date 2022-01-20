@@ -18,14 +18,11 @@
         "website" : "https://www.orlando.va.gov/locations/Viera.asp",
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "32940-8007",
             "city" : "Viera",
             "state" : "FL",
-            "address_1" : "2900 Veterans Way",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "2900 Veterans Way"
           }
         },
         "phone" : {
@@ -52,7 +49,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "PrimaryCare",
             "MentalHealthCare",
@@ -141,7 +137,6 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "detailed_services" : null,
         "visn" : "8"
       }
     }

@@ -1,11 +1,10 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,6 @@ public class SearchByZipJsonTest {
                 .build())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder()
-                .distances(new ArrayList<>())
                 .pagination(
                     Pagination.builder()
                         .currentPage(1)
@@ -70,7 +68,6 @@ public class SearchByZipJsonTest {
                             .timeZone("America/New_York")
                             .address(
                                 Facility.Addresses.builder()
-                                    .mailing(Facility.Address.builder().build())
                                     .physical(
                                         Facility.Address.builder()
                                             .zip("32940-8007")
@@ -101,7 +98,6 @@ public class SearchByZipJsonTest {
                                     .build())
                             .services(
                                 Facility.Services.builder()
-                                    .other(new ArrayList<>())
                                     .health(
                                         List.of(
                                             Facility.HealthService.PrimaryCare,

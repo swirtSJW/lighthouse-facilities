@@ -1,33 +1,60 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.AddressSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.AddressesSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.FacilityAttributesSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.FacilitySerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.HoursSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.OperatingStatusSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.PatientSatisfactionSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.PatientWaitTimeSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.PhoneSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.SatisfactionSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.ServicesSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.WaitTimesSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Data
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+@JsonSerialize(using = FacilitySerializer.class)
 @Schema(description = "JSON API-compliant object describing a VA facility")
-public final class Facility {
+public final class Facility implements CanBeEmpty {
   @Schema(example = "vha_688")
-  //  @NotNull
+  @NotNull
   String id;
 
-  //  @NotNull
-  Type type;
+  @NotNull Type type;
 
-  @Valid
-  //  @NotNull
-  FacilityAttributes attributes;
+  @Valid @NotNull FacilityAttributes attributes;
+
+  /** Empty elements will be omitted from JSON serialization. */
+  @JsonIgnore
+  public boolean isEmpty() {
+    return isBlank(id())
+        && ObjectUtils.isEmpty(type())
+        && (attributes() == null || attributes().isEmpty());
+  }
 
   public enum ActiveStatus {
     A,
@@ -101,8 +128,10 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = AddressSerializer.class)
   @Schema(nullable = true)
-  public static final class Address {
+  public static final class Address implements CanBeEmpty {
     @Schema(example = "50 Irving Street, Northwest", nullable = true)
     @JsonProperty("address_1")
     String address1;
@@ -123,13 +152,26 @@ public final class Facility {
 
     @Schema(example = "DC", nullable = true)
     String state;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(address1())
+          && isBlank(address2())
+          && isBlank(address3())
+          && isBlank(zip())
+          && isBlank(city())
+          && isBlank(state());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = AddressesSerializer.class)
   @Schema(nullable = true)
-  public static final class Addresses {
+  public static final class Addresses implements CanBeEmpty {
     @Schema(nullable = true)
     @Valid
     Address mailing;
@@ -137,11 +179,20 @@ public final class Facility {
     @Schema(nullable = true)
     @Valid
     Address physical;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return (mailing() == null || mailing().isEmpty())
+          && (physical() == null || physical().isEmpty());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = FacilityAttributesSerializer.class)
   @JsonPropertyOrder({
     "name",
     "facility_type",
@@ -164,11 +215,12 @@ public final class Facility {
     "visn"
   })
   @Schema(nullable = true)
-  public static final class FacilityAttributes {
-    //    @NotNull
+  public static final class FacilityAttributes implements CanBeEmpty {
+    @NotNull
     @Schema(example = "Washington VA Medical Center")
     String name;
 
+    @NotNull
     @Schema(example = "va_health_facility")
     @JsonProperty("facility_type")
     FacilityType facilityType;
@@ -179,10 +231,12 @@ public final class Facility {
     @Schema(example = "http://www.washingtondc.va.gov", nullable = true)
     String website;
 
+    @NotNull
     @Schema(description = "Facility latitude", format = "float", example = "38.9311137")
     @JsonProperty("lat")
     BigDecimal latitude;
 
+    @NotNull
     @Schema(description = "Facility longitude", format = "float", example = "-77.0109110499999")
     @JsonProperty("long")
     BigDecimal longitude;
@@ -235,13 +289,36 @@ public final class Facility {
     ActiveStatus activeStatus;
 
     @Valid
-    //    @NotNull
+    @NotNull
     @JsonProperty(value = "operating_status", required = true)
     @Schema(example = "NORMAL")
     OperatingStatus operatingStatus;
 
     @Schema(example = "20", nullable = true)
     String visn;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(name())
+          && ObjectUtils.isEmpty(facilityType())
+          && isBlank(classification())
+          && isBlank(website())
+          && ObjectUtils.isEmpty(latitude())
+          && ObjectUtils.isEmpty(longitude())
+          && isBlank(timeZone())
+          && (address() == null || address().isEmpty())
+          && (phone() == null || phone().isEmpty())
+          && (hours() == null || hours().isEmpty())
+          && ObjectUtils.isEmpty(operationalHoursSpecialInstructions())
+          && (services() == null || services().isEmpty())
+          && (satisfaction() == null || satisfaction().isEmpty())
+          && (waitTimes() == null || waitTimes().isEmpty())
+          && ObjectUtils.isEmpty(mobile())
+          && ObjectUtils.isEmpty(activeStatus())
+          && ObjectUtils.isEmpty(operatingStatus())
+          && isBlank(visn());
+    }
 
     public static final class FacilityAttributesBuilder {
       @JsonProperty("operationalHoursSpecialInstructions")
@@ -254,6 +331,8 @@ public final class Facility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = HoursSerializer.class)
   @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
   @Schema(
       description =
@@ -261,7 +340,7 @@ public final class Facility {
               + "display, with no guarantee of a standard parseable format. "
               + "Hours of operation may vary due to holidays or other events.",
       nullable = true)
-  public static final class Hours {
+  public static final class Hours implements CanBeEmpty {
     @Schema(example = "9AM-5PM", nullable = true)
     @JsonProperty("Monday")
     String monday;
@@ -289,11 +368,25 @@ public final class Facility {
     @Schema(example = "Closed", nullable = true)
     @JsonProperty("Sunday")
     String sunday;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(monday())
+          && isBlank(tuesday())
+          && isBlank(wednesday())
+          && isBlank(thursday())
+          && isBlank(friday())
+          && isBlank(saturday())
+          && isBlank(sunday());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = OperatingStatusSerializer.class)
   @Schema(
       description =
           "Current status of facility operations."
@@ -304,8 +397,8 @@ public final class Facility {
               + " or Closed."
               + " This field replaces active_status.",
       nullable = true)
-  public static final class OperatingStatus {
-    //    @NotNull
+  public static final class OperatingStatus implements CanBeEmpty {
+    @NotNull
     @JsonProperty(required = true)
     @Schema(
         example = "NORMAL",
@@ -325,15 +418,23 @@ public final class Facility {
                 + " floor visitation information.",
         nullable = true)
     String additionalInfo;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(code()) && isBlank(additionalInfo());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = PatientSatisfactionSerializer.class)
   @Schema(
       description = "Veteran-reported satisfaction scores for health care services",
       nullable = true)
-  public static final class PatientSatisfaction {
+  public static final class PatientSatisfaction implements CanBeEmpty {
     @Schema(
         example = "0.85",
         format = "float",
@@ -373,18 +474,28 @@ public final class Facility {
         nullable = true)
     @JsonProperty("specialty_care_routine")
     BigDecimal specialtyCareRoutine;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(primaryCareUrgent())
+          && ObjectUtils.isEmpty(primaryCareRoutine())
+          && ObjectUtils.isEmpty(specialtyCareUrgent())
+          && ObjectUtils.isEmpty(specialtyCareRoutine());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = PatientWaitTimeSerializer.class)
   @Schema(
       description =
           "Expected wait times for new and established patients for a given health care service",
       nullable = true)
-  public static final class PatientWaitTime {
-    //    @NotNull
-    HealthService service;
+  public static final class PatientWaitTime implements CanBeEmpty {
+    @NotNull HealthService service;
 
     @Schema(
         example = "10",
@@ -403,13 +514,23 @@ public final class Facility {
         nullable = true)
     @JsonProperty("established")
     BigDecimal establishedPatientWaitTime;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(service())
+          && ObjectUtils.isEmpty(newPatientWaitTime())
+          && ObjectUtils.isEmpty(establishedPatientWaitTime());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = PhoneSerializer.class)
   @Schema(nullable = true)
-  public static final class Phone {
+  public static final class Phone implements CanBeEmpty {
     @Schema(example = "202-555-1212", nullable = true)
     String fax;
 
@@ -434,13 +555,27 @@ public final class Facility {
     @Schema(example = "202-555-1212", nullable = true)
     @JsonProperty("enrollment_coordinator")
     String enrollmentCoordinator;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(fax())
+          && isBlank(main())
+          && isBlank(pharmacy())
+          && isBlank(afterHours())
+          && isBlank(patientAdvocate())
+          && isBlank(mentalHealthClinic())
+          && isBlank(enrollmentCoordinator());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = SatisfactionSerializer.class)
   @Schema(nullable = true)
-  public static final class Satisfaction {
+  public static final class Satisfaction implements CanBeEmpty {
     @Schema(nullable = true)
     @Valid
     PatientSatisfaction health;
@@ -448,13 +583,21 @@ public final class Facility {
     @Schema(example = "2018-01-01", nullable = true)
     @JsonProperty("effective_date")
     LocalDate effectiveDate;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return (health() == null || health().isEmpty()) && ObjectUtils.isEmpty(effectiveDate());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = ServicesSerializer.class)
   @Schema(nullable = true)
-  public static final class Services {
+  public static final class Services implements CanBeEmpty {
     @Schema(nullable = true)
     List<OtherService> other;
 
@@ -467,18 +610,35 @@ public final class Facility {
     @Schema(example = "2018-01-01", nullable = true)
     @JsonProperty("last_updated")
     LocalDate lastUpdated;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(other())
+          && ObjectUtils.isEmpty(health())
+          && ObjectUtils.isEmpty(benefits())
+          && ObjectUtils.isEmpty(lastUpdated());
+    }
   }
 
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = WaitTimesSerializer.class)
   @Schema(nullable = true)
-  public static final class WaitTimes {
+  public static final class WaitTimes implements CanBeEmpty {
     @Schema(nullable = true)
     List<@Valid PatientWaitTime> health;
 
     @Schema(example = "2018-01-01", nullable = true)
     @JsonProperty("effective_date")
     LocalDate effectiveDate;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(health()) && ObjectUtils.isEmpty(effectiveDate());
+    }
   }
 }

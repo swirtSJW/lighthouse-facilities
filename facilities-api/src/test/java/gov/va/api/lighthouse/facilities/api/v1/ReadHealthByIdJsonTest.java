@@ -1,11 +1,10 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -51,7 +50,6 @@ public class ReadHealthByIdJsonTest {
                         .timeZone("America/New_York")
                         .address(
                             Facility.Addresses.builder()
-                                .mailing(Facility.Address.builder().build())
                                 .physical(
                                     Facility.Address.builder()
                                         .zip("04736-3567")
@@ -83,7 +81,6 @@ public class ReadHealthByIdJsonTest {
                                 .build())
                         .services(
                             Facility.Services.builder()
-                                .other(new ArrayList<>())
                                 .health(
                                     List.of(
                                         Facility.HealthService.EmergencyCare,

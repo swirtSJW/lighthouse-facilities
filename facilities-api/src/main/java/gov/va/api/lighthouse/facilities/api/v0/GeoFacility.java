@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +20,7 @@ import lombok.Value;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
 @Schema(description = "GeoJSON-complaint Feature object describing a VA Facility")
 public final class GeoFacility {
   @Schema(example = "Feature")
@@ -40,6 +43,7 @@ public final class GeoFacility {
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class Geometry {
     @Schema(example = "Point")
@@ -55,6 +59,7 @@ public final class GeoFacility {
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @JsonPropertyOrder({
     "id",
     "name",

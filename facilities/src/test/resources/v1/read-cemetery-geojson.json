@@ -20,21 +20,17 @@
         "city" : "Nicholasville",
         "state" : "KY",
         "address_1" : "6980 Danville Rd",
-        "address_2" : "<Null>",
-        "address_3" : null
+        "address_2" : "<Null>"
       },
       "physical" : {
         "zip" : "41071",
         "city" : "Southgate",
         "state" : "KY",
-        "address_1" : "25 South Alexandria Pike",
-        "address_2" : null,
-        "address_3" : null
+        "address_1" : "25 South Alexandria Pike"
       }
     },
     "phone" : {
-      "fax" : "859-887-4860",
-      "main" : null
+      "fax" : "859-887-4860"
     },
     "hours" : {
       "Monday" : "Sunrise - Sundown",
@@ -50,15 +46,9 @@
       "Vet center 2 is available.",
       "Vet center 3 is available."
     ],
-    "services" : { },
-    "satisfaction" : { },
-    "wait_times" : { },
-    "mobile" : null,
     "active_status" : "A",
     "operating_status" : {
       "code" : "NORMAL"
-    },
-    "detailed_services" : null,
-    "visn" : null
+    }
   }
 }

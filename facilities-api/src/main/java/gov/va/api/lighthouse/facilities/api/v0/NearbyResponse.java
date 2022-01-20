@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +15,7 @@ import lombok.Value;
 @Value
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
 @JsonPropertyOrder({"data", "meta"})
 public final class NearbyResponse {
   List<@Valid @NotNull Nearby> data;
@@ -28,6 +31,7 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(nullable = true)
   public static final class NearbyAttributes {
     @NotNull
@@ -44,6 +48,7 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(
       description = "JSON API-compliant object containing metadata about this response",
       nullable = true)
@@ -56,6 +61,7 @@ public final class NearbyResponse {
   @Value
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_NULL, content = Include.NON_NULL)
   @Schema(
       description = "JSON API-compliant object describing a nearby VA facility",
       nullable = true)

@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -122,7 +123,11 @@ public class FacilitiesControllerV1Test {
         FacilitiesControllerV1.class.getDeclaredMethod("facility", HasFacilityPayload.class);
     facilityMethod.setAccessible(true);
     HasFacilityPayload nullPayload = null;
-    assertThrows(InvocationTargetException.class, () -> facilityMethod.invoke(null, nullPayload));
+    assertThatThrownBy(() -> facilityMethod.invoke(null, nullPayload))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(
+            new NullPointerException(
+                "Cannot invoke \"gov.va.api.lighthouse.facilities.HasFacilityPayload.facility()\" because \"entity\" is null"));
     when(fr.findAllProjectedBy()).thenThrow(new NullPointerException("oh noes"));
     assertThrows(NullPointerException.class, () -> controller().all(1, 2));
     assertThrows(NullPointerException.class, () -> controller().allCsv());
@@ -131,11 +136,12 @@ public class FacilitiesControllerV1Test {
         FacilitiesControllerV1.class.getDeclaredMethod(
             "entitiesByBoundingBox", List.class, String.class, List.class, Boolean.class);
     entitiesByBoundingBoxMethod.setAccessible(true);
-    assertThrows(
-        InvocationTargetException.class,
-        () ->
-            entitiesByBoundingBoxMethod.invoke(
-                controller(), new ArrayList<BigDecimal>(), null, null, null));
+    assertThatThrownBy(
+            () ->
+                entitiesByBoundingBoxMethod.invoke(
+                    controller(), new ArrayList<BigDecimal>(), null, null, null))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(new ExceptionsUtils.InvalidParameter("bbox", "[]"));
     // Nested exception ExceptionsUtils.InvalidParameter
     Method entitiesByLatLongMethod =
         FacilitiesControllerV1.class.getDeclaredMethod(
@@ -148,18 +154,33 @@ public class FacilitiesControllerV1Test {
             List.class,
             Boolean.class);
     entitiesByLatLongMethod.setAccessible(true);
-    assertThrows(
-        InvocationTargetException.class,
-        () ->
-            entitiesByLatLongMethod.invoke(
-                controller(),
-                BigDecimal.valueOf(0.0),
-                BigDecimal.valueOf(0.0),
-                null,
-                "fake_ids",
-                "no_such_type",
-                new ArrayList<String>(),
-                Boolean.FALSE));
+    assertThatThrownBy(
+            () ->
+                entitiesByLatLongMethod.invoke(
+                    controller(),
+                    BigDecimal.valueOf(0.0),
+                    BigDecimal.valueOf(0.0),
+                    null,
+                    "fake_ids",
+                    "no_such_type",
+                    new ArrayList<String>(),
+                    Boolean.FALSE))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(new ExceptionsUtils.InvalidParameter("type", "no_such_type"));
+  }
+
+  @Test
+  void facilityIdsByType() {
+    when(fr.findAllIds())
+        .thenReturn(
+            List.of(
+                FacilitySamples.defaultSamples().facilityEntity("vha_691GB").id(),
+                FacilitySamples.defaultSamples().facilityEntity("vha_740GA").id(),
+                FacilitySamples.defaultSamples().facilityEntity("vha_757").id()));
+    assertThat(controller().facilityIdsByType("benefits").data()).isEmpty();
+    assertThat(controller().facilityIdsByType("health").data())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of("vha_691GB", "vha_740GA", "vha_757"));
   }
 
   @Test

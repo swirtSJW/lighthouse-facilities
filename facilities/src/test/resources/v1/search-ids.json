@@ -17,21 +17,17 @@
             "city" : "Nicholasville",
             "state" : "KY",
             "address_1" : "6980 Danville Rd",
-            "address_2" : "<Null>",
-            "address_3" : null
+            "address_2" : "<Null>"
           },
           "physical" : {
             "zip" : "41071",
             "city" : "Southgate",
             "state" : "KY",
-            "address_1" : "25 South Alexandria Pike",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "25 South Alexandria Pike"
           }
         },
         "phone" : {
-          "fax" : "859-887-4860",
-          "main" : null
+          "fax" : "859-887-4860"
         },
         "hours" : {
           "Monday" : "Sunrise - Sundown",
@@ -47,15 +43,9 @@
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "services" : { },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "visn" : null
+        }
       }
     },
     {
@@ -70,7 +60,6 @@
         "long" : -87.8985442,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "36577",
             "city" : "Spanish Fort",
@@ -96,15 +85,9 @@
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "services" : { },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "visn" : null
+        }
       }
     },
     {
@@ -119,14 +102,11 @@
         "long" : -86.24177373,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "36109",
             "city" : "Montgomery",
             "state" : "AL",
-            "address_1" : "345 Perry Hill Rd",
-            "address_2" : null,
-            "address_3" : null
+            "address_1" : "345 Perry Hill Rd"
           }
         },
         "phone" : {
@@ -153,14 +133,9 @@
             "VocationalRehabilitationAndEmploymentAssistance"
           ]
         },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "visn" : null
+        }
       }
     },
     {
@@ -169,20 +144,16 @@
       "attributes" : {
         "name" : "Boston Vet Center",
         "facility_type" : "vet_center",
-        "classification" : null,
-        "website" : null,
         "lat" : 42.3445959000001,
         "long" : -71.0361051099999,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "02210",
             "city" : "Boston",
             "state" : "MA",
             "address_1" : "7 Drydock Avenue",
-            "address_2" : "Suite 2070",
-            "address_3" : null
+            "address_2" : "Suite 2070"
           }
         },
         "phone" : {
@@ -202,15 +173,9 @@
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "services" : { },
-        "satisfaction" : { },
-        "wait_times" : { },
-        "mobile" : null,
-        "active_status" : null,
         "operating_status" : {
           "code" : "NORMAL"
-        },
-        "visn" : null
+        }
       }
     },
     {
@@ -225,13 +190,11 @@
         "long" : -68.00939541,
         "time_zone" : "America/New_York",
         "address" : {
-          "mailing" : { },
           "physical" : {
             "zip" : "04736-3567",
             "city" : "Caribou",
             "state" : "ME",
             "address_1" : "163 Van Buren Road",
-            "address_2" : null,
             "address_3" : "Suite 6"
           }
         },
@@ -259,7 +222,6 @@
           "Vet center 3 is available."
         ],
         "services" : {
-          "other" : [ ],
           "health" : [
             "EmergencyCare",
             "PrimaryCare",
@@ -280,8 +242,7 @@
           "health" : [
             {
               "service" : "Dermatology",
-              "new" : 3.714285,
-              "established" : null
+              "new" : 3.714285
             },
             {
               "service" : "PrimaryCare",
@@ -313,8 +274,6 @@
   "links" : {
     "self" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?ids=nca_055%2Cnca_s1001%2Cvba_322b%2Cvc_0101V%2Cvha_402GA",
     "first" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?ids=nca_055%2Cnca_s1001%2Cvba_322b%2Cvc_0101V%2Cvha_402GA&page=1&per_page=10",
-    "prev" : null,
-    "next" : null,
     "last" : "https://dev-api.vets.gov/services/va_facilities/v0/facilities?ids=nca_055%2Cnca_s1001%2Cvba_322b%2Cvc_0101V%2Cvha_402GA&page=1&per_page=10"
   },
   "meta" : {
@@ -323,7 +282,6 @@
       "per_page" : 10,
       "total_pages" : 1,
       "total_entries" : 5
-    },
-    "distances" : [ ]
+    }
   }
 }

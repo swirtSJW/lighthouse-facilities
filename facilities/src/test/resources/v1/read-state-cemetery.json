@@ -11,7 +11,6 @@
       "long" : -87.8985442,
       "time_zone" : "America/New_York",
       "address" : {
-        "mailing" : { },
         "physical" : {
           "zip" : "36577",
           "city" : "Spanish Fort",
@@ -37,15 +36,9 @@
         "Vet center 2 is available.",
         "Vet center 3 is available."
       ],
-      "services" : { },
-      "satisfaction" : { },
-      "wait_times" : { },
-      "mobile" : null,
-      "active_status" : null,
       "operating_status" : {
         "code" : "NORMAL"
-      },
-      "visn" : null
+      }
     }
   }
 }

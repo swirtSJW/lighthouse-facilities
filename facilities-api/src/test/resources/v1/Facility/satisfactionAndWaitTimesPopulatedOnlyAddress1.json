@@ -1,0 +1,24 @@
+{
+  "id" : "vha_402",
+  "attributes" : {
+    "address" : {
+      "mailing" : {
+        "address_1" : "50 Irving Street, Northwest"
+      }
+    },
+    "satisfaction" : {
+      "health" : {
+        "primary_care_urgent" : 10
+      },
+      "effective_date" : "2022-01-13"
+    },
+    "wait_times" : {
+      "health" : [
+        {
+          "new" : 1
+        }
+      ],
+      "effective_date" : "2022-01-13"
+    }
+  }
+}

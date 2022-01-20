@@ -1,35 +1,52 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.GeoFacilitySerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.GeometrySerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.PropertiesSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
+import org.apache.commons.lang3.ObjectUtils;
 
 @Value
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+@JsonSerialize(using = GeoFacilitySerializer.class)
 @Schema(description = "GeoJSON-complaint Feature object describing a VA Facility")
-public final class GeoFacility {
+public final class GeoFacility implements CanBeEmpty {
   @Schema(example = "Feature")
-  //  @NotNull
+  @NotNull
   Type type;
 
-  @Valid
-  //  @NotNull
-  Geometry geometry;
+  @Valid @NotNull Geometry geometry;
 
-  @Valid
-  //  @NotNull
-  Properties properties;
+  @Valid @NotNull Properties properties;
+
+  /** Empty elements will be omitted from JSON serialization. */
+  @JsonIgnore
+  public boolean isEmpty() {
+    return ObjectUtils.isEmpty(type())
+        && (geometry() == null || geometry().isEmpty())
+        && (properties() == null || properties().isEmpty());
+  }
 
   public enum GeometryType {
     Point
@@ -43,21 +60,31 @@ public final class GeoFacility {
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = GeometrySerializer.class)
   @Schema(nullable = true)
-  public static final class Geometry {
+  public static final class Geometry implements CanBeEmpty {
     @Schema(example = "Point")
-    //    @NotNull
+    @NotNull
     GeometryType type;
 
     @Schema(example = "[-77.0367761, 38.9004181]", nullable = true)
     @Size(min = 2, max = 2)
     List<BigDecimal> coordinates;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(type()) && ObjectUtils.isEmpty(coordinates());
+    }
   }
 
   @Value
   @Builder
   @AllArgsConstructor(access = AccessLevel.PRIVATE)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = PropertiesSerializer.class)
   @JsonPropertyOrder({
     "id",
     "name",
@@ -77,15 +104,15 @@ public final class GeoFacility {
     "operating_status",
     "visn"
   })
-  public static final class Properties {
+  public static final class Properties implements CanBeEmpty {
     @Schema(example = "vha_688")
-    //    @NotNull
+    @NotNull
     String id;
 
     @Schema(example = "Washington VA Medical Center", nullable = true)
     String name;
 
-    //    @NotNull
+    @NotNull
     @JsonProperty("facility_type")
     Facility.FacilityType facilityType;
 
@@ -138,7 +165,7 @@ public final class GeoFacility {
     Facility.ActiveStatus activeStatus;
 
     @Valid
-    //    @NotNull
+    @NotNull
     @JsonProperty(value = "operating_status", required = true)
     Facility.OperatingStatus operatingStatus;
 
@@ -148,5 +175,28 @@ public final class GeoFacility {
 
     @Schema(example = "20", nullable = true)
     String visn;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(id())
+          && isBlank(name())
+          && ObjectUtils.isEmpty(facilityType())
+          && isBlank(classification())
+          && isBlank(website())
+          && isBlank(timeZone())
+          && (address() == null || address().isEmpty())
+          && (phone() == null || phone().isEmpty())
+          && (hours() == null || hours().isEmpty())
+          && ObjectUtils.isEmpty(operationalHoursSpecialInstructions())
+          && (services() == null || services().isEmpty())
+          && (satisfaction() == null || satisfaction().isEmpty())
+          && (waitTimes() == null || waitTimes().isEmpty())
+          && ObjectUtils.isEmpty(mobile())
+          && ObjectUtils.isEmpty(activeStatus())
+          && ObjectUtils.isEmpty(operatingStatus())
+          && ObjectUtils.isEmpty(detailedServices())
+          && isBlank(visn());
+    }
   }
 }

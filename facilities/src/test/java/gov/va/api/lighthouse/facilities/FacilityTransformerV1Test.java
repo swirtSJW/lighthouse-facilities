@@ -449,34 +449,40 @@ public class FacilityTransformerV1Test {
             "transformFacilityBenefitsService", DatamartFacility.BenefitsService.class);
     transformDatmartFacilityBenefitsServiceMethod.setAccessible(true);
     DatamartFacility.BenefitsService nullBenefits = null;
-    assertThrows(
-        InvocationTargetException.class,
-        () -> transformDatmartFacilityBenefitsServiceMethod.invoke(null, nullBenefits));
+    assertThatThrownBy(
+            () -> transformDatmartFacilityBenefitsServiceMethod.invoke(null, nullBenefits))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(
+            new NullPointerException(
+                "datamartFacilityBenefitsService is marked non-null but is null"));
     final Method transformFacilityBenefitsServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityBenefitsService", Facility.BenefitsService.class);
     transformFacilityBenefitsServiceMethod.setAccessible(true);
     Facility.BenefitsService nullBenefitsV1 = null;
-    assertThrows(
-        InvocationTargetException.class,
-        () -> transformFacilityBenefitsServiceMethod.invoke(null, nullBenefitsV1));
+    assertThatThrownBy(() -> transformFacilityBenefitsServiceMethod.invoke(null, nullBenefitsV1))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(
+            new NullPointerException("facilityBenefitsService is marked non-null but is null"));
 
     final Method transformDatmartFacilityHealthServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityHealthService", DatamartFacility.HealthService.class);
     transformDatmartFacilityHealthServiceMethod.setAccessible(true);
     DatamartFacility.HealthService nullHealth = null;
-    assertThrows(
-        InvocationTargetException.class,
-        () -> transformDatmartFacilityHealthServiceMethod.invoke(null, nullHealth));
+    assertThatThrownBy(() -> transformDatmartFacilityHealthServiceMethod.invoke(null, nullHealth))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(
+            new NullPointerException(
+                "datamartFacilityHealthService is marked non-null but is null"));
     final Method transformFacilityHealthServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityHealthService", Facility.HealthService.class);
     transformFacilityHealthServiceMethod.setAccessible(true);
     Facility.HealthService nullHealthV1 = null;
-    assertThrows(
-        InvocationTargetException.class,
-        () -> transformFacilityHealthServiceMethod.invoke(null, nullHealthV1));
+    assertThatThrownBy(() -> transformFacilityHealthServiceMethod.invoke(null, nullHealthV1))
+        .isInstanceOf(InvocationTargetException.class)
+        .hasCause(new NullPointerException("facilityHealthService is marked non-null but is null"));
 
     final Method transformDatmartFacilityServicesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
