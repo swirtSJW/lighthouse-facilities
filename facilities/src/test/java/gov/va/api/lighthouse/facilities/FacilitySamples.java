@@ -75,10 +75,4 @@ public class FacilitySamples {
     assertThat(f).describedAs(id).isNotNull();
     return GeoFacilityTransformerV0.builder().facility(f).build().toGeoFacility();
   }
-
-  gov.va.api.lighthouse.facilities.api.v1.GeoFacility geoFacilityV1(String id) {
-    var fV1 = facilitiesV1.get(id);
-    assertThat(fV1).describedAs(id).isNotNull();
-    return GeoFacilityTransformerV1.builder().facility(fV1).build().toGeoFacility();
-  }
 }

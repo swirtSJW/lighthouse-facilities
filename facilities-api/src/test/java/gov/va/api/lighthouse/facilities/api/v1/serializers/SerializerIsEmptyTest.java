@@ -17,9 +17,6 @@ import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.Address;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.Addresses;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
 import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v1.Pagination;
@@ -497,111 +494,6 @@ public class SerializerIsEmptyTest {
             .facility(Facility.builder().type(Facility.Type.va_facilities).build())
             .build(),
         new FacilityReadResponseSerializer(),
-        mock(SerializerProvider.class));
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilitiesResponseIsEmpty() {
-    // Empty
-    assertIsEmptyUsingObjectSerializer(
-        null, new GeoFacilitiesResponseSerializer(), mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacilitiesResponse.builder().build(),
-        new GeoFacilitiesResponseSerializer(),
-        mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacilitiesResponse.builder().features(emptyList()).build(),
-        new GeoFacilitiesResponseSerializer(),
-        mock(SerializerProvider.class));
-    // Not empty
-    assertIsNotEmptyUsingObjectSerializer(
-        GeoFacilitiesResponse.builder().type(GeoFacilitiesResponse.Type.FeatureCollection).build(),
-        new GeoFacilitiesResponseSerializer(),
-        mock(SerializerProvider.class));
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilityIsEmpty() {
-    // Empty
-    assertIsEmptyUsingObjectSerializer(
-        null, new GeoFacilitySerializer(), mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacility.builder().build(), new GeoFacilitySerializer(), mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacility.builder().geometry(GeoFacility.Geometry.builder().build()).build(),
-        new GeoFacilitySerializer(),
-        mock(SerializerProvider.class));
-    // Not empty
-    assertIsNotEmptyUsingObjectSerializer(
-        GeoFacility.builder().type(GeoFacility.Type.Feature).build(),
-        new GeoFacilitySerializer(),
-        mock(SerializerProvider.class));
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilityPropertiesIsEmpty() {
-    // Empty
-    assertIsEmptyUsingObjectSerializer(
-        null, new PropertiesSerializer(), mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacility.Properties.builder().build(),
-        new PropertiesSerializer(),
-        mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacility.Properties.builder().id("   ").build(),
-        new PropertiesSerializer(),
-        mock(SerializerProvider.class));
-    // Not empty
-    assertIsNotEmptyUsingObjectSerializer(
-        GeoFacility.Properties.builder()
-            .facilityType(Facility.FacilityType.va_health_facility)
-            .build(),
-        new PropertiesSerializer(),
-        mock(SerializerProvider.class));
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilityReadResponseIsEmpty() {
-    // Empty
-    assertIsEmptyUsingObjectSerializer(
-        null, new GeoFacilityReadResponseSerializer(), mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacilityReadResponse.builder().build(),
-        new GeoFacilityReadResponseSerializer(),
-        mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacilityReadResponse.builder().geometry(GeoFacility.Geometry.builder().build()).build(),
-        new GeoFacilityReadResponseSerializer(),
-        mock(SerializerProvider.class));
-    // Not empty
-    assertIsNotEmptyUsingObjectSerializer(
-        GeoFacilityReadResponse.builder().type(GeoFacility.Type.Feature).build(),
-        new GeoFacilityReadResponseSerializer(),
-        mock(SerializerProvider.class));
-  }
-
-  @Test
-  @SneakyThrows
-  void geometryIsEmpty() {
-    // Empty
-    assertIsEmptyUsingObjectSerializer(
-        null, new GeometrySerializer(), mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacility.Geometry.builder().build(),
-        new GeometrySerializer(),
-        mock(SerializerProvider.class));
-    assertIsEmptyUsingObjectSerializer(
-        GeoFacility.Geometry.builder().coordinates(emptyList()).build(),
-        new GeometrySerializer(),
-        mock(SerializerProvider.class));
-    // Not empty
-    assertIsNotEmptyUsingObjectSerializer(
-        GeoFacility.Geometry.builder().type(GeoFacility.GeometryType.Point).build(),
-        new GeometrySerializer(),
         mock(SerializerProvider.class));
   }
 

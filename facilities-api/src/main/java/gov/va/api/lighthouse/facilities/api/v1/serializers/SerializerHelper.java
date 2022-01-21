@@ -6,8 +6,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonStreamContext;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +24,8 @@ public class SerializerHelper {
     if (obj instanceof Facility) {
       return Optional.ofNullable(((Facility) obj).id());
     }
-    if (obj instanceof GeoFacility.Properties) {
-      return Optional.ofNullable(((GeoFacility.Properties) obj).id());
-    }
-    if (obj instanceof GeoFacility) {
-      return Optional.ofNullable(((GeoFacility) obj).properties()).map(x -> x.id());
-    }
     if (obj instanceof FacilityReadResponse) {
       return Optional.ofNullable(((FacilityReadResponse) obj).facility()).map(x -> x.id());
-    }
-    if (obj instanceof GeoFacilityReadResponse) {
-      return Optional.ofNullable(((GeoFacilityReadResponse) obj).properties()).map(x -> x.id());
     }
     if (obj instanceof NearbyResponse.Nearby) {
       return Optional.ofNullable(((NearbyResponse.Nearby) obj).id());

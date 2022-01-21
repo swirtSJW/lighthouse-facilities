@@ -3,14 +3,8 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV1.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -25,23 +19,12 @@ import org.junit.jupiter.api.Test;
  * whitespace.
  */
 public class SerializationV1Test {
+
   @Test
   @SneakyThrows
   void all() {
-    GeoFacilitiesResponse actual =
-        createMapper()
-            .readValue(getClass().getResourceAsStream("/v1/all.json"), GeoFacilitiesResponse.class);
-    assertThat(actual).isExactlyInstanceOf(GeoFacilitiesResponse.class);
-    ObjectNode expected =
-        (ObjectNode) createMapper().readTree(getClass().getResourceAsStream("/v1/all.json"));
-    ArrayNode expectedFeatures = (ArrayNode) expected.get("features");
-    for (int i = 0; i < expectedFeatures.size(); i++) {
-      JsonNode expectedFeature = expectedFeatures.get(i);
-      GeoFacility actualNode = actual.features().get(i);
-      assertThat(createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(actualNode))
-          .isEqualTo(
-              createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(expectedFeature));
-    }
+    String path = "/v1/all.json";
+    roundTrip(path, FacilitiesResponse.class);
   }
 
   @Test
@@ -60,23 +43,9 @@ public class SerializationV1Test {
 
   @Test
   @SneakyThrows
-  void readBenefitsGeoJson() {
-    String path = "/v1/read-benefits-geojson.json";
-    roundTrip(path, GeoFacilityReadResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
   void readCemetery() {
     String path = "/v1/read-cemetery.json";
     roundTrip(path, FacilityReadResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
-  void readCemeteryGeoJson() {
-    String path = "/v1/read-cemetery-geojson.json";
-    roundTrip(path, GeoFacilityReadResponse.class);
   }
 
   @Test
@@ -88,13 +57,6 @@ public class SerializationV1Test {
 
   @Test
   @SneakyThrows
-  void readHealthGeoJson() {
-    String path = "/v1/read-health-geojson.json";
-    roundTrip(path, GeoFacilityReadResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
   void readStateCemetery() {
     String path = "/v1/read-state-cemetery.json";
     roundTrip(path, FacilityReadResponse.class);
@@ -102,23 +64,9 @@ public class SerializationV1Test {
 
   @Test
   @SneakyThrows
-  void readStateCemeteryGeoJson() {
-    String path = "/v1/read-state-cemetery-geojson.json";
-    roundTrip(path, GeoFacilityReadResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
   void readVetCenter() {
     String path = "/v1/read-vet-center.json";
     roundTrip(path, FacilityReadResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
-  void readVetCenterGeoJson() {
-    String path = "/v1/read-vet-center-geojson.json";
-    roundTrip(path, GeoFacilityReadResponse.class);
   }
 
   @SneakyThrows
@@ -142,23 +90,9 @@ public class SerializationV1Test {
 
   @Test
   @SneakyThrows
-  void searchByBboxGeoJson() {
-    String path = "/v1/search-bbox-geojson.json";
-    roundTrip(path, GeoFacilitiesResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
   void searchByIds() {
     String path = "/v1/search-ids.json";
     roundTrip(path, FacilitiesResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
-  void searchByIdsGeoJson() {
-    String path = "/v1/search-ids-geojson.json";
-    roundTrip(path, GeoFacilitiesResponse.class);
   }
 
   @Test
@@ -170,13 +104,6 @@ public class SerializationV1Test {
 
   @Test
   @SneakyThrows
-  void searchByLatLongGeoJson() {
-    String path = "/v1/search-lat-long-geojson.json";
-    roundTrip(path, GeoFacilitiesResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
   void searchByState() {
     String path = "/v1/search-state.json";
     roundTrip(path, FacilitiesResponse.class);
@@ -184,22 +111,8 @@ public class SerializationV1Test {
 
   @Test
   @SneakyThrows
-  void searchByStateGeoJson() {
-    String path = "/v1/search-state-geojson.json";
-    roundTrip(path, GeoFacilitiesResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
   void searchByZip() {
     String path = "/v1/search-zip.json";
     roundTrip(path, FacilitiesResponse.class);
-  }
-
-  @Test
-  @SneakyThrows
-  void searchByZipGeoJson() {
-    String path = "/v1/search-zip-geojson.json";
-    roundTrip(path, GeoFacilitiesResponse.class);
   }
 }

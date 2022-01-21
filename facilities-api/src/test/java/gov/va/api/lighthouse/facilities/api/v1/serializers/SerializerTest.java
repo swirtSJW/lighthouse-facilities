@@ -14,9 +14,6 @@ import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacility;
-import gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
 import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v1.Pagination;
@@ -400,66 +397,6 @@ public class SerializerTest {
 
   @Test
   @SneakyThrows
-  void serializeGeoFacilitiesReadResponse() {
-    // Empty
-    GeoFacilityReadResponse response = GeoFacilityReadResponse.builder().build();
-    assertJsonIsEmpty(response);
-    response =
-        GeoFacilityReadResponse.builder().geometry(GeoFacility.Geometry.builder().build()).build();
-    assertJsonIsEmpty(response);
-    // Not empty
-    response = GeoFacilityReadResponse.builder().type(GeoFacility.Type.Feature).build();
-    assertJson(response, "{\"type\":\"Feature\"}");
-  }
-
-  @Test
-  @SneakyThrows
-  void serializeGeoFacilitiesResponse() {
-    // Empty
-    GeoFacilitiesResponse geoFacility = GeoFacilitiesResponse.builder().build();
-    assertJsonIsEmpty(geoFacility);
-    geoFacility = GeoFacilitiesResponse.builder().features(emptyList()).build();
-    assertJsonIsEmpty(geoFacility);
-    // Not empty
-    geoFacility =
-        GeoFacilitiesResponse.builder().type(GeoFacilitiesResponse.Type.FeatureCollection).build();
-    assertJson(geoFacility, "{\"type\":\"FeatureCollection\"}");
-  }
-
-  @Test
-  @SneakyThrows
-  void serializeGeoFacility() {
-    // Empty
-    GeoFacility geoFacility = GeoFacility.builder().build();
-    assertJsonIsEmpty(geoFacility);
-    geoFacility = GeoFacility.builder().geometry(GeoFacility.Geometry.builder().build()).build();
-    assertJsonIsEmpty(geoFacility);
-    // Not empty
-    geoFacility =
-        GeoFacility.builder()
-            .properties(
-                GeoFacility.Properties.builder()
-                    .facilityType(Facility.FacilityType.va_health_facility)
-                    .build())
-            .build();
-    assertJson(geoFacility, "{\"properties\":{\"facility_type\":\"va_health_facility\"}}");
-  }
-
-  @Test
-  @SneakyThrows
-  void serializeGeometry() {
-    // Empty
-    GeoFacility.Geometry geometry = GeoFacility.Geometry.builder().build();
-    assertJsonIsEmpty(geometry);
-    geometry = GeoFacility.Geometry.builder().coordinates(emptyList()).build();
-    assertJsonIsEmpty(geometry);
-    // Not empty
-    geometry = GeoFacility.Geometry.builder().type(GeoFacility.GeometryType.Point).build();
-    assertJson(geometry, "{\"type\":\"Point\"}");
-  }
-
-  @Test
-  @SneakyThrows
   void serializeHours() {
     // Empty
     Facility.Hours hours = Facility.Hours.builder().build();
@@ -591,28 +528,6 @@ public class SerializerTest {
     // Not empty
     phone = Facility.Phone.builder().main("202-555-1212").build();
     assertJson(phone, "{\"main\":\"202-555-1212\"}");
-  }
-
-  @Test
-  @SneakyThrows
-  void serializeProperties() {
-    // Empty
-    GeoFacility.Properties properties = GeoFacility.Properties.builder().build();
-    assertJsonIsEmpty(properties);
-    properties = GeoFacility.Properties.builder().id("   ").build();
-    assertJsonIsEmpty(properties);
-    properties =
-        GeoFacility.Properties.builder()
-            .address(
-                Facility.Addresses.builder().mailing(Facility.Address.builder().build()).build())
-            .build();
-    assertJsonIsEmpty(properties);
-    // Not empty
-    properties =
-        GeoFacility.Properties.builder()
-            .facilityType(Facility.FacilityType.va_health_facility)
-            .build();
-    assertJson(properties, "{\"facility_type\":\"va_health_facility\"}");
   }
 
   @Test

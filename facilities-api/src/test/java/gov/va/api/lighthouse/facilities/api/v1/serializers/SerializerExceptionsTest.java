@@ -242,61 +242,6 @@ public class SerializerExceptionsTest {
 
   @Test
   @SneakyThrows
-  void geoFacilitiesResponseExceptions() {
-    assertNpeThrown(
-        null,
-        new GeoFacilitiesResponseSerializer(),
-        mock(JsonGenerator.class),
-        mock(SerializerProvider.class),
-        "Cannot invoke \"gov.va.api.lighthouse.facilities.api.v1.GeoFacilitiesResponse.type()\" because \"value\" is null");
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilityExceptions() {
-    assertNpeThrown(
-        null,
-        new GeoFacilitySerializer(),
-        mock(JsonGenerator.class),
-        mock(SerializerProvider.class),
-        "Cannot invoke \"gov.va.api.lighthouse.facilities.api.v1.GeoFacility.type()\" because \"value\" is null");
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilityPropertiesExceptions() {
-    assertNpeThrown(
-        null,
-        new PropertiesSerializer(),
-        mock(JsonGenerator.class),
-        mock(SerializerProvider.class),
-        "Cannot invoke \"gov.va.api.lighthouse.facilities.api.v1.GeoFacility$Properties.id()\" because \"value\" is null");
-  }
-
-  @Test
-  @SneakyThrows
-  void geoFacilityReadResponseExceptions() {
-    assertNpeThrown(
-        null,
-        new GeoFacilityReadResponseSerializer(),
-        mock(JsonGenerator.class),
-        mock(SerializerProvider.class),
-        "Cannot invoke \"gov.va.api.lighthouse.facilities.api.v1.GeoFacilityReadResponse.type()\" because \"value\" is null");
-  }
-
-  @Test
-  @SneakyThrows
-  void geometryExceptions() {
-    assertNpeThrown(
-        null,
-        new GeometrySerializer(),
-        mock(JsonGenerator.class),
-        mock(SerializerProvider.class),
-        "Cannot invoke \"gov.va.api.lighthouse.facilities.api.v1.GeoFacility$Geometry.type()\" because \"value\" is null");
-  }
-
-  @Test
-  @SneakyThrows
   void hoursExceptions() {
     assertNpeThrown(
         null,
