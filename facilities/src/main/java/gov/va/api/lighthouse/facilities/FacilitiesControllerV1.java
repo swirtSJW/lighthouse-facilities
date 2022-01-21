@@ -46,8 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/v1")
 public class FacilitiesControllerV1 {
-
-  private static final FacilityOverlayV1 FACILITY_OVERLAY = FacilityOverlayV1.builder().build();
+  private static FacilityOverlayV1 facilityOverlay = FacilityOverlayV1.builder().build();
 
   private final FacilityRepository facilityRepository;
 
@@ -63,11 +62,12 @@ public class FacilitiesControllerV1 {
     String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
     linkerUrl = url + path + "v1/";
+    facilityOverlay.linkerUrl(linkerUrl);
   }
 
   @SneakyThrows
   private static Facility facility(HasFacilityPayload entity) {
-    return FACILITY_OVERLAY.apply(entity);
+    return facilityOverlay.apply(entity);
   }
 
   /** Get all facilities. */

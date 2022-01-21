@@ -10,16 +10,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import lombok.Builder;
+import lombok.Data;
 import lombok.SneakyThrows;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
+@Data
 @Builder
-@Value
 @Slf4j
 public class FacilityOverlayV1 implements Function<HasFacilityPayload, Facility> {
   private static final ObjectMapper DATAMART_MAPPER =
       DatamartFacilitiesJacksonConfig.createMapper();
+
+  private String linkerUrl;
 
   private static void applyCmsOverlayServices(Facility facility, Set<String> overlayServices) {
     if (overlayServices == null) {
@@ -57,9 +59,12 @@ public class FacilityOverlayV1 implements Function<HasFacilityPayload, Facility>
   @Override
   @SneakyThrows
   public Facility apply(HasFacilityPayload entity) {
-    Facility facility =
-        FacilityTransformerV1.toFacility(
-            DATAMART_MAPPER.readValue(entity.facility(), DatamartFacility.class));
+    DatamartFacility df = DATAMART_MAPPER.readValue(entity.facility(), DatamartFacility.class);
+    Facility facility = FacilityTransformerV1.toFacility(df);
+
+    facility
+        .attributes()
+        .parent(FacilityTransformerV1.toFacilityParent(df.attributes().parentId(), linkerUrl));
 
     if (facility.attributes().operatingStatus() == null) {
       facility

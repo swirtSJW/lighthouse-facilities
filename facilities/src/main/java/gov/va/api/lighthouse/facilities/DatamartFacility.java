@@ -204,6 +204,8 @@ public class DatamartFacility {
 
     String visn;
 
+    String parentId;
+
     public static final class FacilityAttributesBuilder {
       @JsonProperty("operationalHoursSpecialInstructions")
       public FacilityAttributes.FacilityAttributesBuilder instructions(String val) {

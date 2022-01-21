@@ -40,7 +40,11 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "1"
+        "visn" : "1",
+        "parent" : {
+          "id" : "vc_0101",
+          "link" : "http://localhost:8085/v1/facilities/vc_0101"
+        }
       }
     },
     {
@@ -418,7 +422,11 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "16"
+        "visn" : "16",
+        "parent" : {
+          "id" : "vha_586",
+          "link" : "http://localhost:8085/v1/facilities/vha_586GA"
+        }
       }
     },
     {
@@ -492,7 +500,11 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "16"
+        "visn" : "16",
+        "parent" : {
+          "id" : "vha_586",
+          "link" : "http://localhost:8085/v1/facilities/vha_586GA"
+        }
       }
     }
   ],

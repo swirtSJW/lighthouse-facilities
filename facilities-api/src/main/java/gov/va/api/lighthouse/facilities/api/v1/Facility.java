@@ -16,6 +16,7 @@ import gov.va.api.lighthouse.facilities.api.v1.serializers.FacilityAttributesSer
 import gov.va.api.lighthouse.facilities.api.v1.serializers.FacilitySerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.HoursSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.OperatingStatusSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.ParentSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.PatientSatisfactionSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.PatientWaitTimeSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.PhoneSerializer;
@@ -212,7 +213,8 @@ public final class Facility implements CanBeEmpty {
     "active_status",
     "operating_status",
     "detailed_services",
-    "visn"
+    "visn",
+    "parent"
   })
   @Schema(nullable = true)
   public static final class FacilityAttributes implements CanBeEmpty {
@@ -297,6 +299,8 @@ public final class Facility implements CanBeEmpty {
     @Schema(example = "20", nullable = true)
     String visn;
 
+    @Valid Parent parent;
+
     /** Empty elements will be omitted from JSON serialization. */
     @JsonIgnore
     public boolean isEmpty() {
@@ -317,7 +321,8 @@ public final class Facility implements CanBeEmpty {
           && ObjectUtils.isEmpty(mobile())
           && ObjectUtils.isEmpty(activeStatus())
           && ObjectUtils.isEmpty(operatingStatus())
-          && isBlank(visn());
+          && isBlank(visn())
+          && (parent() == null || parent().isEmpty());
     }
 
     public static final class FacilityAttributesBuilder {
@@ -330,9 +335,25 @@ public final class Facility implements CanBeEmpty {
 
   @Data
   @Builder
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = ParentSerializer.class)
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  public static final class Parent implements CanBeEmpty {
+    String id;
+
+    String link;
+
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(id()) && isBlank(link());
+    }
+  }
+
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = HoursSerializer.class)
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
   @Schema(
       description =

@@ -127,6 +127,7 @@ public class FacilitiesCollector {
                 .map(t -> t.toInstant())
                 .orElse(null))
         .operationalHoursSpecialInstructions(rs.getString("OPERATIONALHOURSSPECIALINSTRUCTIONS"))
+        .parentStationNumber(rs.getString("PAR_STA_NO"))
         .build();
   }
 
@@ -235,7 +236,8 @@ public class FacilitiesCollector {
                     + "POD,"
                     + "MOBILE,"
                     + "VISN,"
-                    + "LASTUPDATED"
+                    + "LASTUPDATED,"
+                    + "PAR_STA_NO"
                     + " FROM App.Vast",
                 (rs, rowNum) -> toVastEntity(rs)));
     log.info(

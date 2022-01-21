@@ -40,6 +40,7 @@ public class FacilityAttributesSerializer extends NonEmptySerializer<FacilityAtt
     writeNonEmpty(jgen, "active_status", value.activeStatus());
     writeNonEmpty(jgen, "operating_status", value.operatingStatus());
     writeNonEmpty(jgen, "visn", value.visn());
+    writeNonEmpty(jgen, "parent", value.parent());
     jgen.writeEndObject();
   }
 }

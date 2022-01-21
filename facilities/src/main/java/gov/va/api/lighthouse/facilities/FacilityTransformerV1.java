@@ -71,6 +71,14 @@ public class FacilityTransformerV1 {
         : null;
   }
 
+  /** Transform DatamartFacility operating status to version 1 facility operating status. */
+  public static Facility.Parent toFacilityParent(String datamartParentId, String linkerUrl) {
+    if (datamartParentId == null) {
+      return null;
+    }
+    return Facility.Parent.builder().id(datamartParentId).link(linkerUrl + "facilities/" + datamartParentId).build();
+  }
+
   /** Transform version 1 facility to DatamartFacility for persistence. */
   public static DatamartFacility toVersionAgnostic(@NonNull Facility f) {
     return DatamartFacility.builder()
@@ -93,6 +101,7 @@ public class FacilityTransformerV1 {
                     .services(transformFacilityServices(f.attributes().services()))
                     .activeStatus(transformFacilityActiveStatus(f.attributes().activeStatus()))
                     .visn(f.attributes().visn())
+                    .parentId(toVersionAgnosticFacilityParent(f.attributes().parent()))
                     .satisfaction(transformFacilitySatisfaction(f.attributes().satisfaction()))
                     .waitTimes(transformFacilityWaitTimes(f.attributes().waitTimes()))
                     .operatingStatus(
@@ -135,6 +144,11 @@ public class FacilityTransformerV1 {
     } else {
       return null;
     }
+  }
+
+  /** Transform DatamartFacility operating status to version 1 facility operating status. */
+  public static String toVersionAgnosticFacilityParent(Facility.Parent parent) {
+    return parent != null ? parent.id() : null;
   }
 
   /** Transform DatamartFacility active status to version 1 facility active status. */
