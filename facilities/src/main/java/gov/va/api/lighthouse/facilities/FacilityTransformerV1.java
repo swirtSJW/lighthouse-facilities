@@ -76,7 +76,10 @@ public class FacilityTransformerV1 {
     if (datamartParentId == null) {
       return null;
     }
-    return Facility.Parent.builder().id(datamartParentId).link(linkerUrl).build();
+    return Facility.Parent.builder()
+        .id(datamartParentId)
+        .link(linkerUrl + "facilities/" + datamartParentId)
+        .build();
   }
 
   /** Transform version 1 facility to DatamartFacility for persistence. */
