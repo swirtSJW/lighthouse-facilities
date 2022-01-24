@@ -148,7 +148,8 @@ public class DatamartFacility {
     "active_status",
     "operating_status",
     "detailed_services",
-    "visn"
+    "visn",
+    "parentId"
   })
   public static final class FacilityAttributes {
     @NotNull String name;

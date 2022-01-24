@@ -439,7 +439,7 @@ public class FacilityTransformerV1Test {
         .attributes()
         .parent(
             FacilityTransformerV1.toFacilityParent(
-                df.attributes().parentId(), "http://localhost:8085/v1/facilities/vha_123"));
+                df.attributes().parentId(), "http://localhost:8085/v1/"));
     assertThat(actual).usingRecursiveComparison().isEqualTo(facility);
   }
 
@@ -624,8 +624,7 @@ public class FacilityTransformerV1Test {
         .attributes()
         .parent(
             FacilityTransformerV1.toFacilityParent(
-                datamartFacility.attributes().parentId(),
-                "http://localhost:8085/v1/facilities/vha_123"));
+                datamartFacility.attributes().parentId(), "http://localhost:8085/v1/"));
     assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
   }
 
