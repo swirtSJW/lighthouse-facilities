@@ -267,10 +267,7 @@ final class HealthTransformer {
   }
 
   private String parentId() {
-    if (allBlank(vast.parentStationNumber())) {
-      return null;
-    }
-    return "vha_" + vast.parentStationNumber();
+    return allBlank(vast.parentStationNumber()) ? null : "vha_" + vast.parentStationNumber();
   }
 
   private Phone phone() {

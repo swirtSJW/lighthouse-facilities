@@ -133,10 +133,7 @@ final class VetCenterTransformer {
   }
 
   private String parentId() {
-    if (allBlank(vast.parentStationNumber())) {
-      return null;
-    }
-    return "vc_" + vast.parentStationNumber();
+    return allBlank(vast.parentStationNumber()) ? null : "vc_" + vast.parentStationNumber();
   }
 
   private Phone phone() {
