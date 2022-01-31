@@ -12,7 +12,6 @@ public class SystemDefinition {
   private Service lab() {
     return Service.builder()
         .url(SentinelProperties.optionUrl("facilities", "https://blue.lab.lighthouse.va.gov"))
-        .port(443)
         .apiPath(SentinelProperties.optionApiPath("facilities", "/va_facilities/"))
         .build();
   }
@@ -20,7 +19,6 @@ public class SystemDefinition {
   private Service local() {
     return Service.builder()
         .url(SentinelProperties.optionUrl("facilities", "http://localhost:8085"))
-        .port(8085)
         .apiPath(SentinelProperties.optionApiPath("facilities", "/"))
         .build();
   }
@@ -29,7 +27,6 @@ public class SystemDefinition {
     return Service.builder()
         .url(
             SentinelProperties.optionUrl("facilities", "https://blue.production.lighthouse.va.gov"))
-        .port(443)
         .apiPath(SentinelProperties.optionApiPath("facilities", "/va_facilities/"))
         .build();
   }
@@ -37,7 +34,6 @@ public class SystemDefinition {
   private Service qa() {
     return Service.builder()
         .url(SentinelProperties.optionUrl("facilities", "https://blue.qa.lighthouse.va.gov"))
-        .port(443)
         .apiPath(SentinelProperties.optionApiPath("facilities", "/va_facilities/"))
         .build();
   }
@@ -45,7 +41,6 @@ public class SystemDefinition {
   private Service staging() {
     return Service.builder()
         .url(SentinelProperties.optionUrl("facilities", "https://blue.staging.lighthouse.va.gov"))
-        .port(443)
         .apiPath(SentinelProperties.optionApiPath("facilities", "/va_facilities/"))
         .build();
   }
@@ -55,7 +50,6 @@ public class SystemDefinition {
         .url(
             SentinelProperties.optionUrl(
                 "facilities", "https://blue.staging-lab.lighthouse.va.gov"))
-        .port(443)
         .apiPath(SentinelProperties.optionApiPath("facilities", "/va_facilities/"))
         .build();
   }
@@ -84,9 +78,6 @@ public class SystemDefinition {
   @Builder
   public static class Service {
     @NonNull String url;
-
-    @NonNull Integer port;
-
     @NonNull String apiPath;
   }
 }
