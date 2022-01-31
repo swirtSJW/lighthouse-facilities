@@ -304,7 +304,9 @@ public class FacilityTransformerV1Test {
         .parent(
             FacilityTransformerV1.toFacilityParent(
                 datamartFacility.attributes().parentId(),
-                "http://localhost:8085/v1/facilities/vha_123"));
+                SystemDefinition.systemDefinition().url()
+                    + SystemDefinition.systemDefinition().apiPath()
+                    + "v1/"));
     assertThat(datamartFacility).hasFieldOrProperty("attributes.detailedServices");
     assertThatThrownBy(() -> assertThat(facility).hasFieldOrProperty("attributes.detailedServices"))
         .isInstanceOf(AssertionError.class);
@@ -384,7 +386,10 @@ public class FacilityTransformerV1Test {
                 .parent(
                     Facility.Parent.builder()
                         .id("vha_123")
-                        .link("http://localhost:8085/v1/facilities/vha_123")
+                        .link(
+                            SystemDefinition.systemDefinition().url()
+                                + SystemDefinition.systemDefinition().apiPath()
+                                + "v1/facilities/vha_123")
                         .build())
                 .satisfaction(
                     Facility.Satisfaction.builder()
@@ -439,7 +444,10 @@ public class FacilityTransformerV1Test {
         .attributes()
         .parent(
             FacilityTransformerV1.toFacilityParent(
-                df.attributes().parentId(), "http://localhost:8085/v1/"));
+                df.attributes().parentId(),
+                SystemDefinition.systemDefinition().url()
+                    + SystemDefinition.systemDefinition().apiPath()
+                    + "v1/"));
     assertThat(actual).usingRecursiveComparison().isEqualTo(facility);
   }
 
@@ -624,7 +632,10 @@ public class FacilityTransformerV1Test {
         .attributes()
         .parent(
             FacilityTransformerV1.toFacilityParent(
-                datamartFacility.attributes().parentId(), "http://localhost:8085/v1/"));
+                datamartFacility.attributes().parentId(),
+                SystemDefinition.systemDefinition().url()
+                    + SystemDefinition.systemDefinition().apiPath()
+                    + "v1/"));
     assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
   }
 
