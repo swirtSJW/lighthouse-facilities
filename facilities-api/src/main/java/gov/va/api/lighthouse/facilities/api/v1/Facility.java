@@ -194,28 +194,6 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = FacilityAttributesSerializer.class)
-  @JsonPropertyOrder({
-    "name",
-    "facility_type",
-    "classification",
-    "website",
-    "lat",
-    "long",
-    "time_zone",
-    "address",
-    "phone",
-    "hours",
-    "operational_hours_special_instructions",
-    "services",
-    "satisfaction",
-    "wait_times",
-    "mobile",
-    "active_status",
-    "operating_status",
-    "detailed_services",
-    "visn",
-    "parent"
-  })
   @Schema(nullable = true)
   public static final class FacilityAttributes implements CanBeEmpty {
     @NotNull

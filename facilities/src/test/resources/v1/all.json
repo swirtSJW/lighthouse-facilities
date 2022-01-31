@@ -6,6 +6,10 @@
       "attributes" : {
         "name" : "Boston Vet Center",
         "facility_type" : "vet_center",
+        "parent" : {
+          "id" : "vc_0101",
+          "link" : "http://localhost:8085/v1/facilities/vc_0101"
+        },
         "website" : "https://www.va.gov/boston-vet-center/",
         "lat" : 42.3445959,
         "long" : -71.03610511,
@@ -40,11 +44,7 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "1",
-        "parent" : {
-          "id" : "vc_0101",
-          "link" : "http://localhost:8085/v1/facilities/vc_0101"
-        }
+        "visn" : "1"
       }
     },
     {
@@ -351,6 +351,10 @@
         "name" : "Columbus VA Clinic",
         "facility_type" : "va_health_facility",
         "classification" : "Primary Care CBOC",
+        "parent" : {
+          "id" : "vha_586",
+          "link" : "http://localhost:8085/v1/facilities/vha_586GA"
+        },
         "website" : "https://www.va.gov/jackson-health-care/locations/columbus-va-clinic/",
         "lat" : 33.493273,
         "long" : -88.36569092,
@@ -422,11 +426,7 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "16",
-        "parent" : {
-          "id" : "vha_586",
-          "link" : "http://localhost:8085/v1/facilities/vha_586GA"
-        }
+        "visn" : "16"
       }
     },
     {
@@ -436,6 +436,10 @@
         "name" : "McComb VA Clinic",
         "facility_type" : "va_health_facility",
         "classification" : "Primary Care CBOC",
+        "parent" : {
+          "id" : "vha_586",
+          "link" : "http://localhost:8085/v1/facilities/vha_586GA"
+        },
         "website" : "https://www.va.gov/jackson-health-care/locations/mccomb-va-clinic/",
         "lat" : 31.24942827,
         "long" : -90.46808065,
@@ -500,11 +504,7 @@
         "operating_status" : {
           "code" : "NORMAL"
         },
-        "visn" : "16",
-        "parent" : {
-          "id" : "vha_586",
-          "link" : "http://localhost:8085/v1/facilities/vha_586GA"
-        }
+        "visn" : "16"
       }
     }
   ],

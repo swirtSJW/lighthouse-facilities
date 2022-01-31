@@ -22,6 +22,7 @@ public class FacilityAttributesSerializer extends NonEmptySerializer<FacilityAtt
     writeNonEmpty(jgen, "name", value.name());
     writeNonEmpty(jgen, "facility_type", value.facilityType());
     writeNonEmpty(jgen, "classification", value.classification());
+    writeNonEmpty(jgen, "parent", value.parent());
     writeNonEmpty(jgen, "website", value.website());
     writeNonEmpty(jgen, "lat", value.latitude());
     writeNonEmpty(jgen, "long", value.longitude());
@@ -40,7 +41,7 @@ public class FacilityAttributesSerializer extends NonEmptySerializer<FacilityAtt
     writeNonEmpty(jgen, "active_status", value.activeStatus());
     writeNonEmpty(jgen, "operating_status", value.operatingStatus());
     writeNonEmpty(jgen, "visn", value.visn());
-    writeNonEmpty(jgen, "parent", value.parent());
+
     jgen.writeEndObject();
   }
 }
