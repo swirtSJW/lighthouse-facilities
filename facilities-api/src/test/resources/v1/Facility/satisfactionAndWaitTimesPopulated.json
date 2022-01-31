@@ -6,24 +6,24 @@
         "zip" : "20422-0001",
         "city" : "Washington",
         "state" : "DC",
-        "address_1" : "50 Irving Street, Northwest",
-        "address_2" : "Bldg 2",
-        "address_3" : "Suite 7"
+        "address1" : "50 Irving Street, Northwest",
+        "address2" : "Bldg 2",
+        "address3" : "Suite 7"
       }
     },
     "satisfaction" : {
       "health" : {
-        "primary_care_urgent" : 10
+        "primaryCareUrgent" : 10
       },
-      "effective_date" : "2022-01-13"
+      "effectiveDate" : "2022-01-13"
     },
-    "wait_times" : {
+    "waitTimes" : {
       "health" : [
         {
           "new" : 1
         }
       ],
-      "effective_date" : "2022-01-13"
+      "effectiveDate" : "2022-01-13"
     }
   }
 }

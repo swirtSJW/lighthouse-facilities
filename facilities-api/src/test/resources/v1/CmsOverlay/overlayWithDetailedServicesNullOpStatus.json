@@ -2,8 +2,8 @@
   "detailedServices" : [
     {
       "name" : "Cardiology",
-      "appointment_leadin" : "Your VA health care team will contact you if you...more text",
-      "appointment_phones" : [
+      "appointmentLeadIn" : "Your VA health care team will contact you if you...more text",
+      "appointmentPhones" : [
         {
           "extension" : "123",
           "label" : "Main phone",
@@ -11,23 +11,23 @@
           "type" : "tel"
         }
       ],
-      "online_scheduling_available" : "True",
-      "referral_required" : "True",
-      "walk_ins_accepted" : "False",
-      "service_locations" : [
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "True",
+      "walkInsAccepted" : "False",
+      "serviceLocations" : [
         {
-          "service_location_address" : {
-            "building_name_number" : "Baxter Building",
-            "clinic_name" : "Baxter Clinic",
-            "wing_floor_or_room_number" : "Wing East",
-            "address_line1" : "122 Main St.",
-            "address_line2" : "West Side Apt# 227",
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "Baxter Building",
+            "clinicName" : "Baxter Clinic",
+            "wingFloorOrRoomNumber" : "Wing East",
+            "addressLine1" : "122 Main St.",
+            "addressLine2" : "West Side Apt# 227",
             "city" : "Rochester",
             "state" : "NY",
-            "zip_code" : "14623-1345",
-            "country_code" : "US"
+            "zipCode" : "14623-1345",
+            "countryCode" : "US"
           },
-          "appointment_phones" : [
+          "appointmentPhones" : [
             {
               "extension" : "567",
               "label" : "Alt phone",
@@ -35,20 +35,20 @@
               "type" : "tel"
             }
           ],
-          "email_contacts" : [
+          "emailContacts" : [
             {
-              "email_address" : "georgea@va.gov",
-              "email_label" : "George Anderson"
+              "emailAddress" : "georgea@va.gov",
+              "emailLabel" : "George Anderson"
             }
           ],
-          "facility_service_hours" : {
-            "Monday" : "8:30AM-7:00PM",
-            "Tuesday" : "8:30AM-7:00PM",
-            "Wednesday" : "8:30AM-7:00PM",
-            "Thursday" : "8:30AM-7:00PM",
-            "Friday" : "8:30AM-7:00PM",
-            "Saturday" : "8:30AM-7:00PM",
-            "Sunday" : "CLOSED"
+          "facilityServiceHours" : {
+            "monday" : "8:30AM-7:00PM",
+            "tuesday" : "8:30AM-7:00PM",
+            "wednesday" : "8:30AM-7:00PM",
+            "thursday" : "8:30AM-7:00PM",
+            "friday" : "8:30AM-7:00PM",
+            "saturday" : "8:30AM-7:00PM",
+            "sunday" : "CLOSED"
           }
         }
       ],
@@ -56,8 +56,8 @@
     },
     {
       "name" : "CaregiverSupport",
-      "appointment_leadin" : "Your VA health care team will contact you if you...more text",
-      "appointment_phones" : [
+      "appointmentLeadIn" : "Your VA health care team will contact you if you...more text",
+      "appointmentPhones" : [
         {
           "extension" : "123",
           "label" : "Main phone",
@@ -65,23 +65,23 @@
           "type" : "tel"
         }
       ],
-      "online_scheduling_available" : "True",
-      "referral_required" : "True",
-      "walk_ins_accepted" : "False",
-      "service_locations" : [
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "True",
+      "walkInsAccepted" : "False",
+      "serviceLocations" : [
         {
-          "service_location_address" : {
-            "building_name_number" : "Baxter Building",
-            "clinic_name" : "Baxter Clinic",
-            "wing_floor_or_room_number" : "Wing East",
-            "address_line1" : "122 Main St.",
-            "address_line2" : "West Side Apt# 227",
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "Baxter Building",
+            "clinicName" : "Baxter Clinic",
+            "wingFloorOrRoomNumber" : "Wing East",
+            "addressLine1" : "122 Main St.",
+            "addressLine2" : "West Side Apt# 227",
             "city" : "Rochester",
             "state" : "NY",
-            "zip_code" : "14623-1345",
-            "country_code" : "US"
+            "zipCode" : "14623-1345",
+            "countryCode" : "US"
           },
-          "appointment_phones" : [
+          "appointmentPhones" : [
             {
               "extension" : "567",
               "label" : "Alt phone",
@@ -89,20 +89,20 @@
               "type" : "tel"
             }
           ],
-          "email_contacts" : [
+          "emailContacts" : [
             {
-              "email_address" : "georgea@va.gov",
-              "email_label" : "George Anderson"
+              "emailAddress" : "georgea@va.gov",
+              "emailLabel" : "George Anderson"
             }
           ],
-          "facility_service_hours" : {
-            "Monday" : "8:30AM-7:00PM",
-            "Tuesday" : "8:30AM-7:00PM",
-            "Wednesday" : "8:30AM-7:00PM",
-            "Thursday" : "8:30AM-7:00PM",
-            "Friday" : "8:30AM-7:00PM",
-            "Saturday" : "8:30AM-7:00PM",
-            "Sunday" : "CLOSED"
+          "facilityServiceHours" : {
+            "monday" : "8:30AM-7:00PM",
+            "tuesday" : "8:30AM-7:00PM",
+            "wednesday" : "8:30AM-7:00PM",
+            "thursday" : "8:30AM-7:00PM",
+            "friday" : "8:30AM-7:00PM",
+            "saturday" : "8:30AM-7:00PM",
+            "sunday" : "CLOSED"
           }
         }
       ],
@@ -110,8 +110,8 @@
     },
     {
       "name" : "EmergencyCare",
-      "appointment_leadin" : "Your VA health care team will contact you if you...more text",
-      "appointment_phones" : [
+      "appointmentLeadIn" : "Your VA health care team will contact you if you...more text",
+      "appointmentPhones" : [
         {
           "extension" : "123",
           "label" : "Main phone",
@@ -119,23 +119,23 @@
           "type" : "tel"
         }
       ],
-      "online_scheduling_available" : "True",
-      "referral_required" : "True",
-      "walk_ins_accepted" : "False",
-      "service_locations" : [
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "True",
+      "walkInsAccepted" : "False",
+      "serviceLocations" : [
         {
-          "service_location_address" : {
-            "building_name_number" : "Baxter Building",
-            "clinic_name" : "Baxter Clinic",
-            "wing_floor_or_room_number" : "Wing East",
-            "address_line1" : "122 Main St.",
-            "address_line2" : "West Side Apt# 227",
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "Baxter Building",
+            "clinicName" : "Baxter Clinic",
+            "wingFloorOrRoomNumber" : "Wing East",
+            "addressLine1" : "122 Main St.",
+            "addressLine2" : "West Side Apt# 227",
             "city" : "Rochester",
             "state" : "NY",
-            "zip_code" : "14623-1345",
-            "country_code" : "US"
+            "zipCode" : "14623-1345",
+            "countryCode" : "US"
           },
-          "appointment_phones" : [
+          "appointmentPhones" : [
             {
               "extension" : "567",
               "label" : "Alt phone",
@@ -143,20 +143,20 @@
               "type" : "tel"
             }
           ],
-          "email_contacts" : [
+          "emailContacts" : [
             {
-              "email_address" : "georgea@va.gov",
-              "email_label" : "George Anderson"
+              "emailAddress" : "georgea@va.gov",
+              "emailLabel" : "George Anderson"
             }
           ],
-          "facility_service_hours" : {
-            "Monday" : "8:30AM-7:00PM",
-            "Tuesday" : "8:30AM-7:00PM",
-            "Wednesday" : "8:30AM-7:00PM",
-            "Thursday" : "8:30AM-7:00PM",
-            "Friday" : "8:30AM-7:00PM",
-            "Saturday" : "8:30AM-7:00PM",
-            "Sunday" : "CLOSED"
+          "facilityServiceHours" : {
+            "monday" : "8:30AM-7:00PM",
+            "tuesday" : "8:30AM-7:00PM",
+            "wednesday" : "8:30AM-7:00PM",
+            "thursday" : "8:30AM-7:00PM",
+            "friday" : "8:30AM-7:00PM",
+            "saturday" : "8:30AM-7:00PM",
+            "sunday" : "CLOSED"
           }
         }
       ],

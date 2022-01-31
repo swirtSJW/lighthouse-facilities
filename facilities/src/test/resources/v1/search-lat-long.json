@@ -5,36 +5,36 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Melbourne Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 28.12169212,
         "long" : -80.65539095,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32935",
             "city" : "Melbourne",
             "state" : "FL",
-            "address_1" : "2098 Sarno Road"
+            "address1" : "2098 Sarno Road"
           }
         },
         "phone" : {
           "main" : "321-254-3410"
         },
         "hours" : {
-          "Monday" : "800AM-630PM",
-          "Tuesday" : "800AM-630PM",
-          "Wednesday" : "800AM-630PM",
-          "Thursday" : "800AM-630PM",
-          "Friday" : "800AM-630PM",
-          "Saturday" : "800AM-630PM",
-          "Sunday" : "Closed"
+          "monday" : "800AM-630PM",
+          "tuesday" : "800AM-630PM",
+          "wednesday" : "800AM-630PM",
+          "thursday" : "800AM-630PM",
+          "friday" : "800AM-630PM",
+          "saturday" : "800AM-630PM",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -44,39 +44,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Viera VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "Health Care Center (HCC)",
         "website" : "https://www.orlando.va.gov/locations/Viera.asp",
         "lat" : 28.2552385700001,
         "long" : -80.73907113,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32940-8007",
             "city" : "Viera",
             "state" : "FL",
-            "address_1" : "2900 Veterans Way"
+            "address1" : "2900 Veterans Way"
           }
         },
         "phone" : {
           "fax" : "321-637-3515",
           "main" : "321-637-3788",
           "pharmacy" : "877-646-4550",
-          "after_hours" : "877-741-3400",
-          "patient_advocate" : "407-631-1187",
-          "mental_health_clinic" : "321-637-3788",
-          "enrollment_coordinator" : "321-637-3527"
+          "afterHours" : "877-741-3400",
+          "patientAdvocate" : "407-631-1187",
+          "mentalHealthClinic" : "321-637-3788",
+          "enrollmentCoordinator" : "321-637-3527"
         },
         "hours" : {
-          "Monday" : "730AM-430PM",
-          "Tuesday" : "730AM-430PM",
-          "Wednesday" : "730AM-430PM",
-          "Thursday" : "730AM-430PM",
-          "Friday" : "730AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "730AM-430PM",
+          "tuesday" : "730AM-430PM",
+          "wednesday" : "730AM-430PM",
+          "thursday" : "730AM-430PM",
+          "friday" : "730AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -96,16 +96,16 @@
             "SpecialtyCare",
             "DentalServices"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.74,
-            "primary_care_routine" : 0.83
+            "primaryCareUrgent" : 0.74,
+            "primaryCareRoutine" : 0.83
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Urology",
@@ -163,11 +163,11 @@
               "established" : 3.97159
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -178,39 +178,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Vero Beach VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "Primary Care CBOC",
         "website" : "https://www.westpalmbeach.va.gov/locations/Vero_Beach_CBOC.asp",
         "lat" : 27.6325183800001,
         "long" : -80.38028023,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32960-5690",
             "city" : "Vero Beach",
             "state" : "FL",
-            "address_1" : "372 17th Street"
+            "address1" : "372 17th Street"
           }
         },
         "phone" : {
           "fax" : "772-299-4632",
           "main" : "772-299-4623",
           "pharmacy" : "800-317-8387",
-          "after_hours" : "877-741-3400",
-          "patient_advocate" : "561-422-8600",
-          "mental_health_clinic" : "772-299-4623",
-          "enrollment_coordinator" : "561-422-6838"
+          "afterHours" : "877-741-3400",
+          "patientAdvocate" : "561-422-8600",
+          "mentalHealthClinic" : "772-299-4623",
+          "enrollmentCoordinator" : "561-422-6838"
         },
         "hours" : {
-          "Monday" : "800AM-430PM",
-          "Tuesday" : "800AM-430PM",
-          "Wednesday" : "800AM-430PM",
-          "Thursday" : "800AM-430PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-430PM",
+          "tuesday" : "800AM-430PM",
+          "wednesday" : "800AM-430PM",
+          "thursday" : "800AM-430PM",
+          "friday" : "800AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -222,16 +222,16 @@
             "Dermatology",
             "SpecialtyCare"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.91,
-            "primary_care_routine" : 0.91
+            "primaryCareUrgent" : 0.91,
+            "primaryCareRoutine" : 0.91
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Dermatology",
@@ -254,11 +254,11 @@
               "established" : 2.233576
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -269,39 +269,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Orlando VA Medical Center",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "VA Medical Center (VAMC)",
         "website" : "https://www.orlando.va.gov/locations/directions.asp",
         "lat" : 28.3666915700001,
         "long" : -81.27650339,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32827-5812",
             "city" : "Orlando",
             "state" : "FL",
-            "address_1" : "13800 Veterans Way"
+            "address1" : "13800 Veterans Way"
           }
         },
         "phone" : {
           "fax" : "407-631-0100",
           "main" : "407-631-1000",
           "pharmacy" : "407-646-4500",
-          "after_hours" : "877-741-3400",
-          "patient_advocate" : "407-631-1187",
-          "mental_health_clinic" : "407-631-2050",
-          "enrollment_coordinator" : "407-631-1060"
+          "afterHours" : "877-741-3400",
+          "patientAdvocate" : "407-631-1187",
+          "mentalHealthClinic" : "407-631-2050",
+          "enrollmentCoordinator" : "407-631-1060"
         },
         "hours" : {
-          "Monday" : "24/7",
-          "Tuesday" : "24/7",
-          "Wednesday" : "24/7",
-          "Thursday" : "24/7",
-          "Friday" : "24/7",
-          "Saturday" : "24/7",
-          "Sunday" : "24/7"
+          "monday" : "24/7",
+          "tuesday" : "24/7",
+          "wednesday" : "24/7",
+          "thursday" : "24/7",
+          "friday" : "24/7",
+          "saturday" : "24/7",
+          "sunday" : "24/7"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -323,18 +323,18 @@
             "SpecialtyCare",
             "DentalServices"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.59,
-            "primary_care_routine" : 0.77,
-            "specialty_care_urgent" : 0.76,
-            "specialty_care_routine" : 0.83
+            "primaryCareUrgent" : 0.59,
+            "primaryCareRoutine" : 0.77,
+            "specialtyCareUrgent" : 0.76,
+            "specialtyCareRoutine" : 0.83
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Urology",
@@ -402,11 +402,11 @@
               "established" : 6.068493
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -417,19 +417,19 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Lake Nona Vocational Rehabilitation & Employment office",
-        "facility_type" : "va_benefits_facility",
+        "facilityType" : "va_benefits_facility",
         "classification" : "Voc Rehab And Employment",
         "website" : "NULL",
         "lat" : 28.36758244,
         "long" : -81.27709119,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32827",
             "city" : "Orlando",
             "state" : "FL",
-            "address_1" : "13800 Veterans Way",
-            "address_2" : "VBA Room #C102"
+            "address1" : "13800 Veterans Way",
+            "address2" : "VBA Room #C102"
           }
         },
         "phone" : {
@@ -437,15 +437,15 @@
           "main" : "407-631-1645"
         },
         "hours" : {
-          "Monday" : "800AM-630PM",
-          "Tuesday" : "800AM-630PM",
-          "Wednesday" : "800AM-630PM",
-          "Thursday" : "800AM-630PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-630PM",
+          "tuesday" : "800AM-630PM",
+          "wednesday" : "800AM-630PM",
+          "thursday" : "800AM-630PM",
+          "friday" : "800AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -463,7 +463,7 @@
             "VocationalRehabilitationAndEmploymentAssistance"
           ]
         },
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -473,37 +473,37 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Orlando Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 28.48229037,
         "long" : -81.30999967,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32822",
             "city" : "Orlando",
             "state" : "FL",
-            "address_1" : "5575 South Semoran Boulevard",
-            "address_2" : "Suite 30"
+            "address1" : "5575 South Semoran Boulevard",
+            "address2" : "Suite 30"
           }
         },
         "phone" : {
           "main" : "407-857-2800"
         },
         "hours" : {
-          "Monday" : "730AM-430PM",
-          "Tuesday" : "730AM-430PM",
-          "Wednesday" : "730AM-430PM",
-          "Thursday" : "730AM-430PM",
-          "Friday" : "730AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "730AM-430PM",
+          "tuesday" : "730AM-430PM",
+          "wednesday" : "730AM-430PM",
+          "thursday" : "730AM-430PM",
+          "friday" : "730AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -513,39 +513,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Kissimmee VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "Primary Care CBOC",
         "website" : "https://www.orlando.va.gov/locations/Kissimmee.asp",
         "lat" : 28.3128777100001,
         "long" : -81.40857002,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "34741-2342",
             "city" : "Kissimmee",
             "state" : "FL",
-            "address_1" : "2285 North Central Avenue"
+            "address1" : "2285 North Central Avenue"
           }
         },
         "phone" : {
           "fax" : "407-932-7012",
           "main" : "407-518-5004",
           "pharmacy" : "407-599-1404",
-          "after_hours" : "877-741-3400",
-          "patient_advocate" : "407-631-1187",
-          "mental_health_clinic" : "407-518-5004",
-          "enrollment_coordinator" : "407-631-1060"
+          "afterHours" : "877-741-3400",
+          "patientAdvocate" : "407-631-1187",
+          "mentalHealthClinic" : "407-518-5004",
+          "enrollmentCoordinator" : "407-631-1060"
         },
         "hours" : {
-          "Monday" : "730AM-430PM",
-          "Tuesday" : "730AM-430PM",
-          "Wednesday" : "730AM-430PM",
-          "Thursday" : "730AM-430PM",
-          "Friday" : "730AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "730AM-430PM",
+          "tuesday" : "730AM-430PM",
+          "wednesday" : "730AM-430PM",
+          "thursday" : "730AM-430PM",
+          "friday" : "730AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -557,16 +557,16 @@
             "Dermatology",
             "SpecialtyCare"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.83,
-            "primary_care_routine" : 0.89
+            "primaryCareUrgent" : 0.83,
+            "primaryCareRoutine" : 0.89
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Dermatology",
@@ -588,11 +588,11 @@
               "established" : 6.576368
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -603,44 +603,44 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Cape Canaveral",
-        "facility_type" : "va_cemetery",
+        "facilityType" : "va_cemetery",
         "classification" : "National Cemetery",
         "website" : "https://www.cem.va.gov/cems/nchp/capecanaveral.asp",
         "lat" : 28.7551827,
         "long" : -80.8738888,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "mailing" : {
             "zip" : "32754-4826",
             "city" : "Mims",
             "state" : "FL",
-            "address_1" : "5525 U.S. Highway 1"
+            "address1" : "5525 U.S. Highway 1"
           },
           "physical" : {
             "zip" : "32754-4826",
             "city" : "Mims",
             "state" : "FL",
-            "address_1" : "5525 U.S. Highway 1"
+            "address1" : "5525 U.S. Highway 1"
           }
         },
         "phone" : {
           "fax" : "321-383-2642"
         },
         "hours" : {
-          "Monday" : "Sunrise - Sunset",
-          "Tuesday" : "Sunrise - Sunset",
-          "Wednesday" : "Sunrise - Sunset",
-          "Thursday" : "Sunrise - Sunset",
-          "Friday" : "Sunrise - Sunset",
-          "Saturday" : "Sunrise - Sunset",
-          "Sunday" : "Sunrise - Sunset"
+          "monday" : "Sunrise - Sunset",
+          "tuesday" : "Sunrise - Sunset",
+          "wednesday" : "Sunrise - Sunset",
+          "thursday" : "Sunrise - Sunset",
+          "friday" : "Sunrise - Sunset",
+          "saturday" : "Sunrise - Sunset",
+          "sunday" : "Sunrise - Sunset"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -650,39 +650,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Crossroads VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "Other Outpatient Services (OOS)",
         "website" : "https://www.orlando.va.gov/locations/Crossroads.asp",
         "lat" : 28.5845601300001,
         "long" : -81.3068096,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32792-5313",
             "city" : "Winter Park",
             "state" : "FL",
-            "address_1" : "925 South Semoran Boulevard",
-            "address_3" : "Suites 112, 114 and 120"
+            "address1" : "925 South Semoran Boulevard",
+            "address3" : "Suites 112, 114 and 120"
           }
         },
         "phone" : {
           "fax" : "407-621-2671",
           "main" : "407-621-2600",
           "pharmacy" : "877-646-4550",
-          "after_hours" : "877-741-3400",
-          "patient_advocate" : "407-631-1187",
-          "enrollment_coordinator" : "407-631-1060"
+          "afterHours" : "877-741-3400",
+          "patientAdvocate" : "407-631-1187",
+          "enrollmentCoordinator" : "407-631-1060"
         },
         "hours" : {
-          "Monday" : "800AM-400PM",
-          "Tuesday" : "800AM-400PM",
-          "Wednesday" : "800AM-400PM",
-          "Thursday" : "800AM-400PM",
-          "Friday" : "800AM-400PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-400PM",
+          "tuesday" : "800AM-400PM",
+          "wednesday" : "800AM-400PM",
+          "thursday" : "800AM-400PM",
+          "friday" : "800AM-400PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -692,9 +692,9 @@
             "MentalHealthCare",
             "SpecialtyCare"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "SpecialtyCare",
@@ -707,11 +707,11 @@
               "established" : 4.24969
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -722,39 +722,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Lake Baldwin VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "VA Medical Center (VAMC)",
         "website" : "https://www.orlando.va.gov/locations/LakeBaldwin.asp",
         "lat" : 28.57912757,
         "long" : -81.32166083,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32803-8208",
             "city" : "Orlando",
             "state" : "FL",
-            "address_1" : "5201 Raymond Street"
+            "address1" : "5201 Raymond Street"
           }
         },
         "phone" : {
           "fax" : "407-513-9636",
           "main" : "407-646-5500",
           "pharmacy" : "407-646-5500 x25990",
-          "after_hours" : "407-646-5500",
-          "patient_advocate" : "407-646-5035",
-          "mental_health_clinic" : "407-646-5400",
-          "enrollment_coordinator" : "407-646-6130"
+          "afterHours" : "407-646-5500",
+          "patientAdvocate" : "407-646-5035",
+          "mentalHealthClinic" : "407-646-5400",
+          "enrollmentCoordinator" : "407-646-6130"
         },
         "hours" : {
-          "Monday" : "800AM-430PM",
-          "Tuesday" : "800AM-430PM",
-          "Wednesday" : "800AM-430PM",
-          "Thursday" : "800AM-430PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-430PM",
+          "tuesday" : "800AM-430PM",
+          "wednesday" : "800AM-430PM",
+          "thursday" : "800AM-430PM",
+          "friday" : "800AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -769,16 +769,16 @@
             "Optometry",
             "SpecialtyCare"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.79,
-            "primary_care_routine" : 0.81
+            "primaryCareUrgent" : 0.79,
+            "primaryCareRoutine" : 0.81
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Audiology",
@@ -816,11 +816,11 @@
               "established" : 4.563762
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -835,10 +835,10 @@
   },
   "meta" : {
     "pagination" : {
-      "current_page" : 1,
-      "per_page" : 10,
-      "total_pages" : 242,
-      "total_entries" : 2414
+      "currentPage" : 1,
+      "perPage" : 10,
+      "totalPages" : 242,
+      "totalEntries" : 2414
     },
     "distances" : [
       {

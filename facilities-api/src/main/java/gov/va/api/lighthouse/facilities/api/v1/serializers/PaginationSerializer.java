@@ -19,10 +19,10 @@ public class PaginationSerializer extends NonEmptySerializer<Pagination> {
   @SneakyThrows
   public void serialize(Pagination value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
-    writeNonEmpty(jgen, "current_page", value.currentPage());
-    writeNonEmpty(jgen, "per_page", value.entriesPerPage());
-    writeNonEmpty(jgen, "total_pages", value.totalPages());
-    writeNonEmpty(jgen, "total_entries", value.totalEntries());
+    writeNonEmpty(jgen, "currentPage", value.currentPage());
+    writeNonEmpty(jgen, "perPage", value.entriesPerPage());
+    writeNonEmpty(jgen, "totalPages", value.totalPages());
+    writeNonEmpty(jgen, "totalEntries", value.totalEntries());
     jgen.writeEndObject();
   }
 }

@@ -20,26 +20,24 @@ public class FacilityAttributesSerializer extends NonEmptySerializer<FacilityAtt
   public void serialize(FacilityAttributes value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
     writeNonEmpty(jgen, "name", value.name());
-    writeNonEmpty(jgen, "facility_type", value.facilityType());
+    writeNonEmpty(jgen, "facilityType", value.facilityType());
     writeNonEmpty(jgen, "classification", value.classification());
     writeNonEmpty(jgen, "parent", value.parent());
     writeNonEmpty(jgen, "website", value.website());
     writeNonEmpty(jgen, "lat", value.latitude());
     writeNonEmpty(jgen, "long", value.longitude());
-    writeNonEmpty(jgen, "time_zone", value.timeZone());
+    writeNonEmpty(jgen, "timeZone", value.timeZone());
     writeNonEmpty(jgen, "address", value.address());
     writeNonEmpty(jgen, "phone", value.phone());
     writeNonEmpty(jgen, "hours", value.hours());
     writeNonEmpty(
-        jgen,
-        "operational_hours_special_instructions",
-        value.operationalHoursSpecialInstructions());
+        jgen, "operationalHoursSpecialInstructions", value.operationalHoursSpecialInstructions());
     writeNonEmpty(jgen, "services", value.services());
     writeNonEmpty(jgen, "satisfaction", value.satisfaction());
-    writeNonEmpty(jgen, "wait_times", value.waitTimes());
+    writeNonEmpty(jgen, "waitTimes", value.waitTimes());
     writeNonEmpty(jgen, "mobile", value.mobile());
-    writeNonEmpty(jgen, "active_status", value.activeStatus());
-    writeNonEmpty(jgen, "operating_status", value.operatingStatus());
+    writeNonEmpty(jgen, "activeStatus", value.activeStatus());
+    writeNonEmpty(jgen, "operatingStatus", value.operatingStatus());
     writeNonEmpty(jgen, "visn", value.visn());
 
     jgen.writeEndObject();

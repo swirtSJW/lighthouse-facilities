@@ -19,8 +19,8 @@ public class NearbyAttributesSerializer extends NonEmptySerializer<NearbyAttribu
   @SneakyThrows
   public void serialize(NearbyAttributes value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
-    writeNonEmpty(jgen, "min_time", value.minTime());
-    writeNonEmpty(jgen, "max_time", value.maxTime());
+    writeNonEmpty(jgen, "minTime", value.minTime());
+    writeNonEmpty(jgen, "maxTime", value.maxTime());
     jgen.writeEndObject();
   }
 }

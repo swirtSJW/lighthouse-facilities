@@ -30,7 +30,7 @@ public class SerializationV1Test {
   @Test
   @SneakyThrows
   void nearby() {
-    String path = "/nearby.json";
+    String path = "/v1/nearby.json";
     roundTrip(path, NearbyResponse.class);
   }
 

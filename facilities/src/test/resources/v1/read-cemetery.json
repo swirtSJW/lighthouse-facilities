@@ -4,46 +4,46 @@
     "type" : "va_facilities",
     "attributes" : {
       "name" : "Evergreen",
-      "facility_type" : "va_cemetery",
+      "facilityType" : "va_cemetery",
       "classification" : "Soldiers Lot",
       "website" : "https://www.cem.va.gov/cems/lots/evergreen.asp",
       "lat" : 39.0696513,
       "long" : -84.4688541,
-      "time_zone" : "America/New_York",
+      "timeZone" : "America/New_York",
       "address" : {
         "mailing" : {
           "zip" : "40356",
           "city" : "Nicholasville",
           "state" : "KY",
-          "address_1" : "6980 Danville Rd",
-          "address_2" : "<Null>"
+          "address1" : "6980 Danville Rd",
+          "address2" : "<Null>"
         },
         "physical" : {
           "zip" : "41071",
           "city" : "Southgate",
           "state" : "KY",
-          "address_1" : "25 South Alexandria Pike"
+          "address1" : "25 South Alexandria Pike"
         }
       },
       "phone" : {
         "fax" : "859-887-4860"
       },
       "hours" : {
-        "Monday" : "Sunrise - Sundown",
-        "Tuesday" : "Sunrise - Sundown",
-        "Wednesday" : "Sunrise - Sundown",
-        "Thursday" : "Sunrise - Sundown",
-        "Friday" : "Sunrise - Sundown",
-        "Saturday" : "Sunrise - Sundown",
-        "Sunday" : "Sunrise - Sundown"
+        "monday" : "Sunrise - Sundown",
+        "tuesday" : "Sunrise - Sundown",
+        "wednesday" : "Sunrise - Sundown",
+        "thursday" : "Sunrise - Sundown",
+        "friday" : "Sunrise - Sundown",
+        "saturday" : "Sunrise - Sundown",
+        "sunday" : "Sunrise - Sundown"
       },
-      "operational_hours_special_instructions" : [
+      "operationalHoursSpecialInstructions" : [
         "Vet center 1 is available.",
         "Vet center 2 is available.",
         "Vet center 3 is available."
       ],
-      "active_status" : "A",
-      "operating_status" : {
+      "activeStatus" : "A",
+      "operatingStatus" : {
         "code" : "NORMAL"
       }
     }

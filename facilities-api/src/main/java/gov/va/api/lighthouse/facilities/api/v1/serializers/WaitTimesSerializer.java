@@ -27,7 +27,7 @@ public class WaitTimesSerializer extends NonEmptySerializer<WaitTimes> {
     jgen.writeStartObject();
     if (!empty(value) || idStartsWith(jgen, "vha_")) {
       writeNonEmpty(jgen, "health", value.health());
-      writeNonEmpty(jgen, "effective_date", value.effectiveDate());
+      writeNonEmpty(jgen, "effectiveDate", value.effectiveDate());
     }
     jgen.writeEndObject();
   }

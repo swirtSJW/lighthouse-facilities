@@ -4,22 +4,22 @@
     "attributes" : {
       "address" : {
         "mailing" : {
-          "address_1" : "50 Irving Street, Northwest"
+          "address1" : "50 Irving Street, Northwest"
         }
       },
       "satisfaction" : {
         "health" : {
-          "primary_care_urgent" : 10
+          "primaryCareUrgent" : 10
         },
-        "effective_date" : "2022-01-13"
+        "effectiveDate" : "2022-01-13"
       },
-      "wait_times" : {
+      "waitTimes" : {
         "health" : [
           {
             "new" : 1
           }
         ],
-        "effective_date" : "2022-01-13"
+        "effectiveDate" : "2022-01-13"
       }
     }
   }

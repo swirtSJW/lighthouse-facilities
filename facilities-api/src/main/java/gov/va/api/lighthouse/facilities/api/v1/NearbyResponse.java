@@ -52,12 +52,10 @@ public final class NearbyResponse implements CanBeEmpty {
   public static final class NearbyAttributes implements CanBeEmpty {
     @NotNull
     @Schema(example = "10")
-    @JsonProperty("min_time")
     Integer minTime;
 
     @NotNull
     @Schema(example = "20")
-    @JsonProperty("max_time")
     Integer maxTime;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -77,7 +75,6 @@ public final class NearbyResponse implements CanBeEmpty {
       nullable = true)
   public static final class Meta implements CanBeEmpty {
     @Schema(example = "APR2021", nullable = true)
-    @JsonProperty("band_version")
     String bandVersion;
 
     /** Empty elements will be omitted from JSON serialization. */

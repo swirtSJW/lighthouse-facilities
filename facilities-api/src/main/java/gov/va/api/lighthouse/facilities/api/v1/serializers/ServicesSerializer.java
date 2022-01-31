@@ -22,7 +22,7 @@ public class ServicesSerializer extends NonEmptySerializer<Services> {
     writeNonEmpty(jgen, "other", value.other());
     writeNonEmpty(jgen, "health", value.health());
     writeNonEmpty(jgen, "benefits", value.benefits());
-    writeNonEmpty(jgen, "last_updated", value.lastUpdated());
+    writeNonEmpty(jgen, "lastUpdated", value.lastUpdated());
     jgen.writeEndObject();
   }
 }

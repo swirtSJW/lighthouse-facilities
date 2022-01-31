@@ -20,13 +20,13 @@ public class DetailedServiceHoursSerializer extends NonEmptySerializer<DetailedS
   public void serialize(
       DetailedServiceHours value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
-    writeNonEmpty(jgen, "Monday", value.monday());
-    writeNonEmpty(jgen, "Tuesday", value.tuesday());
-    writeNonEmpty(jgen, "Wednesday", value.wednesday());
-    writeNonEmpty(jgen, "Thursday", value.thursday());
-    writeNonEmpty(jgen, "Friday", value.friday());
-    writeNonEmpty(jgen, "Saturday", value.saturday());
-    writeNonEmpty(jgen, "Sunday", value.sunday());
+    writeNonEmpty(jgen, "monday", value.monday());
+    writeNonEmpty(jgen, "tuesday", value.tuesday());
+    writeNonEmpty(jgen, "wednesday", value.wednesday());
+    writeNonEmpty(jgen, "thursday", value.thursday());
+    writeNonEmpty(jgen, "friday", value.friday());
+    writeNonEmpty(jgen, "saturday", value.saturday());
+    writeNonEmpty(jgen, "sunday", value.sunday());
     jgen.writeEndObject();
   }
 }

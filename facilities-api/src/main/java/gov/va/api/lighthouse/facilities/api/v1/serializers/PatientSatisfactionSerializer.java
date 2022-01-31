@@ -20,10 +20,10 @@ public class PatientSatisfactionSerializer extends NonEmptySerializer<PatientSat
   public void serialize(
       PatientSatisfaction value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
-    writeNonEmpty(jgen, "primary_care_urgent", value.primaryCareUrgent());
-    writeNonEmpty(jgen, "primary_care_routine", value.primaryCareRoutine());
-    writeNonEmpty(jgen, "specialty_care_urgent", value.specialtyCareUrgent());
-    writeNonEmpty(jgen, "specialty_care_routine", value.specialtyCareRoutine());
+    writeNonEmpty(jgen, "primaryCareUrgent", value.primaryCareUrgent());
+    writeNonEmpty(jgen, "primaryCareRoutine", value.primaryCareRoutine());
+    writeNonEmpty(jgen, "specialtyCareUrgent", value.specialtyCareUrgent());
+    writeNonEmpty(jgen, "specialtyCareRoutine", value.specialtyCareRoutine());
     jgen.writeEndObject();
   }
 }

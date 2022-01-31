@@ -63,7 +63,7 @@ public class SerializerTest {
             .build();
     assertJson(
         facility,
-        "{\"id\":\"nca_s402\",\"attributes\":{\"address\":{\"mailing\":{\"address_1\":\"50 Irving Street, Northwest\"}}}}");
+        "{\"id\":\"nca_s402\",\"attributes\":{\"address\":{\"mailing\":{\"address1\":\"50 Irving Street, Northwest\"}}}}");
   }
 
   @Test
@@ -180,7 +180,7 @@ public class SerializerTest {
         DetailedService.DetailedServiceEmailContact.builder()
             .emailAddress("georgea@va.gov")
             .build();
-    assertJson(emailContact, "{\"email_address\":\"georgea@va.gov\"}");
+    assertJson(emailContact, "{\"emailAddress\":\"georgea@va.gov\"}");
   }
 
   @Test
@@ -194,7 +194,7 @@ public class SerializerTest {
     assertJsonIsEmpty(hours);
     // Not empty
     hours = DetailedService.DetailedServiceHours.builder().saturday("Closed").build();
-    assertJson(hours, "{\"Saturday\":\"Closed\"}");
+    assertJson(hours, "{\"saturday\":\"Closed\"}");
   }
 
   @Test
@@ -214,7 +214,7 @@ public class SerializerTest {
         DetailedService.DetailedServiceLocation.builder()
             .additionalHoursInfo("additional hours info")
             .build();
-    assertJson(serviceLocation, "{\"additional_hours_info\":\"additional hours info\"}");
+    assertJson(serviceLocation, "{\"additionalHoursInfo\":\"additional hours info\"}");
   }
 
   @Test
@@ -250,7 +250,7 @@ public class SerializerTest {
         DetailedServicesResponse.DetailedServicesMetadata.builder()
             .pagination(Pagination.builder().totalEntries(10).build())
             .build();
-    assertJson(metadata, "{\"pagination\":{\"total_entries\":10}}");
+    assertJson(metadata, "{\"pagination\":{\"totalEntries\":10}}");
   }
 
   @Test
@@ -296,7 +296,7 @@ public class SerializerTest {
         FacilitiesResponse.FacilitiesMetadata.builder()
             .pagination(Pagination.builder().totalEntries(10).build())
             .build();
-    assertJson(metadata, "{\"pagination\":{\"total_entries\":10}}");
+    assertJson(metadata, "{\"pagination\":{\"totalEntries\":10}}");
   }
 
   @Test
@@ -405,7 +405,7 @@ public class SerializerTest {
     assertJsonIsEmpty(hours);
     // Not empty
     hours = Facility.Hours.builder().saturday("   Closed  ").build();
-    assertJson(hours, "{\"Saturday\":\"Closed\"}");
+    assertJson(hours, "{\"saturday\":\"Closed\"}");
   }
 
   @Test
@@ -418,7 +418,7 @@ public class SerializerTest {
     assertJsonIsEmpty(meta);
     // Not empty
     meta = NearbyResponse.Meta.builder().bandVersion("APR2021").build();
-    assertJson(meta, "{\"band_version\":\"APR2021\"}");
+    assertJson(meta, "{\"bandVersion\":\"APR2021\"}");
   }
 
   @Test
@@ -449,7 +449,7 @@ public class SerializerTest {
     assertJsonIsEmpty(attributes);
     // Not empty
     attributes = NearbyResponse.NearbyAttributes.builder().maxTime(Integer.MAX_VALUE).build();
-    assertJson(attributes, "{\"max_time\":2147483647}");
+    assertJson(attributes, "{\"maxTime\":2147483647}");
   }
 
   @Test
@@ -465,7 +465,7 @@ public class SerializerTest {
         NearbyResponse.builder()
             .meta(NearbyResponse.Meta.builder().bandVersion("MAR2021").build())
             .build();
-    assertJson(response, "{\"meta\":{\"band_version\":\"MAR2021\"}}");
+    assertJson(response, "{\"meta\":{\"bandVersion\":\"MAR2021\"}}");
   }
 
   @Test
@@ -502,7 +502,7 @@ public class SerializerTest {
     assertJsonIsEmpty(pagination);
     // Not empty
     pagination = Pagination.builder().totalEntries(10).build();
-    assertJson(pagination, "{\"total_entries\":10}");
+    assertJson(pagination, "{\"totalEntries\":10}");
   }
 
   @Test
@@ -587,7 +587,7 @@ public class SerializerTest {
             .health(
                 Facility.PatientSatisfaction.builder().primaryCareUrgent(BigDecimal.TEN).build())
             .build();
-    assertJson(satisfaction, "{\"health\":{\"primary_care_urgent\":10}}");
+    assertJson(satisfaction, "{\"health\":{\"primaryCareUrgent\":10}}");
   }
 
   @Test
@@ -612,6 +612,6 @@ public class SerializerTest {
     assertJsonIsEmpty(waitTimes);
     // Not empty
     waitTimes = Facility.WaitTimes.builder().effectiveDate(LocalDate.parse("2021-12-25")).build();
-    assertJson(waitTimes, "{\"effective_date\":\"2021-12-25\"}");
+    assertJson(waitTimes, "{\"effectiveDate\":\"2021-12-25\"}");
   }
 }

@@ -19,7 +19,7 @@ public class MetaSerializer extends NonEmptySerializer<Meta> {
   @SneakyThrows
   public void serialize(Meta value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
-    writeNonEmpty(jgen, "band_version", value.bandVersion());
+    writeNonEmpty(jgen, "bandVersion", value.bandVersion());
     jgen.writeEndObject();
   }
 }

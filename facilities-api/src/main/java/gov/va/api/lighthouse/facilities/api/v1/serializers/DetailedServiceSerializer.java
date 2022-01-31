@@ -20,12 +20,12 @@ public class DetailedServiceSerializer extends NonEmptySerializer<DetailedServic
   public void serialize(DetailedService value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
     writeNonEmpty(jgen, "name", value.name());
-    writeNonEmpty(jgen, "appointment_leadin", value.appointmentLeadIn());
-    writeNonEmpty(jgen, "appointment_phones", value.phoneNumbers());
-    writeNonEmpty(jgen, "online_scheduling_available", value.onlineSchedulingAvailable());
-    writeNonEmpty(jgen, "referral_required", value.referralRequired());
-    writeNonEmpty(jgen, "walk_ins_accepted", value.walkInsAccepted());
-    writeNonEmpty(jgen, "service_locations", value.serviceLocations());
+    writeNonEmpty(jgen, "appointmentLeadIn", value.appointmentLeadIn());
+    writeNonEmpty(jgen, "appointmentPhones", value.phoneNumbers());
+    writeNonEmpty(jgen, "onlineSchedulingAvailable", value.onlineSchedulingAvailable());
+    writeNonEmpty(jgen, "referralRequired", value.referralRequired());
+    writeNonEmpty(jgen, "walkInsAccepted", value.walkInsAccepted());
+    writeNonEmpty(jgen, "serviceLocations", value.serviceLocations());
     writeNonEmpty(jgen, "path", value.path());
     jgen.writeEndObject();
   }
