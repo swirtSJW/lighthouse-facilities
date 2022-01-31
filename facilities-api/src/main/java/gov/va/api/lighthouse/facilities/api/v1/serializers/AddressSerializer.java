@@ -35,9 +35,9 @@ public class AddressSerializer extends NonEmptySerializer<Address> {
       writeNonEmpty(jgen, "zip", value.zip());
       writeNonEmpty(jgen, "city", value.city());
       writeNonEmpty(jgen, "state", value.state());
-      writeNonEmpty(jgen, "address_1", value.address1());
-      writeNonEmpty(jgen, "address_2", value.address2());
-      writeNonEmpty(jgen, "address_3", value.address3());
+      writeNonEmpty(jgen, "address1", value.address1());
+      writeNonEmpty(jgen, "address2", value.address2());
+      writeNonEmpty(jgen, "address3", value.address3());
     }
     jgen.writeEndObject();
   }

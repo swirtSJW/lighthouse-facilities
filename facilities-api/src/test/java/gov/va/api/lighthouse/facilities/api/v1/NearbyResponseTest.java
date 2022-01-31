@@ -166,6 +166,6 @@ public class NearbyResponseTest {
 
   @Test
   void unmarshallSample() {
-    assertReadable("/nearby.json");
+    assertReadable("/v1/nearby.json");
   }
 }

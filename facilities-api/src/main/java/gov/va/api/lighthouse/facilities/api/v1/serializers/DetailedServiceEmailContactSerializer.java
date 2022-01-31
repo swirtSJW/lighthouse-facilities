@@ -21,8 +21,8 @@ public class DetailedServiceEmailContactSerializer
   public void serialize(
       DetailedServiceEmailContact value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
-    writeNonEmpty(jgen, "email_address", value.emailAddress());
-    writeNonEmpty(jgen, "email_label", value.emailLabel());
+    writeNonEmpty(jgen, "emailAddress", value.emailAddress());
+    writeNonEmpty(jgen, "emailLabel", value.emailLabel());
     jgen.writeEndObject();
   }
 }

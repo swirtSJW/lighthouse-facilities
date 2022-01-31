@@ -5,39 +5,39 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Viera VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "Health Care Center (HCC)",
         "website" : "https://www.orlando.va.gov/locations/Viera.asp",
         "lat" : 28.2552385700001,
         "long" : -80.73907113,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "32940-8007",
             "city" : "Viera",
             "state" : "FL",
-            "address_1" : "2900 Veterans Way"
+            "address1" : "2900 Veterans Way"
           }
         },
         "phone" : {
           "fax" : "321-637-3515",
           "main" : "321-637-3788",
           "pharmacy" : "877-646-4550",
-          "after_hours" : "877-741-3400",
-          "patient_advocate" : "407-631-1187",
-          "mental_health_clinic" : "321-637-3788",
-          "enrollment_coordinator" : "321-637-3527"
+          "afterHours" : "877-741-3400",
+          "patientAdvocate" : "407-631-1187",
+          "mentalHealthClinic" : "321-637-3788",
+          "enrollmentCoordinator" : "321-637-3527"
         },
         "hours" : {
-          "Monday" : "730AM-430PM",
-          "Tuesday" : "730AM-430PM",
-          "Wednesday" : "730AM-430PM",
-          "Thursday" : "730AM-430PM",
-          "Friday" : "730AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "730AM-430PM",
+          "tuesday" : "730AM-430PM",
+          "wednesday" : "730AM-430PM",
+          "thursday" : "730AM-430PM",
+          "friday" : "730AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -57,16 +57,16 @@
             "SpecialtyCare",
             "DentalServices"
           ],
-          "last_updated" : "2020-03-02"
+          "lastUpdated" : "2020-03-02"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.74,
-            "primary_care_routine" : 0.83
+            "primaryCareUrgent" : 0.74,
+            "primaryCareRoutine" : 0.83
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Urology",
@@ -124,11 +124,11 @@
               "established" : 3.97159
             }
           ],
-          "effective_date" : "2020-03-02"
+          "effectiveDate" : "2020-03-02"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "8"
@@ -142,10 +142,10 @@
   },
   "meta" : {
     "pagination" : {
-      "current_page" : 1,
-      "per_page" : 10,
-      "total_pages" : 1,
-      "total_entries" : 1
+      "currentPage" : 1,
+      "perPage" : 10,
+      "totalPages" : 1,
+      "totalEntries" : 1
     }
   }
 }

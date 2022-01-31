@@ -5,45 +5,45 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Evergreen",
-        "facility_type" : "va_cemetery",
+        "facilityType" : "va_cemetery",
         "classification" : "Soldiers Lot",
         "website" : "https://www.cem.va.gov/cems/lots/evergreen.asp",
         "lat" : 39.0696513,
         "long" : -84.4688541,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "mailing" : {
             "zip" : "40356",
             "city" : "Nicholasville",
             "state" : "KY",
-            "address_1" : "6980 Danville Rd",
-            "address_2" : "<Null>"
+            "address1" : "6980 Danville Rd",
+            "address2" : "<Null>"
           },
           "physical" : {
             "zip" : "41071",
             "city" : "Southgate",
             "state" : "KY",
-            "address_1" : "25 South Alexandria Pike"
+            "address1" : "25 South Alexandria Pike"
           }
         },
         "phone" : {
           "fax" : "859-887-4860"
         },
         "hours" : {
-          "Monday" : "Sunrise - Sundown",
-          "Tuesday" : "Sunrise - Sundown",
-          "Wednesday" : "Sunrise - Sundown",
-          "Thursday" : "Sunrise - Sundown",
-          "Friday" : "Sunrise - Sundown",
-          "Saturday" : "Sunrise - Sundown",
-          "Sunday" : "Sunrise - Sundown"
+          "monday" : "Sunrise - Sundown",
+          "tuesday" : "Sunrise - Sundown",
+          "wednesday" : "Sunrise - Sundown",
+          "thursday" : "Sunrise - Sundown",
+          "friday" : "Sunrise - Sundown",
+          "saturday" : "Sunrise - Sundown",
+          "sunday" : "Sunrise - Sundown"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -53,18 +53,18 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Alabama State Veterans Memorial Cemetery At Spanish Fort",
-        "facility_type" : "va_cemetery",
+        "facilityType" : "va_cemetery",
         "classification" : "State Cemetery",
         "website" : "http://www.va.state.al.us/spanishfort.aspx",
         "lat" : 30.7346233,
         "long" : -87.8985442,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "36577",
             "city" : "Spanish Fort",
             "state" : "AL",
-            "address_1" : "34904 State Highway 225"
+            "address1" : "34904 State Highway 225"
           }
         },
         "phone" : {
@@ -72,20 +72,20 @@
           "main" : "251-625-1338"
         },
         "hours" : {
-          "Monday" : "Sunrise - Sunset",
-          "Tuesday" : "Sunrise - Sunset",
-          "Wednesday" : "Sunrise - Sunset",
-          "Thursday" : "Sunrise - Sunset",
-          "Friday" : "Sunrise - Sunset",
-          "Saturday" : "Sunrise - Sunset",
-          "Sunday" : "Sunrise - Sunset"
+          "monday" : "Sunrise - Sunset",
+          "tuesday" : "Sunrise - Sunset",
+          "wednesday" : "Sunrise - Sunset",
+          "thursday" : "Sunrise - Sunset",
+          "friday" : "Sunrise - Sunset",
+          "saturday" : "Sunrise - Sunset",
+          "sunday" : "Sunrise - Sunset"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -95,18 +95,18 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Montgomery Vocational Rehabilitation and Employment Office",
-        "facility_type" : "va_benefits_facility",
+        "facilityType" : "va_benefits_facility",
         "classification" : "Voc Rehab And Employment",
         "website" : "NULL",
         "lat" : 32.3615470600001,
         "long" : -86.24177373,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "36109",
             "city" : "Montgomery",
             "state" : "AL",
-            "address_1" : "345 Perry Hill Rd"
+            "address1" : "345 Perry Hill Rd"
           }
         },
         "phone" : {
@@ -114,15 +114,15 @@
           "main" : "334-213-3333"
         },
         "hours" : {
-          "Monday" : "8:00AM-4:00PM",
-          "Tuesday" : "8:00AM-4:00PM",
-          "Wednesday" : "8:00AM-4:00PM",
-          "Thursday" : "8:00AM-4:00PM",
-          "Friday" : "8:00AM-4:00PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "8:00AM-4:00PM",
+          "tuesday" : "8:00AM-4:00PM",
+          "wednesday" : "8:00AM-4:00PM",
+          "thursday" : "8:00AM-4:00PM",
+          "friday" : "8:00AM-4:00PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -133,7 +133,7 @@
             "VocationalRehabilitationAndEmploymentAssistance"
           ]
         },
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -143,37 +143,37 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Boston Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 42.3445959000001,
         "long" : -71.0361051099999,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "02210",
             "city" : "Boston",
             "state" : "MA",
-            "address_1" : "7 Drydock Avenue",
-            "address_2" : "Suite 2070"
+            "address1" : "7 Drydock Avenue",
+            "address2" : "Suite 2070"
           }
         },
         "phone" : {
           "main" : "857-203-6461"
         },
         "hours" : {
-          "Monday" : "830AM-700PM",
-          "Tuesday" : "830AM-700PM",
-          "Wednesday" : "830AM-600PM",
-          "Thursday" : "830AM-600PM",
-          "Friday" : "830AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "830AM-700PM",
+          "tuesday" : "830AM-700PM",
+          "wednesday" : "830AM-600PM",
+          "thursday" : "830AM-600PM",
+          "friday" : "830AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
         ],
-        "operating_status" : {
+        "operatingStatus" : {
           "code" : "NORMAL"
         }
       }
@@ -183,40 +183,40 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Caribou VA Clinic",
-        "facility_type" : "va_health_facility",
+        "facilityType" : "va_health_facility",
         "classification" : "Primary Care CBOC",
         "website" : "https://www.maine.va.gov/locations/caribou.asp",
         "lat" : 46.8780264900001,
         "long" : -68.00939541,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "04736-3567",
             "city" : "Caribou",
             "state" : "ME",
-            "address_1" : "163 Van Buren Road",
-            "address_3" : "Suite 6"
+            "address1" : "163 Van Buren Road",
+            "address3" : "Suite 6"
           }
         },
         "phone" : {
           "fax" : "207-493-3877",
           "main" : "207-493-3800",
           "pharmacy" : "207-623-8411 x5770",
-          "after_hours" : "844-750-8426",
-          "patient_advocate" : "207-623-5760",
-          "mental_health_clinic" : "207-623-8411 x 7490",
-          "enrollment_coordinator" : "207-623-8411 x5688"
+          "afterHours" : "844-750-8426",
+          "patientAdvocate" : "207-623-5760",
+          "mentalHealthClinic" : "207-623-8411 x 7490",
+          "enrollmentCoordinator" : "207-623-8411 x5688"
         },
         "hours" : {
-          "Monday" : "700AM-430PM",
-          "Tuesday" : "700AM-430PM",
-          "Wednesday" : "700AM-430PM",
-          "Thursday" : "700AM-430PM",
-          "Friday" : "700AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "700AM-430PM",
+          "tuesday" : "700AM-430PM",
+          "wednesday" : "700AM-430PM",
+          "thursday" : "700AM-430PM",
+          "friday" : "700AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "Vet center 1 is available.",
           "Vet center 2 is available.",
           "Vet center 3 is available."
@@ -229,16 +229,16 @@
             "Dermatology",
             "SpecialtyCare"
           ],
-          "last_updated" : "2020-02-24"
+          "lastUpdated" : "2020-02-24"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.89,
-            "primary_care_routine" : 0.91
+            "primaryCareUrgent" : 0.89,
+            "primaryCareRoutine" : 0.91
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "Dermatology",
@@ -260,11 +260,11 @@
               "established" : 2.634703
             }
           ],
-          "effective_date" : "2020-02-24"
+          "effectiveDate" : "2020-02-24"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "1"
@@ -278,10 +278,10 @@
   },
   "meta" : {
     "pagination" : {
-      "current_page" : 1,
-      "per_page" : 10,
-      "total_pages" : 1,
-      "total_entries" : 5
+      "currentPage" : 1,
+      "perPage" : 10,
+      "totalPages" : 1,
+      "totalEntries" : 5
     }
   }
 }

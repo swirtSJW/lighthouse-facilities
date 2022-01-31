@@ -133,15 +133,12 @@ public final class Facility implements CanBeEmpty {
   @Schema(nullable = true)
   public static final class Address implements CanBeEmpty {
     @Schema(example = "50 Irving Street, Northwest", nullable = true)
-    @JsonProperty("address_1")
     String address1;
 
     @Schema(example = "Bldg 2", nullable = true)
-    @JsonProperty("address_2")
     String address2;
 
     @Schema(example = "Suite 7", nullable = true)
-    @JsonProperty("address_3")
     String address3;
 
     @Schema(example = "20422-0001", nullable = true)
@@ -195,23 +192,23 @@ public final class Facility implements CanBeEmpty {
   @JsonSerialize(using = FacilityAttributesSerializer.class)
   @JsonPropertyOrder({
     "name",
-    "facility_type",
+    "facilityType",
     "classification",
     "website",
     "lat",
     "long",
-    "time_zone",
+    "timeZone",
     "address",
     "phone",
     "hours",
-    "operational_hours_special_instructions",
+    "operationalHoursSpecialInstructions",
     "services",
     "satisfaction",
-    "wait_times",
+    "waitTimes",
     "mobile",
-    "active_status",
-    "operating_status",
-    "detailed_services",
+    "activeStatus",
+    "operatingStatus",
+    "detailedServices",
     "visn"
   })
   @Schema(nullable = true)
@@ -222,7 +219,6 @@ public final class Facility implements CanBeEmpty {
 
     @NotNull
     @Schema(example = "va_health_facility")
-    @JsonProperty("facility_type")
     FacilityType facilityType;
 
     @Schema(example = "VA Medical Center (VAMC)", nullable = true)
@@ -242,7 +238,6 @@ public final class Facility implements CanBeEmpty {
     BigDecimal longitude;
 
     @Schema(description = "Facility time zone", format = "String", example = "America/New_York")
-    @JsonProperty("time_zone")
     String timeZone;
 
     @Schema(nullable = true)
@@ -263,7 +258,6 @@ public final class Facility implements CanBeEmpty {
                 + "\"If you need to talk to someone, call the Vet Center at 1-877-927-8387.\","
                 + "\"Vet Center hours are dependent upon outreach assignments.\" ]",
         nullable = true)
-    @JsonProperty("operational_hours_special_instructions")
     List<String> operationalHoursSpecialInstructions;
 
     @Schema(nullable = true)
@@ -276,13 +270,11 @@ public final class Facility implements CanBeEmpty {
 
     @Valid
     @Schema(example = "10", nullable = true)
-    @JsonProperty("wait_times")
     WaitTimes waitTimes;
 
     @Schema(example = "false", nullable = true)
     Boolean mobile;
 
-    @JsonProperty("active_status")
     @Schema(
         description = "This field is deprecated and replaced with \"operating_status\".",
         nullable = true)
@@ -290,7 +282,7 @@ public final class Facility implements CanBeEmpty {
 
     @Valid
     @NotNull
-    @JsonProperty(value = "operating_status", required = true)
+    @JsonProperty(required = true)
     @Schema(example = "NORMAL")
     OperatingStatus operatingStatus;
 
@@ -321,7 +313,6 @@ public final class Facility implements CanBeEmpty {
     }
 
     public static final class FacilityAttributesBuilder {
-      @JsonProperty("operationalHoursSpecialInstructions")
       public FacilityAttributesBuilder instructions(List<String> val) {
         return operationalHoursSpecialInstructions(val);
       }
@@ -333,7 +324,7 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = HoursSerializer.class)
-  @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
+  @JsonPropertyOrder({"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"})
   @Schema(
       description =
           "Standard hours of operation. Currently formatted as descriptive text suitable for "
@@ -342,31 +333,24 @@ public final class Facility implements CanBeEmpty {
       nullable = true)
   public static final class Hours implements CanBeEmpty {
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Monday")
     String monday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Tuesday")
     String tuesday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Wednesday")
     String wednesday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Thursday")
     String thursday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Friday")
     String friday;
 
     @Schema(example = "Closed", nullable = true)
-    @JsonProperty("Saturday")
     String saturday;
 
     @Schema(example = "Closed", nullable = true)
-    @JsonProperty("Sunday")
     String sunday;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -409,7 +393,7 @@ public final class Facility implements CanBeEmpty {
         nullable = true)
     OperatingStatusCode code;
 
-    @JsonProperty(value = "additional_info", required = false)
+    @JsonProperty(required = false)
     @Size(max = 300)
     @Schema(
         description =
@@ -442,7 +426,6 @@ public final class Facility implements CanBeEmpty {
             "% of Veterans who say they usually or always get an appointment when "
                 + "they need care right away at a primary care location.",
         nullable = true)
-    @JsonProperty("primary_care_urgent")
     BigDecimal primaryCareUrgent;
 
     @Schema(
@@ -452,7 +435,6 @@ public final class Facility implements CanBeEmpty {
             "% of Veterans who say they usually or always get an appointment when "
                 + "they need it at a primary care location.",
         nullable = true)
-    @JsonProperty("primary_care_routine")
     BigDecimal primaryCareRoutine;
 
     @Schema(
@@ -462,7 +444,6 @@ public final class Facility implements CanBeEmpty {
             "% of Veterans who say they usually or always get an appointment when "
                 + "they need care right away at a specialty location.",
         nullable = true)
-    @JsonProperty("specialty_care_urgent")
     BigDecimal specialtyCareUrgent;
 
     @Schema(
@@ -472,7 +453,6 @@ public final class Facility implements CanBeEmpty {
             "% of Veterans who say they usually or always get an appointment when "
                 + "they need it at a specialty location.",
         nullable = true)
-    @JsonProperty("specialty_care_routine")
     BigDecimal specialtyCareRoutine;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -541,19 +521,15 @@ public final class Facility implements CanBeEmpty {
     String pharmacy;
 
     @Schema(example = "202-555-1212", nullable = true)
-    @JsonProperty("after_hours")
     String afterHours;
 
     @Schema(example = "202-555-1212", nullable = true)
-    @JsonProperty("patient_advocate")
     String patientAdvocate;
 
     @Schema(example = "202-555-1212", nullable = true)
-    @JsonProperty("mental_health_clinic")
     String mentalHealthClinic;
 
     @Schema(example = "202-555-1212", nullable = true)
-    @JsonProperty("enrollment_coordinator")
     String enrollmentCoordinator;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -581,7 +557,6 @@ public final class Facility implements CanBeEmpty {
     PatientSatisfaction health;
 
     @Schema(example = "2018-01-01", nullable = true)
-    @JsonProperty("effective_date")
     LocalDate effectiveDate;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -608,7 +583,6 @@ public final class Facility implements CanBeEmpty {
     List<BenefitsService> benefits;
 
     @Schema(example = "2018-01-01", nullable = true)
-    @JsonProperty("last_updated")
     LocalDate lastUpdated;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -632,7 +606,6 @@ public final class Facility implements CanBeEmpty {
     List<@Valid PatientWaitTime> health;
 
     @Schema(example = "2018-01-01", nullable = true)
-    @JsonProperty("effective_date")
     LocalDate effectiveDate;
 
     /** Empty elements will be omitted from JSON serialization. */

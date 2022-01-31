@@ -38,13 +38,13 @@ import org.apache.commons.lang3.ObjectUtils;
 @NoArgsConstructor
 @JsonPropertyOrder({
   "name",
-  "description_facility",
-  "appointment_leadin",
-  "appointment_phones",
-  "online_scheduling_available",
-  "referral_required",
-  "walk_ins_accepted",
-  "service_locations"
+  "descriptionFacility",
+  "appointmentLeadIn",
+  "appointmentPhones",
+  "onlineSchedulingAvailable",
+  "referralRequired",
+  "walkInsAccepted",
+  "serviceLocations"
 })
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService implements CanBeEmpty {
@@ -63,7 +63,6 @@ public class DetailedService implements CanBeEmpty {
 
   @JsonIgnore
   @Schema(description = "Deprecated until further notice.", example = "null", nullable = true)
-  @JsonProperty("description_facility")
   String descriptionFacility;
 
   @Schema(
@@ -75,14 +74,12 @@ public class DetailedService implements CanBeEmpty {
               + "during this time. As the supply of vaccine increases, we'll work with our care "
               + "teams to let Veterans know their options.",
       nullable = true)
-  @JsonProperty("appointment_leadin")
   String appointmentLeadIn;
 
   @Schema(
       description = "String detailing online scheduling availability.",
       example = "True",
       nullable = true)
-  @JsonProperty("online_scheduling_available")
   String onlineSchedulingAvailable;
 
   @Schema(
@@ -96,25 +93,22 @@ public class DetailedService implements CanBeEmpty {
   @Schema(
       description = "List of phone numbers related to scheduling appointments for this service.",
       nullable = true)
-  @JsonProperty("appointment_phones")
+  @JsonProperty("appointmentPhones")
   List<AppointmentPhoneNumber> phoneNumbers;
 
   @Schema(
       description = "String detailing if referrals are required for the service.",
       example = "False",
       nullable = true)
-  @JsonProperty("referral_required")
   String referralRequired;
 
   @Schema(description = "List of service locations.", nullable = true)
-  @JsonProperty("service_locations")
   List<DetailedServiceLocation> serviceLocations;
 
   @Schema(
       description = "String detailing if walk-ins are accepted for the service.",
       example = "True",
       nullable = true)
-  @JsonProperty("walk_ins_accepted")
   String walkInsAccepted;
 
   /** Empty elements will be omitted from JSON serialization. */
@@ -138,24 +132,24 @@ public class DetailedService implements CanBeEmpty {
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = DetailedServiceAddressSerializer.class)
   @JsonPropertyOrder({
-    "building_name_number",
-    "clinic_name",
-    "wing_floor_or_room_number",
-    "address_line1",
-    "address_line2",
+    "buildingNameNumber",
+    "clinicName",
+    "wingFloorOrRoomNumber",
+    "addressLine1",
+    "addressLine2",
     "city",
     "state",
-    "zip_code",
-    "country_code"
+    "zipCode",
+    "countryCode"
   })
   @Schema(description = "Service location address.", nullable = true)
   public static final class DetailedServiceAddress implements CanBeEmpty {
     @Schema(example = "50 Irving Street, Northwest", nullable = true)
-    @JsonProperty("address_line1")
+    @JsonProperty("addressLine1")
     String address1;
 
     @Schema(nullable = true)
-    @JsonProperty("address_line2")
+    @JsonProperty("addressLine2")
     String address2;
 
     @Schema(example = "DC", nullable = true)
@@ -165,29 +159,24 @@ public class DetailedService implements CanBeEmpty {
         description = "Building name and/or number of service.",
         example = "Baxter Building",
         nullable = true)
-    @JsonProperty("building_name_number")
     String buildingNameNumber;
 
     @Schema(description = "Clinic name for service.", example = "Baxter Clinic", nullable = true)
-    @JsonProperty("clinic_name")
     String clinicName;
 
     @Schema(example = "US", nullable = true)
-    @JsonProperty("country_code")
     String countryCode;
 
     @Schema(example = "Washington", nullable = true)
     String city;
 
     @Schema(example = "20422-0001", nullable = true)
-    @JsonProperty("zip_code")
     String zipCode;
 
     @Schema(
         description = "Wing, floor, or room number of service.",
         example = "Wing East",
         nullable = true)
-    @JsonProperty("wing_floor_or_room_number")
     String wingFloorOrRoomNumber;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -237,11 +226,11 @@ public class DetailedService implements CanBeEmpty {
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = DetailedServiceLocationSerializer.class)
   @JsonPropertyOrder({
-    "service_location_address",
-    "appointment_phones",
-    "email_contacts",
-    "facility_service_hours",
-    "additional_hours_info"
+    "serviceLocationAddress",
+    "appointmentPhones",
+    "emailContacts",
+    "facilityServiceHours",
+    "additionalHoursInfo"
   })
   @Schema(description = "Details for a location offering a service.", nullable = true)
   public static final class DetailedServiceLocation implements CanBeEmpty {
@@ -249,24 +238,20 @@ public class DetailedService implements CanBeEmpty {
         description = "Additional information related to service location hours.",
         example = "Location hours times may vary depending on staff availability",
         nullable = true)
-    @JsonProperty("additional_hours_info")
     String additionalHoursInfo;
 
     @Schema(description = "List of email contact information.", nullable = true)
-    @JsonProperty("email_contacts")
     List<DetailedServiceEmailContact> emailContacts;
 
     @Schema(nullable = true)
-    @JsonProperty("facility_service_hours")
     @Valid
     DetailedServiceHours facilityServiceHours;
 
     @Schema(description = "List of appointment phone information.", nullable = true)
-    @JsonProperty("appointment_phones")
+    @JsonProperty("appointmentPhones")
     List<AppointmentPhoneNumber> appointmentPhoneNumbers;
 
     @Schema(nullable = true)
-    @JsonProperty("service_location_address")
     DetailedServiceAddress serviceLocationAddress;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -288,11 +273,9 @@ public class DetailedService implements CanBeEmpty {
   @Schema(description = "Email contact information.", nullable = true)
   public static final class DetailedServiceEmailContact implements CanBeEmpty {
     @Schema(example = "georgea@va.gov", nullable = true)
-    @JsonProperty("email_address")
     String emailAddress;
 
     @Schema(example = "George Anderson", nullable = true)
-    @JsonProperty("email_label")
     String emailLabel;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -307,7 +290,7 @@ public class DetailedService implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = DetailedServiceHoursSerializer.class)
-  @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
+  @JsonPropertyOrder({"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"})
   @Schema(
       description =
           "Standard hours of operation. Currently formatted as descriptive text suitable for "
@@ -316,31 +299,24 @@ public class DetailedService implements CanBeEmpty {
       nullable = true)
   public static final class DetailedServiceHours implements CanBeEmpty {
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Monday")
     String monday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Tuesday")
     String tuesday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Wednesday")
     String wednesday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Thursday")
     String thursday;
 
     @Schema(example = "9AM-5PM", nullable = true)
-    @JsonProperty("Friday")
     String friday;
 
     @Schema(example = "Closed", nullable = true)
-    @JsonProperty("Saturday")
     String saturday;
 
     @Schema(example = "Closed", nullable = true)
-    @JsonProperty("Sunday")
     String sunday;
 
     /** Empty elements will be omitted from JSON serialization. */

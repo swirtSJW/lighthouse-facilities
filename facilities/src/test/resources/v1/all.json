@@ -5,18 +5,18 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Boston Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "website" : "https://www.va.gov/boston-vet-center/",
         "lat" : 42.3445959,
         "long" : -71.03610511,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "02210-2303",
             "city" : "Boston",
             "state" : "MA",
-            "address_1" : "7 Drydock Avenue",
-            "address_2" : "Suite 2070"
+            "address1" : "7 Drydock Avenue",
+            "address2" : "Suite 2070"
           }
         },
         "phone" : {
@@ -24,20 +24,20 @@
           "main" : "857-203-6461"
         },
         "hours" : {
-          "Monday" : "830AM-700PM",
-          "Tuesday" : "830AM-700PM",
-          "Wednesday" : "830AM-600PM",
-          "Thursday" : "830AM-600PM",
-          "Friday" : "830AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "830AM-700PM",
+          "tuesday" : "830AM-700PM",
+          "wednesday" : "830AM-600PM",
+          "thursday" : "830AM-600PM",
+          "friday" : "830AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "1"
@@ -48,17 +48,17 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Secaucus Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 40.78920056,
         "long" : -74.07387396,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "07094-2302",
             "city" : "Secaucus",
             "state" : "NJ",
-            "address_1" : "110A Meadowlands Parkway",
-            "address_2" : "Suite 102"
+            "address1" : "110A Meadowlands Parkway",
+            "address2" : "Suite 102"
           }
         },
         "phone" : {
@@ -66,20 +66,20 @@
           "main" : "201-223-7787"
         },
         "hours" : {
-          "Monday" : "700AM-830PM",
-          "Tuesday" : "700AM-830PM",
-          "Wednesday" : "700AM-800PM",
-          "Thursday" : "700AM-530PM",
-          "Friday" : "700AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "700AM-830PM",
+          "tuesday" : "700AM-830PM",
+          "wednesday" : "700AM-800PM",
+          "thursday" : "700AM-530PM",
+          "friday" : "700AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "2"
@@ -90,18 +90,18 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Springfield Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "website" : "https://www.va.gov/springfield-ma-vet-center/",
         "lat" : 42.13903409,
         "long" : -72.62448048,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "01089-1352",
             "city" : "West Springfield",
             "state" : "MA",
-            "address_1" : "95A Ashley Avenue",
-            "address_2" : "Suite A"
+            "address1" : "95A Ashley Avenue",
+            "address2" : "Suite A"
           }
         },
         "phone" : {
@@ -109,20 +109,20 @@
           "main" : "413-737-5167"
         },
         "hours" : {
-          "Monday" : "800AM-500PM",
-          "Tuesday" : "800AM-500PM",
-          "Wednesday" : "800AM-500PM",
-          "Thursday" : "800AM-500PM",
-          "Friday" : "800AM-500PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-500PM",
+          "tuesday" : "800AM-500PM",
+          "wednesday" : "800AM-500PM",
+          "thursday" : "800AM-500PM",
+          "friday" : "800AM-500PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "If you need to talk to someone or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS (1-877-927-8387)."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "1"
@@ -133,17 +133,17 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Brockton Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 42.05304251,
         "long" : -71.06686558,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "02301-5400",
             "city" : "Brockton",
             "state" : "MA",
-            "address_1" : "1041L Pearl Street",
-            "address_2" : "Suite L"
+            "address1" : "1041L Pearl Street",
+            "address2" : "Suite L"
           }
         },
         "phone" : {
@@ -151,20 +151,20 @@
           "main" : "508-580-2730"
         },
         "hours" : {
-          "Monday" : "800AM-800PM",
-          "Tuesday" : "800AM-800PM",
-          "Wednesday" : "800AM-800PM",
-          "Thursday" : "800AM-800PM",
-          "Friday" : "800AM-530PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-800PM",
+          "tuesday" : "800AM-800PM",
+          "wednesday" : "800AM-800PM",
+          "thursday" : "800AM-800PM",
+          "friday" : "800AM-530PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "1"
@@ -175,17 +175,17 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Brooklyn Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 40.6972586,
         "long" : -73.98586968,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "11201-1954",
             "city" : "Brooklyn",
             "state" : "NY",
-            "address_1" : "25 Chapel Street",
-            "address_2" : "Suite 604"
+            "address1" : "25 Chapel Street",
+            "address2" : "Suite 604"
           }
         },
         "phone" : {
@@ -193,20 +193,20 @@
           "main" : "718-630-2830"
         },
         "hours" : {
-          "Monday" : "830AM-700PM",
-          "Tuesday" : "830AM-500PM",
-          "Wednesday" : "830AM-700PM",
-          "Thursday" : "830AM-800PM",
-          "Friday" : "830AM-500PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "830AM-700PM",
+          "tuesday" : "830AM-500PM",
+          "wednesday" : "830AM-700PM",
+          "thursday" : "830AM-800PM",
+          "friday" : "830AM-500PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "2"
@@ -217,18 +217,18 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Manhattan Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "website" : "https://www.va.gov/manhattan-ny-vet-center/",
         "lat" : 40.70596048,
         "long" : -74.01313618,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "10004-1637",
             "city" : "New York",
             "state" : "NY",
-            "address_1" : "32 Broadway",
-            "address_2" : "2nd Floor, Suite 200"
+            "address1" : "32 Broadway",
+            "address2" : "2nd Floor, Suite 200"
           }
         },
         "phone" : {
@@ -236,21 +236,21 @@
           "main" : "212-951-6866"
         },
         "hours" : {
-          "Monday" : "900AM-530PM",
-          "Tuesday" : "800AM-430PM",
-          "Wednesday" : "800AM-430PM",
-          "Thursday" : "800AM-430PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "900AM-530PM",
+          "tuesday" : "800AM-430PM",
+          "wednesday" : "800AM-430PM",
+          "thursday" : "800AM-430PM",
+          "friday" : "800AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "More hours are available for some services. To learn more, call our main phone number.",
           "If you need to talk to someone or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS (1-877-927-8387)."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "2"
@@ -261,17 +261,17 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Buffalo Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 43.023349,
         "long" : -78.79903,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "14228-1164",
             "city" : "Amherst",
             "state" : "NY",
-            "address_1" : "2372 Sweet Home Road",
-            "address_2" : "Suite 1"
+            "address1" : "2372 Sweet Home Road",
+            "address2" : "Suite 1"
           }
         },
         "phone" : {
@@ -279,20 +279,20 @@
           "main" : "716-862-7350"
         },
         "hours" : {
-          "Monday" : "800AM-430PM",
-          "Tuesday" : "800AM-430PM",
-          "Wednesday" : "800AM-430PM",
-          "Thursday" : "800AM-430PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-430PM",
+          "tuesday" : "800AM-430PM",
+          "wednesday" : "800AM-430PM",
+          "thursday" : "800AM-430PM",
+          "friday" : "800AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "If you need to talk to someone or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS (1-877-927-8387)."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "2"
@@ -303,17 +303,17 @@
       "type" : "va_facilities",
       "attributes" : {
         "name" : "Manchester Vet Center",
-        "facility_type" : "vet_center",
+        "facilityType" : "vet_center",
         "lat" : 43.07031789,
         "long" : -71.45021261,
-        "time_zone" : "America/New_York",
+        "timeZone" : "America/New_York",
         "address" : {
           "physical" : {
             "zip" : "03106-1882",
             "city" : "Hooksett",
             "state" : "NH",
-            "address_1" : "1461 Hooksett Road",
-            "address_2" : "Suite B7"
+            "address1" : "1461 Hooksett Road",
+            "address2" : "Suite B7"
           }
         },
         "phone" : {
@@ -321,178 +321,180 @@
           "main" : "603-668-7060"
         },
         "hours" : {
-          "Monday" : "800AM-830PM",
-          "Tuesday" : "800AM-730PM",
-          "Wednesday" : "800AM-730PM",
-          "Thursday" : "800AM-730PM",
-          "Friday" : "800AM-530PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-830PM",
+          "tuesday" : "800AM-730PM",
+          "wednesday" : "800AM-730PM",
+          "thursday" : "800AM-730PM",
+          "friday" : "800AM-530PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
-        "operational_hours_special_instructions" : [
+        "operationalHoursSpecialInstructions" : [
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
         "visn" : "1"
       }
     },
     {
-      "id" : "vha_586GF",
+      "id" : "vha_657QD",
       "type" : "va_facilities",
       "attributes" : {
-        "name" : "Columbus VA Clinic",
-        "facility_type" : "va_health_facility",
+        "name" : "Heartland Street VA Clinic",
+        "facilityType" : "va_health_facility",
         "classification" : "Primary Care CBOC",
-        "website" : "https://www.va.gov/jackson-health-care/locations/columbus-va-clinic/",
-        "lat" : 33.493273,
-        "long" : -88.36569092,
-        "time_zone" : "America/Chicago",
+        "website" : "https://www.va.gov/marion-health-care/locations/heartland-street-va-clinic/",
+        "lat" : 37.74305443,
+        "long" : -88.99432982,
+        "timeZone" : "America/Chicago",
         "address" : {
           "physical" : {
-            "zip" : "39702-5436",
-            "city" : "Columbus",
-            "state" : "MS",
-            "address_1" : "824 Alabama Street"
+            "zip" : "62959-6393",
+            "city" : "Marion",
+            "state" : "IL",
+            "address1" : "3403 Heartland Street"
           }
         },
         "phone" : {
-          "fax" : "662-244-0395",
-          "main" : "662-244-0391",
-          "pharmacy" : "800-949-1009 x51352",
-          "after_hours" : "800-949-1009 x57915",
-          "patient_advocate" : "800-949-1009 x51253",
-          "mental_health_clinic" : "662-244-0391",
-          "enrollment_coordinator" : "800-949-1009 x51511"
+          "fax" : "618-997-8249",
+          "main" : "618-997-5311 x72001",
+          "pharmacy" : "618-997-5311 x54677",
+          "afterHours" : "618-997-5311 x4396",
+          "patientAdvocate" : "618-997-5311 x59558",
+          "enrollmentCoordinator" : "618-997-5311 x58217"
         },
         "hours" : {
-          "Monday" : "800AM-430PM",
-          "Tuesday" : "800AM-430PM",
-          "Wednesday" : "800AM-430PM",
-          "Thursday" : "800AM-430PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-430PM",
+          "tuesday" : "800AM-430PM",
+          "wednesday" : "800AM-430PM",
+          "thursday" : "800AM-430PM",
+          "friday" : "800AM-430PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
         "services" : {
           "health" : [
             "EmergencyCare",
+            "Gynecology",
             "MentalHealthCare",
             "PrimaryCare",
-            "SpecialtyCare"
+            "SpecialtyCare",
+            "WomensHealth"
           ],
-          "last_updated" : "2020-03-09"
+          "lastUpdated" : "2020-03-09"
         },
         "satisfaction" : {
           "health" : {
-            "primary_care_urgent" : 0.8999999761581421,
-            "primary_care_routine" : 0.9700000286102295
+            "primaryCareUrgent" : 0.7099999785423279,
+            "primaryCareRoutine" : 0.8500000238418579
           },
-          "effective_date" : "2019-06-20"
+          "effectiveDate" : "2019-06-20"
         },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
+              "service" : "Gynecology",
+              "new" : 28.333333,
+              "established" : 1.594594
+            },
+            {
               "service" : "MentalHealthCare",
-              "new" : 9.2,
-              "established" : 4.245614
+              "new" : 6.484848,
+              "established" : 1.301587
             },
             {
               "service" : "PrimaryCare",
-              "new" : 11.052631,
-              "established" : 1.628895
+              "new" : 11.8,
+              "established" : 3.374829
             },
             {
               "service" : "SpecialtyCare",
-              "new" : 13.666666,
-              "established" : 22.0
+              "new" : 28.333333,
+              "established" : 0
+            },
+            {
+              "service" : "WomensHealth",
+              "established" : 2.185185
             }
           ],
-          "effective_date" : "2020-03-09"
+          "effectiveDate" : "2020-03-09"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
-        "visn" : "16"
+        "visn" : "15"
       }
     },
     {
-      "id" : "vha_586GG",
+      "id" : "vha_657QE",
       "type" : "va_facilities",
       "attributes" : {
-        "name" : "McComb VA Clinic",
-        "facility_type" : "va_health_facility",
-        "classification" : "Primary Care CBOC",
-        "website" : "https://www.va.gov/jackson-health-care/locations/mccomb-va-clinic/",
-        "lat" : 31.24942827,
-        "long" : -90.46808065,
-        "time_zone" : "America/Chicago",
+        "name" : "Scott Air Force Base VA Clinic",
+        "facilityType" : "va_health_facility",
+        "classification" : "Other Outpatient Services (OOS)",
+        "website" : "https://www.va.gov/st-louis-health-care/locations/scott-air-force-base-va-clinic/",
+        "lat" : 38.54265307,
+        "long" : -89.86923039,
+        "timeZone" : "America/Chicago",
         "address" : {
           "physical" : {
-            "zip" : "39648-2830",
-            "city" : "McComb",
-            "state" : "MS",
-            "address_1" : "1308 Harrison Avenue"
+            "zip" : "62225-5250",
+            "city" : "Scott Air Force Base",
+            "state" : "IL",
+            "address1" : "310 West Losey Street"
           }
         },
         "phone" : {
-          "fax" : "601-250-5761",
-          "main" : "601-250-0965",
-          "pharmacy" : "800-949-1009 x51352",
-          "after_hours" : "800-949-1009 x57915",
-          "patient_advocate" : "800-949-1009 x51253",
-          "mental_health_clinic" : "601-250-0965",
-          "enrollment_coordinator" : "800-949-1009 x51511"
+          "fax" : "314-289-6557",
+          "main" : "314-652-4100 x56408",
+          "pharmacy" : "800-228-5459 x57666",
+          "afterHours" : "314-652-4100 x56410",
+          "patientAdvocate" : "314-289-6373 x56373",
+          "enrollmentCoordinator" : "314-652-4100 x53516"
         },
         "hours" : {
-          "Monday" : "800AM-430PM",
-          "Tuesday" : "800AM-430PM",
-          "Wednesday" : "800AM-430PM",
-          "Thursday" : "800AM-430PM",
-          "Friday" : "800AM-430PM",
-          "Saturday" : "Closed",
-          "Sunday" : "Closed"
+          "monday" : "800AM-400PM",
+          "tuesday" : "800AM-400PM",
+          "wednesday" : "800AM-400PM",
+          "thursday" : "800AM-400PM",
+          "friday" : "800AM-400PM",
+          "saturday" : "Closed",
+          "sunday" : "Closed"
         },
         "services" : {
           "health" : [
-            "EmergencyCare",
             "MentalHealthCare",
-            "PrimaryCare"
+            "SpecialtyCare"
           ],
-          "last_updated" : "2020-03-09"
+          "lastUpdated" : "2020-03-09"
         },
-        "satisfaction" : {
-          "health" : {
-            "primary_care_routine" : 0.9399999976158142
-          },
-          "effective_date" : "2019-06-20"
-        },
-        "wait_times" : {
+        "waitTimes" : {
           "health" : [
             {
               "service" : "MentalHealthCare",
-              "new" : 21.2,
-              "established" : 5.368421
+              "new" : 28.238095,
+              "established" : 2.55
             },
             {
-              "service" : "PrimaryCare",
-              "new" : 6.9375,
-              "established" : 2.656084
+              "service" : "SpecialtyCare",
+              "new" : 14.296875,
+              "established" : 2.392857
             }
           ],
-          "effective_date" : "2020-03-09"
+          "effectiveDate" : "2020-03-09"
         },
         "mobile" : false,
-        "active_status" : "A",
-        "operating_status" : {
+        "activeStatus" : "A",
+        "operatingStatus" : {
           "code" : "NORMAL"
         },
-        "visn" : "16"
+        "visn" : "15"
       }
     }
   ],
@@ -504,10 +506,10 @@
   },
   "meta" : {
     "pagination" : {
-      "current_page" : 1,
-      "per_page" : 10,
-      "total_pages" : 249,
-      "total_entries" : 2485
+      "currentPage" : 1,
+      "perPage" : 10,
+      "totalPages" : 249,
+      "totalEntries" : 2485
     }
   }
 }

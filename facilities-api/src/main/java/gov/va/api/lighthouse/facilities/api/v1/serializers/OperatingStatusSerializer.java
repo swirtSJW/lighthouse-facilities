@@ -20,7 +20,7 @@ public class OperatingStatusSerializer extends NonEmptySerializer<OperatingStatu
   public void serialize(OperatingStatus value, JsonGenerator jgen, SerializerProvider provider) {
     jgen.writeStartObject();
     writeNonEmpty(jgen, "code", value.code());
-    writeNonEmpty(jgen, "additional_info", value.additionalInfo());
+    writeNonEmpty(jgen, "additionalInfo", value.additionalInfo());
     jgen.writeEndObject();
   }
 }
