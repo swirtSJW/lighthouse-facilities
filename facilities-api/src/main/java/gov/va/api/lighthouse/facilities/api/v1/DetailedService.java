@@ -37,6 +37,7 @@ import org.apache.commons.lang3.ObjectUtils;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
+  "id",
   "name",
   "descriptionFacility",
   "appointmentLeadIn",
@@ -48,6 +49,8 @@ import org.apache.commons.lang3.ObjectUtils;
 })
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService implements CanBeEmpty {
+  String id;
+
   @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
   String name;
 
@@ -114,7 +117,8 @@ public class DetailedService implements CanBeEmpty {
   /** Empty elements will be omitted from JSON serialization. */
   @JsonIgnore
   public boolean isEmpty() {
-    return isBlank(name())
+    return isBlank(id())
+        && isBlank(name())
         && isBlank(changed())
         && isBlank(descriptionFacility())
         && isBlank(appointmentLeadIn())

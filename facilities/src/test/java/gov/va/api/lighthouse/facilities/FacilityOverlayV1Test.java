@@ -81,6 +81,7 @@ public class FacilityOverlayV1Test {
 
   private DetailedService createDetailedService(boolean cmsServiceActiveValue) {
     return DetailedService.builder()
+        .id("covid19Vaccine")
         .name("Covid19Vaccine")
         .active(cmsServiceActiveValue)
         .changed("2021-02-04T22:36:49+00:00")
@@ -149,7 +150,7 @@ public class FacilityOverlayV1Test {
       detailedServices = new HashSet<>();
       for (DetailedService service : overlay.detailedServices()) {
         if (service.active()) {
-          detailedServices.add(service.name());
+          detailedServices.add(service.id());
         }
       }
     }

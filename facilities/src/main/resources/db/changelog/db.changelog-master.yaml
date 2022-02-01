@@ -510,3 +510,10 @@ databaseChangeLog:
         - dropTable:
             tableName: cms_graveyard_overlay_detailed_services
             schemaName: app
+  - changeSet:
+      id: 19
+      author: axolotl
+      changes:
+        - delete:
+            tableName: cms_overlay_detailed_services
+            schemaName: app
