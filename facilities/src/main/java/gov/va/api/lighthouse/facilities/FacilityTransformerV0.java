@@ -1,22 +1,13 @@
 package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 /** Utility class for transforming DatamartFacility to version 0 facility object and back. */
 @UtilityClass
-public final class FacilityTransformerV0 {
-  private static boolean containsValueOfName(Enum<?>[] values, String name) {
-    return !Arrays.stream(values)
-        .parallel()
-        .map(e -> e.name().equals(name))
-        .collect(Collectors.toList())
-        .isEmpty();
-  }
-
+public final class FacilityTransformerV0 extends BaseVersionedTransformer {
   /** Transform persisted DatamartFacility to version 0 facility. */
   static Facility toFacility(@NonNull DatamartFacility df) {
     return Facility.builder()
@@ -222,7 +213,11 @@ public final class FacilityTransformerV0 {
     return containsValueOfName(
             Facility.HealthService.values(), datamartFacilityHealthService.name())
         ? Facility.HealthService.valueOf(datamartFacilityHealthService.name())
-        : null;
+        : datamartFacilityHealthService.equals(DatamartFacility.HealthService.MentalHealth)
+            ? Facility.HealthService.MentalHealthCare
+            : datamartFacilityHealthService.equals(DatamartFacility.HealthService.Dental)
+                ? Facility.HealthService.DentalServices
+                : null;
   }
 
   /** Transform version 0 facility health service to DatamartFacility health service. */
@@ -231,7 +226,11 @@ public final class FacilityTransformerV0 {
     return containsValueOfName(
             DatamartFacility.HealthService.values(), facilityHealthService.name())
         ? DatamartFacility.HealthService.valueOf(facilityHealthService.name())
-        : null;
+        : facilityHealthService.equals(Facility.HealthService.MentalHealthCare)
+            ? DatamartFacility.HealthService.MentalHealth
+            : facilityHealthService.equals(Facility.HealthService.DentalServices)
+                ? DatamartFacility.HealthService.Dental
+                : null;
   }
 
   /** Transform DatamartFacility hours to version 0 facility hours. */
@@ -289,10 +288,7 @@ public final class FacilityTransformerV0 {
         .establishedPatientWaitTime(datamartPatientWaitTime.establishedPatientWaitTime())
         .service(
             (datamartPatientWaitTime.service() != null)
-                ? containsValueOfName(
-                        Facility.HealthService.values(), datamartPatientWaitTime.service().name())
-                    ? Facility.HealthService.valueOf(datamartPatientWaitTime.service().name())
-                    : null
+                ? transformFacilityHealthService(datamartPatientWaitTime.service())
                 : null)
         .build();
   }
@@ -305,12 +301,7 @@ public final class FacilityTransformerV0 {
         .establishedPatientWaitTime(facilityPatientWaitTime.establishedPatientWaitTime())
         .service(
             (facilityPatientWaitTime.service() != null)
-                ? containsValueOfName(
-                        DatamartFacility.HealthService.values(),
-                        facilityPatientWaitTime.service().name())
-                    ? DatamartFacility.HealthService.valueOf(
-                        facilityPatientWaitTime.service().name())
-                    : null
+                ? transformFacilityHealthService(facilityPatientWaitTime.service())
                 : null)
         .build();
   }
@@ -396,18 +387,25 @@ public final class FacilityTransformerV0 {
             .health(
                 (datamartFacilityServices.health() != null)
                     ? datamartFacilityServices.health().parallelStream()
+                        .filter(
+                            e ->
+                                containsValueOfName(Facility.HealthService.values(), e.name())
+                                    || checkHealthServiceNameChange(e))
                         .map(e -> transformFacilityHealthService(e))
                         .collect(Collectors.toList())
                     : null)
             .benefits(
                 (datamartFacilityServices.benefits() != null)
                     ? datamartFacilityServices.benefits().parallelStream()
+                        .filter(
+                            e -> containsValueOfName(Facility.BenefitsService.values(), e.name()))
                         .map(e -> transformFacilityBenefitsService(e))
                         .collect(Collectors.toList())
                     : null)
             .other(
                 (datamartFacilityServices.other() != null)
                     ? datamartFacilityServices.other().parallelStream()
+                        .filter(e -> containsValueOfName(Facility.OtherService.values(), e.name()))
                         .map(e -> transformFacilityOtherService(e))
                         .collect(Collectors.toList())
                     : null)
@@ -424,18 +422,31 @@ public final class FacilityTransformerV0 {
             .health(
                 (facilityServices.health() != null)
                     ? facilityServices.health().parallelStream()
+                        .filter(
+                            e ->
+                                containsValueOfName(
+                                        DatamartFacility.HealthService.values(), e.name())
+                                    || checkHealthServiceNameChange(e))
                         .map(e -> transformFacilityHealthService(e))
                         .collect(Collectors.toList())
                     : null)
             .benefits(
                 (facilityServices.benefits() != null)
                     ? facilityServices.benefits().parallelStream()
+                        .filter(
+                            e ->
+                                containsValueOfName(
+                                    DatamartFacility.BenefitsService.values(), e.name()))
                         .map(e -> transformFacilityBenefitsService(e))
                         .collect(Collectors.toList())
                     : null)
             .other(
                 (facilityServices.other() != null)
                     ? facilityServices.other().parallelStream()
+                        .filter(
+                            e ->
+                                containsValueOfName(
+                                    DatamartFacility.OtherService.values(), e.name()))
                         .map(e -> transformFacilityOtherService(e))
                         .collect(Collectors.toList())
                     : null)

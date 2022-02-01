@@ -207,7 +207,7 @@ public class FacilitiesControllerV1Test {
                         BigDecimal.valueOf(-97.67),
                         BigDecimal.valueOf(26.18)),
                     "health",
-                    List.of("Cardiology", "Audiology", "Urology"),
+                    List.of("cardiology", "audiology", "urology"),
                     Boolean.FALSE,
                     1,
                     1))
@@ -217,13 +217,13 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v1/facilities?bbox%5B%5D=-97.65&bbox%5B%5D=26.16&bbox%5B%5D=-97.67&bbox%5B%5D=26.18&mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?bbox%5B%5D=-97.65&bbox%5B%5D=26.16&bbox%5B%5D=-97.67&bbox%5B%5D=26.18&mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .first(
-                            "http://foo/bp/v1/facilities?bbox%5B%5D=-97.65&bbox%5B%5D=26.16&bbox%5B%5D=-97.67&bbox%5B%5D=26.18&mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?bbox%5B%5D=-97.65&bbox%5B%5D=26.16&bbox%5B%5D=-97.67&bbox%5B%5D=26.18&mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .prev(null)
                         .next(null)
                         .last(
-                            "http://foo/bp/v1/facilities?bbox%5B%5D=-97.65&bbox%5B%5D=26.16&bbox%5B%5D=-97.67&bbox%5B%5D=26.18&mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?bbox%5B%5D=-97.65&bbox%5B%5D=26.16&bbox%5B%5D=-97.67&bbox%5B%5D=26.18&mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -338,7 +338,7 @@ public class FacilitiesControllerV1Test {
                     null,
                     "vha_740GA",
                     "health",
-                    List.of("Cardiology", "Audiology", "Urology"),
+                    List.of("cardiology", "audiology", "urology"),
                     Boolean.FALSE,
                     1,
                     1))
@@ -348,13 +348,13 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v1/facilities?lat=26.1745479800001&long=-97.6667188&mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=26.1745479800001&long=-97.6667188&mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .first(
-                            "http://foo/bp/v1/facilities?lat=26.1745479800001&long=-97.6667188&mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=26.1745479800001&long=-97.6667188&mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .prev(null)
                         .next(null)
                         .last(
-                            "http://foo/bp/v1/facilities?lat=26.1745479800001&long=-97.6667188&mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=26.1745479800001&long=-97.6667188&mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -385,7 +385,7 @@ public class FacilitiesControllerV1Test {
                     BigDecimal.valueOf(75),
                     "vha_740GA",
                     "health",
-                    List.of("Cardiology", "Audiology", "Urology"),
+                    List.of("cardiology", "audiology", "urology"),
                     Boolean.FALSE,
                     1,
                     1))
@@ -395,13 +395,13 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .first(
-                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .prev(null)
                         .next(null)
                         .last(
-                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=75&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -432,7 +432,7 @@ public class FacilitiesControllerV1Test {
                     BigDecimal.valueOf(50),
                     "vha_740GA",
                     "health",
-                    List.of("Cardiology", "Audiology", "Urology"),
+                    List.of("cardiology", "audiology", "urology"),
                     Boolean.FALSE,
                     1,
                     1))
@@ -442,13 +442,13 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .first(
-                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .prev(null)
                         .next(null)
                         .last(
-                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?lat=27.1745479800001&long=-97.6667188&mobile=false&radius=50&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -491,7 +491,7 @@ public class FacilitiesControllerV1Test {
                 .jsonFacilitiesByState(
                     "FL",
                     "health",
-                    List.of("Cardiology", "Audiology", "Urology"),
+                    List.of("cardiology", "audiology", "urology"),
                     Boolean.FALSE,
                     2,
                     1))
@@ -501,14 +501,14 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&state=FL&type=health&page=2&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&state=FL&type=health&page=2&per_page=1")
                         .first(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&state=FL&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&state=FL&type=health&page=1&per_page=1")
                         .prev(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&state=FL&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&state=FL&type=health&page=1&per_page=1")
                         .next(null)
                         .last(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&state=FL&type=health&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&state=FL&type=health&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()
@@ -579,7 +579,7 @@ public class FacilitiesControllerV1Test {
                 .jsonFacilitiesByZip(
                     "32934",
                     "health",
-                    List.of("Cardiology", "Audiology", "Urology"),
+                    List.of("cardiology", "audiology", "urology"),
                     Boolean.FALSE,
                     2,
                     1))
@@ -589,14 +589,14 @@ public class FacilitiesControllerV1Test {
                 .links(
                     PageLinks.builder()
                         .self(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&zip=32934&page=2&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&zip=32934&page=2&per_page=1")
                         .first(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&zip=32934&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&zip=32934&page=1&per_page=1")
                         .prev(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&zip=32934&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&zip=32934&page=1&per_page=1")
                         .next(null)
                         .last(
-                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=Cardiology&services%5B%5D=Audiology&services%5B%5D=Urology&type=health&zip=32934&page=1&per_page=1")
+                            "http://foo/bp/v1/facilities?mobile=false&services%5B%5D=cardiology&services%5B%5D=audiology&services%5B%5D=urology&type=health&zip=32934&page=1&per_page=1")
                         .build())
                 .meta(
                     FacilitiesResponse.FacilitiesMetadata.builder()

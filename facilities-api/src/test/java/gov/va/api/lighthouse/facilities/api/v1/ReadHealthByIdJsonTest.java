@@ -85,9 +85,8 @@ public class ReadHealthByIdJsonTest {
                                     List.of(
                                         Facility.HealthService.EmergencyCare,
                                         Facility.HealthService.PrimaryCare,
-                                        Facility.HealthService.MentalHealthCare,
-                                        Facility.HealthService.Dermatology,
-                                        Facility.HealthService.SpecialtyCare))
+                                        Facility.HealthService.MentalHealth,
+                                        Facility.HealthService.Dermatology))
                                 .lastUpdated(LocalDate.parse("2020-02-24"))
                                 .build())
                         .satisfaction(
@@ -110,11 +109,7 @@ public class ReadHealthByIdJsonTest {
                                             13.727272,
                                             10.392441),
                                         patientWaitTime(
-                                            Facility.HealthService.SpecialtyCare, 5.222222, 0.0),
-                                        patientWaitTime(
-                                            Facility.HealthService.MentalHealthCare,
-                                            5.75,
-                                            2.634703)))
+                                            Facility.HealthService.MentalHealth, 5.75, 2.634703)))
                                 .effectiveDate(LocalDate.parse("2020-02-24"))
                                 .build())
                         .mobile(false)
