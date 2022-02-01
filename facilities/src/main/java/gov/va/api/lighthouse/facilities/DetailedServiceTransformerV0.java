@@ -14,7 +14,7 @@ public class DetailedServiceTransformerV0 {
   /** Transform DatamartDetailedService to version 0 DetailedService. */
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
-        .id(dds.id())
+        .serviceId(dds.serviceId())
         .name(dds.name())
         .active(dds.active())
         .changed(dds.changed())
@@ -91,7 +91,7 @@ public class DetailedServiceTransformerV0 {
   public static DatamartDetailedService toVersionAgnosticDetailedService(
       @NonNull DetailedService ds) {
     return DatamartDetailedService.builder()
-        .id(ds.id())
+        .serviceId(ds.serviceId())
         .name(ds.name())
         .active(ds.active())
         .changed(ds.changed())

@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
-  "id",
+  "serviceId",
   "name",
   "description_facility",
   "appointment_leadin",
@@ -35,7 +35,7 @@ import lombok.NoArgsConstructor;
   "service_locations"
 })
 public class DatamartDetailedService {
-  String id;
+  String serviceId;
 
   String name;
 

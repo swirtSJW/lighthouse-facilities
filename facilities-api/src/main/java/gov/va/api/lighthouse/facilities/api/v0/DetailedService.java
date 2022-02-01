@@ -37,7 +37,7 @@ import lombok.NoArgsConstructor;
 })
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService {
-  String id;
+  String serviceId;
 
   @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
   String name;

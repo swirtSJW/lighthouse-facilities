@@ -233,7 +233,7 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(service.id());
+        detailedServices.add(service.serviceId());
       }
       facilityEntity.overlayServices(detailedServices);
     }
