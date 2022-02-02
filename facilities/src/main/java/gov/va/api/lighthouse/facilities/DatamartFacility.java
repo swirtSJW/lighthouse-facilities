@@ -312,26 +312,26 @@ public class DatamartFacility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonPropertyOrder({
-      "name",
-      "facility_type",
-      "classification",
-      "parentId",
-      "website",
-      "lat",
-      "long",
-      "time_zone",
-      "address",
-      "phone",
-      "hours",
-      "operational_hours_special_instructions",
-      "services",
-      "satisfaction",
-      "wait_times",
-      "mobile",
-      "active_status",
-      "operating_status",
-      "detailed_services",
-      "visn"
+    "name",
+    "facility_type",
+    "classification",
+    "parentId",
+    "website",
+    "lat",
+    "long",
+    "time_zone",
+    "address",
+    "phone",
+    "hours",
+    "operational_hours_special_instructions",
+    "services",
+    "satisfaction",
+    "wait_times",
+    "mobile",
+    "active_status",
+    "operating_status",
+    "detailed_services",
+    "visn"
   })
   public static final class FacilityAttributes {
     @NotNull String name;
