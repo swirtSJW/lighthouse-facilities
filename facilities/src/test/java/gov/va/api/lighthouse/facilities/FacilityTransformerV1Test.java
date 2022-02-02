@@ -497,11 +497,21 @@ public class FacilityTransformerV1Test {
                 Facility.HealthService.EmergencyCare,
                 Facility.HealthService.MentalHealth,
                 Facility.HealthService.Dental));
-    assertThat(
-            FacilityTransformerV1.toFacility(
-                FacilityTransformerV0.toVersionAgnostic(
-                    FacilityTransformerV0.toFacility(
-                        FacilityTransformerV1.toVersionAgnostic(facilityWithWholeHealth)))))
+    DatamartFacility datamartFacility =
+        FacilityTransformerV1.toVersionAgnostic(facilityWithWholeHealth);
+    Facility tranformedfacilityWithWholeHealth =
+        FacilityTransformerV1.toFacility(
+            FacilityTransformerV0.toVersionAgnostic(
+                FacilityTransformerV0.toFacility(datamartFacility)));
+    tranformedfacilityWithWholeHealth
+        .attributes()
+        .parent(
+            FacilityTransformerV1.toFacilityParent(
+                datamartFacility.attributes().parentId(),
+                SystemDefinition.systemDefinition().url()
+                    + SystemDefinition.systemDefinition().apiPath()
+                    + "v1/"));
+    assertThat(tranformedfacilityWithWholeHealth)
         .usingRecursiveComparison()
         .isEqualTo(facilityWithoutWholeHealth);
   }
