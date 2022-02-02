@@ -386,12 +386,11 @@
         },
         "services" : {
           "health" : [
-            "EmergencyCare",
-            "Gynecology",
-            "MentalHealthCare",
-            "PrimaryCare",
-            "SpecialtyCare",
-            "WomensHealth"
+            "emergencyCare",
+            "gynecology",
+            "mentalHealth",
+            "primaryCare",
+            "womensHealth"
           ],
           "lastUpdated" : "2020-03-09"
         },
@@ -405,27 +404,22 @@
         "waitTimes" : {
           "health" : [
             {
-              "service" : "Gynecology",
+              "service" : "gynecology",
               "new" : 28.333333,
               "established" : 1.594594
             },
             {
-              "service" : "MentalHealthCare",
+              "service" : "mentalHealth",
               "new" : 6.484848,
               "established" : 1.301587
             },
             {
-              "service" : "PrimaryCare",
+              "service" : "primaryCare",
               "new" : 11.8,
               "established" : 3.374829
             },
             {
-              "service" : "SpecialtyCare",
-              "new" : 28.333333,
-              "established" : 0
-            },
-            {
-              "service" : "WomensHealth",
+              "service" : "womensHealth",
               "established" : 2.185185
             }
           ],
@@ -481,22 +475,23 @@
         },
         "services" : {
           "health" : [
-            "MentalHealthCare",
-            "SpecialtyCare"
+            "emergencyCare",
+            "mentalHealth",
+            "primaryCare"
           ],
           "lastUpdated" : "2020-03-09"
         },
         "waitTimes" : {
           "health" : [
             {
-              "service" : "MentalHealthCare",
-              "new" : 28.238095,
-              "established" : 2.55
+              "service" : "mentalHealth",
+              "new" : 21.2,
+              "established" : 5.368421
             },
             {
-              "service" : "SpecialtyCare",
-              "new" : 14.296875,
-              "established" : 2.392857
+              "service" : "primaryCare",
+              "new" : 6.9375,
+              "established" : 2.656084
             }
           ],
           "effectiveDate" : "2020-03-09"

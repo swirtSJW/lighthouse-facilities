@@ -514,7 +514,7 @@ public class SerializerTest {
     // Not empty
     waitTimes =
         Facility.PatientWaitTime.builder().service(Facility.HealthService.Cardiology).build();
-    assertJson(waitTimes, "{\"service\":\"Cardiology\"}");
+    assertJson(waitTimes, "{\"service\":\"cardiology\"}");
   }
 
   @Test

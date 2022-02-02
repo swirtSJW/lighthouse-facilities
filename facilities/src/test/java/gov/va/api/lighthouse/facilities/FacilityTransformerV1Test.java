@@ -317,6 +317,14 @@ public class FacilityTransformerV1Test {
   }
 
   private Facility facility() {
+    return facility(
+        List.of(
+            Facility.HealthService.PrimaryCare,
+            Facility.HealthService.UrgentCare,
+            Facility.HealthService.EmergencyCare));
+  }
+
+  private Facility facility(List<Facility.HealthService> healthServices) {
     return Facility.builder()
         .id("vha_123GA")
         .type(Facility.Type.va_facilities)
@@ -374,11 +382,7 @@ public class FacilityTransformerV1Test {
                                 Facility.BenefitsService.EducationClaimAssistance,
                                 Facility.BenefitsService.FamilyMemberClaimAssistance))
                         .other(List.of(Facility.OtherService.OnlineScheduling))
-                        .health(
-                            List.of(
-                                Facility.HealthService.PrimaryCare,
-                                Facility.HealthService.UrgentCare,
-                                Facility.HealthService.EmergencyCare))
+                        .health(healthServices)
                         .lastUpdated(LocalDate.parse("2018-01-01"))
                         .build())
                 .activeStatus(Facility.ActiveStatus.A)
@@ -452,7 +456,7 @@ public class FacilityTransformerV1Test {
   }
 
   @Test
-  public void facilityVisitorRoundtrip() {
+  public void losslessFacilityVisitorRoundtrip() {
     Facility facility = facility();
     DatamartFacility df = FacilityTransformerV1.toVersionAgnostic(facility);
     assertThat(df).hasFieldOrProperty("attributes.parentId");
@@ -472,6 +476,34 @@ public class FacilityTransformerV1Test {
         .usingRecursiveComparison()
         .ignoringFields("attributes.parent")
         .isEqualTo(facility);
+  }
+
+  @Test
+  public void nonLosslessFacilityVisitorRoundtrip() {
+    Facility facilityWithWholeHealth =
+        facility(
+            List.of(
+                Facility.HealthService.PrimaryCare,
+                Facility.HealthService.UrgentCare,
+                Facility.HealthService.EmergencyCare,
+                Facility.HealthService.MentalHealth,
+                Facility.HealthService.Dental,
+                Facility.HealthService.WholeHealth));
+    Facility facilityWithoutWholeHealth =
+        facility(
+            List.of(
+                Facility.HealthService.PrimaryCare,
+                Facility.HealthService.UrgentCare,
+                Facility.HealthService.EmergencyCare,
+                Facility.HealthService.MentalHealth,
+                Facility.HealthService.Dental));
+    assertThat(
+            FacilityTransformerV1.toFacility(
+                FacilityTransformerV0.toVersionAgnostic(
+                    FacilityTransformerV0.toFacility(
+                        FacilityTransformerV1.toVersionAgnostic(facilityWithWholeHealth)))))
+        .usingRecursiveComparison()
+        .isEqualTo(facilityWithoutWholeHealth);
   }
 
   @Test

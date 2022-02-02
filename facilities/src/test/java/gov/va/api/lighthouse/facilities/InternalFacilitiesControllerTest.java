@@ -292,8 +292,7 @@ public class InternalFacilitiesControllerTest {
             "South",
             1.2,
             3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealth));
     f1.attributes().latitude(null);
     f1.attributes().longitude(null);
     f1V1.attributes().latitude(null);
@@ -329,7 +328,7 @@ public class InternalFacilitiesControllerTest {
     List<FacilityEntity> findAll = ImmutableList.copyOf(facilityRepository.findAll());
     assertThat(findAll).hasSize(4);
     assertThat(findAll.get(0).missingTimestamp()).isNull();
-    assertThat(findAll.get(0).services()).isEqualTo(Set.of("MentalHealthCare"));
+    assertThat(findAll.get(0).services()).isEqualTo(Set.of("MentalHealth"));
     assertThat(findAll.get(1).missingTimestamp()).isNotNull();
     assertThat(findAll.get(2).missingTimestamp()).isNotNull();
     assertThat(findAll.get(3).missingTimestamp()).isNotNull();
@@ -349,7 +348,7 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.facilitiesUpdated()).isEqualTo(List.of("vha_f1"));
     FacilityEntity result = Iterables.getOnlyElement(facilityRepository.findAll());
     assertThat(result.missingTimestamp()).isNull();
-    assertThat(result.services()).isEqualTo(Set.of("MentalHealthCare"));
+    assertThat(result.services()).isEqualTo(Set.of("MentalHealth"));
   }
 
   @Test
@@ -379,8 +378,7 @@ public class InternalFacilitiesControllerTest {
             "South",
             1.2,
             3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealth));
     f1.attributes().address().physical().state(null);
     f1.attributes().address().physical().zip(null);
     f1.attributes().latitude(BigDecimal.valueOf(91.4));
@@ -901,8 +899,7 @@ public class InternalFacilitiesControllerTest {
                                 Services.builder()
                                     .health(
                                         List.of(
-                                            HealthService.PrimaryCare,
-                                            HealthService.MentalHealthCare))
+                                            HealthService.PrimaryCare, HealthService.MentalHealth))
                                     .benefits(
                                         List.of(
                                             BenefitsService.ApplyingForBenefits,
@@ -913,7 +910,7 @@ public class InternalFacilitiesControllerTest {
                     .build()))
         .containsExactlyInAnyOrder(
             HealthService.PrimaryCare,
-            HealthService.MentalHealthCare,
+            HealthService.MentalHealth,
             BenefitsService.ApplyingForBenefits,
             BenefitsService.BurialClaimAssistance,
             OtherService.OnlineScheduling);
@@ -978,8 +975,7 @@ public class InternalFacilitiesControllerTest {
             "South",
             1.2,
             3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealth));
     f1.attributes().address().mailing(Address.builder().zip("12345-56").build());
     f1V1.attributes().address().mailing(Address.builder().zip("12345-56").build());
     ReloadResponse response = ReloadResponse.start();
@@ -1028,8 +1024,7 @@ public class InternalFacilitiesControllerTest {
             "South",
             1.2,
             3.4,
-            List.of(
-                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealthCare));
+            List.of(gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.MentalHealth));
     DatamartFacility f2V1 =
         _facilityV1(
             "vha_f2",
