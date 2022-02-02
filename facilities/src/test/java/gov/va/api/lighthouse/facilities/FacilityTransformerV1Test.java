@@ -466,11 +466,7 @@ public class FacilityTransformerV1Test {
                 assertThat(FacilityTransformerV0.toFacility(df))
                     .hasFieldOrProperty("attributes.parent"))
         .isInstanceOf(AssertionError.class)
-        .hasMessage(
-            "\nExpecting\n  "
-                + FacilityTransformerV0.toFacility(df).toString()
-                + "\nto have a property or a field named \"attributes.parent\""
-                + "\n(static and synthetic fields are ignored)");
+        .hasMessageContaining("\"attributes.parent\"");
     assertThat(
             FacilityTransformerV1.toFacility(
                 FacilityTransformerV0.toVersionAgnostic(
