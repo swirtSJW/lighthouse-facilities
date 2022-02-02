@@ -463,11 +463,14 @@ public class FacilityTransformerV1Test {
     // Assert that there is no parent for V0 Facility when it is transformed from datamartFacility
     assertThatThrownBy(
             () ->
-                assertThat(
-                        FacilityTransformerV0.toFacility(
-                            FacilityTransformerV1.toVersionAgnostic(facility)))
+                assertThat(FacilityTransformerV0.toFacility(df))
                     .hasFieldOrProperty("attributes.parent"))
-        .isInstanceOf(AssertionError.class);
+        .isInstanceOf(AssertionError.class)
+        .hasMessage(
+            "\r\nExpecting\r\n  "
+                + FacilityTransformerV0.toFacility(df).toString()
+                + "\r\nto have a property or a field named \"attributes.parent\""
+                + "\r\n(static and synthetic fields are ignored)");
     assertThat(
             FacilityTransformerV1.toFacility(
                 FacilityTransformerV0.toVersionAgnostic(
