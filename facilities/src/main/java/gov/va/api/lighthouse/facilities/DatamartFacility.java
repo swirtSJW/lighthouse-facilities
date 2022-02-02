@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -310,6 +311,28 @@ public class DatamartFacility {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonPropertyOrder({
+      "name",
+      "facility_type",
+      "classification",
+      "parentId",
+      "website",
+      "lat",
+      "long",
+      "time_zone",
+      "address",
+      "phone",
+      "hours",
+      "operational_hours_special_instructions",
+      "services",
+      "satisfaction",
+      "wait_times",
+      "mobile",
+      "active_status",
+      "operating_status",
+      "detailed_services",
+      "visn"
+  })
   public static final class FacilityAttributes {
     @NotNull String name;
 
