@@ -41,13 +41,12 @@
     "services" : {
       "other" : [ ],
       "health" : [
-        "EmergencyCare",
-        "PrimaryCare",
-        "MentalHealthCare",
-        "Audiology",
-        "Dermatology",
-        "SpecialtyCare",
-        "DentalServices"
+        "emergencyCare",
+        "primaryCare",
+        "mentalHealth",
+        "audiology",
+        "dermatology",
+        "dental"
       ],
       "last_updated" : "2020-03-16"
     },
@@ -61,27 +60,22 @@
     "wait_times" : {
       "health" : [
         {
-          "service" : "Audiology",
+          "service" : "audiology",
           "new" : 39.871345,
           "established" : 6.566929
         },
         {
-          "service" : "Dermatology",
+          "service" : "dermatology",
           "new" : 2.60606,
           "established" : 5.571428
         },
         {
-          "service" : "PrimaryCare",
+          "service" : "primaryCare",
           "new" : 20.641975,
           "established" : 2.113052
         },
         {
-          "service" : "SpecialtyCare",
-          "new" : 22.694915,
-          "established" : 2.26008
-        },
-        {
-          "service" : "MentalHealthCare",
+          "service" : "mentalHealth",
           "new" : 3.045454,
           "established" : 0.844202
         }

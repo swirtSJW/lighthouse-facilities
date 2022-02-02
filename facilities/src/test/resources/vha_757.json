@@ -41,20 +41,19 @@
     "services" : {
       "other" : [ ],
       "health" : [
-        "PrimaryCare",
-        "MentalHealthCare",
-        "WomensHealth",
-        "Audiology",
-        "Cardiology",
-        "Dermatology",
-        "Gastroenterology",
-        "Gynecology",
-        "Ophthalmology",
-        "Optometry",
-        "Orthopedics",
-        "Urology",
-        "SpecialtyCare",
-        "DentalServices"
+        "primaryCare",
+        "mentalHealth",
+        "womensHealth",
+        "audiology",
+        "cardiology",
+        "dermatology",
+        "gastroenterology",
+        "gynecology",
+        "ophthalmology",
+        "optometry",
+        "orthopedics",
+        "urology",
+        "dental"
       ],
       "last_updated" : "2020-03-16"
     },
@@ -70,67 +69,62 @@
     "wait_times" : {
       "health" : [
         {
-          "service" : "Urology",
+          "service" : "urology",
           "new" : 15.979591,
           "established" : 8.095465
         },
         {
-          "service" : "Audiology",
+          "service" : "audiology",
           "new" : 20.431174,
           "established" : 9.695447
         },
         {
-          "service" : "Optometry",
+          "service" : "optometry",
           "new" : 13.5291,
           "established" : 5.630188
         },
         {
-          "service" : "Cardiology",
+          "service" : "cardiology",
           "new" : 33.644067,
           "established" : 15.057007
         },
         {
-          "service" : "Gynecology",
+          "service" : "gynecology",
           "new" : 14.47619,
           "established" : 5.406896
         },
         {
-          "service" : "Dermatology",
+          "service" : "dermatology",
           "new" : 8.31081,
           "established" : 9.635044
         },
         {
-          "service" : "Orthopedics",
+          "service" : "orthopedics",
           "new" : 20.722222,
           "established" : 15.551829
         },
         {
-          "service" : "PrimaryCare",
+          "service" : "primaryCare",
           "new" : 10.542288,
           "established" : 5.08283
         },
         {
-          "service" : "Ophthalmology",
+          "service" : "ophthalmology",
           "new" : 24.0,
           "established" : 6.96486
         },
         {
-          "service" : "WomensHealth",
+          "service" : "womensHealth",
           "new" : 14.882352,
           "established" : 5.212355
         },
         {
-          "service" : "SpecialtyCare",
-          "new" : 17.53453,
-          "established" : 9.400051
-        },
-        {
-          "service" : "Gastroenterology",
+          "service" : "gastroenterology",
           "new" : 14.814159,
           "established" : 6.796
         },
         {
-          "service" : "MentalHealthCare",
+          "service" : "mentalHealth",
           "new" : 5.028089,
           "established" : 7.345443
         }

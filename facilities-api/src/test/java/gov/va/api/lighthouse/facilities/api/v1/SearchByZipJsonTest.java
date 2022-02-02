@@ -101,7 +101,7 @@ public class SearchByZipJsonTest {
                                     .health(
                                         List.of(
                                             Facility.HealthService.PrimaryCare,
-                                            Facility.HealthService.MentalHealthCare,
+                                            Facility.HealthService.MentalHealth,
                                             Facility.HealthService.Audiology,
                                             Facility.HealthService.Cardiology,
                                             Facility.HealthService.Dermatology,
@@ -110,8 +110,7 @@ public class SearchByZipJsonTest {
                                             Facility.HealthService.Optometry,
                                             Facility.HealthService.Orthopedics,
                                             Facility.HealthService.Urology,
-                                            Facility.HealthService.SpecialtyCare,
-                                            Facility.HealthService.DentalServices))
+                                            Facility.HealthService.Dental))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(
@@ -158,15 +157,11 @@ public class SearchByZipJsonTest {
                                                 47.571428,
                                                 3.258992),
                                             patientWaitTime(
-                                                Facility.HealthService.SpecialtyCare,
-                                                20.963572,
-                                                5.775406),
-                                            patientWaitTime(
                                                 Facility.HealthService.Gastroenterology,
                                                 22.151515,
                                                 4.943661),
                                             patientWaitTime(
-                                                Facility.HealthService.MentalHealthCare,
+                                                Facility.HealthService.MentalHealth,
                                                 7.592814,
                                                 3.97159)))
                                     .effectiveDate(LocalDate.parse("2020-03-02"))
