@@ -45,7 +45,9 @@ public class CmsOverlayResponseEmptyFieldsTest {
             CmsOverlayResponse.builder()
                 .overlay(
                     CmsOverlay.builder()
-                        .detailedServices(List.of(DetailedService.builder().name("test").build()))
+                        .detailedServices(
+                            List.of(
+                                DetailedService.builder().name("test").serviceId("test").build()))
                         .build())
                 .build()
                 .isEmpty())
