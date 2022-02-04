@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @Builder
@@ -35,7 +36,7 @@ import lombok.NoArgsConstructor;
   "service_locations"
 })
 public class DatamartDetailedService {
-  String serviceId;
+  @NonNull String serviceId;
 
   String name;
 

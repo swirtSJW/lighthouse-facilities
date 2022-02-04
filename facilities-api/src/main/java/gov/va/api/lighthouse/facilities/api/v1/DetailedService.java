@@ -23,6 +23,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
 
 @Data
@@ -36,9 +37,21 @@ import org.apache.commons.lang3.ObjectUtils;
 @JsonSerialize(using = DetailedServiceSerializer.class)
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonPropertyOrder({
+  "serviceId",
+  "name",
+  "descriptionFacility",
+  "appointmentLeadIn",
+  "appointmentPhones",
+  "onlineSchedulingAvailable",
+  "referralRequired",
+  "walkInsAccepted",
+  "serviceLocations"
+})
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService implements CanBeEmpty {
   @Schema(description = "Service id.", example = "covid19Vaccine", nullable = true)
+  @NonNull
   String serviceId;
 
   @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)

@@ -116,6 +116,7 @@ final class JacksonSerializersV0 {
     @SneakyThrows
     public void serialize(DetailedService value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
+      jgen.writeStringField("service_id", value.serviceId());
       jgen.writeStringField("name", value.name());
       jgen.writeStringField("description_facility", value.descriptionFacility());
       jgen.writeStringField("appointment_leadin", value.appointmentLeadIn());

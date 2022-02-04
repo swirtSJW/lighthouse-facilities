@@ -258,33 +258,86 @@ public class DetailedServiceEmptyFieldsTest {
   @Test
   @SneakyThrows
   void isEmpty() {
-    // Empty
-    assertThat(DetailedService.builder().build().isEmpty()).isTrue();
-    String blank = "   ";
-    assertThat(DetailedService.builder().name(blank).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().serviceLocations(emptyList()).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().appointmentLeadIn(blank).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().changed(blank).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().descriptionFacility(blank).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().onlineSchedulingAvailable(blank).build().isEmpty())
-        .isTrue();
-    assertThat(DetailedService.builder().path(blank).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().phoneNumbers(emptyList()).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().referralRequired(blank).build().isEmpty()).isTrue();
-    assertThat(DetailedService.builder().walkInsAccepted(blank).build().isEmpty()).isTrue();
     // Not empty
-    String nonBlank = "test";
-    assertThat(DetailedService.builder().name(nonBlank).build().isEmpty()).isFalse();
-    assertThat(DetailedService.builder().appointmentLeadIn(nonBlank).build().isEmpty()).isFalse();
-    assertThat(DetailedService.builder().changed(nonBlank).build().isEmpty()).isFalse();
-    assertThat(DetailedService.builder().descriptionFacility(nonBlank).build().isEmpty()).isFalse();
-    assertThat(DetailedService.builder().onlineSchedulingAvailable(nonBlank).build().isEmpty())
-        .isFalse();
-    assertThat(DetailedService.builder().path(nonBlank).build().isEmpty()).isFalse();
-    assertThat(DetailedService.builder().referralRequired(nonBlank).build().isEmpty()).isFalse();
-    assertThat(DetailedService.builder().walkInsAccepted(nonBlank).build().isEmpty()).isFalse();
+    assertThat(DetailedService.builder().serviceId("test").build().isEmpty()).isFalse();
+    String blank = "   ";
+    assertThat(DetailedService.builder().serviceId("test").name(blank).build().isEmpty()).isFalse();
     assertThat(
             DetailedService.builder()
+                .serviceId("test")
+                .serviceLocations(emptyList())
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder().serviceId("test").appointmentLeadIn(blank).build().isEmpty())
+        .isFalse();
+    assertThat(DetailedService.builder().serviceId("test").changed(blank).build().isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
+                .descriptionFacility(blank)
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
+                .onlineSchedulingAvailable(blank)
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(DetailedService.builder().serviceId("test").path(blank).build().isEmpty()).isFalse();
+    assertThat(
+            DetailedService.builder().serviceId("test").phoneNumbers(emptyList()).build().isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder().serviceId("test").referralRequired(blank).build().isEmpty())
+        .isFalse();
+    assertThat(DetailedService.builder().serviceId("test").walkInsAccepted(blank).build().isEmpty())
+        .isFalse();
+    String nonBlank = "test";
+    assertThat(DetailedService.builder().serviceId("test").name(nonBlank).build().isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
+                .appointmentLeadIn(nonBlank)
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(DetailedService.builder().serviceId("test").changed(nonBlank).build().isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
+                .descriptionFacility(nonBlank)
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
+                .onlineSchedulingAvailable(nonBlank)
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(DetailedService.builder().serviceId("test").path(nonBlank).build().isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
+                .referralRequired(nonBlank)
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder().serviceId("test").walkInsAccepted(nonBlank).build().isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.builder()
+                .serviceId("test")
                 .phoneNumbers(
                     List.of(
                         DetailedService.AppointmentPhoneNumber.builder()
@@ -295,6 +348,7 @@ public class DetailedServiceEmptyFieldsTest {
         .isFalse();
     assertThat(
             DetailedService.builder()
+                .serviceId("test")
                 .serviceLocations(
                     List.of(
                         DetailedService.DetailedServiceLocation.builder()
