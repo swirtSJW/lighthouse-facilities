@@ -14,6 +14,7 @@ public class DetailedServiceTransformerV0 {
   /** Transform DatamartDetailedService to version 0 DetailedService. */
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
+        .serviceId(dds.serviceId())
         .name(dds.name())
         .active(dds.active())
         .changed(dds.changed())
@@ -88,19 +89,20 @@ public class DetailedServiceTransformerV0 {
 
   /** Transform version 0 DetailedService to version agnostic DatamartDetailedService. */
   public static DatamartDetailedService toVersionAgnosticDetailedService(
-      @NonNull DetailedService dds) {
+      @NonNull DetailedService ds) {
     return DatamartDetailedService.builder()
-        .name(dds.name())
-        .active(dds.active())
-        .changed(dds.changed())
-        .descriptionFacility(dds.descriptionFacility())
-        .appointmentLeadIn(dds.appointmentLeadIn())
-        .onlineSchedulingAvailable(dds.onlineSchedulingAvailable())
-        .path(dds.path())
-        .phoneNumbers(toVersionAgnosticDetailedServicePhoneNumbers(dds.phoneNumbers()))
-        .referralRequired(dds.referralRequired())
-        .serviceLocations(toVersionAgnosticDetailedServiceLocations(dds.serviceLocations()))
-        .walkInsAccepted(dds.walkInsAccepted())
+        .serviceId(ds.serviceId())
+        .name(ds.name())
+        .active(ds.active())
+        .changed(ds.changed())
+        .descriptionFacility(ds.descriptionFacility())
+        .appointmentLeadIn(ds.appointmentLeadIn())
+        .onlineSchedulingAvailable(ds.onlineSchedulingAvailable())
+        .path(ds.path())
+        .phoneNumbers(toVersionAgnosticDetailedServicePhoneNumbers(ds.phoneNumbers()))
+        .referralRequired(ds.referralRequired())
+        .serviceLocations(toVersionAgnosticDetailedServiceLocations(ds.serviceLocations()))
+        .walkInsAccepted(ds.walkInsAccepted())
         .build();
   }
 
