@@ -1,6 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -81,7 +84,15 @@ public final class Facility {
     SpecialtyCare,
     UrgentCare,
     Urology,
-    WomensHealth
+    WomensHealth;
+
+    /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
+    @JsonCreator
+    public static HealthService fromString(String name) {
+      return "mentalHealth".equalsIgnoreCase(name)
+          ? valueOf("MentalHealthCare")
+          : "dental".equalsIgnoreCase(name) ? valueOf("DentalServices") : valueOf(capitalize(name));
+    }
   }
 
   public enum OtherService implements ServiceType {
