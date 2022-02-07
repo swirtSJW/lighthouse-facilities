@@ -14,7 +14,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
-public class FacilityTransformerV1Test {
+public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
   private DatamartFacility datamartFacility() {
     return DatamartFacility.builder()
         .id("vha_123GA")
@@ -456,6 +456,94 @@ public class FacilityTransformerV1Test {
   }
 
   @Test
+  @SneakyThrows
+  void healthServiceRoundTripUsingServiceId() {
+    for (String json :
+        List.of(
+            "\"audiology\"",
+            "\"cardiology\"",
+            "\"caregiverSupport\"",
+            "\"covid19Vaccine\"",
+            "\"dental\"",
+            "\"dermatology\"",
+            "\"emergencyCare\"",
+            "\"gastroenterology\"",
+            "\"gynecology\"",
+            "\"mentalHealth\"",
+            "\"ophthalmology\"",
+            "\"optometry\"",
+            "\"orthopedics\"",
+            "\"nutrition\"",
+            "\"podiatry\"",
+            "\"primaryCare\"",
+            "\"specialtyCare\"",
+            "\"urgentCare\"",
+            "\"urology\"",
+            "\"womensHealth\"")) {
+      // Convert to FAPI V1 Health Service
+      gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService healthServiceV1 =
+          convertToHealthServiceV1(json);
+      // Convert to Datamart Health Service
+      String jsonHealthService = convertToJson(healthServiceV1);
+      DatamartFacility.HealthService datamartHealthService =
+          convertToDatamartHealthService(jsonHealthService);
+      // Convert to FAPI V0 Health Service
+      jsonHealthService = convertToJson(datamartHealthService);
+      gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService healthServiceV0 =
+          convertToHealthServiceV0(jsonHealthService);
+      // Convert back to FAPI V1 Health Service and compare beginning to end
+      jsonHealthService = convertToJson(healthServiceV0);
+      gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService healthService =
+          convertToHealthServiceV1(jsonHealthService);
+      assertThat(healthService).isEqualTo(healthServiceV1);
+    }
+  }
+
+  @Test
+  @SneakyThrows
+  void healthServiceRoundTripUsingServiceName() {
+    for (String json :
+        List.of(
+            "\"Audiology\"",
+            "\"Cardiology\"",
+            "\"CaregiverSupport\"",
+            "\"Covid19Vaccine\"",
+            "\"DentalServices\"",
+            "\"Dermatology\"",
+            "\"EmergencyCare\"",
+            "\"Gastroenterology\"",
+            "\"Gynecology\"",
+            "\"MentalHealthCare\"",
+            "\"Ophthalmology\"",
+            "\"Optometry\"",
+            "\"Orthopedics\"",
+            "\"Nutrition\"",
+            "\"Podiatry\"",
+            "\"PrimaryCare\"",
+            "\"SpecialtyCare\"",
+            "\"UrgentCare\"",
+            "\"Urology\"",
+            "\"WomensHealth\"")) {
+      // Convert to FAPI V1 Health Service
+      gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService healthServiceV1 =
+          convertToHealthServiceV1(json);
+      // Convert to Datamart Health Service
+      String jsonHealthService = convertToJson(healthServiceV1);
+      DatamartFacility.HealthService datamartHealthService =
+          convertToDatamartHealthService(jsonHealthService);
+      // Convert to FAPI V0 Health Service
+      jsonHealthService = convertToJson(datamartHealthService);
+      gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService healthServiceV0 =
+          convertToHealthServiceV0(jsonHealthService);
+      // Convert back to FAPI V1 Health Service and compare beginning to end
+      jsonHealthService = convertToJson(healthServiceV0);
+      gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService healthService =
+          convertToHealthServiceV1(jsonHealthService);
+      assertThat(healthService).isEqualTo(healthServiceV1);
+    }
+  }
+
+  @Test
   public void losslessFacilityVisitorRoundtrip() {
     Facility facility = facility();
     DatamartFacility df = FacilityTransformerV1.toVersionAgnostic(facility);
@@ -520,7 +608,6 @@ public class FacilityTransformerV1Test {
   public void nullArgs() {
     assertThrows(NullPointerException.class, () -> FacilityTransformerV1.toFacility(null));
     assertThrows(NullPointerException.class, () -> FacilityTransformerV1.toVersionAgnostic(null));
-
     final Method transformDatmartFacilityBenefitsServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityBenefitsService", DatamartFacility.BenefitsService.class);
@@ -541,7 +628,6 @@ public class FacilityTransformerV1Test {
         .isInstanceOf(InvocationTargetException.class)
         .hasCause(
             new NullPointerException("facilityBenefitsService is marked non-null but is null"));
-
     final Method transformDatmartFacilityHealthServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityHealthService", DatamartFacility.HealthService.class);
@@ -560,7 +646,6 @@ public class FacilityTransformerV1Test {
     assertThatThrownBy(() -> transformFacilityHealthServiceMethod.invoke(null, nullHealthV1))
         .isInstanceOf(InvocationTargetException.class)
         .hasCause(new NullPointerException("facilityHealthService is marked non-null but is null"));
-
     final Method transformDatmartFacilityServicesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityServices", DatamartFacility.Services.class);
@@ -577,7 +662,6 @@ public class FacilityTransformerV1Test {
     assertThat(transformFacilityServicesMethod.invoke(null, nullServicesV1))
         .usingRecursiveComparison()
         .isEqualTo(DatamartFacility.Services.builder().build());
-
     final Method transformDatmartFacilitySatisfactionMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilitySatisfaction", DatamartFacility.Satisfaction.class);
@@ -594,7 +678,6 @@ public class FacilityTransformerV1Test {
     assertThat(transformFacilitySatisfactionMethod.invoke(null, nullSatisfactionV1))
         .usingRecursiveComparison()
         .isEqualTo(DatamartFacility.Satisfaction.builder().build());
-
     final Method transformDatmartFacilityPhoneMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityPhone", DatamartFacility.Phone.class);
@@ -611,7 +694,6 @@ public class FacilityTransformerV1Test {
     assertThat(transformFacilityPhoneMethod.invoke(null, nullPhoneV1))
         .usingRecursiveComparison()
         .isEqualTo(DatamartFacility.Phone.builder().build());
-
     final Method transformDatmartFacilityHoursMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityHours", DatamartFacility.Hours.class);
@@ -628,7 +710,6 @@ public class FacilityTransformerV1Test {
     assertThat(transformFacilityHoursMethod.invoke(null, nullHoursV1))
         .usingRecursiveComparison()
         .isEqualTo(DatamartFacility.Hours.builder().build());
-
     final Method transformDatmartFacilityAddressesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityAddresses", DatamartFacility.Addresses.class);
@@ -645,7 +726,6 @@ public class FacilityTransformerV1Test {
     assertThat(transformFacilityAddressesMethod.invoke(null, nullAddressesV1))
         .usingRecursiveComparison()
         .isEqualTo(DatamartFacility.Addresses.builder().build());
-
     final Method transformDatmartFacilityWaitTimesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
             "transformFacilityWaitTimes", DatamartFacility.WaitTimes.class);
