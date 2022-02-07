@@ -11,5 +11,11 @@
   <artifactId>facilities-api</artifactId>
   <version>3.0.89</version>
   <packaging>jar</packaging>
-  <dependencies/>
+  <dependencies>
+    <dependency>
+      <groupId>gov.va.api.health</groupId>
+      <artifactId>service-auto-config</artifactId>
+      <version>9.0.6</version>
+    </dependency>
+  </dependencies>
 </project>
