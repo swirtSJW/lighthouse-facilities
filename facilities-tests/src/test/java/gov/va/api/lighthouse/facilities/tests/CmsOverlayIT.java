@@ -38,7 +38,7 @@ public class CmsOverlayIT {
   private static final String DETAILED_SERVICE_JSON_BODY =
       "{    \"detailed_services\":["
           + "{"
-          + "\"service_id\":\""
+          + "\"serviceId\":\""
           + uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name())
           + "\","
           + "\"name\":\"COVID-19 vaccines\","
