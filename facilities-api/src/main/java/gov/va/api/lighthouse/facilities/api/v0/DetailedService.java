@@ -27,7 +27,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
-  "service_id",
+  "serviceId",
   "name",
   "description_facility",
   "appointment_leadin",
@@ -41,7 +41,6 @@ import lombok.NonNull;
 public class DetailedService {
   @Schema(description = "Service id.", example = "covid19Vaccine", nullable = true)
   @NonNull
-  @JsonProperty("service_id")
   String serviceId;
 
   @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
