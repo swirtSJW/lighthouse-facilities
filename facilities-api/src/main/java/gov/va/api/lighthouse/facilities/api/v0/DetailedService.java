@@ -39,7 +39,7 @@ import lombok.NonNull;
 })
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService {
-  @Schema(description = "Service id.", example = "covid19Vaccine", nullable = true)
+  @Schema(description = "Service id.", example = "covid19Vaccine")
   @NonNull
   String serviceId;
 
