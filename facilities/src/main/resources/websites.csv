@@ -235,6 +235,7 @@ vc_0103V,https://www.va.gov/springfield-ma-vet-center/
 vc_0106V,https://www.va.gov/manhattan-ny-vet-center/
 vc_0108V,https://www.va.gov/manchester-vet-center/
 vc_0109V,https://www.va.gov/queens-vet-center/
+vc_0110V,https://www.va.gov/bronx-vet-center/
 vc_0115V,https://www.va.gov/portland-me-vet-center/
 vc_0116V,https://www.va.gov/new-haven-vet-center/
 vc_0117V,https://www.va.gov/hartford-vet-center/
@@ -250,6 +251,7 @@ vc_0127V,https://www.va.gov/norwich-vet-center/
 vc_0128V,https://www.va.gov/new-bedford-vet-center/
 vc_0129V,https://www.va.gov/lewiston-vet-center/
 vc_0130V,https://www.va.gov/sanford-vet-center/
+vc_0131V,https://www.va.gov/syracuse-vet-center/
 vc_0132V,https://www.va.gov/staten-island-vet-center/
 vc_0134V,https://www.va.gov/berlin-vet-center/
 vc_0135V,https://www.va.gov/watertown-vet-center/
@@ -263,6 +265,7 @@ vc_0207V,https://www.hampton.va.gov/locations/norfolk.asp
 vc_0208V,https://www.va.gov/huntington-vet-center/
 vc_0210V,https://www.va.gov/center-city-philadelphia-vet-center/
 vc_0211V,https://www.va.gov/pittsburgh-vet-center/
+vc_0213V,https://www.va.gov/silver-spring-vet-center/
 vc_0214V,https://www.va.gov/washington-dc-vet-center/
 vc_0215V,https://www.va.gov/wilmington-vet-center/
 vc_0216V,https://www.va.gov/morgantown-vet-center/
@@ -280,6 +283,7 @@ vc_0233V,https://www.va.gov/wheeling-vet-center/
 vc_0235V,https://www.va.gov/annapolis-vet-center/
 vc_0236V,https://www.va.gov/dundalk-vet-center/
 vc_0239V,https://www.va.gov/norristown-vet-center/
+vc_0240V,https://www.va.gov/virginia-beach-vet-center/
 vc_0243V,https://www.va.gov/sussex-county-vet-center/
 vc_0314V,https://www.va.gov/orlando-vet-center/
 vc_0315V,https://www.fayettevillenc.va.gov/locations/FayettevilleVetCenter.asp
@@ -288,6 +292,7 @@ vc_0326V,https://www.westpalmbeach.va.gov/locations/Palm_Beach_Vet_Center.asp
 vc_0337V,https://www.westpalmbeach.va.gov/locations/Jupiter_Vet_Center.asp
 vc_0343V,https://www.fayettevillenc.va.gov/locations/JacksonvilleVetCenter.asp
 vc_0434V,https://www.va.gov/escanaba-vet-center/
+vc_0501V,https://www.va.gov/cheyenne-vet-center/
 vc_0502V,https://www.va.gov/anchorage-vet-center/
 vc_0503V,https://www.va.gov/boise-vet-center/
 vc_0505V,https://www.va.gov/las-vegas-vet-center/
@@ -306,6 +311,7 @@ vc_0522V,https://www.va.gov/bellingham-vet-center/
 vc_0523V,https://www.va.gov/yakima-valley-vet-center/
 vc_0524V,https://www.va.gov/mesa-vet-center/
 vc_0525V,https://www.va.gov/colorado-springs-vet-center/
+vc_0526V,https://www.va.gov/grand-junction-vet-center/
 vc_0529V,https://www.va.gov/everett-vet-center/
 vc_0530V,https://www.va.gov/las-cruces-vet-center/
 vc_0531V,https://www.va.gov/east-idaho-vet-center/
@@ -316,6 +322,7 @@ vc_0536V,https://www.va.gov/lake-havasu-vet-center/
 vc_0537V,https://www.va.gov/yuma-vet-center/
 vc_0538-1OS,https://www.va.gov/great-falls-vet-center/
 vc_0538V,https://www.va.gov/great-falls-vet-center/
+vc_0539V,https://www.va.gov/kalispell-vet-center/
 vc_0541V,https://www.va.gov/walla-walla-vet-center/
 vc_0601V,https://www.va.gov/bakersfield-vet-center/
 vc_0602V,https://www.va.gov/concord-vet-center/
@@ -356,11 +363,15 @@ vc_0649V,https://www.va.gov/chico-vet-center/
 vc_0650V,https://www.va.gov/delta-vet-center/
 vc_0704V,https://www.shreveport.va.gov/locations/Shreveport_La_Veterans_Service_Ctr.asp
 vc_0706V,https://www.va.gov/dallas-vet-center/
+vc_0707V,https://www.va.gov/el-paso-vet-center/
+vc_0714V,https://www.va.gov/lubbock-vet-center/
 vc_0716V,https://www.va.gov/midland-vet-center/
 vc_0718V,https://www.va.gov/oklahoma-city-vet-center/
 vc_0723V,https://www.va.gov/tulsa-vet-center/
 vc_0724V,https://www.va.gov/nashville-vet-center/
+vc_0726V,https://www.va.gov/killeen-heights-vet-center/
 vc_0735V,https://www.va.gov/beaumont-vet-center/
+vc_0737V,https://www.va.gov/biloxi-vet-center/
 vc_0801MVC,https://www.va.gov/hartford-vet-center/
 vc_0803MVC,https://www.va.gov/white-river-junction-vet-center/
 vc_0804MVC,https://www.va.gov/lewiston-vet-center/
