@@ -44,7 +44,7 @@ import lombok.NonNull;
 public class DetailedService {
   @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
 
-  @Schema(description = "Service id.", example = "covid19Vaccine", nullable = true)
+  @Schema(description = "Service id.", example = "covid19Vaccine")
   @NonNull
   String serviceId;
 
