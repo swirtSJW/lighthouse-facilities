@@ -213,7 +213,7 @@ public class CmsOverlayControllerV1Test {
     DatamartCmsOverlay overlay = overlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
-    var serviceId = CMS_OVERLAY_SERVICE_NAME_COVID_19;
+    var serviceId = uncapitalize(HealthService.Covid19Vaccine.name());
     CmsOverlayEntity cmsOverlayEntity =
         CmsOverlayEntity.builder()
             .id(pk)

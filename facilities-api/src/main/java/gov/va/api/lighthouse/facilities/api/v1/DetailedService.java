@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import gov.va.api.lighthouse.facilities.api.v1.deserializers.DetailedServiceDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAddressSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAppointmentPhoneNumberSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceEmailContactSerializer;
@@ -48,8 +50,11 @@ import org.apache.commons.lang3.ObjectUtils;
   "walkInsAccepted",
   "serviceLocations"
 })
+@JsonDeserialize(using = DetailedServiceDeserializer.class)
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService implements CanBeEmpty {
+  @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
+
   @Schema(description = "Service Id.", example = "covid19Vaccine", nullable = true)
   @NonNull
   String serviceId;

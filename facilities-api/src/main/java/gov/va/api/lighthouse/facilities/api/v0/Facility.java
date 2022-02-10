@@ -89,9 +89,13 @@ public final class Facility {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
-      return "mentalHealth".equalsIgnoreCase(name)
-          ? valueOf("MentalHealthCare")
-          : "dental".equalsIgnoreCase(name) ? valueOf("DentalServices") : valueOf(capitalize(name));
+      return "COVID-19 vaccines".equalsIgnoreCase(name)
+          ? valueOf("Covid19Vaccine")
+          : "mentalHealth".equalsIgnoreCase(name)
+              ? valueOf("MentalHealthCare")
+              : "dental".equalsIgnoreCase(name)
+                  ? valueOf("DentalServices")
+                  : valueOf(capitalize(name));
     }
   }
 
