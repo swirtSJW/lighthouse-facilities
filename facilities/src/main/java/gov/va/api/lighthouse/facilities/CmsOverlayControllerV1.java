@@ -85,10 +85,17 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   @SneakyThrows
   ResponseEntity<DetailedServicesResponse> getDetailedServices(
       @PathVariable("id") String facilityId,
+      @RequestParam(value = "serviceIds", required = false, defaultValue = "")
+          List<String> serviceIds,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<DetailedService> services =
         DetailedServiceTransformerV1.toDetailedServices(getOverlayDetailedServices(facilityId));
+    if (serviceIds.size() > 0) {
+      services =
+          services.stream().filter(s -> serviceIds.contains(s.serviceId())).collect(toList());
+    }
+
     PageLinkerV1 linker =
         PageLinkerV1.builder()
             .url(linkerUrl + "facilities/" + facilityId + "/services")

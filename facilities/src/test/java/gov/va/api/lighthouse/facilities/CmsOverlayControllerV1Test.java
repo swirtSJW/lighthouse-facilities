@@ -23,6 +23,7 @@ import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v1.Pagination;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -69,7 +70,7 @@ public class CmsOverlayControllerV1Test {
     assertThatThrownBy(() -> controller().getExistingOverlayEntity(pk))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
-    assertThatThrownBy(() -> controller().getDetailedServices(id, page, perPage))
+    assertThatThrownBy(() -> controller().getDetailedServices(id, new ArrayList<>(), page, perPage))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
     when(mockFacilityRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
@@ -256,9 +257,10 @@ public class CmsOverlayControllerV1Test {
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
     // Obtain first page of detailed services - cardiology detailed service
-    ResponseEntity<DetailedServicesResponse> test =
-        controller().getDetailedServices(facilityId, page, perPage);
-    assertThat(controller().getDetailedServices(facilityId, page, perPage))
+    //    ResponseEntity<DetailedServicesResponse> test =
+    //        controller().getDetailedServices(facilityId, new ArrayList<>(), page, perPage);
+    List<String> serviceIds = new ArrayList<>(List.of("cardiology", "covid19Vaccine", "urology"));
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -287,7 +289,7 @@ public class CmsOverlayControllerV1Test {
                     .build()));
     // Obtain second page of detailed services - covid-19 detailed service
     page = 2;
-    assertThat(controller().getDetailedServices(facilityId, page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, new ArrayList<>(), page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -316,7 +318,7 @@ public class CmsOverlayControllerV1Test {
                     .build()));
     // Obtain third and final page of detailed services - urology detailed service
     page = 3;
-    assertThat(controller().getDetailedServices(facilityId, page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, new ArrayList<>(), page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
