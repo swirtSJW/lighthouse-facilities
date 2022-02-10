@@ -50,7 +50,7 @@ public abstract class BaseCmsOverlayController {
           detailedServices.parallelStream().filter(d -> d.active()).collect(Collectors.toList()));
     }
     updateServiceUrlPaths(id, activeServices);
-    activeServices.sort(Comparator.comparing(DatamartDetailedService::name));
+    activeServices.sort(Comparator.comparing(DatamartDetailedService::serviceId));
     return activeServices;
   }
 
