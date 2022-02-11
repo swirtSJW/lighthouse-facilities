@@ -304,6 +304,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     assertThat(FacilityTransformerV1.toVersionAgnostic(facility))
         .usingRecursiveComparison()
         .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.activeStatus")
         .isEqualTo(datamartFacility);
   }
 
@@ -376,7 +377,6 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                         .health(healthServices)
                         .lastUpdated(LocalDate.parse("2018-01-01"))
                         .build())
-                .activeStatus(Facility.ActiveStatus.A)
                 .visn("20")
                 .satisfaction(
                     Facility.Satisfaction.builder()
@@ -730,6 +730,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     assertThat(FacilityTransformerV1.toVersionAgnostic(facility))
         .usingRecursiveComparison()
         .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.activeStatus")
         .isEqualTo(expected);
   }
 
