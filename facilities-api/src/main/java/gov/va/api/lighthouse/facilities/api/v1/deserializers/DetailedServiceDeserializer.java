@@ -50,20 +50,24 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode referralRequiredNode = node.get("referralRequired");
     JsonNode serviceLocationsNode = node.get("serviceLocations");
     JsonNode walkInsAcceptedNode = node.get("walkInsAccepted");
+
+    String serviceName =
+        nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
+    String serviceId =
+        serviceIdNode != null
+                && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))
+            ? createMapper().convertValue(serviceIdNode, String.class)
+            : // Attempt to construct service id from service name
+            serviceIdNode == null && isRecognizedServiceName(serviceName)
+                ? getServiceIdForRecognizedServiceName(serviceName)
+                : INVALID_SVC_ID;
+
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
+
     return DetailedService.builder()
-        .serviceId(
-            serviceIdNode != null
-                ? createMapper().convertValue(serviceIdNode, String.class)
-                : // Attempt to construct service id from service name
-                nameNode != null
-                        && isRecognizedServiceName(
-                            createMapper().convertValue(nameNode, String.class))
-                    ? getServiceIdForRecognizedServiceName(
-                        createMapper().convertValue(nameNode, String.class))
-                    : INVALID_SVC_ID)
-        .name(nameNode != null ? createMapper().convertValue(nameNode, String.class) : null)
+        .serviceId(serviceId)
+        .name(serviceName)
         .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
         .changed(
             changedNode != null ? createMapper().convertValue(changedNode, String.class) : null)
@@ -118,16 +122,19 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                         : INVALID_SVC_ID);
   }
 
-  private boolean isRecognizedServiceName(String name) {
-    return StringUtils.equals(name, "COVID-19 vaccines")
-        || Arrays.stream(HealthService.values())
+  private boolean isRecognizedServiceId(String serviceId) {
+    return Arrays.stream(HealthService.values())
             .parallel()
-            .anyMatch(hs -> hs.name().equalsIgnoreCase(name))
+            .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceId))
         || Arrays.stream(BenefitsService.values())
             .parallel()
-            .anyMatch(bs -> bs.name().equalsIgnoreCase(name))
+            .anyMatch(bs -> bs.name().equalsIgnoreCase(serviceId))
         || Arrays.stream(OtherService.values())
             .parallel()
-            .anyMatch(os -> os.name().equalsIgnoreCase(name));
+            .anyMatch(os -> os.name().equalsIgnoreCase(serviceId));
+  }
+
+  private boolean isRecognizedServiceName(String name) {
+    return StringUtils.equals(name, "COVID-19 vaccines") || isRecognizedServiceId(name);
   }
 }

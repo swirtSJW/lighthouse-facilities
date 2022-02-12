@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.DatamartDetailedService.INVALID_SVC_ID;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
@@ -50,20 +51,24 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     JsonNode referralRequiredNode = node.get("referral_required");
     JsonNode serviceLocationsNode = node.get("service_locations");
     JsonNode walkInsAcceptedNode = node.get("walk_ins_accepted");
+
+    String serviceName =
+        nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
+    String serviceId =
+        serviceIdNode != null
+                && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))
+            ? createMapper().convertValue(serviceIdNode, String.class)
+            : // Attempt to construct service id from service name
+            serviceIdNode == null && isRecognizedServiceName(serviceName)
+                ? getServiceIdForRecognizedServiceName(serviceName)
+                : INVALID_SVC_ID;
+
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
+
     return DatamartDetailedService.builder()
-        .serviceId(
-            serviceIdNode != null
-                ? createMapper().convertValue(serviceIdNode, String.class)
-                : // Attempt to construct service id from service name
-                nameNode != null
-                        && isRecognizedServiceName(
-                            createMapper().convertValue(nameNode, String.class))
-                    ? getServiceIdForRecognizedServiceName(
-                        createMapper().convertValue(nameNode, String.class))
-                    : INVALID_SVC_ID)
-        .name(nameNode != null ? createMapper().convertValue(nameNode, String.class) : null)
+        .serviceId(serviceId)
+        .name(serviceName)
         .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
         .changed(
             changedNode != null ? createMapper().convertValue(changedNode, String.class) : null)
@@ -118,16 +123,20 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                         : INVALID_SVC_ID);
   }
 
-  private boolean isRecognizedServiceName(String name) {
-    return StringUtils.equals(name, "COVID-19 vaccines")
-        || Arrays.stream(HealthService.values())
+  private boolean isRecognizedServiceId(String serviceId) {
+    return Arrays.stream(HealthService.values())
             .parallel()
-            .anyMatch(hs -> hs.name().equalsIgnoreCase(name))
+            .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceId))
         || Arrays.stream(BenefitsService.values())
             .parallel()
-            .anyMatch(bs -> bs.name().equalsIgnoreCase(name))
+            .anyMatch(bs -> bs.name().equalsIgnoreCase(serviceId))
         || Arrays.stream(OtherService.values())
             .parallel()
-            .anyMatch(os -> os.name().equalsIgnoreCase(name));
+            .anyMatch(os -> os.name().equalsIgnoreCase(serviceId));
+  }
+
+  private boolean isRecognizedServiceName(String name) {
+    return StringUtils.equals(name, CMS_OVERLAY_SERVICE_NAME_COVID_19)
+        || isRecognizedServiceId(name);
   }
 }
