@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -119,6 +120,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                         DatamartDetailedService.builder()
                             .active(true)
                             .name("COVID-19 vaccines")
+                            .serviceId(
+                                uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
                             .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                             .phoneNumbers(
                                 List.of(
@@ -205,7 +208,9 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                             .build(),
                         DatamartDetailedService.builder()
                             .active(true)
-                            .name("Cardiology")
+                            .name(DatamartFacility.HealthService.Cardiology.name())
+                            .serviceId(
+                                uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
                             .path("https://www.melbourne.va.gov/services/cardiology.asp")
                             .phoneNumbers(
                                 List.of(
@@ -411,6 +416,7 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                         DetailedService.builder()
                             .active(true)
                             .name("COVID-19 vaccines")
+                            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
                             .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                             .phoneNumbers(
                                 List.of(
@@ -495,7 +501,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                             .build(),
                         DetailedService.builder()
                             .active(true)
-                            .name("Cardiology")
+                            .name(Facility.HealthService.Cardiology.name())
+                            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
                             .path("https://www.melbourne.va.gov/services/cardiology.asp")
                             .phoneNumbers(
                                 List.of(

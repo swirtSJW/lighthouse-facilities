@@ -1,10 +1,16 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -156,11 +162,12 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
       DatamartFacility.OperatingStatus operatingStatus = overlay.operatingStatus();
       if (operatingStatus != null) {
         facility.attributes().operatingStatus(operatingStatus);
-        if (operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED) {
-          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.T);
-        } else {
-          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.A);
-        }
+        facility
+            .attributes()
+            .activeStatus(
+                operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED
+                    ? DatamartFacility.ActiveStatus.T
+                    : DatamartFacility.ActiveStatus.A);
       }
       if (overlay.detailedServices() != null) {
         facility
@@ -172,7 +179,19 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(service.serviceId());
+        if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+          detailedServices.add(HealthService.Covid19Vaccine.name());
+        } else if (Arrays.stream(HealthService.values())
+                .parallel()
+                .anyMatch(hs -> hs.name().equals(capitalize(service.serviceId())))
+            || Arrays.stream(BenefitsService.values())
+                .parallel()
+                .anyMatch(bs -> bs.name().equals(capitalize(service.serviceId())))
+            || Arrays.stream(OtherService.values())
+                .parallel()
+                .anyMatch(os -> os.name().equals(capitalize(service.serviceId())))) {
+          detailedServices.add(capitalize(service.serviceId()));
+        }
       }
       facilityEntity.overlayServices(detailedServices);
     }
