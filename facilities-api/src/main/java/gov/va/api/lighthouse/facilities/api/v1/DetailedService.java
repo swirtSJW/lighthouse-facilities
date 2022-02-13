@@ -55,7 +55,7 @@ import org.apache.commons.lang3.ObjectUtils;
 public class DetailedService implements CanBeEmpty {
   @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
 
-  @Schema(description = "Service Id.", example = "covid19Vaccine")
+  @Schema(description = "Service id.", example = "covid19Vaccine")
   @NonNull
   String serviceId;
 
