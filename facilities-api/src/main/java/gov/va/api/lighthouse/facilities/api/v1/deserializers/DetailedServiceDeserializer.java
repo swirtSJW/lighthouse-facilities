@@ -52,10 +52,11 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode walkInsAcceptedNode = node.get("walkInsAccepted");
 
     JsonNode serviceInfoNode = node.get("serviceInfo");
-    JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : null;
+    JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
     final String serviceName =
         nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
-    JsonNode serviceIdNode = serviceInfoNode != null ? serviceInfoNode.get("serviceId") : null;
+    JsonNode serviceIdNode =
+        serviceInfoNode != null ? serviceInfoNode.get("serviceId") : node.get("serviceId");
     final String serviceId =
         serviceIdNode != null
                 && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))

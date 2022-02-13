@@ -38,8 +38,6 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
-    JsonNode nameNode = node.get("name");
-    JsonNode serviceIdNode = node.get("serviceId");
     JsonNode activeNode = node.get("active");
     JsonNode changedNode = node.get("changed");
     JsonNode descriptionFacilityNode = node.get("description_facility");
@@ -51,9 +49,13 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode serviceLocationsNode = node.get("service_locations");
     JsonNode walkInsAcceptedNode = node.get("walk_ins_accepted");
 
-    String serviceName =
+    JsonNode serviceInfoNode = node.get("serviceInfo");
+    JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
+    final String serviceName =
         nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
-    String serviceId =
+    JsonNode serviceIdNode =
+        serviceInfoNode != null ? serviceInfoNode.get("serviceId") : node.get("serviceId");
+    final String serviceId =
         serviceIdNode != null
                 && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))
             ? createMapper().convertValue(serviceIdNode, String.class)
