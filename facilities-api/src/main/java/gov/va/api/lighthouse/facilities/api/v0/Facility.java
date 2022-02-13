@@ -8,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.api.v0.deserializers.FacilityAttributesDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -182,6 +184,7 @@ public final class Facility {
     "detailed_services",
     "visn"
   })
+  @JsonDeserialize(using = FacilityAttributesDeserializer.class)
   @Schema(nullable = true)
   public static final class FacilityAttributes {
     @NotNull

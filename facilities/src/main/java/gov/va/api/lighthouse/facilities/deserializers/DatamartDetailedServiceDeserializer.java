@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo.INVALID_SVC_ID;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
@@ -50,6 +51,7 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     JsonNode referralRequiredNode = node.get("referral_required");
     JsonNode serviceLocationsNode = node.get("service_locations");
     JsonNode walkInsAcceptedNode = node.get("walk_ins_accepted");
+
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : null;
     final String serviceName =
@@ -74,8 +76,10 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 ? getServiceTypeForServiceId(serviceId)
                 : // Default to Health service type
                 ServiceType.Health;
+
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
+
     return DatamartDetailedService.builder()
         .serviceInfo(
             ServiceInfo.builder()
@@ -167,7 +171,8 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
   }
 
   private boolean isRecognizedServiceName(String name) {
-    return StringUtils.equals(name, "COVID-19 vaccines") || isRecognizedServiceId(name);
+    return StringUtils.equals(name, CMS_OVERLAY_SERVICE_NAME_COVID_19)
+        || isRecognizedServiceId(name);
   }
 
   private boolean isRecognizedServiceType(String type) {

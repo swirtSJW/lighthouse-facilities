@@ -50,6 +50,7 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode referralRequiredNode = node.get("referralRequired");
     JsonNode serviceLocationsNode = node.get("serviceLocations");
     JsonNode walkInsAcceptedNode = node.get("walkInsAccepted");
+
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : null;
     final String serviceName =
@@ -74,8 +75,10 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 ? getServiceTypeForServiceId(serviceId)
                 : // Default to Health service type
                 ServiceType.Health;
+
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
+
     return DetailedService.builder()
         .serviceInfo(
             ServiceInfo.builder()
