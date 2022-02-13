@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -271,12 +272,12 @@ public class DatamartFacility {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
-      return "COVID-19 vaccines".equalsIgnoreCase(name)
-          ? valueOf("Covid19Vaccine")
+      return CMS_OVERLAY_SERVICE_NAME_COVID_19.equalsIgnoreCase(name)
+          ? HealthService.Covid19Vaccine
           : "MentalHealthCare".equalsIgnoreCase(name)
-              ? valueOf("MentalHealth")
+              ? HealthService.MentalHealth
               : "DentalServices".equalsIgnoreCase(name)
-                  ? valueOf("Dental")
+                  ? HealthService.Dental
                   : valueOf(capitalize(name));
     }
   }

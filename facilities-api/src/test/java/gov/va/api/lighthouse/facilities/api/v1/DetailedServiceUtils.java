@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.api.v1;
 
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class DetailedServiceUtils {
@@ -11,7 +12,7 @@ public class DetailedServiceUtils {
             DetailedService.ServiceInfo.builder()
                 .serviceId(uncapitalize(name))
                 .name(name)
-                .serviceType(DetailedService.ServiceType.Health)
+                .serviceType(getServiceTypeForServiceName(name))
                 .build())
         .active(true)
         .changed(null)
@@ -71,5 +72,22 @@ public class DetailedServiceUtils {
                     .additionalHoursInfo("")
                     .build()))
         .build();
+  }
+
+  private static DetailedService.ServiceType getServiceTypeForServiceName(String serviceName) {
+    return Arrays.stream(Facility.HealthService.values())
+            .parallel()
+            .anyMatch(hs -> hs.name().equals(serviceName))
+        ? DetailedService.ServiceType.Health
+        : Arrays.stream(Facility.BenefitsService.values())
+                .parallel()
+                .anyMatch(bs -> bs.name().equals(serviceName))
+            ? DetailedService.ServiceType.Benefits
+            : Arrays.stream(Facility.OtherService.values())
+                    .parallel()
+                    .anyMatch(os -> os.name().equals(serviceName))
+                ? DetailedService.ServiceType.Other
+                : // Default to Health service type
+                DetailedService.ServiceType.Health;
   }
 }

@@ -297,11 +297,11 @@ public final class Facility implements CanBeEmpty {
     @JsonCreator
     public static HealthService fromString(String name) {
       return "COVID-19 vaccines".equalsIgnoreCase(name)
-          ? valueOf("Covid19Vaccine")
+          ? HealthService.Covid19Vaccine
           : "MentalHealthCare".equalsIgnoreCase(name)
-              ? valueOf("MentalHealth")
+              ? HealthService.MentalHealth
               : "DentalServices".equalsIgnoreCase(name)
-                  ? valueOf("Dental")
+                  ? HealthService.Dental
                   : valueOf(capitalize(name));
     }
   }
