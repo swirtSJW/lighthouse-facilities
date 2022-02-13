@@ -1,6 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -8,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceDeserializer;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,8 +31,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
-  "serviceId",
-  "name",
+  "serviceInfo",
   "description_facility",
   "appointment_leadin",
   "appointment_phones",
@@ -39,11 +42,7 @@ import lombok.NonNull;
 })
 @JsonDeserialize(using = DatamartDetailedServiceDeserializer.class)
 public class DatamartDetailedService {
-  @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
-
-  @NonNull String serviceId;
-
-  String name;
+  @NonNull ServiceInfo serviceInfo;
 
   boolean active;
 
@@ -71,6 +70,42 @@ public class DatamartDetailedService {
 
   @JsonProperty("walk_ins_accepted")
   String walkInsAccepted;
+
+  public enum ServiceType {
+    @JsonProperty("benefits")
+    Benefits,
+    @JsonProperty("health")
+    Health,
+    @JsonProperty("other")
+    Other;
+
+    /** Ensure that Jackson can create ServiceType enum regardless of capitalization. */
+    @JsonCreator
+    public static ServiceType fromString(String name) {
+      return valueOf(capitalize(name));
+    }
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_EMPTY)
+  @JsonPropertyOrder({"name", "serviceId", "serviceType"})
+  @Schema(description = "Service information.")
+  public static final class ServiceInfo {
+    @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
+
+    @Schema(description = "Service id.", example = "covid19Vaccine")
+    @NonNull
+    String serviceId;
+
+    @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
+    String name;
+
+    @Schema(description = "Service type.", example = "Health")
+    @NonNull
+    ServiceType serviceType;
+  }
 
   @Data
   @Builder

@@ -18,7 +18,11 @@ public class DetailedServiceResponseEmptyFieldsTest {
             DetailedServiceResponse.builder()
                 .data(
                     DetailedService.builder()
-                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceInfo(
+                            DetailedService.ServiceInfo.builder()
+                                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                                .serviceType(DetailedService.ServiceType.Health)
+                                .build())
                         .build())
                 .build()
                 .isEmpty())
@@ -27,8 +31,12 @@ public class DetailedServiceResponseEmptyFieldsTest {
             DetailedServiceResponse.builder()
                 .data(
                     DetailedService.builder()
-                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
-                        .name("test")
+                        .serviceInfo(
+                            DetailedService.ServiceInfo.builder()
+                                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                                .name("test")
+                                .serviceType(DetailedService.ServiceType.Health)
+                                .build())
                         .build())
                 .build()
                 .isEmpty())

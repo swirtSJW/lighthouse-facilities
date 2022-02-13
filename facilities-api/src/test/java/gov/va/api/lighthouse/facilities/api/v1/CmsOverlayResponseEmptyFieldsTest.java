@@ -49,9 +49,14 @@ public class CmsOverlayResponseEmptyFieldsTest {
                         .detailedServices(
                             List.of(
                                 DetailedService.builder()
-                                    .serviceId(
-                                        uncapitalize(Facility.HealthService.Cardiology.name()))
-                                    .name("test")
+                                    .serviceInfo(
+                                        DetailedService.ServiceInfo.builder()
+                                            .serviceId(
+                                                uncapitalize(
+                                                    Facility.HealthService.Cardiology.name()))
+                                            .name(Facility.HealthService.Cardiology.name())
+                                            .serviceType(DetailedService.ServiceType.Health)
+                                            .build())
                                     .build()))
                         .build())
                 .build()

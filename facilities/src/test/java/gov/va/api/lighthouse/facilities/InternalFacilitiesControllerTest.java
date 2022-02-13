@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_health_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.vet_center;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_1;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_2;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_3;
@@ -71,8 +72,12 @@ public class InternalFacilitiesControllerTest {
   private static DatamartDetailedService _covid19DetailedService() {
     return DatamartDetailedService.builder()
         .active(true)
-        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-        .name(HealthService.Covid19Vaccine.name())
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                .name(HealthService.Covid19Vaccine.name())
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .descriptionFacility(null)
         .appointmentLeadIn("Your VA health care team will contact you if you...more text")
         .onlineSchedulingAvailable("True")
@@ -235,7 +240,7 @@ public class InternalFacilitiesControllerTest {
       if (overlay.detailedServices() != null) {
         for (DatamartDetailedService service : overlay.detailedServices()) {
           if (service.active()) {
-            cmsServicesNames.add(service.name());
+            cmsServicesNames.add(service.serviceInfo().name());
           }
         }
       }
@@ -808,6 +813,70 @@ public class InternalFacilitiesControllerTest {
   }
 
   @Test
+  @SneakyThrows
+  void populateCmsOverlayTable() {
+    var pk = "vha_402";
+    var type = va_facilities;
+    var state = "FL";
+    var zip = "32934";
+    var latitude = BigDecimal.valueOf(1.2);
+    var longitude = BigDecimal.valueOf(3.4);
+    var healthServices = List.of(HealthService.Cardiology);
+    var facilityType = va_health_facility;
+    var facilityDetailedServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartFacility facility =
+        DatamartFacility.builder()
+            .id(pk)
+            .type(type)
+            .attributes(
+                FacilityAttributes.builder()
+                    .address(
+                        Addresses.builder()
+                            .physical(Address.builder().state(state).zip(zip).build())
+                            .build())
+                    .latitude(latitude)
+                    .longitude(longitude)
+                    .services(Services.builder().health(healthServices).build())
+                    .mobile(false)
+                    .facilityType(facilityType)
+                    .detailedServices(facilityDetailedServices)
+                    .operatingStatus(
+                        OperatingStatus.builder()
+                            .code(OperatingStatusCode.LIMITED)
+                            .additionalInfo("Limited")
+                            .build())
+                    .build())
+            .build();
+    assertThat(facilityRepository.findAll()).isEmpty();
+    FacilityEntity facilityEntity = _facilityEntity(facility);
+    facilityEntity.cmsServices(
+        JacksonConfig.createMapper().writeValueAsString(facilityDetailedServices));
+    facilityRepository.save(facilityEntity);
+    assertThat(facilityRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(facilityEntity));
+    // Populate overlay using CMS services
+    assertThat(overlayRepository.findAll()).isEmpty();
+    _controller().populateCmsOverlayTable();
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    DatamartCmsOverlay.builder().detailedServices(facilityDetailedServices).build(),
+                    pk)));
+  }
+
+  @Test
   public void populateException() {
     FacilityEntity mockEntity = mock(FacilityEntity.class);
     when(mockEntity.id()).thenReturn(null);
@@ -992,24 +1061,44 @@ public class InternalFacilitiesControllerTest {
     var facilityDetailedServices =
         List.of(
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(HealthService.Cardiology.name()))
-                .name(HealthService.Cardiology.name())
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .build(),
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                .name(HealthService.Covid19Vaccine.name())
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .build(),
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
-                .name(OtherService.OnlineScheduling.name())
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .build(),
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(BenefitsService.Pensions.name()))
-                .name(BenefitsService.Pensions.name())
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .build(),
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(HealthService.Urology.name()))
-                .name(HealthService.Urology.name())
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Urology.name()))
+                        .name(HealthService.Urology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .build());
     DatamartFacility facility =
         DatamartFacility.builder()

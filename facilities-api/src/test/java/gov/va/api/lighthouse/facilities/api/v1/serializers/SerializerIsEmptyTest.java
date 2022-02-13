@@ -235,21 +235,33 @@ public class SerializerIsEmptyTest {
     // Not empty
     assertIsNotEmptyUsingObjectSerializer(
         DetailedService.builder()
-            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
             .build(),
         new DetailedServiceSerializer(),
         mock(SerializerProvider.class));
     assertIsNotEmptyUsingObjectSerializer(
         DetailedService.builder()
-            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
-            .name("   ")
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .name("   ")
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
             .build(),
         new DetailedServiceSerializer(),
         mock(SerializerProvider.class));
     assertIsNotEmptyUsingObjectSerializer(
         DetailedService.builder()
-            .serviceId(uncapitalize(uncapitalize(Facility.HealthService.Covid19Vaccine.name())))
-            .name("COVID-19 vaccines")
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                    .name("COVID-19 vaccines")
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
             .build(),
         new DetailedServiceSerializer(),
         mock(SerializerProvider.class));
@@ -295,8 +307,12 @@ public class SerializerIsEmptyTest {
         DetailedServiceResponse.builder()
             .data(
                 DetailedService.builder()
-                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
-                    .name("   ")
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                            .name("   ")
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
                     .build())
             .build(),
         new DetailedServiceResponseSerializer(),
@@ -305,8 +321,12 @@ public class SerializerIsEmptyTest {
         DetailedServiceResponse.builder()
             .data(
                 DetailedService.builder()
-                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
-                    .name("COVID-19 vaccines")
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                            .name("COVID-19 vaccines")
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
                     .build())
             .build(),
         new DetailedServiceResponseSerializer(),

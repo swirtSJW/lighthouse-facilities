@@ -22,8 +22,12 @@ public class CmsOverlayHelperTest {
             .map(
                 hs ->
                     DatamartDetailedService.builder()
-                        .serviceId(uncapitalize(hs.name()))
-                        .name(hs.name())
+                        .serviceInfo(
+                            DatamartDetailedService.ServiceInfo.builder()
+                                .serviceId(uncapitalize(hs.name()))
+                                .name(hs.name())
+                                .serviceType(DatamartDetailedService.ServiceType.Health)
+                                .build())
                         .build())
             .collect(Collectors.toList());
     assertThat(

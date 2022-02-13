@@ -458,7 +458,9 @@ public class InternalFacilitiesController {
                               @Override
                               public int compare(
                                   DatamartDetailedService dds1, DatamartDetailedService dds2) {
-                                return dds1.serviceId().compareTo(dds2.serviceId());
+                                return dds1.serviceInfo()
+                                    .serviceId()
+                                    .compareTo(dds2.serviceInfo().serviceId());
                               }
                             });
                     if (isNotEmpty(facilityDetailedServices)) {

@@ -43,8 +43,13 @@ public class CmsOverlayTransformerV0Test {
             List.of(
                 DatamartDetailedService.builder()
                     .active(true)
-                    .name("COVID-19 vaccines")
-                    .serviceId(uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
+                    .serviceInfo(
+                        DatamartDetailedService.ServiceInfo.builder()
+                            .serviceId(
+                                uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
+                            .name("COVID-19 vaccines")
+                            .serviceType(DatamartDetailedService.ServiceType.Health)
+                            .build())
                     .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                     .phoneNumbers(
                         List.of(
@@ -129,8 +134,13 @@ public class CmsOverlayTransformerV0Test {
                     .build(),
                 DatamartDetailedService.builder()
                     .active(true)
-                    .name(DatamartFacility.HealthService.Cardiology.name())
-                    .serviceId(uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                    .serviceInfo(
+                        DatamartDetailedService.ServiceInfo.builder()
+                            .serviceId(
+                                uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                            .name(DatamartFacility.HealthService.Cardiology.name())
+                            .serviceType(DatamartDetailedService.ServiceType.Health)
+                            .build())
                     .path("https://www.melbourne.va.gov/services/cardiology.asp")
                     .phoneNumbers(
                         List.of(

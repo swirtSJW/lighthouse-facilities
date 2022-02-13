@@ -262,77 +262,121 @@ public class DetailedServiceEmptyFieldsTest {
     // Not empty
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .build()
                 .isEmpty())
         .isFalse();
     String blank = "   ";
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
-                .name(blank)
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .name(blank)
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .serviceLocations(emptyList())
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .appointmentLeadIn(blank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .changed(blank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .descriptionFacility(blank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .onlineSchedulingAvailable(blank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .path(blank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .phoneNumbers(emptyList())
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .referralRequired(blank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .walkInsAccepted(blank)
                 .build()
                 .isEmpty())
@@ -340,63 +384,99 @@ public class DetailedServiceEmptyFieldsTest {
     String nonBlank = "test";
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
-                .name(nonBlank)
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .name(nonBlank)
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .appointmentLeadIn(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .changed(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .descriptionFacility(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .onlineSchedulingAvailable(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .path(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .referralRequired(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .walkInsAccepted(nonBlank)
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .phoneNumbers(
                     List.of(
                         DetailedService.AppointmentPhoneNumber.builder()
@@ -407,7 +487,11 @@ public class DetailedServiceEmptyFieldsTest {
         .isFalse();
     assertThat(
             DetailedService.builder()
-                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .serviceInfo(
+                    DetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                        .serviceType(DetailedService.ServiceType.Health)
+                        .build())
                 .serviceLocations(
                     List.of(
                         DetailedService.DetailedServiceLocation.builder()

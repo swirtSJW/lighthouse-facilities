@@ -7,8 +7,12 @@ import java.util.List;
 public class DetailedServiceUtils {
   public static DetailedService getDetailedService(String name) {
     return DetailedService.builder()
-        .name(name)
-        .serviceId(uncapitalize(name))
+        .serviceInfo(
+            DetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(name))
+                .name(name)
+                .serviceType(DetailedService.ServiceType.Health)
+                .build())
         .active(true)
         .changed(null)
         .descriptionFacility("Most advanced healthcare facility nationally.")

@@ -23,30 +23,37 @@ public class DeserializerTest {
   void deserializeBenefitsDetailedService() {
     DatamartDetailedService detailedService =
         DatamartDetailedService.builder()
-            .serviceId(uncapitalize(BenefitsService.Pensions.name()))
-            .name(BenefitsService.Pensions.name())
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                    .name(BenefitsService.Pensions.name())
+                    .serviceType(DatamartDetailedService.ServiceType.Benefits)
+                    .build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
-    assertJson("{\"name\":\"Pensions\"}", DatamartDetailedService.class, detailedService);
     assertJson(
-        "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}",
+        "{\"serviceInfo\":{\"name\":\"Pensions\",\"serviceType\":\"benefits\"}}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"name\":\"Pensions\",\"appointmentPhones\":[]}",
+        "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointmentPhones\":[]}",
+        "{\"serviceInfo\":{\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"name\":\"Pensions\",\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        "{\"serviceInfo\":{\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        DatamartDetailedService.class,
+        detailedService);
+    assertJson(
+        "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]}",
         DatamartDetailedService.class,
         detailedService);
   }
@@ -56,30 +63,37 @@ public class DeserializerTest {
   void deserializeHealthDetailedService() {
     DatamartDetailedService detailedService =
         DatamartDetailedService.builder()
-            .serviceId(uncapitalize(HealthService.Dental.name()))
-            .name(HealthService.Dental.name())
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(HealthService.Dental.name()))
+                    .name(HealthService.Dental.name())
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
-    assertJson("{\"name\":\"Dental\"}", DatamartDetailedService.class, detailedService);
     assertJson(
-        "{\"serviceId\":\"dental\",\"name\":\"Dental\"}",
+        "{\"serviceInfo\":{\"name\":\"Dental\",\"serviceType\":\"health\"}}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"name\":\"Dental\",\"appointmentPhones\":[]}",
+        "{\"serviceInfo\":{\"serviceId\":\"dental\",\"name\":\"Dental\",\"serviceType\":\"health\"}}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"serviceId\":\"dental\",\"name\":\"Dental\",\"appointmentPhones\":[]}",
+        "{\"serviceInfo\":{\"name\":\"Dental\",\"serviceType\":\"health\"},\"appointmentPhones\":[]}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"name\":\"Dental\",\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        "{\"serviceInfo\":{\"serviceId\":\"dental\",\"name\":\"Dental\",\"serviceType\":\"health\"},\"appointmentPhones\":[]}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"serviceId\":\"dental\",\"name\":\"Dental\",\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        "{\"serviceInfo\":{\"name\":\"Dental\",\"serviceType\":\"health\"},\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        DatamartDetailedService.class,
+        detailedService);
+    assertJson(
+        "{\"serviceInfo\":{\"serviceId\":\"dental\",\"name\":\"Dental\",\"serviceType\":\"health\"},\"appointmentPhones\":[],\"serviceLocations\":[]}",
         DatamartDetailedService.class,
         detailedService);
   }
@@ -89,30 +103,37 @@ public class DeserializerTest {
   void deserializeOtherDetailedService() {
     DatamartDetailedService detailedService =
         DatamartDetailedService.builder()
-            .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
-            .name(OtherService.OnlineScheduling.name())
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                    .name(OtherService.OnlineScheduling.name())
+                    .serviceType(DatamartDetailedService.ServiceType.Other)
+                    .build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
-    assertJson("{\"name\":\"OnlineScheduling\"}", DatamartDetailedService.class, detailedService);
     assertJson(
-        "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\"}",
+        "{\"serviceInfo\":{\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"name\":\"OnlineScheduling\",\"appointmentPhones\":[]}",
+        "{\"serviceInfo\":{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"appointmentPhones\":[]}",
+        "{\"serviceInfo\":{\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[]}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"name\":\"OnlineScheduling\",\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        "{\"serviceInfo\":{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[]}",
         DatamartDetailedService.class,
         detailedService);
     assertJson(
-        "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        "{\"serviceInfo\":{\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[],\"serviceLocations\":[]}",
+        DatamartDetailedService.class,
+        detailedService);
+    assertJson(
+        "{\"serviceInfo\":{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[],\"serviceLocations\":[]}",
         DatamartDetailedService.class,
         detailedService);
   }
