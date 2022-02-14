@@ -26,14 +26,14 @@ public abstract class BaseCmsOverlayController {
             ? Collections.emptyList()
             : List.of(
                 mapper.readValue(cmsOverlayEntity.cmsServices(), DatamartDetailedService[].class));
-    final List<String> overlayServiceNames =
-        ds.stream().map(DatamartDetailedService::name).collect(Collectors.toList());
+    final List<String> overlayServiceIds =
+        ds.stream().map(DatamartDetailedService::serviceId).collect(Collectors.toList());
     final List<DatamartDetailedService> finalDetailedServices = new ArrayList<>();
     finalDetailedServices.addAll(
         currentDetailedServices.parallelStream()
             .filter(
                 currentDetailedService ->
-                    !overlayServiceNames.contains(currentDetailedService.name()))
+                    !overlayServiceIds.contains(currentDetailedService.serviceId()))
             .collect(Collectors.toList()));
     finalDetailedServices.addAll(
         ds.parallelStream().filter(d -> d.active()).collect(Collectors.toList()));
