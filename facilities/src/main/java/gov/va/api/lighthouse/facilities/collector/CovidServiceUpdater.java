@@ -24,7 +24,7 @@ public final class CovidServiceUpdater {
       @NotNull String id, @NotNull List<DatamartDetailedService> detailedServices) {
     final Map<String, String> websites = loadWebsites(COVID_CSV_WEBSITES_RESOURCE_NAME);
     detailedServices.parallelStream()
-        .filter(d -> d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19))
+        .filter(d -> d.serviceInfo().name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19))
         .forEach(
             d -> {
               d.path(websites.get(id));

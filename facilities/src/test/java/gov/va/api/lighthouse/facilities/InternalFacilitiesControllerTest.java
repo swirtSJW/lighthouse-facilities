@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_health_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.vet_center;
+import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_1;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_2;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_3;
@@ -21,12 +22,19 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.AppointmentPhoneNumber;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceAddress;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceEmailContact;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceHours;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
+import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
+import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatusCode;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
@@ -60,6 +68,72 @@ public class InternalFacilitiesControllerTest {
   @Autowired CmsOverlayRepository overlayRepository;
 
   FacilitiesCollector collector = mock(FacilitiesCollector.class);
+
+  private static DatamartDetailedService _covid19DetailedService() {
+    return DatamartDetailedService.builder()
+        .active(true)
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                .name(HealthService.Covid19Vaccine.name())
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
+        .descriptionFacility(null)
+        .appointmentLeadIn("Your VA health care team will contact you if you...more text")
+        .onlineSchedulingAvailable("True")
+        .phoneNumbers(
+            List.of(
+                AppointmentPhoneNumber.builder()
+                    .extension("123")
+                    .label("Main phone")
+                    .number("555-555-1212")
+                    .type("tel")
+                    .build()))
+        .referralRequired("True")
+        .walkInsAccepted("False")
+        .serviceLocations(
+            List.of(
+                DetailedServiceLocation.builder()
+                    .serviceLocationAddress(
+                        DetailedServiceAddress.builder()
+                            .buildingNameNumber("Baxter Building")
+                            .clinicName("Baxter Clinic")
+                            .wingFloorOrRoomNumber("Wing East")
+                            .address1("122 Main St.")
+                            .address2(null)
+                            .city("Rochester")
+                            .state("NY")
+                            .zipCode("14623-1345")
+                            .countryCode("US")
+                            .build())
+                    .appointmentPhoneNumbers(
+                        List.of(
+                            AppointmentPhoneNumber.builder()
+                                .extension("567")
+                                .label("Alt phone")
+                                .number("556-565-1119")
+                                .type("tel")
+                                .build()))
+                    .emailContacts(
+                        List.of(
+                            DetailedServiceEmailContact.builder()
+                                .emailAddress("georgea@va.gov")
+                                .emailLabel("George Anderson")
+                                .build()))
+                    .facilityServiceHours(
+                        DetailedServiceHours.builder()
+                            .monday("8:30AM-7:00PM")
+                            .tuesday("8:30AM-7:00PM")
+                            .wednesday("8:30AM-7:00PM")
+                            .thursday("8:30AM-7:00PM")
+                            .friday("8:30AM-7:00PM")
+                            .saturday("8:30AM-7:00PM")
+                            .sunday("CLOSED")
+                            .build())
+                    .additionalHoursInfo("Please call for an appointment outside...")
+                    .build()))
+        .build();
+  }
 
   private static DatamartFacility _facility(
       String id,
@@ -127,66 +201,7 @@ public class InternalFacilitiesControllerTest {
   }
 
   private static List<DatamartDetailedService> _overlay_detailed_services() {
-    return List.of(
-        DatamartDetailedService.builder()
-            .active(true)
-            .name(HealthService.Covid19Vaccine.name())
-            .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-            .descriptionFacility(null)
-            .appointmentLeadIn("Your VA health care team will contact you if you...more text")
-            .onlineSchedulingAvailable("True")
-            .phoneNumbers(
-                List.of(
-                    DatamartDetailedService.AppointmentPhoneNumber.builder()
-                        .extension("123")
-                        .label("Main phone")
-                        .number("555-555-1212")
-                        .type("tel")
-                        .build()))
-            .referralRequired("True")
-            .walkInsAccepted("False")
-            .serviceLocations(
-                List.of(
-                    DatamartDetailedService.DetailedServiceLocation.builder()
-                        .serviceLocationAddress(
-                            DatamartDetailedService.DetailedServiceAddress.builder()
-                                .buildingNameNumber("Baxter Building")
-                                .clinicName("Baxter Clinic")
-                                .wingFloorOrRoomNumber("Wing East")
-                                .address1("122 Main St.")
-                                .address2(null)
-                                .city("Rochester")
-                                .state("NY")
-                                .zipCode("14623-1345")
-                                .countryCode("US")
-                                .build())
-                        .appointmentPhoneNumbers(
-                            List.of(
-                                DatamartDetailedService.AppointmentPhoneNumber.builder()
-                                    .extension("567")
-                                    .label("Alt phone")
-                                    .number("556-565-1119")
-                                    .type("tel")
-                                    .build()))
-                        .emailContacts(
-                            List.of(
-                                DatamartDetailedService.DetailedServiceEmailContact.builder()
-                                    .emailAddress("georgea@va.gov")
-                                    .emailLabel("George Anderson")
-                                    .build()))
-                        .facilityServiceHours(
-                            DatamartDetailedService.DetailedServiceHours.builder()
-                                .monday("8:30AM-7:00PM")
-                                .tuesday("8:30AM-7:00PM")
-                                .wednesday("8:30AM-7:00PM")
-                                .thursday("8:30AM-7:00PM")
-                                .friday("8:30AM-7:00PM")
-                                .saturday("8:30AM-7:00PM")
-                                .sunday("CLOSED")
-                                .build())
-                        .additionalHoursInfo("Please call for an appointment outside...")
-                        .build()))
-            .build());
+    return List.of(_covid19DetailedService());
   }
 
   private static DatamartFacility.OperatingStatus _overlay_operating_status() {
@@ -225,7 +240,7 @@ public class InternalFacilitiesControllerTest {
       if (overlay.detailedServices() != null) {
         for (DatamartDetailedService service : overlay.detailedServices()) {
           if (service.active()) {
-            cmsServicesNames.add(service.name());
+            cmsServicesNames.add(service.serviceInfo().name());
           }
         }
       }
@@ -798,6 +813,70 @@ public class InternalFacilitiesControllerTest {
   }
 
   @Test
+  @SneakyThrows
+  void populateCmsOverlayTable() {
+    var pk = "vha_402";
+    var type = va_facilities;
+    var state = "FL";
+    var zip = "32934";
+    var latitude = BigDecimal.valueOf(1.2);
+    var longitude = BigDecimal.valueOf(3.4);
+    var healthServices = List.of(HealthService.Cardiology);
+    var facilityType = va_health_facility;
+    var facilityDetailedServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartFacility facility =
+        DatamartFacility.builder()
+            .id(pk)
+            .type(type)
+            .attributes(
+                FacilityAttributes.builder()
+                    .address(
+                        Addresses.builder()
+                            .physical(Address.builder().state(state).zip(zip).build())
+                            .build())
+                    .latitude(latitude)
+                    .longitude(longitude)
+                    .services(Services.builder().health(healthServices).build())
+                    .mobile(false)
+                    .facilityType(facilityType)
+                    .detailedServices(facilityDetailedServices)
+                    .operatingStatus(
+                        OperatingStatus.builder()
+                            .code(OperatingStatusCode.LIMITED)
+                            .additionalInfo("Limited")
+                            .build())
+                    .build())
+            .build();
+    assertThat(facilityRepository.findAll()).isEmpty();
+    FacilityEntity facilityEntity = _facilityEntity(facility);
+    facilityEntity.cmsServices(
+        JacksonConfig.createMapper().writeValueAsString(facilityDetailedServices));
+    facilityRepository.save(facilityEntity);
+    assertThat(facilityRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(facilityEntity));
+    // Populate overlay using CMS services
+    assertThat(overlayRepository.findAll()).isEmpty();
+    _controller().populateCmsOverlayTable();
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    DatamartCmsOverlay.builder().detailedServices(facilityDetailedServices).build(),
+                    pk)));
+  }
+
+  @Test
   public void populateException() {
     FacilityEntity mockEntity = mock(FacilityEntity.class);
     when(mockEntity.id()).thenReturn(null);
@@ -814,6 +893,12 @@ public class InternalFacilitiesControllerTest {
                 .facilityRepository(mockRepo)
                 .build()
                 .populateCmsOverlayTable());
+    assertDoesNotThrow(
+        () ->
+            InternalFacilitiesController.builder()
+                .facilityRepository(mockRepo)
+                .build()
+                .updateAllDetailedServiceIdAndTransferToCmsOverlay());
   }
 
   @Test
@@ -959,6 +1044,115 @@ public class InternalFacilitiesControllerTest {
                             .build())
                     .build()))
         .isEqualTo("FL");
+  }
+
+  @Test
+  @SneakyThrows
+  void updateAllDetailedServiceIdAndTransferToCmsOverlay() {
+    var pk = "vha_402";
+    var type = DatamartFacility.Type.va_facilities;
+    var state = "FL";
+    var zip = "32934";
+    var latitude = 1.2;
+    var longitude = 3.4;
+    var healthServices =
+        List.of(HealthService.Cardiology, HealthService.Covid19Vaccine, HealthService.Urology);
+    var facilityType = va_health_facility;
+    var facilityDetailedServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Urology.name()))
+                        .name(HealthService.Urology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartFacility facility =
+        DatamartFacility.builder()
+            .id(pk)
+            .type(type)
+            .attributes(
+                FacilityAttributes.builder()
+                    .address(
+                        Addresses.builder()
+                            .physical(Address.builder().state(state).zip(zip).build())
+                            .build())
+                    .latitude(BigDecimal.valueOf(latitude))
+                    .longitude(BigDecimal.valueOf(longitude))
+                    .services(Services.builder().health(healthServices).build())
+                    .mobile(false)
+                    .facilityType(facilityType)
+                    .detailedServices(facilityDetailedServices)
+                    .operatingStatus(
+                        OperatingStatus.builder()
+                            .code(OperatingStatusCode.LIMITED)
+                            .additionalInfo("Limited")
+                            .build())
+                    .build())
+            .build();
+    assertThat(facilityRepository.findAll()).isEmpty();
+    FacilityEntity facilityEntity = _facilityEntity(facility);
+    facilityRepository.save(facilityEntity);
+    assertThat(facilityRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(facilityEntity));
+    assertThat(overlayRepository.findAll()).isEmpty();
+    overlayRepository.save(_overlayEntity(_overlay(), pk));
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    DatamartCmsOverlay.builder()
+                        .operatingStatus(_overlay_operating_status())
+                        .detailedServices(_overlay_detailed_services())
+                        .build(),
+                    pk)));
+    // Transfer detailed services from facility to overlay
+    _controller().updateAllDetailedServiceIdAndTransferToCmsOverlay();
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    DatamartCmsOverlay.builder()
+                        .operatingStatus(_overlay_operating_status())
+                        .detailedServices(facilityDetailedServices)
+                        .build(),
+                    pk)));
   }
 
   @Test

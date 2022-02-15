@@ -31,7 +31,7 @@ public class CmsOverlayCollector {
   public static boolean containsCovidService(List<DatamartDetailedService> detailedServices) {
     return detailedServices != null
         && detailedServices.parallelStream()
-            .anyMatch(f -> f.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19));
+            .anyMatch(f -> f.serviceInfo().name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19));
   }
 
   private static <K, V>

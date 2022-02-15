@@ -234,17 +234,34 @@ public class SerializerIsEmptyTest {
         null, new DetailedServiceSerializer(), mock(SerializerProvider.class));
     // Not empty
     assertIsNotEmptyUsingObjectSerializer(
-        DetailedService.builder().serviceId("test").build(),
-        new DetailedServiceSerializer(),
-        mock(SerializerProvider.class));
-    assertIsNotEmptyUsingObjectSerializer(
-        DetailedService.builder().serviceId("test").name("   ").build(),
+        DetailedService.builder()
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
+            .build(),
         new DetailedServiceSerializer(),
         mock(SerializerProvider.class));
     assertIsNotEmptyUsingObjectSerializer(
         DetailedService.builder()
-            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
-            .name("COVID-19 vaccines")
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .name("   ")
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
+            .build(),
+        new DetailedServiceSerializer(),
+        mock(SerializerProvider.class));
+    assertIsNotEmptyUsingObjectSerializer(
+        DetailedService.builder()
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                    .name("COVID-19 vaccines")
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
             .build(),
         new DetailedServiceSerializer(),
         mock(SerializerProvider.class));
@@ -288,7 +305,15 @@ public class SerializerIsEmptyTest {
     // Not empty
     assertIsNotEmptyUsingObjectSerializer(
         DetailedServiceResponse.builder()
-            .data(DetailedService.builder().serviceId("test").name("   ").build())
+            .data(
+                DetailedService.builder()
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                            .name("   ")
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
+                    .build())
             .build(),
         new DetailedServiceResponseSerializer(),
         mock(SerializerProvider.class));
@@ -296,8 +321,12 @@ public class SerializerIsEmptyTest {
         DetailedServiceResponse.builder()
             .data(
                 DetailedService.builder()
-                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
-                    .name("COVID-19 vaccines")
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                            .name("COVID-19 vaccines")
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
                     .build())
             .build(),
         new DetailedServiceResponseSerializer(),

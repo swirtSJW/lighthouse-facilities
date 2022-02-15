@@ -23,6 +23,7 @@ import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceA
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceEmailContact;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceHours;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,6 +46,7 @@ final class DatamartJacksonSerializers {
     mod.addSerializer(Services.class, new ServicesSerializer());
     mod.addSerializer(WaitTimes.class, new WaitTimesSerializer());
     mod.addSerializer(DatamartDetailedService.class, new DetailedServiceSerializer());
+    mod.addSerializer(ServiceInfo.class, new DetailedServiceInfoSerializer());
     mod.addSerializer(DetailedServiceAddress.class, new DetailedServiceAddressSerializer());
     mod.addSerializer(
         AppointmentPhoneNumber.class, new DetailedServiceAppointmentPhoneNumberSerializer());
@@ -101,8 +103,7 @@ final class DatamartJacksonSerializers {
     public void serialize(
         DatamartDetailedService value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
-      jgen.writeStringField("serviceId", value.serviceId());
-      jgen.writeStringField("name", value.name());
+      jgen.writeObjectField("serviceInfo", value.serviceInfo());
       jgen.writeStringField("description_facility", value.descriptionFacility());
       jgen.writeStringField("appointment_leadin", value.appointmentLeadIn());
       jgen.writeObjectField("appointment_phones", value.phoneNumbers());
@@ -111,6 +112,26 @@ final class DatamartJacksonSerializers {
       jgen.writeStringField("walk_ins_accepted", value.walkInsAccepted());
       jgen.writeObjectField("service_locations", value.serviceLocations());
       jgen.writeStringField("path", value.path());
+      jgen.writeEndObject();
+    }
+  }
+
+  private static final class DetailedServiceInfoSerializer extends StdSerializer<ServiceInfo> {
+    public DetailedServiceInfoSerializer() {
+      this(null);
+    }
+
+    public DetailedServiceInfoSerializer(Class<ServiceInfo> t) {
+      super(t);
+    }
+
+    @Override
+    @SneakyThrows
+    public void serialize(ServiceInfo value, JsonGenerator jgen, SerializerProvider provider) {
+      jgen.writeStartObject();
+      jgen.writeStringField("name", value.name());
+      jgen.writeStringField("serviceId", value.serviceId());
+      jgen.writeObjectField("serviceType", value.serviceType());
       jgen.writeEndObject();
     }
   }

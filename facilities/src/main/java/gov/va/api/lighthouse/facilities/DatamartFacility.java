@@ -1,12 +1,15 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartFacilityAttributesDeserializer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -269,9 +272,13 @@ public class DatamartFacility {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
-      return "MentalHealthCare".equalsIgnoreCase(name)
-          ? valueOf("MentalHealth")
-          : "DentalServices".equalsIgnoreCase(name) ? valueOf("Dental") : valueOf(capitalize(name));
+      return CMS_OVERLAY_SERVICE_NAME_COVID_19.equalsIgnoreCase(name)
+          ? HealthService.Covid19Vaccine
+          : "MentalHealthCare".equalsIgnoreCase(name)
+              ? HealthService.MentalHealth
+              : "DentalServices".equalsIgnoreCase(name)
+                  ? HealthService.Dental
+                  : valueOf(capitalize(name));
     }
   }
 
@@ -343,6 +350,7 @@ public class DatamartFacility {
     "detailed_services",
     "visn"
   })
+  @JsonDeserialize(using = DatamartFacilityAttributesDeserializer.class)
   public static final class FacilityAttributes {
     @NotNull String name;
 

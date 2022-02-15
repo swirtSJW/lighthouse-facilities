@@ -1,19 +1,24 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import gov.va.api.lighthouse.facilities.api.v1.deserializers.DetailedServiceDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAddressSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAppointmentPhoneNumberSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceEmailContactSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceHoursSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceInfoSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceLocationSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,8 +43,7 @@ import org.apache.commons.lang3.ObjectUtils;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
-  "serviceId",
-  "name",
+  "serviceInfo",
   "descriptionFacility",
   "appointmentLeadIn",
   "appointmentPhones",
@@ -48,14 +52,12 @@ import org.apache.commons.lang3.ObjectUtils;
   "walkInsAccepted",
   "serviceLocations"
 })
+@JsonDeserialize(using = DetailedServiceDeserializer.class)
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService implements CanBeEmpty {
-  @Schema(description = "Service Id.", example = "covid19Vaccine")
+  @Schema(description = "Service information.")
   @NonNull
-  String serviceId;
-
-  @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
-  String name;
+  ServiceInfo serviceInfo;
 
   @Schema(hidden = true)
   boolean active;
@@ -120,8 +122,7 @@ public class DetailedService implements CanBeEmpty {
   /** Empty elements will be omitted from JSON serialization. */
   @JsonIgnore
   public boolean isEmpty() {
-    return isBlank(serviceId())
-        && isBlank(name())
+    return ObjectUtils.isEmpty(serviceInfo())
         && isBlank(changed())
         && isBlank(descriptionFacility())
         && isBlank(appointmentLeadIn())
@@ -131,6 +132,49 @@ public class DetailedService implements CanBeEmpty {
         && isBlank(referralRequired())
         && ObjectUtils.isEmpty(serviceLocations())
         && isBlank(walkInsAccepted());
+  }
+
+  public enum ServiceType {
+    @JsonProperty("benefits")
+    Benefits,
+    @JsonProperty("health")
+    Health,
+    @JsonProperty("other")
+    Other;
+
+    /** Ensure that Jackson can create ServiceType enum regardless of capitalization. */
+    @JsonCreator
+    public static ServiceType fromString(String name) {
+      return valueOf(capitalize(name));
+    }
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = DetailedServiceInfoSerializer.class)
+  @JsonPropertyOrder({"name", "serviceId", "serviceType"})
+  @Schema(description = "Service information.")
+  public static final class ServiceInfo implements CanBeEmpty {
+    @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
+
+    @Schema(description = "Service id.", example = "covid19Vaccine")
+    @NonNull
+    String serviceId;
+
+    @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
+    String name;
+
+    @Schema(description = "Service type.", example = "Health")
+    @NonNull
+    ServiceType serviceType;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return isBlank(serviceId()) && isBlank(name()) && ObjectUtils.isEmpty(serviceType());
+    }
   }
 
   @Data
