@@ -43,8 +43,13 @@ public class CmsOverlayTransformerV1Test {
             List.of(
                 DatamartDetailedService.builder()
                     .active(true)
-                    .name("COVID-19 vaccines")
-                    .serviceId(uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
+                    .serviceInfo(
+                        DatamartDetailedService.ServiceInfo.builder()
+                            .serviceId(
+                                uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
+                            .name("COVID-19 vaccines")
+                            .serviceType(DatamartDetailedService.ServiceType.Health)
+                            .build())
                     .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                     .phoneNumbers(
                         List.of(
@@ -129,8 +134,13 @@ public class CmsOverlayTransformerV1Test {
                     .build(),
                 DatamartDetailedService.builder()
                     .active(true)
-                    .name(DatamartFacility.HealthService.Cardiology.name())
-                    .serviceId(uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                    .serviceInfo(
+                        DatamartDetailedService.ServiceInfo.builder()
+                            .serviceId(
+                                uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                            .name(DatamartFacility.HealthService.Cardiology.name())
+                            .serviceType(DatamartDetailedService.ServiceType.Health)
+                            .build())
                     .path("https://www.melbourne.va.gov/services/cardiology.asp")
                     .phoneNumbers(
                         List.of(
@@ -235,8 +245,12 @@ public class CmsOverlayTransformerV1Test {
             List.of(
                 DetailedService.builder()
                     .active(true)
-                    .name("COVID-19 vaccines")
-                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                            .name("COVID-19 vaccines")
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
                     .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                     .phoneNumbers(
                         List.of(
@@ -318,8 +332,12 @@ public class CmsOverlayTransformerV1Test {
                     .build(),
                 DetailedService.builder()
                     .active(true)
-                    .name(Facility.HealthService.Cardiology.name())
-                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                            .name(Facility.HealthService.Cardiology.name())
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
                     .path("https://www.melbourne.va.gov/services/cardiology.asp")
                     .phoneNumbers(
                         List.of(

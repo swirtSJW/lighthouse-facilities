@@ -128,18 +128,41 @@ public class SerializerTest {
   @SneakyThrows
   void serializeDetailedService() {
     // Not empty
-    DetailedService detailedService = DetailedService.builder().serviceId("test").build();
-    assertJson(detailedService, "{\"serviceId\":\"test\"}");
-    detailedService =
-        DetailedService.builder().serviceId("test").serviceLocations(emptyList()).build();
-    assertJson(detailedService, "{\"serviceId\":\"test\"}");
-    detailedService =
+    DetailedService detailedService =
         DetailedService.builder()
-            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
-            .name("COVID-19 vaccines")
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
             .build();
     assertJson(
-        detailedService, "{\"serviceId\":\"covid19Vaccine\",\"name\":\"COVID-19 vaccines\"}");
+        detailedService,
+        "{\"serviceInfo\":{\"serviceId\":\"cardiology\",\"serviceType\":\"health\"}}");
+    detailedService =
+        DetailedService.builder()
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
+            .serviceLocations(emptyList())
+            .build();
+    assertJson(
+        detailedService,
+        "{\"serviceInfo\":{\"serviceId\":\"cardiology\",\"serviceType\":\"health\"}}");
+    detailedService =
+        DetailedService.builder()
+            .serviceInfo(
+                DetailedService.ServiceInfo.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                    .name("COVID-19 vaccines")
+                    .serviceType(DetailedService.ServiceType.Health)
+                    .build())
+            .build();
+    assertJson(
+        detailedService,
+        "{\"serviceInfo\":{\"name\":\"COVID-19 vaccines\",\"serviceId\":\"covid19Vaccine\",\"serviceType\":\"health\"}}");
   }
 
   @Test
@@ -232,19 +255,33 @@ public class SerializerTest {
     // Not empty
     response =
         DetailedServiceResponse.builder()
-            .data(DetailedService.builder().serviceId("test").build())
+            .data(
+                DetailedService.builder()
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
+                    .build())
             .build();
-    assertJson(response, "{\"data\":{\"serviceId\":\"test\"}}");
+    assertJson(
+        response,
+        "{\"data\":{\"serviceInfo\":{\"serviceId\":\"cardiology\",\"serviceType\":\"health\"}}}");
     response =
         DetailedServiceResponse.builder()
             .data(
                 DetailedService.builder()
-                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
-                    .name("COVID-19 vaccines")
+                    .serviceInfo(
+                        DetailedService.ServiceInfo.builder()
+                            .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
+                            .name("COVID-19 vaccines")
+                            .serviceType(DetailedService.ServiceType.Health)
+                            .build())
                     .build())
             .build();
     assertJson(
-        response, "{\"data\":{\"serviceId\":\"covid19Vaccine\",\"name\":\"COVID-19 vaccines\"}}");
+        response,
+        "{\"data\":{\"serviceInfo\":{\"name\":\"COVID-19 vaccines\",\"serviceId\":\"covid19Vaccine\",\"serviceType\":\"health\"}}}");
   }
 
   @Test

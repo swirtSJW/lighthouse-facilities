@@ -13,8 +13,7 @@ public class DetailedServiceTransformerV1 {
   /** Transform DatamartDetailedService to version 1 DetailedService. */
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
-        .serviceId(dds.serviceId())
-        .name(dds.name())
+        .serviceInfo(toDetailedServiceInfo(dds.serviceInfo()))
         .active(dds.active())
         .changed(dds.changed())
         .descriptionFacility(dds.descriptionFacility())
@@ -42,6 +41,17 @@ public class DetailedServiceTransformerV1 {
                 .map(DetailedServiceTransformerV1::transformDetailedServiceEmailContact)
                 .collect(Collectors.toList())
             : new ArrayList<>();
+  }
+
+  /** Transform DatamartDetailedService ServiceInfo object into DetailedService ServiceInfo. */
+  public static DetailedService.ServiceInfo toDetailedServiceInfo(
+      @NonNull DatamartDetailedService.ServiceInfo datamartDetailedServiceInfo) {
+    return DetailedService.ServiceInfo.builder()
+        .serviceId(datamartDetailedServiceInfo.serviceId())
+        .name(datamartDetailedServiceInfo.name())
+        .serviceType(
+            DetailedService.ServiceType.valueOf(datamartDetailedServiceInfo.serviceType().name()))
+        .build();
   }
 
   /**
@@ -90,8 +100,7 @@ public class DetailedServiceTransformerV1 {
   public static DatamartDetailedService toVersionAgnosticDetailedService(
       @NonNull DetailedService ds) {
     return DatamartDetailedService.builder()
-        .serviceId(ds.serviceId())
-        .name(ds.name())
+        .serviceInfo(toVersionAgnosticServiceInfo(ds.serviceInfo()))
         .active(ds.active())
         .changed(ds.changed())
         .descriptionFacility(ds.descriptionFacility())
@@ -166,6 +175,16 @@ public class DetailedServiceTransformerV1 {
                 .map(DetailedServiceTransformerV1::toVersionAgnosticDetailedService)
                 .collect(Collectors.toList())
             : new ArrayList<>();
+  }
+
+  /** Transform DetailedService ServiceInfo object into DatamartDetailedService ServiceInfo. */
+  public static DatamartDetailedService.ServiceInfo toVersionAgnosticServiceInfo(
+      @NonNull DetailedService.ServiceInfo serviceInfo) {
+    return DatamartDetailedService.ServiceInfo.builder()
+        .serviceId(serviceInfo.serviceId())
+        .name(serviceInfo.name())
+        .serviceType(DatamartDetailedService.ServiceType.valueOf(serviceInfo.serviceType().name()))
+        .build();
   }
 
   /**

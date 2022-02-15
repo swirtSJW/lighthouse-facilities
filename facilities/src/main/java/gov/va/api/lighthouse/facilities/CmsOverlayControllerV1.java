@@ -66,11 +66,11 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
-      value = {"/facilities/{id}/services/{service}"},
+      value = {"/facilities/{facilityId}/services/{serviceId}"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<DetailedServiceResponse> getDetailedService(
-      @PathVariable("id") String facilityId, @PathVariable("service") String serviceId) {
+      @PathVariable("facilityId") String facilityId, @PathVariable("serviceId") String serviceId) {
     return ResponseEntity.ok(
         DetailedServiceResponse.builder()
             .data(
@@ -80,11 +80,11 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
-      value = {"/facilities/{id}/services"},
+      value = {"/facilities/{facilityId}/services"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<DetailedServicesResponse> getDetailedServices(
-      @PathVariable("id") String facilityId,
+      @PathVariable("facilityId") String facilityId,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<DetailedService> services =
@@ -240,7 +240,7 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(capitalize(service.serviceId()));
+        detailedServices.add(capitalize(service.serviceInfo().serviceId()));
       }
       facilityEntity.overlayServices(detailedServices);
     }

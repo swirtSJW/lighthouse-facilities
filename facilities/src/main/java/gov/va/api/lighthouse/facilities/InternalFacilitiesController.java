@@ -10,6 +10,7 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.vet
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.isBlank;
 import static java.util.stream.Collectors.toCollection;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,12 +28,14 @@ import gov.va.api.lighthouse.facilities.collector.FacilitiesCollector;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
@@ -391,7 +394,6 @@ public class InternalFacilitiesController {
       saveAsMissing(response, entity);
       return;
     }
-
     facilityRepository.delete(entity);
   }
 
@@ -419,6 +421,84 @@ public class InternalFacilitiesController {
               ReloadResponse.Problem.of(
                   id.toIdString(), "Failed to mark facility as missing: " + e.getMessage()));
       throw e;
+    }
+  }
+
+  /**
+   * WARNING: This method will overwrite existing detailed services in CMS overlay with those
+   * containing a matching serviceId found within facility attributes. Engineer discretion is
+   * advised.
+   */
+  @GetMapping(value = "/facilities/detailedServices/transfer-to-cms-overlay-table")
+  @SneakyThrows
+  void updateAllDetailedServiceIdAndTransferToCmsOverlay() {
+    boolean noErrors = true;
+    try {
+      log.warn(
+          "Attempting to update and transfer all facility detailed services to cms_overlay table.");
+      Streams.stream(facilityRepository.findAll())
+          .parallel()
+          .forEach(
+              f -> {
+                try {
+                  DatamartFacility facility =
+                      DATAMART_MAPPER.readValue(f.facility(), DatamartFacility.class);
+                  DatamartFacility.OperatingStatus operatingStatus =
+                      facility.attributes().operatingStatus();
+                  List<DatamartDetailedService> facilityDetailedServices =
+                      facility.attributes().detailedServices();
+                  if (operatingStatus != null) {
+                    log.warn(
+                        "Updating service id for detailed services associated with facility {}",
+                        f.id().toIdString());
+                    // Merge facility detailed services with those of existing overlay
+                    Set<DatamartDetailedService> mergedDetailedServices =
+                        new TreeSet<>(
+                            new Comparator<DatamartDetailedService>() {
+                              @Override
+                              public int compare(
+                                  DatamartDetailedService dds1, DatamartDetailedService dds2) {
+                                return dds1.serviceInfo()
+                                    .serviceId()
+                                    .compareTo(dds2.serviceInfo().serviceId());
+                              }
+                            });
+                    if (isNotEmpty(facilityDetailedServices)) {
+                      mergedDetailedServices.addAll(facilityDetailedServices);
+                    }
+                    Optional<CmsOverlayEntity> existingOverlay =
+                        cmsOverlayRepository.findById(f.id());
+                    if (existingOverlay.isPresent()) {
+                      mergedDetailedServices.addAll(
+                          CmsOverlayHelper.getDetailedServices(
+                              existingOverlay.get().cmsServices()));
+                    }
+                    cmsOverlayRepository.save(
+                        CmsOverlayEntity.builder()
+                            .id(f.id())
+                            .cmsOperatingStatus(DATAMART_MAPPER.writeValueAsString(operatingStatus))
+                            .cmsServices(
+                                CmsOverlayHelper.serializeDetailedServices(
+                                    mergedDetailedServices.stream().toList()))
+                            .build());
+                  }
+                } catch (Exception ex) {
+                  log.error(
+                      "Failed to update and transfer facility {} detailed services to "
+                          + "cms_overlay table: {}",
+                      f.id().toIdString(),
+                      ex.getMessage());
+                }
+              });
+    } catch (Exception e) {
+      noErrors = false;
+      log.error(
+          "Failed to update and transfer all facility detailed services to cms_overlay table: {}",
+          e.getMessage());
+    }
+    if (noErrors) {
+      log.warn(
+          "Completed update and transfer of all facility detailed services to cms_overlay table!");
     }
   }
 

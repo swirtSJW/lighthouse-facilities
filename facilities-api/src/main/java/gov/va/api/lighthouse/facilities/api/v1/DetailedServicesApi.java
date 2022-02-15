@@ -17,7 +17,7 @@ public interface DetailedServicesApi {
       tags = {"facilities"},
       security = @SecurityRequirement(name = "apikey"))
   @GET
-  @Path("/facilities/{id}/services")
+  @Path("/facilities/{facilityId}/services")
   @ApiResponse(
       responseCode = "200",
       description = "Success",
@@ -71,7 +71,7 @@ public interface DetailedServicesApi {
   FacilityReadResponse getServicesById(
       @Parameter(
               in = ParameterIn.PATH,
-              name = "id",
+              name = "facilityId",
               description =
                   "Facility ID, in the form `<prefix>_<station>`, where prefix is one of "
                       + "\"vha\", \"vba\", \"nca\", or \"vc\", "
