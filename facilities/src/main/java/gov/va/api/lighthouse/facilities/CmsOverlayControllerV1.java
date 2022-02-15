@@ -66,11 +66,11 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
-      value = {"/facilities/{id}/services/{service}"},
+      value = {"/facilities/{facilityId}/services/{serviceId}"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<DetailedServiceResponse> getDetailedService(
-      @PathVariable("id") String facilityId, @PathVariable("service") String serviceId) {
+      @PathVariable("facilityId") String facilityId, @PathVariable("serviceId") String serviceId) {
     return ResponseEntity.ok(
         DetailedServiceResponse.builder()
             .data(
@@ -80,11 +80,11 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
-      value = {"/facilities/{id}/services"},
+      value = {"/facilities/{facilityId}/services"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<DetailedServicesResponse> getDetailedServices(
-      @PathVariable("id") String facilityId,
+      @PathVariable("facilityId") String facilityId,
       @RequestParam(value = "serviceIds", required = false, defaultValue = "")
           List<String> serviceIds,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
@@ -93,7 +93,9 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
         DetailedServiceTransformerV1.toDetailedServices(getOverlayDetailedServices(facilityId));
     if (serviceIds.size() > 0) {
       services =
-          services.stream().filter(s -> serviceIds.contains(s.serviceId())).collect(toList());
+          services.stream()
+              .filter(s -> serviceIds.contains(s.serviceInfo().serviceId()))
+              .collect(toList());
     }
 
     PageLinkerV1 linker =
@@ -247,7 +249,7 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(capitalize(service.serviceId()));
+        detailedServices.add(capitalize(service.serviceInfo().serviceId()));
       }
       facilityEntity.overlayServices(detailedServices);
     }
