@@ -2,7 +2,9 @@ package gov.va.api.lighthouse.facilities;
 
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -14,8 +16,8 @@ public class DetailedServiceTransformerV0 {
   /** Transform DatamartDetailedService to version 0 DetailedService. */
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
-        .serviceId(dds.serviceId())
-        .name(dds.name())
+        .serviceId(dds.serviceInfo().serviceId())
+        .name(dds.serviceInfo().name())
         .active(dds.active())
         .changed(dds.changed())
         .descriptionFacility(dds.descriptionFacility())
@@ -91,8 +93,7 @@ public class DetailedServiceTransformerV0 {
   public static DatamartDetailedService toVersionAgnosticDetailedService(
       @NonNull DetailedService ds) {
     return DatamartDetailedService.builder()
-        .serviceId(ds.serviceId())
-        .name(ds.name())
+        .serviceInfo(toVersionAgnosticServiceInfo(ds.serviceId(), ds.name()))
         .active(ds.active())
         .changed(ds.changed())
         .descriptionFacility(ds.descriptionFacility())
@@ -129,7 +130,6 @@ public class DetailedServiceTransformerV0 {
   public static List<DatamartDetailedService.DetailedServiceLocation>
       toVersionAgnosticDetailedServiceLocations(
           List<DetailedService.DetailedServiceLocation> detailedServiceLocations) {
-
     return (detailedServiceLocations == null)
         ? null
         : !detailedServiceLocations.isEmpty()
@@ -146,7 +146,6 @@ public class DetailedServiceTransformerV0 {
   public static List<DatamartDetailedService.AppointmentPhoneNumber>
       toVersionAgnosticDetailedServicePhoneNumbers(
           List<DetailedService.AppointmentPhoneNumber> detailedServicePhoneNumbers) {
-
     return (detailedServicePhoneNumbers == null)
         ? null
         : !detailedServicePhoneNumbers.isEmpty()
@@ -169,6 +168,31 @@ public class DetailedServiceTransformerV0 {
                 .map(DetailedServiceTransformerV0::toVersionAgnosticDetailedService)
                 .collect(Collectors.toList())
             : new ArrayList<>();
+  }
+
+  /** Construct DatamartDetailedService ServiceInfo object based on serviceId and service name. */
+  public static DatamartDetailedService.ServiceInfo toVersionAgnosticServiceInfo(
+      @NonNull String serviceId, String name) {
+    return DatamartDetailedService.ServiceInfo.builder()
+        .serviceId(serviceId)
+        .name(name)
+        // Attempt to infer service type from service id
+        .serviceType(
+            Arrays.stream(Facility.HealthService.values())
+                    .parallel()
+                    .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceId))
+                ? DatamartDetailedService.ServiceType.Health
+                : Arrays.stream(Facility.BenefitsService.values())
+                        .parallel()
+                        .anyMatch(bs -> bs.name().equalsIgnoreCase(serviceId))
+                    ? DatamartDetailedService.ServiceType.Benefits
+                    : Arrays.stream(Facility.OtherService.values())
+                            .parallel()
+                            .anyMatch(os -> os.name().equalsIgnoreCase(serviceId))
+                        ? DatamartDetailedService.ServiceType.Other
+                        // Default to Health service type
+                        : DatamartDetailedService.ServiceType.Health)
+        .build();
   }
 
   /**

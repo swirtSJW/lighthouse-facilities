@@ -12,7 +12,11 @@ import lombok.experimental.UtilityClass;
 public class DatamartDetailedServicesTestUtils {
   public static DatamartDetailedService datamartDetailedServiceWithEmptyAttributes() {
     return DatamartDetailedService.builder()
-        .serviceId("emptyService")
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId("emptyService")
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .phoneNumbers(emptyList())
         .serviceLocations(emptyList())
         .build();
@@ -20,7 +24,11 @@ public class DatamartDetailedServicesTestUtils {
 
   public static DatamartDetailedService datamartDetailedServiceWithNullAttributes() {
     return DatamartDetailedService.builder()
-        .serviceId("emptyService")
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId("emptyService")
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .phoneNumbers(null)
         .serviceLocations(null)
         .build();
@@ -35,8 +43,12 @@ public class DatamartDetailedServicesTestUtils {
 
   private DatamartDetailedService getCardiologyDatamartDetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(HealthService.Cardiology.name())
-        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                .name(HealthService.Cardiology.name())
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -99,8 +111,12 @@ public class DatamartDetailedServicesTestUtils {
 
   private DatamartDetailedService getCovid19DatamartDetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -163,8 +179,12 @@ public class DatamartDetailedServicesTestUtils {
 
   private DatamartDetailedService getUrologyDatamartDetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(HealthService.Urology.name())
-        .serviceId(uncapitalize(HealthService.Urology.name()))
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Urology.name()))
+                .name(HealthService.Urology.name())
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)

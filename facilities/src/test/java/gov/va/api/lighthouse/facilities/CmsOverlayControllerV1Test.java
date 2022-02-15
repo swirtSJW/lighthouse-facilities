@@ -82,8 +82,12 @@ public class CmsOverlayControllerV1Test {
 
   private DatamartDetailedService getCardiologyDetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(HealthService.Cardiology.name())
-        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                .name(HealthService.Cardiology.name())
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -146,8 +150,12 @@ public class CmsOverlayControllerV1Test {
 
   private DatamartDetailedService getCovid19DetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -214,7 +222,7 @@ public class CmsOverlayControllerV1Test {
     DatamartCmsOverlay overlay = overlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
-    var serviceId = CMS_OVERLAY_SERVICE_NAME_COVID_19;
+    var serviceId = uncapitalize(HealthService.Covid19Vaccine.name());
     CmsOverlayEntity cmsOverlayEntity =
         CmsOverlayEntity.builder()
             .id(pk)
@@ -384,8 +392,12 @@ public class CmsOverlayControllerV1Test {
 
   private DatamartDetailedService getUrologyDetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(HealthService.Urology.name())
-        .serviceId(uncapitalize(HealthService.Urology.name()))
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(uncapitalize(HealthService.Urology.name()))
+                .name(HealthService.Urology.name())
+                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -480,7 +492,7 @@ public class CmsOverlayControllerV1Test {
     Set<String> detailedServices = new HashSet<>();
     for (DatamartDetailedService service : overlay.detailedServices()) {
       if (service.active()) {
-        detailedServices.add(capitalize(service.serviceId()));
+        detailedServices.add(capitalize(service.serviceInfo().serviceId()));
       }
     }
     // Test contained DetailedService is one of HealthService, BenefitsService, or OtherService
@@ -527,10 +539,10 @@ public class CmsOverlayControllerV1Test {
     Set<String> detailedServices = new HashSet<>();
     for (DatamartDetailedService service : overlay.detailedServices()) {
       if (service.active()) {
-        if ("COVID-19 vaccines".equals(service.name())) {
+        if (CMS_OVERLAY_SERVICE_NAME_COVID_19.equals(service.serviceInfo().name())) {
           detailedServices.add(HealthService.Covid19Vaccine.name());
         } else {
-          detailedServices.add(service.name());
+          detailedServices.add(service.serviceInfo().name());
         }
       }
     }
@@ -584,13 +596,23 @@ public class CmsOverlayControllerV1Test {
     List<DatamartDetailedService> additionalServices =
         List.of(
             DatamartDetailedService.builder()
-                .name("additional service1")
-                .serviceId("additionalService1")
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(
+                            uncapitalize(DatamartFacility.HealthService.CaregiverSupport.name()))
+                        .name("additional service1")
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .active(true)
                 .build(),
             DatamartDetailedService.builder()
-                .name("additional service2")
-                .serviceId("additionalService2")
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(
+                            uncapitalize(DatamartFacility.HealthService.Ophthalmology.name()))
+                        .name("additional service2")
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
                 .active(true)
                 .build());
     overlay.detailedServices(additionalServices);
@@ -637,14 +659,14 @@ public class CmsOverlayControllerV1Test {
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = overlay();
     for (DatamartDetailedService d : overlay.detailedServices()) {
-      if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+      if (d.serviceInfo().name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path()).isEqualTo("replaceable path here");
       }
     }
     CmsOverlay cmsOverlay = CmsOverlayTransformerV1.toCmsOverlay(overlay);
     controller().saveOverlay("vha_402", cmsOverlay);
     for (DetailedService d : cmsOverlay.detailedServices()) {
-      if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+      if (d.serviceInfo().name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
         assertThat(d.path())
             .isEqualTo("https://www.va.gov/maine-health-care/programs/covid-19-vaccines/");
       }

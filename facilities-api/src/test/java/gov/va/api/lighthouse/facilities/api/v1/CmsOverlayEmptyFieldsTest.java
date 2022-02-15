@@ -4,6 +4,7 @@ import static gov.va.api.lighthouse.facilities.api.TestUtils.getExpectedJson;
 import static gov.va.api.lighthouse.facilities.api.v1.DetailedServiceUtils.getDetailedService;
 import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -106,7 +107,16 @@ public class CmsOverlayEmptyFieldsTest {
     assertThat(
             CmsOverlay.builder()
                 .detailedServices(
-                    List.of(DetailedService.builder().name("test").serviceId("test").build()))
+                    List.of(
+                        DetailedService.builder()
+                            .serviceInfo(
+                                DetailedService.ServiceInfo.builder()
+                                    .serviceId(
+                                        uncapitalize(Facility.HealthService.Cardiology.name()))
+                                    .name(Facility.HealthService.Cardiology.name())
+                                    .serviceType(DetailedService.ServiceType.Health)
+                                    .build())
+                            .build()))
                 .build()
                 .isEmpty())
         .isFalse();
