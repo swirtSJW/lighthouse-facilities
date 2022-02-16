@@ -15,11 +15,14 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.AppointmentPhoneNumber;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
+import gov.va.api.lighthouse.facilities.DatamartDetailedService.PatientWaitTime;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceType;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -76,7 +79,20 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 ? getServiceTypeForServiceId(serviceId)
                 : // Default to Health service type
                 ServiceType.Health;
-
+    JsonNode waitTimeNode = node.get("waitTime");
+    JsonNode newNode = waitTimeNode != null ? waitTimeNode.get("new") : null;
+    final BigDecimal newPatientWaitTime =
+        newNode != null ? createMapper().convertValue(newNode, BigDecimal.class) : null;
+    JsonNode establishedNode = waitTimeNode != null ? waitTimeNode.get("established") : null;
+    final BigDecimal establishedPatientWaitTime =
+        establishedNode != null
+            ? createMapper().convertValue(establishedNode, BigDecimal.class)
+            : null;
+    JsonNode effectiveDateNode = waitTimeNode != null ? waitTimeNode.get("effectiveDate") : null;
+    final LocalDate effectiveDate =
+        establishedNode != null
+            ? createMapper().convertValue(effectiveDateNode, LocalDate.class)
+            : null;
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
 
@@ -86,6 +102,12 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 .name(serviceName)
                 .serviceId(serviceId)
                 .serviceType(serviceType)
+                .build())
+        .waitTime(
+            PatientWaitTime.builder()
+                .newPatientWaitTime(newPatientWaitTime)
+                .establishedPatientWaitTime(establishedPatientWaitTime)
+                .effectiveDate(effectiveDate)
                 .build())
         .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
         .changed(

@@ -102,6 +102,7 @@ public class CmsOverlayCollectorTest {
                     .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
                     .serviceType(DatamartDetailedService.ServiceType.Health)
                     .build())
+            .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
             // .path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
             .path("replace_this_path")
             .build();

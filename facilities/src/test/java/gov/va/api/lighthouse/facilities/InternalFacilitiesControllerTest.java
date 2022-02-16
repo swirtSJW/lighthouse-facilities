@@ -1535,6 +1535,7 @@ public class InternalFacilitiesControllerTest {
                         .name(HealthService.Cardiology.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1543,6 +1544,7 @@ public class InternalFacilitiesControllerTest {
                         .name(HealthService.Covid19Vaccine.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1551,6 +1553,7 @@ public class InternalFacilitiesControllerTest {
                         .name(OtherService.OnlineScheduling.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1559,6 +1562,7 @@ public class InternalFacilitiesControllerTest {
                         .name(BenefitsService.Pensions.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1567,6 +1571,7 @@ public class InternalFacilitiesControllerTest {
                         .name(HealthService.Urology.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build());
     DatamartFacility facility =
         DatamartFacility.builder()
@@ -1855,6 +1860,7 @@ public class InternalFacilitiesControllerTest {
                         .name(HealthService.Cardiology.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1863,6 +1869,7 @@ public class InternalFacilitiesControllerTest {
                         .name(HealthService.Covid19Vaccine.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1871,6 +1878,7 @@ public class InternalFacilitiesControllerTest {
                         .name(OtherService.OnlineScheduling.name())
                         .serviceType(DatamartDetailedService.ServiceType.Other)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1879,6 +1887,7 @@ public class InternalFacilitiesControllerTest {
                         .name(BenefitsService.Pensions.name())
                         .serviceType(DatamartDetailedService.ServiceType.Benefits)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build(),
             DatamartDetailedService.builder()
                 .serviceInfo(
@@ -1887,6 +1896,7 @@ public class InternalFacilitiesControllerTest {
                         .name(HealthService.Urology.name())
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .build());
     DatamartCmsOverlay cmsOverlay =
         DatamartCmsOverlay.builder()

@@ -185,6 +185,7 @@ public class CmsOverlayControllerV1Test {
                 .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
                 .serviceType(DatamartDetailedService.ServiceType.Health)
                 .build())
+        .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -689,6 +690,7 @@ public class CmsOverlayControllerV1Test {
                         .name("additional service1")
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                 .active(true)
                 .build(),
             DatamartDetailedService.builder()

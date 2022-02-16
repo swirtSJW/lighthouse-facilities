@@ -38,6 +38,7 @@ public class CmsOverlayHelperTest {
                                 .name(hs.name())
                                 .serviceType(DatamartDetailedService.ServiceType.Health)
                                 .build())
+                        .waitTime(DatamartDetailedService.PatientWaitTime.builder().build())
                         .build())
             .collect(Collectors.toList());
     assertThat(
