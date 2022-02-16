@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -279,7 +280,8 @@ public class InternalFacilitiesController {
                 String responseMsg;
                 try {
                   DatamartFacility facility =
-                      DATAMART_MAPPER.readValue(f.facility(), DatamartFacility.class);
+                      datamartReadValue(f.facility(), DatamartFacility.class);
+
                   DatamartFacility.OperatingStatus operatingStatus =
                       facility.attributes().operatingStatus();
                   List<DatamartDetailedService> facilityDetailedServices =
@@ -287,7 +289,7 @@ public class InternalFacilitiesController {
                   if (containsInvalidServiceId(facilityDetailedServices)) {
                     String serviceNamesWithInvalidServiceIds =
                         facilityDetailedServices.stream()
-                            .filter(ds -> ds.serviceInfo.serviceId().equals(INVALID_SVC_ID))
+                            .filter(ds -> ds.serviceInfo().serviceId().equals(INVALID_SVC_ID))
                             .map(ds -> ds.serviceInfo().name())
                             .collect(Collectors.joining(", "));
                     responseMsg =
@@ -353,6 +355,11 @@ public class InternalFacilitiesController {
         && detailedServices.stream()
             .parallel()
             .anyMatch(ds -> ds.serviceInfo().serviceId().equals(INVALID_SVC_ID));
+  }
+
+  @SneakyThrows
+  private <T> T datamartReadValue(@NonNull String json, @NonNull Class<T> expectedClass) {
+    return DATAMART_MAPPER.readValue(json, expectedClass);
   }
 
   /**
@@ -582,7 +589,6 @@ public class InternalFacilitiesController {
    * advised.
    */
   @GetMapping(value = "/facilities/detailedServices/transfer-to-cms-overlay-table")
-  @SneakyThrows
   ResponseEntity<String> updateAllDetailedServiceIdAndTransferToCmsOverlay() {
     boolean noErrors = true;
     StringBuilder responseBody = new StringBuilder();
@@ -802,7 +808,7 @@ public class InternalFacilitiesController {
   private String updateDetailedServiceIdAndTransferToCmsOverlay(String facilityJson) {
     String responseMsg;
     StringBuilder responseBody = new StringBuilder();
-    DatamartFacility df = DATAMART_MAPPER.readValue(facilityJson, DatamartFacility.class);
+    DatamartFacility df = datamartReadValue(facilityJson, DatamartFacility.class);
     DatamartFacility.OperatingStatus operatingStatus = df.attributes().operatingStatus();
     List<DatamartDetailedService> facilityDetailedServices = df.attributes().detailedServices();
     if (operatingStatus != null) {
