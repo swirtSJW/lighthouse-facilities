@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceDeserializer;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -35,7 +37,10 @@ import lombok.NonNull;
   "walk_ins_accepted",
   "service_locations"
 })
+@JsonDeserialize(using = DatamartDetailedServiceDeserializer.class)
 public class DatamartDetailedService {
+  @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
+
   @NonNull String serviceId;
 
   String name;
