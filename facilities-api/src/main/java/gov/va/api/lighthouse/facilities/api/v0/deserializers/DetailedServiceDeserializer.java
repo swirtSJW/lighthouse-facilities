@@ -38,6 +38,7 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
+
     JsonNode activeNode = node.get("active");
     JsonNode changedNode = node.get("changed");
     JsonNode descriptionFacilityNode = node.get("description_facility");
