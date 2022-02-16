@@ -1639,6 +1639,16 @@ public class InternalFacilitiesControllerTest {
             .operatingStatus(_overlay_operating_status())
             .detailedServices(facilityDetailedServices)
             .build());
+
+    assertThat(datamartCmsOverlays)
+        .usingRecursiveComparison()
+        .isEqualTo(
+            List.of(
+                DatamartCmsOverlay.builder()
+                    .operatingStatus(_overlay_operating_status())
+                    .detailedServices(facilityDetailedServices)
+                    .build()));
+
     // Exception Cases
     FacilityRepository mockFacilityRepository = mock(FacilityRepository.class);
     when(mockFacilityRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
