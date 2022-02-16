@@ -132,16 +132,19 @@ public class FacilitiesControllerV0 {
 
     // lng lat lng lat
     List<FacilityEntity> allEntities =
-        facilityRepository.findAll(
-            FacilityRepository.BoundingBoxSpecification.builder()
-                .minLongitude(bbox.get(0).min(bbox.get(2)))
-                .maxLongitude(bbox.get(0).max(bbox.get(2)))
-                .minLatitude(bbox.get(1).min(bbox.get(3)))
-                .maxLatitude(bbox.get(1).max(bbox.get(3)))
-                .facilityType(facilityType)
-                .services(services)
-                .mobile(rawMobile)
-                .build());
+            facilityRepository.findAll(
+                    FacilityRepository.BoundingBoxSpecification.builder()
+                            .minLongitude(bbox.get(0).min(bbox.get(2)))
+                            .maxLongitude(bbox.get(0).max(bbox.get(2)))
+                            .minLatitude(bbox.get(1).min(bbox.get(3)))
+                            .maxLatitude(bbox.get(1).max(bbox.get(3)))
+                            .build().and(
+                    FacilityRepository.FacilityTypeSpecification.builder()
+                            .facilityType(facilityType)
+                            .build()).and(
+                    FacilityRepository.ServicesSpecification.builder().services(services).build()).and(
+                    FacilityRepository.MobileSpecification.builder().mobile(rawMobile).build())
+            );
     double centerLng = (bbox.get(0).doubleValue() + bbox.get(2).doubleValue()) / 2;
     double centerLat = (bbox.get(1).doubleValue() + bbox.get(3).doubleValue()) / 2;
     return allEntities.stream()
@@ -172,13 +175,14 @@ public class FacilitiesControllerV0 {
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<ServiceType> services = validateServices(rawServices);
     List<FacilityEntity> entities =
-        facilityRepository.findAll(
-            FacilityRepository.TypeServicesIdsSpecification.builder()
-                .ids(entityIds(ids))
-                .facilityType(facilityType)
-                .services(services)
-                .mobile(rawMobile)
-                .build());
+            facilityRepository.findAll(
+                    FacilityRepository.TypeServicesIdsSpecification.builder()
+                            .ids(entityIds(ids)).build().and(
+                    FacilityRepository.FacilityTypeSpecification.builder()
+                            .facilityType(facilityType)
+                            .build()).and(
+                    FacilityRepository.ServicesSpecification.builder().services(services).build()).and(
+                    FacilityRepository.MobileSpecification.builder().mobile(rawMobile).build()));
     double lng = longitude.doubleValue();
     double lat = latitude.doubleValue();
     return entities.stream()
@@ -209,12 +213,14 @@ public class FacilitiesControllerV0 {
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<ServiceType> services = validateServices(rawServices);
     return facilityRepository.findAll(
-        FacilityRepository.StateSpecification.builder()
-            .state(state)
-            .facilityType(facilityType)
-            .services(services)
-            .mobile(rawMobile)
-            .build(),
+            FacilityRepository.StateSpecification.builder()
+                    .state(state).build().and(
+            FacilityRepository.FacilityTypeSpecification.builder()
+                    .facilityType(facilityType).build()).and(
+            FacilityRepository.ServicesSpecification.builder()
+                    .services(services).build()).and(
+            FacilityRepository.MobileSpecification.builder()
+                    .mobile(rawMobile).build()),
         PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
   }
 
@@ -231,12 +237,14 @@ public class FacilitiesControllerV0 {
     Set<ServiceType> services = validateServices(rawServices);
     String zip = rawZip.substring(0, Math.min(rawZip.length(), 5));
     return facilityRepository.findAll(
-        FacilityRepository.ZipSpecification.builder()
-            .zip(zip)
-            .facilityType(facilityType)
-            .services(services)
-            .mobile(rawMobile)
-            .build(),
+            FacilityRepository.ZipSpecification.builder()
+                    .zip(zip).build().and(
+            FacilityRepository.FacilityTypeSpecification.builder()
+                    .facilityType(facilityType).build()).and(
+            FacilityRepository.ServicesSpecification.builder()
+                    .services(services).build()).and(
+            FacilityRepository.MobileSpecification.builder()
+                    .mobile(rawMobile).build()),
         PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
   }
 

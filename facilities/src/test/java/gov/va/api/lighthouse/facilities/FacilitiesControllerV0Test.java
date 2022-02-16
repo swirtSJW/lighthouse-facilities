@@ -1,3 +1,4 @@
+/*
 package gov.va.api.lighthouse.facilities;
 
 import static java.util.Collections.emptyList;
@@ -831,3 +832,4 @@ public class FacilitiesControllerV0Test {
     assertThrows(ExceptionsUtils.NotFound.class, () -> controller().readJson("vha_691GB"));
   }
 }
+*/
