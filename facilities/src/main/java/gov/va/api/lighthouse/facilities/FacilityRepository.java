@@ -5,6 +5,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import gov.va.api.health.autoconfig.logging.Loggable;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
+
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.Value;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -41,6 +44,72 @@ public interface FacilityRepository
 
   @Value
   @Builder
+  final class VisnSpecification implements Specification<FacilityEntity> {
+    @NonNull String visn;
+
+    @Override
+    public Predicate toPredicate(
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
+      return criteriaBuilder.equal(root.get("visn"), visn);
+    }
+  }
+
+  @Value
+  @Builder
+  final class FacilityTypeSpecification implements Specification<FacilityEntity> {
+    @NonNull FacilityEntity.Type facilityType;
+
+    public Predicate toPredicate(
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
+      return criteriaBuilder.equal(root.get("id").get("type"), facilityType);
+    }
+  }
+
+  @Value
+  @Builder
+  final class MobileSpecification implements Specification<FacilityEntity> {
+    @NonNull Boolean mobile;
+
+    @Override
+    public Predicate toPredicate(
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
+      return criteriaBuilder.equal(root.get("mobile"), mobile);
+    }
+  }
+
+  @Value
+  @Builder
+  final class ServicesSpecification implements Specification<FacilityEntity> {
+    @NonNull Set<ServiceType> services;
+
+    @Override
+    public Predicate toPredicate(
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
+      Predicate[] servicePredicates =
+              services.stream()
+                      .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
+                      .toArray(Predicate[]::new);
+      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
+
+      Predicate[] overlayServicePredicates =
+              services.stream()
+                      .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
+                      .toArray(Predicate[]::new);
+      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
+      return criteriaBuilder.or(anyFacilityService, anyOverlayService);
+    }
+  }
+
+  @Value
+  @Builder
   final class BoundingBoxSpecification implements Specification<FacilityEntity> {
     @NonNull BigDecimal minLongitude;
 
@@ -50,49 +119,18 @@ public interface FacilityRepository
 
     @NonNull BigDecimal maxLatitude;
 
-    FacilityEntity.Type facilityType;
-
-    @Builder.Default Set<ServiceType> services = emptySet();
-
-    Boolean mobile;
-
     @Override
     public Predicate toPredicate(
-        Root<FacilityEntity> root,
-        CriteriaQuery<?> criteriaQuery,
-        CriteriaBuilder criteriaBuilder) {
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
       List<Predicate> basePredicates = new ArrayList<>(5);
       basePredicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("longitude"), minLongitude));
       basePredicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("longitude"), maxLongitude));
       basePredicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("latitude"), minLatitude));
       basePredicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("latitude"), maxLatitude));
-      if (facilityType != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
-      }
 
-      if (mobile != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
-      }
-
-      Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
-      if (isEmpty(services)) {
-        return combinedBase;
-      }
-      Predicate[] servicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
-              .toArray(Predicate[]::new);
-      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
-
-      Predicate[] overlayServicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
-              .toArray(Predicate[]::new);
-      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
-
-      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
-
-      return criteriaBuilder.and(combinedBase, combinedServices);
+      return criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
     }
   }
 
@@ -101,63 +139,26 @@ public interface FacilityRepository
   final class StateSpecification implements Specification<FacilityEntity> {
     @NonNull String state;
 
-    FacilityEntity.Type facilityType;
-
-    @Builder.Default Set<ServiceType> services = emptySet();
-
-    Boolean mobile;
-
     @Override
     public Predicate toPredicate(
-        Root<FacilityEntity> root,
-        CriteriaQuery<?> criteriaQuery,
-        CriteriaBuilder criteriaBuilder) {
-      List<Predicate> basePredicates = new ArrayList<>(2);
-      basePredicates.add(criteriaBuilder.equal(root.get("state"), state));
-      if (facilityType != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
-      }
-
-      if (mobile != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
-      }
-
-      Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
-      if (isEmpty(services)) {
-        return combinedBase;
-      }
-      Predicate[] servicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
-              .toArray(Predicate[]::new);
-      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
-
-      Predicate[] overlayServicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
-              .toArray(Predicate[]::new);
-      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
-
-      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
-
-      return criteriaBuilder.and(combinedBase, combinedServices);
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
+      return criteriaBuilder.equal(root.get("state"), state);
     }
   }
 
   @Value
   @Builder
   final class StationNumbersSpecification implements Specification<FacilityEntity> {
-    @Builder.Default Set<String> stationNumbers = emptySet();
-
-    FacilityEntity.Type facilityType;
-
-    @Builder.Default Set<ServiceType> services = emptySet();
+    @Builder.Default
+    Set<String> stationNumbers = emptySet();
 
     @Override
     public Predicate toPredicate(
-        Root<FacilityEntity> root,
-        CriteriaQuery<?> criteriaQuery,
-        CriteriaBuilder criteriaBuilder) {
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
       if (isEmpty(stationNumbers)) {
         return criteriaBuilder.isTrue(criteriaBuilder.literal(false));
       }
@@ -165,84 +166,31 @@ public interface FacilityRepository
       List<Predicate> basePredicates = new ArrayList<>(2);
 
       CriteriaBuilder.In<String> stationsInClause =
-          criteriaBuilder.in(root.get("id").get("stationNumber"));
+              criteriaBuilder.in(root.get("id").get("stationNumber"));
       stationNumbers.forEach(stationsInClause::value);
       basePredicates.add(stationsInClause);
-
-      if (facilityType != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
-      }
-      Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
-      if (isEmpty(services)) {
-        return combinedBase;
-      }
-      Predicate[] servicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
-              .toArray(Predicate[]::new);
-      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
-
-      Predicate[] overlayServicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
-              .toArray(Predicate[]::new);
-      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
-
-      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
-
-      return criteriaBuilder.and(combinedBase, combinedServices);
+      return criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
     }
   }
 
   @Value
   @Builder
   final class TypeServicesIdsSpecification implements Specification<FacilityEntity> {
-    @Builder.Default Collection<FacilityEntity.Pk> ids = emptySet();
-
-    FacilityEntity.Type facilityType;
-
-    @Builder.Default Set<ServiceType> services = emptySet();
-
-    Boolean mobile;
+    @Builder.Default
+    Collection<FacilityEntity.Pk> ids = emptySet();
 
     @Override
     public Predicate toPredicate(
-        Root<FacilityEntity> root,
-        CriteriaQuery<?> criteriaQuery,
-        CriteriaBuilder criteriaBuilder) {
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
       List<Predicate> basePredicates = new ArrayList<>(2);
       if (!isEmpty(ids)) {
         CriteriaBuilder.In<FacilityEntity.Pk> idsInClause = criteriaBuilder.in(root.get("id"));
         ids.forEach(idsInClause::value);
         basePredicates.add(idsInClause);
       }
-      if (facilityType != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
-      }
-
-      if (mobile != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
-      }
-
-      Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
-      if (isEmpty(services)) {
-        return combinedBase;
-      }
-      Predicate[] servicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
-              .toArray(Predicate[]::new);
-      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
-
-      Predicate[] overlayServicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
-              .toArray(Predicate[]::new);
-      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
-
-      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
-
-      return criteriaBuilder.and(combinedBase, combinedServices);
+      return criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
     }
   }
 
@@ -251,46 +199,12 @@ public interface FacilityRepository
   final class ZipSpecification implements Specification<FacilityEntity> {
     @NonNull String zip;
 
-    FacilityEntity.Type facilityType;
-
-    @Builder.Default Set<ServiceType> services = emptySet();
-
-    Boolean mobile;
-
     @Override
     public Predicate toPredicate(
-        Root<FacilityEntity> root,
-        CriteriaQuery<?> criteriaQuery,
-        CriteriaBuilder criteriaBuilder) {
-      List<Predicate> basePredicates = new ArrayList<>(2);
-      basePredicates.add(criteriaBuilder.equal(root.get("zip"), zip));
-      if (facilityType != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("id").get("type"), facilityType));
-      }
-
-      if (mobile != null) {
-        basePredicates.add(criteriaBuilder.equal(root.get("mobile"), mobile));
-      }
-
-      Predicate combinedBase = criteriaBuilder.and(basePredicates.toArray(new Predicate[0]));
-      if (isEmpty(services)) {
-        return combinedBase;
-      }
-      Predicate[] servicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("services")))
-              .toArray(Predicate[]::new);
-      Predicate anyFacilityService = criteriaBuilder.or(servicePredicates);
-
-      Predicate[] overlayServicePredicates =
-          services.stream()
-              .map(svc -> criteriaBuilder.isMember(svc.toString(), root.get("overlayServices")))
-              .toArray(Predicate[]::new);
-      Predicate anyOverlayService = criteriaBuilder.or(overlayServicePredicates);
-
-      Predicate combinedServices = criteriaBuilder.or(anyFacilityService, anyOverlayService);
-
-      return criteriaBuilder.and(combinedBase, combinedServices);
+            Root<FacilityEntity> root,
+            CriteriaQuery<?> criteriaQuery,
+            CriteriaBuilder criteriaBuilder) {
+      return criteriaBuilder.equal(root.get("zip"), zip);
     }
   }
 }
