@@ -588,9 +588,9 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody())
         .isEqualToIgnoringWhitespace(
-            "Failed to check service id for detailed services associated with vha_402: "
-                + "argument \"content\" is nullCompleted invalid service id check "
-                + "for all facility detailed services!");
+            "Failed to check service id for detailed services associated with vha_402:"
+                + "json is marked non-null but is null"
+                + "Completed invalid service id check for all facility detailed services!");
     mockFacilityEntity = mock(FacilityEntity.class);
     when(mockFacilityEntity.facility()).thenReturn("{\"noSuchName\":\"noSuchValue\"}");
     when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
@@ -703,8 +703,8 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody())
         .isEqualToIgnoringWhitespace(
-            "No failures to perform invalid service id check encountered.\n"
-                + "No invalid service ids identified for existing facility attributes.\n"
+            "No failures to perform invalid service id check encountered."
+                + "No invalid service ids identified for existing facility attributes."
                 + "Completed invalid service id check for all facility detailed services!");
     // Exception cases
     FacilityEntity mockFacilityEntity = mock(FacilityEntity.class);
@@ -734,8 +734,8 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody())
         .isEqualToIgnoringWhitespace(
-            "No failures to perform invalid service id check encountered.\n"
-                + "No invalid service ids identified for existing facility attributes.\n"
+            "No failures to perform invalid service id check encountered."
+                + "No invalid service ids identified for existing facility attributes."
                 + "Completed invalid service id check for all facility detailed services!");
   }
 
@@ -1668,7 +1668,8 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     assertThat(response.getBody())
         .isEqualToIgnoringWhitespace(
-            "Failed to update and transfer all facility detailed services to cms_overlay table: argument \"content\" is null");
+            "Failed to update and transfer all facility detailed services to cms_overlay table:"
+                + "json is marked non-null but is null");
     mockFacilityEntity = mock(FacilityEntity.class);
     when(mockFacilityEntity.facility()).thenReturn("{\"noSuchName\":\"noSuchValue\"}");
     when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
@@ -1926,6 +1927,42 @@ public class InternalFacilitiesControllerTest {
                     .operatingStatus(_overlay_operating_status())
                     .detailedServices(cmsServices)
                     .build()));
+
+    // Add in invalid detailed services and redo update
+    List<DatamartDetailedService> updatedCmsServices = new ArrayList<>();
+    updatedCmsServices.addAll(cmsServices);
+    updatedCmsServices.add(
+        DatamartDetailedService.builder()
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                    .name(HealthService.SocialWork.name())
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
+            .build());
+    updatedCmsServices.add(
+        DatamartDetailedService.builder()
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                    .name("Mental Health Care")
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
+            .build());
+    cmsOverlay.detailedServices(updatedCmsServices);
+    overlayRepository.save(_overlayEntity(cmsOverlay, pk));
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(_overlayEntity(cmsOverlay, pk)));
+    // Update service id for existing detailed services in CMS overlays
+    response = _controller().updateServiceIdForExistingCmsOverlays();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Updating service id for detailed services associated with overlay vha_402"
+                + "Invalid service id(s) found for vha_402 existing detailed services in overlay"
+                + "Completed service id update for existing detailed services in overlay!");
+
     // Exception Cases
     CmsOverlayRepository mockOverlayRepository = mock(CmsOverlayRepository.class);
     when(mockOverlayRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
@@ -1940,6 +1977,26 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getBody())
         .isEqualToIgnoringWhitespace(
             "Failed to update service id for existing detailed services in overlay: oh noes");
+
+    mockOverlayRepository = mock(CmsOverlayRepository.class);
+    when(mockOverlayRepository.findAll()).thenReturn(List.of(_overlayEntity(cmsOverlay, pk)));
+    when(mockOverlayRepository.save(_overlayEntity(cmsOverlay, pk)))
+        .thenThrow(new NullPointerException("oh noes"));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(facilityRepository)
+            .cmsOverlayRepository(mockOverlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.updateServiceIdForExistingCmsOverlays();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Updating service id for detailed services associated with overlay vha_402"
+                + "Invalid service id(s) found for vha_402 existing detailed services in overlay"
+                + "Failed to update service id for vha_402 existing detailed services in overlay:"
+                + "oh noes"
+                + "Completed service id update for existing detailed services in overlay!");
   }
 
   @Test
