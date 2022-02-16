@@ -1,0 +1,268 @@
+{
+  "data" : [
+    {
+      "serviceInfo" : {
+        "name" : "Audiology",
+        "serviceId" : "audiology",
+        "serviceType" : "health"
+      },
+      "waitTime" : {
+        "new" : 27.349514,
+        "established" : 13.296296,
+        "effectiveDate" : "2020-03-09"
+      },
+      "appointmentLeadIn" : "Your VA health care team will contact you if you???re eligible to get a vaccine during this time. As the supply of vaccine increases, we'll work with our care teams to let Veterans know their options.",
+      "appointmentPhones" : [
+        {
+          "extension" : "string",
+          "label" : "string",
+          "number" : "string",
+          "type" : "string"
+        }
+      ],
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "False",
+      "walkInsAccepted" : "True",
+      "serviceLocations" : [
+        {
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "string",
+            "clinicName" : "string",
+            "wingFloorOrRoomNumber" : "string",
+            "addressLine1" : "string",
+            "addressLine2" : "string",
+            "city" : "string",
+            "state" : "string",
+            "zipCode" : "string",
+            "countryCode" : "string"
+          },
+          "appointmentPhones" : [
+            {
+              "extension" : "string",
+              "label" : "string",
+              "number" : "string",
+              "type" : "string"
+            }
+          ],
+          "emailContacts" : [
+            {
+              "emailAddress" : "string",
+              "emailLabel" : "string"
+            }
+          ],
+          "facilityServiceHours" : {
+            "monday" : "string",
+            "tuesday" : "string",
+            "wednesday" : "string",
+            "thursday" : "string",
+            "friday" : "string",
+            "saturday" : "string",
+            "sunday" : "string"
+          },
+          "additionalHoursInfo" : "string"
+        }
+      ],
+      "path" : "https://www.boston.va.gov/services/covid-19-vaccines.asp"
+    },
+    {
+      "serviceInfo" : {
+        "name" : "Cardiology",
+        "serviceId" : "cardiology",
+        "serviceType" : "health"
+      },
+      "waitTime" : {
+        "new" : 14.583333,
+        "established" : 8.076923,
+        "effectiveDate" : "2020-03-09"
+      },
+      "appointmentLeadIn" : "Your VA health care team will contact you if you???re eligible to get a vaccine during this time. As the supply of vaccine increases, we'll work with our care teams to let Veterans know their options.",
+      "appointmentPhones" : [
+        {
+          "extension" : "string",
+          "label" : "string",
+          "number" : "string",
+          "type" : "string"
+        }
+      ],
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "False",
+      "walkInsAccepted" : "True",
+      "serviceLocations" : [
+        {
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "string",
+            "clinicName" : "string",
+            "wingFloorOrRoomNumber" : "string",
+            "addressLine1" : "string",
+            "addressLine2" : "string",
+            "city" : "string",
+            "state" : "string",
+            "zipCode" : "string",
+            "countryCode" : "string"
+          },
+          "appointmentPhones" : [
+            {
+              "extension" : "string",
+              "label" : "string",
+              "number" : "string",
+              "type" : "string"
+            }
+          ],
+          "emailContacts" : [
+            {
+              "emailAddress" : "string",
+              "emailLabel" : "string"
+            }
+          ],
+          "facilityServiceHours" : {
+            "monday" : "string",
+            "tuesday" : "string",
+            "wednesday" : "string",
+            "thursday" : "string",
+            "friday" : "string",
+            "saturday" : "string",
+            "sunday" : "string"
+          },
+          "additionalHoursInfo" : "string"
+        }
+      ],
+      "path" : "https://www.boston.va.gov/services/covid-19-vaccines.asp"
+    },
+    {
+      "serviceInfo" : {
+        "name" : "Covid 19 Vaccine",
+        "serviceId" : "covid19Vaccine",
+        "serviceType" : "health"
+      },
+      "appointmentLeadIn" : "Your VA health care team will contact you if you???re eligible to get a vaccine during this time. As the supply of vaccine increases, we'll work with our care teams to let Veterans know their options.",
+      "appointmentPhones" : [
+        {
+          "extension" : "string",
+          "label" : "string",
+          "number" : "string",
+          "type" : "string"
+        }
+      ],
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "False",
+      "walkInsAccepted" : "True",
+      "serviceLocations" : [
+        {
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "string",
+            "clinicName" : "string",
+            "wingFloorOrRoomNumber" : "string",
+            "addressLine1" : "string",
+            "addressLine2" : "string",
+            "city" : "string",
+            "state" : "string",
+            "zipCode" : "string",
+            "countryCode" : "string"
+          },
+          "appointmentPhones" : [
+            {
+              "extension" : "string",
+              "label" : "string",
+              "number" : "string",
+              "type" : "string"
+            }
+          ],
+          "emailContacts" : [
+            {
+              "emailAddress" : "string",
+              "emailLabel" : "string"
+            }
+          ],
+          "facilityServiceHours" : {
+            "monday" : "string",
+            "tuesday" : "string",
+            "wednesday" : "string",
+            "thursday" : "string",
+            "friday" : "string",
+            "saturday" : "string",
+            "sunday" : "string"
+          },
+          "additionalHoursInfo" : "string"
+        }
+      ],
+      "path" : "https://www.boston.va.gov/services/covid-19-vaccines.asp"
+    },
+    {
+      "serviceInfo" : {
+        "name" : "Primary Care",
+        "serviceId" : "primaryCare",
+        "serviceType" : "health"
+      },
+      "waitTime" : {
+        "new" : 28.175438,
+        "established" : 4.359409,
+        "effectiveDate" : "2020-03-09"
+      },
+      "appointmentLeadIn" : "Your VA health care team will contact you if you???re eligible to get a vaccine during this time. As the supply of vaccine increases, we'll work with our care teams to let Veterans know their options.",
+      "appointmentPhones" : [
+        {
+          "extension" : "string",
+          "label" : "string",
+          "number" : "string",
+          "type" : "string"
+        }
+      ],
+      "onlineSchedulingAvailable" : "True",
+      "referralRequired" : "False",
+      "walkInsAccepted" : "True",
+      "serviceLocations" : [
+        {
+          "serviceLocationAddress" : {
+            "buildingNameNumber" : "string",
+            "clinicName" : "string",
+            "wingFloorOrRoomNumber" : "string",
+            "addressLine1" : "string",
+            "addressLine2" : "string",
+            "city" : "string",
+            "state" : "string",
+            "zipCode" : "string",
+            "countryCode" : "string"
+          },
+          "appointmentPhones" : [
+            {
+              "extension" : "string",
+              "label" : "string",
+              "number" : "string",
+              "type" : "string"
+            }
+          ],
+          "emailContacts" : [
+            {
+              "emailAddress" : "string",
+              "emailLabel" : "string"
+            }
+          ],
+          "facilityServiceHours" : {
+            "monday" : "string",
+            "tuesday" : "string",
+            "wednesday" : "string",
+            "thursday" : "string",
+            "friday" : "string",
+            "saturday" : "string",
+            "sunday" : "string"
+          },
+          "additionalHoursInfo" : "string"
+        }
+      ],
+      "path" : "https://www.boston.va.gov/services/covid-19-vaccines.asp"
+    }
+  ],
+  "links" : {
+    "self" : "http://localhost:8085/v1/facilities/vha_558GA/services?page=1&per_page=10",
+    "first" : "http://localhost:8085/v1/facilities/vha_558GA/services?page=1&per_page=10",
+    "last" : "http://localhost:8085/v1/facilities/vha_558GA/services?page=1&per_page=10"
+  },
+  "meta" : {
+    "pagination" : {
+      "currentPage" : 1,
+      "perPage" : 10,
+      "totalPages" : 1,
+      "totalEntries" : 4
+    }
+  }
+}

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
+import gov.va.api.lighthouse.facilities.ExceptionsUtils.NotFound;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
@@ -23,6 +24,8 @@ import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v1.Pagination;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +45,27 @@ public class CmsOverlayControllerV1Test {
   @Mock FacilityRepository mockFacilityRepository;
 
   @Mock CmsOverlayRepository mockCmsOverlayRepository;
+
+  @Test
+  @SneakyThrows
+  void applyAtcWaitTimeToCmsServicesException() {
+    DatamartCmsOverlay overlay = overlay();
+    var pk = FacilityEntity.Pk.fromIdString("vha_402");
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    assertThatThrownBy(() -> controller().getOverlay("vha_402"))
+        .isInstanceOf(NotFound.class)
+        .hasMessage("The record identified by vha_402 could not be found");
+  }
 
   CmsOverlayControllerV1 controller() {
     return CmsOverlayControllerV1.builder()
@@ -86,6 +110,12 @@ public class CmsOverlayControllerV1Test {
                 .serviceId(uncapitalize(HealthService.Cardiology.name()))
                 .name(HealthService.Cardiology.name())
                 .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
+        .waitTime(
+            DatamartDetailedService.PatientWaitTime.builder()
+                .newPatientWaitTime(BigDecimal.valueOf(14.583333))
+                .establishedPatientWaitTime(BigDecimal.valueOf(8.076923))
+                .effectiveDate(LocalDate.parse("2020-03-09"))
                 .build())
         .active(isActive)
         .changed(null)
@@ -232,8 +262,48 @@ public class CmsOverlayControllerV1Test {
                 DatamartFacilitiesJacksonConfig.createMapper()
                     .writeValueAsString(overlay.detailedServices()))
             .build();
+    String facility =
+        "{\"id\":\"vha_402\",\"type\":\"va_facilities\",\"attributes\":{\"name\":\"Greenville VA Clinic\",\"facility_type\":\"va_health_facility\",\"classification\":\"Multi-Specialty CBOC\",\"website\":\"https://www.va.gov/durham-health-care/locations/greenville-va-clinic/\",\"lat\":35.61679734,\"long\":-77.39924707,\"time_zone\":\"America/New_York\",\"address\":{\"mailing\":{},\"physical\":{\"zip\":\"27834-2885\",\"city\":\"Greenville\",\"state\":\"NC\",\"address_1\":\"401 Moye Boulevard\",\"address_2\":null,\"address_3\":null}},\"phone\":{\"fax\":\"252-830-1106\",\"main\":\"252-830-2149\",\"pharmacy\":\"888-878-6890\",\"after_hours\":\"919-286-0411\",\"patient_advocate\":\"919-286-0411 x176906\",\"mental_health_clinic\":\"252-830-2149 x 3220\",\"enrollment_coordinator\":\"919-286-0411 x176993\"},\"hours\":{\"monday\":\"800AM-430PM\",\"tuesday\":\"800AM-430PM\",\"wednesday\":\"800AM-430PM\",\"thursday\":\"800AM-430PM\",\"friday\":\"800AM-430PM\",\"saturday\":\"Closed\",\"sunday\":\"Closed\"},\"operational_hours_special_instructions\":null,\"services\":{\"other\":[],\"health\":[\"audiology\",\"cardiology\",\"dental\",\"dermatology\",\"emergencyCare\",\"gastroenterology\",\"gynecology\",\"mentalHealth\",\"nutrition\",\"ophthalmology\",\"optometry\",\"orthopedics\",\"podiatry\",\"primaryCare\",\"specialtyCare\",\"urology\",\"womensHealth\"],\"last_updated\":\"2020-03-09\"},\"satisfaction\":{\"health\":{\"primary_care_urgent\":0.7699999809265137,\"primary_care_routine\":0.8600000143051147},\"effective_date\":\"2019-06-20\"},\"wait_times\":{\"health\":[{\"service\":\"audiology\",\"new\":27.349514,\"established\":13.296296},{\"service\":\"cardiology\",\"new\":14.583333,\"established\":8.076923},{\"service\":\"dermatology\",\"new\":1.90909,\"established\":8.54878},{\"service\":\"gastroenterology\",\"new\":38.0,\"established\":0.0},{\"service\":\"gynecology\",\"new\":19.666666,\"established\":4.794871},{\"service\":\"mentalHealth\",\"new\":39.84375,\"established\":7.601423},{\"service\":\"ophthalmology\",\"new\":65.25,\"established\":13.947368},{\"service\":\"optometry\",\"new\":84.217948,\"established\":11.974619},{\"service\":\"orthopedics\",\"new\":30.222222,\"established\":6.40625},{\"service\":\"primaryCare\",\"new\":28.175438,\"established\":4.359409},{\"service\":\"specialtyCare\",\"new\":34.946478,\"established\":12.140114},{\"service\":\"urology\",\"new\":13.868421,\"established\":2.016129},{\"service\":\"womensHealth\",\"new\":19.666666,\"established\":4.794871}],\"effective_date\":\"2020-03-09\"},\"mobile\":false,\"active_status\":\"A\",\"operating_status\":null,\"detailed_services\":null,\"visn\":\"6\"}}";
+    FacilityEntity facilityEntity = FacilityEntity.builder().facility(facility).build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(facilityEntity));
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
     assertThat(controller().getDetailedService(facilityId, serviceId))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            ResponseEntity.ok(
+                DetailedServiceResponse.builder()
+                    .data(
+                        DetailedServiceTransformerV1.toDetailedService(
+                            getCovid19DetailedService(false)))
+                    .build()));
+  }
+
+  @Test
+  @SneakyThrows
+  void getDetailedServiceWithNoAtcWaitTime() {
+    DatamartCmsOverlay overlay = overlay();
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
+    var page = 1;
+    var perPage = 1;
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    String facility =
+        "{\"id\":\"vha_402\",\"type\":\"va_facilities\",\"attributes\":{\"name\":\"Athens Community Based Outpatient Clinic\",\"facility_type\":\"va_benefits_facility\",\"classification\":\"Outbased\",\"website\":null,\"lat\":39.33105822,\"long\":-82.12304104,\"time_zone\":\"America/New_York\",\"address\":{\"mailing\":{},\"physical\":{\"zip\":\"45701\",\"city\":\"Athens\",\"state\":\"OH\",\"address_1\":\"510 West Union Street\",\"address_2\":\"\",\"address_3\":null}},\"phone\":{\"fax\":\"740-594-2804\",\"main\":\"740-593-7314\"},\"hours\":{\"monday\":\"8:00AM-4:30PM\",\"tuesday\":\"8:00AM-4:30PM\",\"wednesday\":\"8:00AM-4:30PM\",\"thursday\":\"8:00AM-4:30PM\",\"friday\":\"8:00AM-4:30PM\",\"saturday\":\"Closed\",\"sunday\":\"Closed\"},\"operational_hours_special_instructions\":null,\"services\":{\"benefits\":[]},\"satisfaction\":{},\"wait_times\":{},\"mobile\":null,\"active_status\":null,\"operating_status\":null,\"detailed_services\":null,\"visn\":null}}";
+    FacilityEntity facilityEntity = FacilityEntity.builder().facility(facility).build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(facilityEntity));
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    assertThat(
+            controller()
+                .getDetailedService(facilityId, uncapitalize(HealthService.Covid19Vaccine.name())))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -262,10 +332,11 @@ public class CmsOverlayControllerV1Test {
                 DatamartFacilitiesJacksonConfig.createMapper()
                     .writeValueAsString(overlay.detailedServices()))
             .build();
+    String facility =
+        "{\"id\":\"vha_402\",\"type\":\"va_facilities\",\"attributes\":{\"name\":\"Greenville VA Clinic\",\"facility_type\":\"va_health_facility\",\"classification\":\"Multi-Specialty CBOC\",\"website\":\"https://www.va.gov/durham-health-care/locations/greenville-va-clinic/\",\"lat\":35.61679734,\"long\":-77.39924707,\"time_zone\":\"America/New_York\",\"address\":{\"mailing\":{},\"physical\":{\"zip\":\"27834-2885\",\"city\":\"Greenville\",\"state\":\"NC\",\"address_1\":\"401 Moye Boulevard\",\"address_2\":null,\"address_3\":null}},\"phone\":{\"fax\":\"252-830-1106\",\"main\":\"252-830-2149\",\"pharmacy\":\"888-878-6890\",\"after_hours\":\"919-286-0411\",\"patient_advocate\":\"919-286-0411 x176906\",\"mental_health_clinic\":\"252-830-2149 x 3220\",\"enrollment_coordinator\":\"919-286-0411 x176993\"},\"hours\":{\"monday\":\"800AM-430PM\",\"tuesday\":\"800AM-430PM\",\"wednesday\":\"800AM-430PM\",\"thursday\":\"800AM-430PM\",\"friday\":\"800AM-430PM\",\"saturday\":\"Closed\",\"sunday\":\"Closed\"},\"operational_hours_special_instructions\":null,\"services\":{\"other\":[],\"health\":[\"audiology\",\"cardiology\",\"dental\",\"dermatology\",\"emergencyCare\",\"gastroenterology\",\"gynecology\",\"mentalHealth\",\"nutrition\",\"ophthalmology\",\"optometry\",\"orthopedics\",\"podiatry\",\"primaryCare\",\"specialtyCare\",\"urology\",\"womensHealth\"],\"last_updated\":\"2020-03-09\"},\"satisfaction\":{\"health\":{\"primary_care_urgent\":0.7699999809265137,\"primary_care_routine\":0.8600000143051147},\"effective_date\":\"2019-06-20\"},\"wait_times\":{\"health\":[{\"service\":\"audiology\",\"new\":27.349514,\"established\":13.296296},{\"service\":\"cardiology\",\"new\":14.583333,\"established\":8.076923},{\"service\":\"dermatology\",\"new\":1.90909,\"established\":8.54878},{\"service\":\"gastroenterology\",\"new\":38.0,\"established\":0.0},{\"service\":\"gynecology\",\"new\":19.666666,\"established\":4.794871},{\"service\":\"mentalHealth\",\"new\":39.84375,\"established\":7.601423},{\"service\":\"ophthalmology\",\"new\":65.25,\"established\":13.947368},{\"service\":\"optometry\",\"new\":84.217948,\"established\":11.974619},{\"service\":\"orthopedics\",\"new\":30.222222,\"established\":6.40625},{\"service\":\"primaryCare\",\"new\":28.175438,\"established\":4.359409},{\"service\":\"specialtyCare\",\"new\":34.946478,\"established\":12.140114},{\"service\":\"urology\",\"new\":13.868421,\"established\":2.016129},{\"service\":\"womensHealth\",\"new\":19.666666,\"established\":4.794871}],\"effective_date\":\"2020-03-09\"},\"mobile\":false,\"active_status\":\"A\",\"operating_status\":null,\"detailed_services\":null,\"visn\":\"6\"}}";
+    FacilityEntity facilityEntity = FacilityEntity.builder().facility(facility).build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(facilityEntity));
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
-    // Obtain first page of detailed services - cardiology detailed service
-    ResponseEntity<DetailedServicesResponse> test =
-        controller().getDetailedServices(facilityId, page, perPage);
     assertThat(controller().getDetailedServices(facilityId, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
@@ -368,6 +439,10 @@ public class CmsOverlayControllerV1Test {
                 DatamartFacilitiesJacksonConfig.createMapper()
                     .writeValueAsString(overlay.detailedServices()))
             .build();
+    String facility =
+        "{\"id\":\"vha_402\",\"type\":\"va_facilities\",\"attributes\":{\"name\":\"Greenville VA Clinic\",\"facility_type\":\"va_health_facility\",\"classification\":\"Multi-Specialty CBOC\",\"website\":\"https://www.va.gov/durham-health-care/locations/greenville-va-clinic/\",\"lat\":35.61679734,\"long\":-77.39924707,\"time_zone\":\"America/New_York\",\"address\":{\"mailing\":{},\"physical\":{\"zip\":\"27834-2885\",\"city\":\"Greenville\",\"state\":\"NC\",\"address_1\":\"401 Moye Boulevard\",\"address_2\":null,\"address_3\":null}},\"phone\":{\"fax\":\"252-830-1106\",\"main\":\"252-830-2149\",\"pharmacy\":\"888-878-6890\",\"after_hours\":\"919-286-0411\",\"patient_advocate\":\"919-286-0411 x176906\",\"mental_health_clinic\":\"252-830-2149 x 3220\",\"enrollment_coordinator\":\"919-286-0411 x176993\"},\"hours\":{\"monday\":\"800AM-430PM\",\"tuesday\":\"800AM-430PM\",\"wednesday\":\"800AM-430PM\",\"thursday\":\"800AM-430PM\",\"friday\":\"800AM-430PM\",\"saturday\":\"Closed\",\"sunday\":\"Closed\"},\"operational_hours_special_instructions\":null,\"services\":{\"other\":[],\"health\":[\"audiology\",\"cardiology\",\"dental\",\"dermatology\",\"emergencyCare\",\"gastroenterology\",\"gynecology\",\"mentalHealth\",\"nutrition\",\"ophthalmology\",\"optometry\",\"orthopedics\",\"podiatry\",\"primaryCare\",\"specialtyCare\",\"urology\",\"womensHealth\"],\"last_updated\":\"2020-03-09\"},\"satisfaction\":{\"health\":{\"primary_care_urgent\":0.7699999809265137,\"primary_care_routine\":0.8600000143051147},\"effective_date\":\"2019-06-20\"},\"wait_times\":{\"health\":[{\"service\":\"audiology\",\"new\":27.349514,\"established\":13.296296},{\"service\":\"cardiology\",\"new\":14.583333,\"established\":8.076923},{\"service\":\"dermatology\",\"new\":1.90909,\"established\":8.54878},{\"service\":\"gastroenterology\",\"new\":38.0,\"established\":0.0},{\"service\":\"gynecology\",\"new\":19.666666,\"established\":4.794871},{\"service\":\"mentalHealth\",\"new\":39.84375,\"established\":7.601423},{\"service\":\"ophthalmology\",\"new\":65.25,\"established\":13.947368},{\"service\":\"optometry\",\"new\":84.217948,\"established\":11.974619},{\"service\":\"orthopedics\",\"new\":30.222222,\"established\":6.40625},{\"service\":\"primaryCare\",\"new\":28.175438,\"established\":4.359409},{\"service\":\"specialtyCare\",\"new\":34.946478,\"established\":12.140114},{\"service\":\"urology\",\"new\":13.868421,\"established\":2.016129},{\"service\":\"womensHealth\",\"new\":19.666666,\"established\":4.794871}],\"effective_date\":\"2020-03-09\"},\"mobile\":false,\"active_status\":\"A\",\"operating_status\":null,\"detailed_services\":null,\"visn\":\"6\"}}";
+    FacilityEntity facilityEntity = FacilityEntity.builder().facility(facility).build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(facilityEntity));
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
     // active will ALWAYS be false when retrieving from the database, the fact the overlay
     // exists means that active was true at the time of insertion
@@ -388,6 +463,13 @@ public class CmsOverlayControllerV1Test {
         .hasMessage("The record identified by vha_041 could not be found");
   }
 
+  @Test
+  void getOverlayDetailedServicesException() {
+    assertThatThrownBy(() -> controller().getDetailedServices("vha_402", 1, 10))
+        .isInstanceOf(NotFound.class)
+        .hasMessage("The record identified by vha_402 could not be found");
+  }
+
   private DatamartDetailedService getUrologyDetailedService(boolean isActive) {
     return DatamartDetailedService.builder()
         .serviceInfo(
@@ -395,6 +477,12 @@ public class CmsOverlayControllerV1Test {
                 .serviceId(uncapitalize(HealthService.Urology.name()))
                 .name(HealthService.Urology.name())
                 .serviceType(DatamartDetailedService.ServiceType.Health)
+                .build())
+        .waitTime(
+            DatamartDetailedService.PatientWaitTime.builder()
+                .newPatientWaitTime(BigDecimal.valueOf(13.868421))
+                .establishedPatientWaitTime(BigDecimal.valueOf(2.016129))
+                .effectiveDate(LocalDate.parse("2020-03-09"))
                 .build())
         .active(isActive)
         .changed(null)
@@ -611,6 +699,12 @@ public class CmsOverlayControllerV1Test {
                         .name("additional service2")
                         .serviceType(DatamartDetailedService.ServiceType.Health)
                         .build())
+                .waitTime(
+                    DatamartDetailedService.PatientWaitTime.builder()
+                        .newPatientWaitTime(BigDecimal.valueOf(65.25))
+                        .establishedPatientWaitTime(BigDecimal.valueOf(13.947368))
+                        .effectiveDate(LocalDate.parse("2020-03-09"))
+                        .build())
                 .active(true)
                 .build());
     overlay.detailedServices(additionalServices);
@@ -629,6 +723,10 @@ public class CmsOverlayControllerV1Test {
     for (DatamartDetailedService d : combinedServices) {
       d.active(false);
     }
+    String facility =
+        "{\"id\":\"vha_402\",\"type\":\"va_facilities\",\"attributes\":{\"name\":\"Greenville VA Clinic\",\"facility_type\":\"va_health_facility\",\"classification\":\"Multi-Specialty CBOC\",\"website\":\"https://www.va.gov/durham-health-care/locations/greenville-va-clinic/\",\"lat\":35.61679734,\"long\":-77.39924707,\"time_zone\":\"America/New_York\",\"address\":{\"mailing\":{},\"physical\":{\"zip\":\"27834-2885\",\"city\":\"Greenville\",\"state\":\"NC\",\"address_1\":\"401 Moye Boulevard\",\"address_2\":null,\"address_3\":null}},\"phone\":{\"fax\":\"252-830-1106\",\"main\":\"252-830-2149\",\"pharmacy\":\"888-878-6890\",\"after_hours\":\"919-286-0411\",\"patient_advocate\":\"919-286-0411 x176906\",\"mental_health_clinic\":\"252-830-2149 x 3220\",\"enrollment_coordinator\":\"919-286-0411 x176993\"},\"hours\":{\"monday\":\"800AM-430PM\",\"tuesday\":\"800AM-430PM\",\"wednesday\":\"800AM-430PM\",\"thursday\":\"800AM-430PM\",\"friday\":\"800AM-430PM\",\"saturday\":\"Closed\",\"sunday\":\"Closed\"},\"operational_hours_special_instructions\":null,\"services\":{\"other\":[],\"health\":[\"audiology\",\"cardiology\",\"dental\",\"dermatology\",\"emergencyCare\",\"gastroenterology\",\"gynecology\",\"mentalHealth\",\"nutrition\",\"ophthalmology\",\"optometry\",\"orthopedics\",\"podiatry\",\"primaryCare\",\"specialtyCare\",\"urology\",\"womensHealth\"],\"last_updated\":\"2020-03-09\"},\"satisfaction\":{\"health\":{\"primary_care_urgent\":0.7699999809265137,\"primary_care_routine\":0.8600000143051147},\"effective_date\":\"2019-06-20\"},\"wait_times\":{\"health\":[{\"service\":\"audiology\",\"new\":27.349514,\"established\":13.296296},{\"service\":\"cardiology\",\"new\":14.583333,\"established\":8.076923},{\"service\":\"dermatology\",\"new\":1.90909,\"established\":8.54878},{\"service\":\"gastroenterology\",\"new\":38.0,\"established\":0.0},{\"service\":\"gynecology\",\"new\":19.666666,\"established\":4.794871},{\"service\":\"mentalHealth\",\"new\":39.84375,\"established\":7.601423},{\"service\":\"ophthalmology\",\"new\":65.25,\"established\":13.947368},{\"service\":\"optometry\",\"new\":84.217948,\"established\":11.974619},{\"service\":\"orthopedics\",\"new\":30.222222,\"established\":6.40625},{\"service\":\"primaryCare\",\"new\":28.175438,\"established\":4.359409},{\"service\":\"specialtyCare\",\"new\":34.946478,\"established\":12.140114},{\"service\":\"urology\",\"new\":13.868421,\"established\":2.016129},{\"service\":\"womensHealth\",\"new\":19.666666,\"established\":4.794871}],\"effective_date\":\"2020-03-09\"},\"mobile\":false,\"active_status\":\"A\",\"operating_status\":null,\"detailed_services\":null,\"visn\":\"6\"}}";
+    FacilityEntity facilityEntity = FacilityEntity.builder().facility(facility).build();
+    when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(facilityEntity));
     ResponseEntity<CmsOverlayResponse> response = controller().getOverlay("vha_402");
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();

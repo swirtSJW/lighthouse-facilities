@@ -316,9 +316,12 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     assertThat(datamartFacility).hasFieldOrProperty("attributes.detailedServices");
     assertThatThrownBy(() -> assertThat(facility).hasFieldOrProperty("attributes.detailedServices"))
         .isInstanceOf(AssertionError.class);
+    assertThat(datamartFacility).hasFieldOrProperty("attributes.waitTimes");
+    assertThatThrownBy(() -> assertThat(facility).hasFieldOrProperty("attributes.waitTimes"))
+        .isInstanceOf(AssertionError.class);
     assertThat(FacilityTransformerV1.toVersionAgnostic(facility))
         .usingRecursiveComparison()
-        .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.detailedServices", "attributes.waitTimes")
         .isEqualTo(datamartFacility);
   }
 
@@ -403,22 +406,6 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                                 .specialtyCareUrgent(BigDecimal.valueOf(0.88))
                                 .build())
                         .effectiveDate(LocalDate.parse("2018-02-01"))
-                        .build())
-                .waitTimes(
-                    Facility.WaitTimes.builder()
-                        .health(
-                            List.of(
-                                Facility.PatientWaitTime.builder()
-                                    .service(Facility.HealthService.Cardiology)
-                                    .establishedPatientWaitTime(BigDecimal.valueOf(5))
-                                    .newPatientWaitTime(BigDecimal.valueOf(10))
-                                    .build(),
-                                Facility.PatientWaitTime.builder()
-                                    .service(Facility.HealthService.Covid19Vaccine)
-                                    .establishedPatientWaitTime(BigDecimal.valueOf(4))
-                                    .newPatientWaitTime(BigDecimal.valueOf(9))
-                                    .build()))
-                        .effectiveDate(LocalDate.parse("2018-03-05"))
                         .build())
                 .operatingStatus(
                     Facility.OperatingStatus.builder()
@@ -696,22 +683,6 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     assertThat(transformFacilityAddressesMethod.invoke(null, nullAddressesV1))
         .usingRecursiveComparison()
         .isEqualTo(DatamartFacility.Addresses.builder().build());
-    final Method transformDatmartFacilityWaitTimesMethod =
-        FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityWaitTimes", DatamartFacility.WaitTimes.class);
-    transformDatmartFacilityWaitTimesMethod.setAccessible(true);
-    DatamartFacility.WaitTimes nullWaitTimes = null;
-    assertThat(transformDatmartFacilityWaitTimesMethod.invoke(null, nullWaitTimes))
-        .usingRecursiveComparison()
-        .isEqualTo(Facility.WaitTimes.builder().build());
-    final Method transformFacilityWaitTimesMethod =
-        FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityWaitTimes", Facility.WaitTimes.class);
-    transformFacilityWaitTimesMethod.setAccessible(true);
-    Facility.WaitTimes nullWaitTimesV1 = null;
-    assertThat(transformFacilityWaitTimesMethod.invoke(null, nullWaitTimesV1))
-        .usingRecursiveComparison()
-        .isEqualTo(DatamartFacility.WaitTimes.builder().build());
   }
 
   @Test
@@ -742,9 +713,12 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     assertThat(expected).hasFieldOrProperty("attributes.detailedServices");
     assertThatThrownBy(() -> assertThat(facility).hasFieldOrProperty("attributes.detailedServices"))
         .isInstanceOf(AssertionError.class);
+    assertThat(expected).hasFieldOrProperty("attributes.waitTimes");
+    assertThatThrownBy(() -> assertThat(facility).hasFieldOrProperty("attributes.waitTimes"))
+        .isInstanceOf(AssertionError.class);
     assertThat(FacilityTransformerV1.toVersionAgnostic(facility))
         .usingRecursiveComparison()
-        .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.detailedServices", "attributes.waitTimes")
         .isEqualTo(expected);
   }
 

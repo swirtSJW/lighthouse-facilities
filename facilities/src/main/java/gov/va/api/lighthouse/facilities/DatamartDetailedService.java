@@ -12,6 +12,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -43,6 +45,9 @@ import lombok.NonNull;
 @JsonDeserialize(using = DatamartDetailedServiceDeserializer.class)
 public class DatamartDetailedService {
   @NonNull ServiceInfo serviceInfo;
+
+  @JsonProperty("wait_time")
+  PatientWaitTime waitTime;
 
   boolean active;
 
@@ -227,5 +232,19 @@ public class DatamartDetailedService {
 
     @JsonProperty("Sunday")
     String sunday;
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  public static final class PatientWaitTime {
+    @JsonProperty("new")
+    BigDecimal newPatientWaitTime;
+
+    @JsonProperty("established")
+    BigDecimal establishedPatientWaitTime;
+
+    @JsonProperty("effective_date")
+    LocalDate effectiveDate;
   }
 }

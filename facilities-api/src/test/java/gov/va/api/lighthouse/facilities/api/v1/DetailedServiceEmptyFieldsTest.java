@@ -4,6 +4,12 @@ import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo;
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceType;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -500,5 +506,83 @@ public class DetailedServiceEmptyFieldsTest {
                 .build()
                 .isEmpty())
         .isFalse();
+  }
+
+  @Test
+  void patientWaitTime() {
+    assertThat(DetailedService.PatientWaitTime.builder().build().isEmpty()).isTrue();
+    assertThat(
+            DetailedService.builder()
+                .serviceInfo(
+                    ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .serviceType(ServiceType.Health)
+                        .build())
+                .waitTime(PatientWaitTime.builder().build())
+                .build()
+                .waitTime())
+        .usingRecursiveComparison()
+        .isEqualTo(DetailedService.PatientWaitTime.builder().build());
+
+    assertThat(
+            DetailedService.builder()
+                .serviceInfo(
+                    ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .serviceType(ServiceType.Health)
+                        .build())
+                .waitTime(
+                    PatientWaitTime.builder()
+                        .newPatientWaitTime(BigDecimal.valueOf(14.583333))
+                        .establishedPatientWaitTime(BigDecimal.valueOf(8.076923))
+                        .effectiveDate(LocalDate.parse("2020-03-09"))
+                        .build())
+                .build()
+                .waitTime())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            PatientWaitTime.builder()
+                .newPatientWaitTime(BigDecimal.valueOf(14.583333))
+                .establishedPatientWaitTime(BigDecimal.valueOf(8.076923))
+                .effectiveDate(LocalDate.parse("2020-03-09"))
+                .build());
+
+    assertThat(
+            DetailedService.builder()
+                .serviceInfo(
+                    ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .serviceType(ServiceType.Health)
+                        .build())
+                .waitTime(
+                    PatientWaitTime.builder()
+                        .newPatientWaitTime(BigDecimal.valueOf(14.583333))
+                        .effectiveDate(LocalDate.parse("2020-03-09"))
+                        .build())
+                .build()
+                .waitTime())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            PatientWaitTime.builder()
+                .newPatientWaitTime(BigDecimal.valueOf(14.583333))
+                .effectiveDate(LocalDate.parse("2020-03-09"))
+                .build());
+
+    assertThat(
+            DetailedService.builder()
+                .serviceInfo(
+                    ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .serviceType(ServiceType.Health)
+                        .build())
+                .waitTime(
+                    PatientWaitTime.builder()
+                        .newPatientWaitTime(BigDecimal.valueOf(14.583333))
+                        .effectiveDate(LocalDate.parse("2020-03-09"))
+                        .build())
+                .build()
+                .waitTime()
+                .establishedPatientWaitTime())
+        .isNull();
   }
 }

@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.v1;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,7 @@ public class DetailedServiceResponseEmptyFieldsTest {
                                 .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
                                 .serviceType(DetailedService.ServiceType.Health)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .build())
                 .build()
                 .isEmpty())
@@ -37,6 +39,7 @@ public class DetailedServiceResponseEmptyFieldsTest {
                                 .name("test")
                                 .serviceType(DetailedService.ServiceType.Health)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .build())
                 .build()
                 .isEmpty())

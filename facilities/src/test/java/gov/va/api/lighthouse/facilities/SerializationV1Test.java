@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV1.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.v1.DetailedServicesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
 import gov.va.api.lighthouse.facilities.api.v1.NearbyResponse;
@@ -19,12 +20,17 @@ import org.junit.jupiter.api.Test;
  * whitespace.
  */
 public class SerializationV1Test {
-
   @Test
   @SneakyThrows
   void all() {
     String path = "/v1/all.json";
     roundTrip(path, FacilitiesResponse.class);
+  }
+
+  @Test
+  void detailedServices() {
+    String path = "/v1/detailed-services.json";
+    roundTrip(path, DetailedServicesResponse.class);
   }
 
   @Test
@@ -109,10 +115,10 @@ public class SerializationV1Test {
     roundTrip(path, FacilitiesResponse.class);
   }
 
-  @Test
-  @SneakyThrows
-  void searchByZip() {
-    String path = "/v1/search-zip.json";
-    roundTrip(path, FacilitiesResponse.class);
-  }
+    @Test
+    @SneakyThrows
+    void searchByZip() {
+      String path = "/v1/search-zip.json";
+      roundTrip(path, FacilitiesResponse.class);
+    }
 }

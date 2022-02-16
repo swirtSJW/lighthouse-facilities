@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 
 public abstract class BaseCmsOverlayController {
@@ -55,24 +54,4 @@ public abstract class BaseCmsOverlayController {
   }
 
   protected abstract Optional<CmsOverlayEntity> getExistingOverlayEntity(FacilityEntity.Pk pk);
-
-  @SneakyThrows
-  protected DatamartDetailedService getOverlayDetailedService(
-      @NonNull String facilityId, @NonNull String serviceId) {
-    List<DatamartDetailedService> detailedServices =
-        getOverlayDetailedServices(facilityId).parallelStream()
-            .filter(ds -> ds.serviceInfo().serviceId().equals(serviceId))
-            .collect(Collectors.toList());
-    return detailedServices.isEmpty() ? null : detailedServices.get(0);
-  }
-
-  @SneakyThrows
-  protected List<DatamartDetailedService> getOverlayDetailedServices(@NonNull String facilityId) {
-    FacilityEntity.Pk pk = FacilityEntity.Pk.fromIdString(facilityId);
-    Optional<CmsOverlayEntity> existingOverlayEntity = getExistingOverlayEntity(pk);
-    if (!existingOverlayEntity.isPresent()) {
-      throw new ExceptionsUtils.NotFound(facilityId);
-    }
-    return CmsOverlayHelper.getDetailedServices(existingOverlayEntity.get().cmsServices());
-  }
 }

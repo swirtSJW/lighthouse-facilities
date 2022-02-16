@@ -695,13 +695,20 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
   @Test
   public void losslessFacilityVisitorRoundtrip() {
     Facility facility = facility();
+    assertThatThrownBy(
+            () ->
+                assertThat(
+                        FacilityTransformerV1.toFacility(
+                            FacilityTransformerV0.toVersionAgnostic(facility)))
+                    .hasFieldOrProperty("attributes.waitTimes"))
+        .isInstanceOf(AssertionError.class);
     assertThat(
             FacilityTransformerV0.toFacility(
                 FacilityTransformerV1.toVersionAgnostic(
                     FacilityTransformerV1.toFacility(
                         FacilityTransformerV0.toVersionAgnostic(facility)))))
         .usingRecursiveComparison()
-        .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.detailedServices", "attributes.waitTimes")
         .isEqualTo(facility);
   }
 
@@ -728,13 +735,20 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                 Facility.HealthService.MentalHealthCare,
                 Facility.HealthService.DentalServices,
                 Facility.HealthService.SpecialtyCare));
+    assertThatThrownBy(
+            () ->
+                assertThat(
+                        FacilityTransformerV1.toFacility(
+                            FacilityTransformerV0.toVersionAgnostic(facilityWithSpecialtyCare)))
+                    .hasFieldOrProperty("attributes.waitTimes"))
+        .isInstanceOf(AssertionError.class);
     assertThat(
             FacilityTransformerV0.toFacility(
                 FacilityTransformerV1.toVersionAgnostic(
                     FacilityTransformerV1.toFacility(
                         FacilityTransformerV0.toVersionAgnostic(facilityWithSpecialtyCare)))))
         .usingRecursiveComparison()
-        .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.detailedServices", "attributes.waitTimes")
         .isEqualTo(facilityWithoutSpecialtyCare);
   }
 

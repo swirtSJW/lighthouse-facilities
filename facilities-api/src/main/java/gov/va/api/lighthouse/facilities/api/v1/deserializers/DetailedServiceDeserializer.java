@@ -14,11 +14,14 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.AppointmentPhoneNumber;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.DetailedServiceLocation;
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import lombok.SneakyThrows;
@@ -77,6 +80,20 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 : // Default to Health service type
                 ServiceType.Health;
 
+    JsonNode waitTimeNode = node.get("waitTime");
+    JsonNode newNode = waitTimeNode != null ? waitTimeNode.get("new") : null;
+    final BigDecimal newPatientWaitTime =
+        newNode != null ? createMapper().convertValue(newNode, BigDecimal.class) : null;
+    JsonNode establishedNode = waitTimeNode != null ? waitTimeNode.get("established") : null;
+    final BigDecimal establishedPatientWaitTime =
+        establishedNode != null
+            ? createMapper().convertValue(establishedNode, BigDecimal.class)
+            : null;
+    JsonNode effectiveDateNode = waitTimeNode != null ? waitTimeNode.get("effectiveDate") : null;
+    final LocalDate effectiveDate =
+        establishedNode != null
+            ? createMapper().convertValue(effectiveDateNode, LocalDate.class)
+            : null;
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
 
@@ -86,6 +103,12 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 .name(serviceName)
                 .serviceId(serviceId)
                 .serviceType(serviceType)
+                .build())
+        .waitTime(
+            PatientWaitTime.builder()
+                .newPatientWaitTime(newPatientWaitTime)
+                .establishedPatientWaitTime(establishedPatientWaitTime)
+                .effectiveDate(effectiveDate)
                 .build())
         .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
         .changed(

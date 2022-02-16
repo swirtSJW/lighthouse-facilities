@@ -44,10 +44,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
@@ -1143,16 +1145,32 @@ public class InternalFacilitiesControllerTest {
                     pk)));
     // Transfer detailed services from facility to overlay
     _controller().updateAllDetailedServiceIdAndTransferToCmsOverlay();
-    assertThat(overlayRepository.findAll())
+    List<CmsOverlayEntity> cmsOverlayEntities = new ArrayList<>();
+    overlayRepository.findAll().forEach(cmsOverlayEntities::add);
+    List<DatamartCmsOverlay> datamartCmsOverlays =
+        cmsOverlayEntities.stream()
+            .map(
+                overlayEntity ->
+                    DatamartCmsOverlay.builder()
+                        .operatingStatus(
+                            CmsOverlayHelper.getOperatingStatus(overlayEntity.cmsOperatingStatus()))
+                        .detailedServices(
+                            CmsOverlayHelper.getDetailedServices(overlayEntity.cmsServices()))
+                        .build())
+            .collect(Collectors.toList());
+    List.of(
+        DatamartCmsOverlay.builder()
+            .operatingStatus(_overlay_operating_status())
+            .detailedServices(facilityDetailedServices)
+            .build());
+    assertThat(datamartCmsOverlays)
         .usingRecursiveComparison()
         .isEqualTo(
             List.of(
-                _overlayEntity(
-                    DatamartCmsOverlay.builder()
-                        .operatingStatus(_overlay_operating_status())
-                        .detailedServices(facilityDetailedServices)
-                        .build(),
-                    pk)));
+                DatamartCmsOverlay.builder()
+                    .operatingStatus(_overlay_operating_status())
+                    .detailedServices(facilityDetailedServices)
+                    .build()));
   }
 
   @Test

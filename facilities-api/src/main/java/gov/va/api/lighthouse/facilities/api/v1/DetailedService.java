@@ -21,13 +21,15 @@ import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceHoursS
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceInfoSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceLocationSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.PatientWaitTimeSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -41,7 +43,6 @@ import org.apache.commons.lang3.ObjectUtils;
 @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
 @JsonSerialize(using = DetailedServiceSerializer.class)
 @AllArgsConstructor
-@NoArgsConstructor
 @JsonPropertyOrder({
   "serviceInfo",
   "descriptionFacility",
@@ -58,6 +59,9 @@ public class DetailedService implements CanBeEmpty {
   @Schema(description = "Service information.")
   @NonNull
   ServiceInfo serviceInfo;
+
+  @Schema(description = "Patient wait time.")
+  PatientWaitTime waitTime;
 
   @Schema(hidden = true)
   boolean active;
@@ -122,7 +126,7 @@ public class DetailedService implements CanBeEmpty {
   /** Empty elements will be omitted from JSON serialization. */
   @JsonIgnore
   public boolean isEmpty() {
-    return ObjectUtils.isEmpty(serviceInfo())
+    return ObjectUtils.isEmpty(waitTime())
         && isBlank(changed())
         && isBlank(descriptionFacility())
         && isBlank(appointmentLeadIn())
@@ -131,7 +135,8 @@ public class DetailedService implements CanBeEmpty {
         && ObjectUtils.isEmpty(phoneNumbers())
         && isBlank(referralRequired())
         && ObjectUtils.isEmpty(serviceLocations())
-        && isBlank(walkInsAccepted());
+        && isBlank(walkInsAccepted())
+        && ObjectUtils.isEmpty(serviceInfo());
   }
 
   public enum ServiceType {
@@ -380,6 +385,46 @@ public class DetailedService implements CanBeEmpty {
           && isBlank(friday())
           && isBlank(saturday())
           && isBlank(sunday());
+    }
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = PatientWaitTimeSerializer.class)
+  @Schema(
+      description =
+          "Expected wait times for new and established patients for a given health care service",
+      nullable = true)
+  public static final class PatientWaitTime implements CanBeEmpty {
+    @Schema(
+        example = "28.175438",
+        description =
+            "Average number of days a Veteran who hasn't been to this location has to wait "
+                + "for a non-urgent appointment.",
+        nullable = true)
+    @JsonProperty("new")
+    BigDecimal newPatientWaitTime;
+
+    @Schema(
+        example = "4.359409",
+        description =
+            "Average number of days a patient who has already been to this location has to wait "
+                + "for a non-urgent appointment.",
+        nullable = true)
+    @JsonProperty("established")
+    BigDecimal establishedPatientWaitTime;
+
+    @Schema(example = "2018-01-01", nullable = true)
+    LocalDate effectiveDate;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(newPatientWaitTime())
+          && ObjectUtils.isEmpty(establishedPatientWaitTime())
+          && ObjectUtils.isEmpty(effectiveDate());
     }
   }
 }

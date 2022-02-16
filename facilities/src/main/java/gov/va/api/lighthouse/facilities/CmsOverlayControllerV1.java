@@ -4,17 +4,24 @@ import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.ControllersV1.page;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.api.lighthouse.facilities.DatamartFacility.PatientWaitTime;
+import gov.va.api.lighthouse.facilities.DatamartFacility.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServiceResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServicesResponse;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.Builder;
@@ -41,7 +48,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/v1")
 public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
-
   private static final ObjectMapper DATAMART_MAPPER =
       DatamartFacilitiesJacksonConfig.createMapper();
 
@@ -63,6 +69,46 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
     linkerUrl = url + path + "v1/";
+  }
+
+  private void applyAtcWaitTimeToCmsService(
+      DatamartDetailedService cmsService,
+      Map<String, PatientWaitTime> waitTimeMap,
+      LocalDate effectiveDate) {
+    String serviceId = cmsService.serviceInfo().serviceId();
+    PatientWaitTime patientWaitTime = waitTimeMap.get(serviceId);
+    if (patientWaitTime != null) {
+      cmsService.waitTime(
+          DatamartDetailedService.PatientWaitTime.builder()
+              .newPatientWaitTime(patientWaitTime.newPatientWaitTime())
+              .establishedPatientWaitTime(patientWaitTime.establishedPatientWaitTime())
+              .effectiveDate(effectiveDate)
+              .build());
+    }
+  }
+
+  @SneakyThrows
+  private void applyAtcWaitTimeToCmsServices(
+      List<DatamartDetailedService> cmsDatamartDetailedServices, String facilityId) {
+    FacilityEntity.Pk pk = FacilityEntity.Pk.fromIdString(facilityId);
+    Optional<FacilityEntity> opt = facilityRepository.findById(pk);
+    if (opt.isEmpty()) {
+      throw new ExceptionsUtils.NotFound(facilityId);
+    }
+    DatamartFacility datamartFacility =
+        DATAMART_MAPPER.readValue(opt.get().facility(), DatamartFacility.class);
+    WaitTimes atcWaitTimes = datamartFacility.attributes().waitTimes();
+    if (atcWaitTimes == null || atcWaitTimes.health() == null) {
+      return;
+    }
+    List<PatientWaitTime> patientWaitTimes = atcWaitTimes.health();
+    LocalDate effectiveDate = atcWaitTimes.effectiveDate();
+    Map<String, PatientWaitTime> waitTimeMap =
+        patientWaitTimes.stream()
+            .collect(Collectors.toMap(s -> uncapitalize(s.service.name()), Function.identity()));
+    cmsDatamartDetailedServices.stream()
+        .forEach(
+            cmsService -> applyAtcWaitTimeToCmsService(cmsService, waitTimeMap, effectiveDate));
   }
 
   @GetMapping(
@@ -114,16 +160,19 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
-      value = {"/facilities/{id}/cms-overlay"},
+      value = {"/facilities/{facilityId}/cms-overlay"},
       produces = "application/json")
   @SneakyThrows
-  ResponseEntity<CmsOverlayResponse> getOverlay(@PathVariable("id") String id) {
-    FacilityEntity.Pk pk = FacilityEntity.Pk.fromIdString(id);
+  ResponseEntity<CmsOverlayResponse> getOverlay(@PathVariable("facilityId") String facilityId) {
+    FacilityEntity.Pk pk = FacilityEntity.Pk.fromIdString(facilityId);
     Optional<CmsOverlayEntity> existingOverlayEntity = getExistingOverlayEntity(pk);
     if (!existingOverlayEntity.isPresent()) {
-      throw new ExceptionsUtils.NotFound(id);
+      throw new ExceptionsUtils.NotFound(facilityId);
     }
     CmsOverlayEntity cmsOverlayEntity = existingOverlayEntity.get();
+    List<DatamartDetailedService> cmsServices =
+        CmsOverlayHelper.getDetailedServices(cmsOverlayEntity.cmsServices());
+    applyAtcWaitTimeToCmsServices(cmsServices, facilityId);
     CmsOverlayResponse response =
         CmsOverlayResponse.builder()
             .overlay(
@@ -132,11 +181,33 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
                         .operatingStatus(
                             CmsOverlayHelper.getOperatingStatus(
                                 cmsOverlayEntity.cmsOperatingStatus()))
-                        .detailedServices(
-                            CmsOverlayHelper.getDetailedServices(cmsOverlayEntity.cmsServices()))
+                        .detailedServices(cmsServices)
                         .build()))
             .build();
     return ResponseEntity.ok(response);
+  }
+
+  @SneakyThrows
+  private DatamartDetailedService getOverlayDetailedService(
+      @NonNull String facilityId, @NonNull String serviceId) {
+    List<DatamartDetailedService> detailedServices =
+        getOverlayDetailedServices(facilityId).parallelStream()
+            .filter(ds -> ds.serviceInfo().serviceId().equalsIgnoreCase(serviceId))
+            .collect(Collectors.toList());
+    return detailedServices.isEmpty() ? null : detailedServices.get(0);
+  }
+
+  @SneakyThrows
+  private List<DatamartDetailedService> getOverlayDetailedServices(@NonNull String facilityId) {
+    FacilityEntity.Pk pk = FacilityEntity.Pk.fromIdString(facilityId);
+    Optional<CmsOverlayEntity> existingOverlayEntity = getExistingOverlayEntity(pk);
+    if (!existingOverlayEntity.isPresent()) {
+      throw new ExceptionsUtils.NotFound(facilityId);
+    }
+    List<DatamartDetailedService> cmsDatamartDetailedServices =
+        CmsOverlayHelper.getDetailedServices(existingOverlayEntity.get().cmsServices());
+    applyAtcWaitTimeToCmsServices(cmsDatamartDetailedServices, facilityId);
+    return cmsDatamartDetailedServices;
   }
 
   @InitBinder
@@ -233,10 +304,8 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
             .attributes()
             .detailedServices(toSaveDetailedServices.isEmpty() ? null : toSaveDetailedServices);
       }
-
       facilityEntity.facility(DATAMART_MAPPER.writeValueAsString(facility));
     }
-
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {

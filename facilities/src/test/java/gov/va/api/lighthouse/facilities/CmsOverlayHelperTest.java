@@ -10,6 +10,16 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class CmsOverlayHelperTest {
+  @Test
+  void nullDetailedServices() {
+    assertThat(CmsOverlayHelper.getDetailedServices(null)).isEmpty();
+  }
+
+  @Test
+  void nullOperatingStatus() {
+    assertThat(CmsOverlayHelper.getOperatingStatus(null)).isNull();
+  }
+
   @SneakyThrows
   private void roundTripDetailedHealthService(HealthService healthService) {
     roundTripDetailedHealthServices(List.of(healthService));

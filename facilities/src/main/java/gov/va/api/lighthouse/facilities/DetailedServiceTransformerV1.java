@@ -14,6 +14,7 @@ public class DetailedServiceTransformerV1 {
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
         .serviceInfo(toDetailedServiceInfo(dds.serviceInfo()))
+        .waitTime(toPatientWaitTime(dds.waitTime()))
         .active(dds.active())
         .changed(dds.changed())
         .descriptionFacility(dds.descriptionFacility())
@@ -96,11 +97,26 @@ public class DetailedServiceTransformerV1 {
             : new ArrayList<>();
   }
 
+  /**
+   * Transform DatamartDetailedService.PatientWaitTime to version 1 DetailedService.PatientWaitTime
+   */
+  private static DetailedService.PatientWaitTime toPatientWaitTime(
+      DatamartDetailedService.PatientWaitTime dw) {
+    return (dw != null)
+        ? DetailedService.PatientWaitTime.builder()
+            .newPatientWaitTime(dw.newPatientWaitTime())
+            .establishedPatientWaitTime(dw.establishedPatientWaitTime())
+            .effectiveDate(dw.effectiveDate())
+            .build()
+        : null;
+  }
+
   /** Transform version 1 DetailedService to version agnostic DatamartDetailedService. */
   public static DatamartDetailedService toVersionAgnosticDetailedService(
       @NonNull DetailedService ds) {
     return DatamartDetailedService.builder()
         .serviceInfo(toVersionAgnosticServiceInfo(ds.serviceInfo()))
+        .waitTime(toVersionAgnosticPatientWaitTime(ds.waitTime()))
         .active(ds.active())
         .changed(ds.changed())
         .descriptionFacility(ds.descriptionFacility())
@@ -359,6 +375,21 @@ public class DetailedServiceTransformerV1 {
             .label(da.label())
             .number(da.number())
             .type(da.type())
+            .build()
+        : null;
+  }
+
+  /**
+   * Transform version 1 DetailedService.AppointmentPhoneNumber to version agnostic
+   * DatamartDetailedService.AppointmentPhoneNumber
+   */
+  private DatamartDetailedService.PatientWaitTime toVersionAgnosticPatientWaitTime(
+      DetailedService.PatientWaitTime w) {
+    return (w != null)
+        ? DatamartDetailedService.PatientWaitTime.builder()
+            .newPatientWaitTime(w.newPatientWaitTime())
+            .establishedPatientWaitTime(w.establishedPatientWaitTime())
+            .effectiveDate(w.effectiveDate())
             .build()
         : null;
   }

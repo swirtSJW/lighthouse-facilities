@@ -8,7 +8,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo;
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServicesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
@@ -39,6 +41,7 @@ public class DeserializerTest {
                                 .name(BenefitsService.Pensions.name())
                                 .serviceType(DetailedService.ServiceType.Benefits)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -92,6 +95,7 @@ public class DeserializerTest {
                     .name(BenefitsService.Pensions.name())
                     .serviceType(DetailedService.ServiceType.Benefits)
                     .build())
+            .waitTime(PatientWaitTime.builder().build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
@@ -135,6 +139,7 @@ public class DeserializerTest {
                                 .name(BenefitsService.Pensions.name())
                                 .serviceType(DetailedService.ServiceType.Benefits)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -237,8 +242,9 @@ public class DeserializerTest {
                             ServiceInfo.builder()
                                 .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                                 .name(BenefitsService.Pensions.name())
-                                .serviceType(DetailedService.ServiceType.Benefits)
+                                .serviceType(ServiceType.Benefits)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build(),
@@ -247,8 +253,9 @@ public class DeserializerTest {
                             ServiceInfo.builder()
                                 .serviceId(uncapitalize(HealthService.Smoking.name()))
                                 .name(HealthService.Smoking.name())
-                                .serviceType(DetailedService.ServiceType.Health)
+                                .serviceType(ServiceType.Health)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -369,6 +376,7 @@ public class DeserializerTest {
                                 .name(BenefitsService.Pensions.name())
                                 .serviceType(DetailedService.ServiceType.Benefits)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build(),
@@ -379,6 +387,7 @@ public class DeserializerTest {
                                 .name(HealthService.Smoking.name())
                                 .serviceType(DetailedService.ServiceType.Health)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -450,6 +459,7 @@ public class DeserializerTest {
                                 .name(HealthService.Dental.name())
                                 .serviceType(DetailedService.ServiceType.Health)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -503,6 +513,7 @@ public class DeserializerTest {
                     .name(HealthService.Dental.name())
                     .serviceType(DetailedService.ServiceType.Health)
                     .build())
+            .waitTime(PatientWaitTime.builder().build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
@@ -546,6 +557,7 @@ public class DeserializerTest {
                                 .name(HealthService.Dental.name())
                                 .serviceType(DetailedService.ServiceType.Health)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -597,6 +609,7 @@ public class DeserializerTest {
                     .name("foo")
                     .serviceType(DetailedService.ServiceType.Health)
                     .build())
+            .waitTime(PatientWaitTime.builder().build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
@@ -637,6 +650,7 @@ public class DeserializerTest {
                                 .name(OtherService.OnlineScheduling.name())
                                 .serviceType(DetailedService.ServiceType.Other)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))
@@ -690,6 +704,7 @@ public class DeserializerTest {
                     .name(OtherService.OnlineScheduling.name())
                     .serviceType(DetailedService.ServiceType.Other)
                     .build())
+            .waitTime(PatientWaitTime.builder().build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
@@ -733,6 +748,7 @@ public class DeserializerTest {
                                 .name(OtherService.OnlineScheduling.name())
                                 .serviceType(DetailedService.ServiceType.Other)
                                 .build())
+                        .waitTime(PatientWaitTime.builder().build())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
                         .build()))

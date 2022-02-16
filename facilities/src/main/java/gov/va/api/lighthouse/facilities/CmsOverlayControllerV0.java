@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/v0")
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
-
   private static final ObjectMapper DATAMART_MAPPER =
       DatamartFacilitiesJacksonConfig.createMapper();
 

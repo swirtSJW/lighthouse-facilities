@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,7 @@ public class DetailedServicesResponseEmptyFieldsTest {
                                     .name("test")
                                     .serviceType(DetailedService.ServiceType.Health)
                                     .build())
+                            .waitTime(PatientWaitTime.builder().build())
                             .build()))
                 .build()
                 .isEmpty())
