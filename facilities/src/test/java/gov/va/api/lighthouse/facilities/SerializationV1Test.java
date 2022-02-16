@@ -115,10 +115,10 @@ public class SerializationV1Test {
     roundTrip(path, FacilitiesResponse.class);
   }
 
-    @Test
-    @SneakyThrows
-    void searchByZip() {
-      String path = "/v1/search-zip.json";
-      roundTrip(path, FacilitiesResponse.class);
-    }
+  @Test
+  @SneakyThrows
+  void searchByZip() {
+    String path = "/v1/search-zip.json";
+    roundTrip(path, FacilitiesResponse.class);
+  }
 }

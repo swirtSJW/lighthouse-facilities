@@ -54,7 +54,6 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode serviceLocationsNode = node.get("serviceLocations");
     JsonNode walkInsAcceptedNode = node.get("walkInsAccepted");
 
-
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
     final String serviceName =
@@ -111,7 +110,6 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 .establishedPatientWaitTime(establishedPatientWaitTime)
                 .effectiveDate(effectiveDate)
                 .build())
-
         .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
         .changed(
             changedNode != null ? createMapper().convertValue(changedNode, String.class) : null)
@@ -183,7 +181,6 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 ServiceType.Health;
   }
 
-
   private boolean isRecognizedServiceId(String serviceId) {
     return Arrays.stream(HealthService.values())
             .parallel()
@@ -205,5 +202,4 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
         .parallel()
         .anyMatch(st -> st.name().equalsIgnoreCase(type));
   }
-
 }

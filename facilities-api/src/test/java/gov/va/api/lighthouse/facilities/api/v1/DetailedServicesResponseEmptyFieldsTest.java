@@ -60,7 +60,6 @@ public class DetailedServicesResponseEmptyFieldsTest {
                                     .serviceType(DetailedService.ServiceType.Health)
                                     .build())
                             .waitTime(PatientWaitTime.builder().build())
-
                             .build()))
                 .build()
                 .isEmpty())

@@ -77,7 +77,6 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 : // Default to Health service type
                 ServiceType.Health;
 
-
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
 
@@ -181,5 +180,4 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
         .parallel()
         .anyMatch(st -> st.name().equalsIgnoreCase(type));
   }
-
 }

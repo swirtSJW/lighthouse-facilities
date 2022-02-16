@@ -27,7 +27,6 @@ import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceA
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceEmailContact;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceHours;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
-import gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
@@ -51,7 +50,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.ws.rs.HEAD;
 import lombok.SneakyThrows;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.Test;
@@ -529,7 +527,11 @@ public class InternalFacilitiesControllerTest {
     assertThat(
             facility.attributes().detailedServices().stream()
                 .parallel()
-                .anyMatch(ds -> ds.serviceInfo().serviceId().equals(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)))
+                .anyMatch(
+                    ds ->
+                        ds.serviceInfo()
+                            .serviceId()
+                            .equals(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)))
         .isTrue();
 
     assertThat(facilityRepository.findAll()).isEmpty();
@@ -539,7 +541,11 @@ public class InternalFacilitiesControllerTest {
     assertThat(
             CmsOverlayHelper.getDetailedServices(facilityEntity.cmsServices()).stream()
                 .parallel()
-                .anyMatch(ds -> ds.serviceInfo().serviceId().equals(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)))
+                .anyMatch(
+                    ds ->
+                        ds.serviceInfo()
+                            .serviceId()
+                            .equals(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)))
         .isFalse();
     facilityRepository.save(facilityEntity);
     assertThat(facilityRepository.findAll())
@@ -1613,16 +1619,26 @@ public class InternalFacilitiesControllerTest {
             "Updating service id for detailed services associated with facility vha_402"
                 + "Updating service id for existing vha_402 CMS overlay detailed services"
                 + "Completed update and transfer of all facility detailed services to cms_overlay table!");
-    assertThat(overlayRepository.findAll())
-        .usingRecursiveComparison()
-        .isEqualTo(
-            List.of(
-                _overlayEntity(
+
+    List<CmsOverlayEntity> cmsOverlayEntities = new ArrayList<>();
+    overlayRepository.findAll().forEach(cmsOverlayEntities::add);
+
+    List<DatamartCmsOverlay> datamartCmsOverlays =
+        cmsOverlayEntities.stream()
+            .map(
+                overlayEntity ->
                     DatamartCmsOverlay.builder()
-                        .operatingStatus(_overlay_operating_status())
-                        .detailedServices(facilityDetailedServices)
-                        .build(),
-                    pk)));
+                        .operatingStatus(
+                            CmsOverlayHelper.getOperatingStatus(overlayEntity.cmsOperatingStatus()))
+                        .detailedServices(
+                            CmsOverlayHelper.getDetailedServices(overlayEntity.cmsServices()))
+                        .build())
+            .collect(Collectors.toList());
+    List.of(
+        DatamartCmsOverlay.builder()
+            .operatingStatus(_overlay_operating_status())
+            .detailedServices(facilityDetailedServices)
+            .build());
     // Exception Cases
     FacilityRepository mockFacilityRepository = mock(FacilityRepository.class);
     when(mockFacilityRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
@@ -1882,16 +1898,34 @@ public class InternalFacilitiesControllerTest {
         .isEqualToIgnoringWhitespace(
             "Updating service id for detailed services associated with overlay vha_402"
                 + "Completed service id update for existing detailed services in overlay!");
-    assertThat(overlayRepository.findAll())
+    List<CmsOverlayEntity> cmsOverlayEntities = new ArrayList<>();
+    overlayRepository.findAll().forEach(cmsOverlayEntities::add);
+
+    List<DatamartCmsOverlay> datamartCmsOverlays =
+        cmsOverlayEntities.stream()
+            .map(
+                overlayEntity ->
+                    DatamartCmsOverlay.builder()
+                        .operatingStatus(
+                            CmsOverlayHelper.getOperatingStatus(overlayEntity.cmsOperatingStatus()))
+                        .detailedServices(
+                            CmsOverlayHelper.getDetailedServices(overlayEntity.cmsServices()))
+                        .build())
+            .collect(Collectors.toList());
+    List.of(
+        DatamartCmsOverlay.builder()
+            .operatingStatus(_overlay_operating_status())
+            .detailedServices(cmsServices)
+            .build());
+
+    assertThat(datamartCmsOverlays)
         .usingRecursiveComparison()
         .isEqualTo(
             List.of(
-                _overlayEntity(
-                    DatamartCmsOverlay.builder()
-                        .operatingStatus(_overlay_operating_status())
-                        .detailedServices(cmsServices)
-                        .build(),
-                    pk)));
+                DatamartCmsOverlay.builder()
+                    .operatingStatus(_overlay_operating_status())
+                    .detailedServices(cmsServices)
+                    .build()));
     // Exception Cases
     CmsOverlayRepository mockOverlayRepository = mock(CmsOverlayRepository.class);
     when(mockOverlayRepository.findAll()).thenThrow(new NullPointerException("oh noes"));

@@ -54,5 +54,4 @@ public abstract class BaseCmsOverlayController {
   }
 
   protected abstract Optional<CmsOverlayEntity> getExistingOverlayEntity(FacilityEntity.Pk pk);
-
 }

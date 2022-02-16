@@ -1,11 +1,7 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-<<<<<<< HEAD
 import static gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo.INVALID_SVC_ID;
-=======
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.INVALID_SVC_ID;
->>>>>>> 05cebc5997738a52f8bacc13a5b23fce7a8fb837
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -59,11 +55,7 @@ public class DatamartCmsOverlayDeserializer extends StdDeserializer<DatamartCmsO
     if (detailedServices != null) {
       // Filter out detailed services containing unrecognized service id
       return detailedServices.stream()
-<<<<<<< HEAD
           .filter(x -> !x.serviceInfo().serviceId().equals(INVALID_SVC_ID))
-=======
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
->>>>>>> 05cebc5997738a52f8bacc13a5b23fce7a8fb837
           .collect(Collectors.toList());
     }
     return null;
