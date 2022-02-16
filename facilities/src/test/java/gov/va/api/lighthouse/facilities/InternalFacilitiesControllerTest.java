@@ -44,6 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -269,6 +270,472 @@ public class InternalFacilitiesControllerTest {
                 ? null
                 : JacksonConfig.createMapper().writeValueAsString(overlay.detailedServices()))
         .build();
+  }
+
+  @Test
+  @SneakyThrows
+  void checkForInvalidServiceIdsInCmsOverlay() {
+    var pk = "vha_402";
+    var cmsServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Urology.name()))
+                        .name(HealthService.Urology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartCmsOverlay cmsOverlay =
+        DatamartCmsOverlay.builder()
+            .operatingStatus(
+                OperatingStatus.builder()
+                    .code(OperatingStatusCode.LIMITED)
+                    .additionalInfo("Limited")
+                    .build())
+            .detailedServices(cmsServices)
+            .build();
+    assertThat(overlayRepository.findAll()).isEmpty();
+    overlayRepository.save(_overlayEntity(cmsOverlay, pk));
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(_overlayEntity(cmsOverlay, pk)));
+    // Check for invalid service ids in existing overlays
+    ResponseEntity<String> response = _controller().checkForInvalidServiceIdsInCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "No failures to perform invalid service id check encountered.\n"
+                + "No invalid service ids identified for existing overlays.\n"
+                + "Completed invalid service id check for all overlay detailed services!");
+    // Add in invalid detailed services and re-check
+    List<DatamartDetailedService> updatedCmsServices = new ArrayList<>();
+    updatedCmsServices.addAll(cmsServices);
+    updatedCmsServices.add(
+        DatamartDetailedService.builder()
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                    .name(HealthService.SocialWork.name())
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
+            .build());
+    updatedCmsServices.add(
+        DatamartDetailedService.builder()
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                    .name("Mental Health Care")
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
+            .build());
+    cmsOverlay.detailedServices(updatedCmsServices);
+    overlayRepository.save(_overlayEntity(cmsOverlay, pk));
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(_overlayEntity(cmsOverlay, pk)));
+    // Check for invalid service ids in existing overlays
+    response = _controller().checkForInvalidServiceIdsInCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Invalid service id(s) found for vha_402 existing detailed services in overlay"
+                + " with LIMITED operating status code for the following service names: "
+                + "SocialWork, Mental Health Care"
+                + "Completed invalid service id check for all overlay detailed services!");
+    // Exception Cases
+    CmsOverlayRepository mockOverlayRepository = mock(CmsOverlayRepository.class);
+    when(mockOverlayRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(facilityRepository)
+            .cmsOverlayRepository(mockOverlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to check service id for all overlay detailed services: oh noes");
+    CmsOverlayEntity mockOverlayEntity = mock(CmsOverlayEntity.class);
+    when(mockOverlayEntity.cmsServices()).thenReturn(null);
+    mockOverlayRepository = mock(CmsOverlayRepository.class);
+    when(mockOverlayRepository.findAll()).thenReturn(List.of(mockOverlayEntity));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(facilityRepository)
+            .cmsOverlayRepository(mockOverlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "No failures to perform invalid service id check encountered.\n"
+                + "No invalid service ids identified for existing overlays.\n"
+                + "Completed invalid service id check for all overlay detailed services!");
+    mockOverlayEntity = mock(CmsOverlayEntity.class);
+    when(mockOverlayEntity.cmsServices()).thenReturn("{\"noSuchName\":\"noSuchValue\"}");
+    when(mockOverlayEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
+    mockOverlayRepository = mock(CmsOverlayRepository.class);
+    when(mockOverlayRepository.findAll()).thenReturn(List.of(mockOverlayEntity));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(facilityRepository)
+            .cmsOverlayRepository(mockOverlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to check service id for detailed services associated with vha_402: "
+                + "Cannot deserialize value of type "
+                + "`[Lgov.va.api.lighthouse.facilities.DatamartDetailedService;` "
+                + "from Object value (token `JsonToken.START_OBJECT`) "
+                + "at [Source: (String)\"{\"noSuchName\":\"noSuchValue\"}\"; "
+                + "line: 1, column: 1]"
+                + "Completed invalid service id check for all overlay detailed services!");
+  }
+
+  @Test
+  @SneakyThrows
+  void checkForInvalidServiceIdsInFacilityAttributesWithMixedServices() {
+    var pk = "vha_402";
+    var type = DatamartFacility.Type.va_facilities;
+    var state = "FL";
+    var zip = "32934";
+    var latitude = 1.2;
+    var longitude = 3.4;
+    var healthServices =
+        List.of(HealthService.Cardiology, HealthService.Covid19Vaccine, HealthService.Urology);
+    var facilityType = va_health_facility;
+    var mixedDetailedServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Other)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Benefits)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Urology.name()))
+                        .name(HealthService.Urology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                        .name(HealthService.SocialWork.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                        .name("Mental Health Care")
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartFacility facility =
+        DatamartFacility.builder()
+            .id(pk)
+            .type(type)
+            .attributes(
+                FacilityAttributes.builder()
+                    .address(
+                        Addresses.builder()
+                            .physical(Address.builder().state(state).zip(zip).build())
+                            .build())
+                    .latitude(BigDecimal.valueOf(latitude))
+                    .longitude(BigDecimal.valueOf(longitude))
+                    .services(Services.builder().health(healthServices).build())
+                    .mobile(false)
+                    .facilityType(facilityType)
+                    .detailedServices(mixedDetailedServices)
+                    .operatingStatus(
+                        OperatingStatus.builder()
+                            .code(OperatingStatusCode.LIMITED)
+                            .additionalInfo("Limited")
+                            .build())
+                    .build())
+            .build();
+    assertThat(
+            facility.attributes().detailedServices().stream()
+                .parallel()
+                .anyMatch(
+                    ds ->
+                        ds.serviceInfo()
+                            .serviceId()
+                            .equals(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)))
+        .isTrue();
+
+    assertThat(facilityRepository.findAll()).isEmpty();
+    // Translation of list of detailed services to string will filter out any detailed service with
+    // an invalid service id through custom deserializers.
+    FacilityEntity facilityEntity = _facilityEntity(facility);
+    assertThat(
+            CmsOverlayHelper.getDetailedServices(facilityEntity.cmsServices()).stream()
+                .parallel()
+                .anyMatch(
+                    ds ->
+                        ds.serviceInfo()
+                            .serviceId()
+                            .equals(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)))
+        .isFalse();
+    facilityRepository.save(facilityEntity);
+    assertThat(facilityRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(facilityEntity));
+    // Check for invalid service ids in facility attributes
+    ResponseEntity<String> response = _controller().checkForInvalidServiceIdsInFacilityAttributes();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "No failures to perform invalid service id check encountered.\n"
+                + "No invalid service ids identified for existing facility attributes.\n"
+                + "Completed invalid service id check for all facility detailed services!");
+    // Exception Cases
+    FacilityRepository mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInFacilityAttributes();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to check service ids for all facility detailed services: oh noes");
+    FacilityEntity mockFacilityEntity = mock(FacilityEntity.class);
+    when(mockFacilityEntity.facility()).thenReturn(null);
+    when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
+    mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenReturn(List.of(mockFacilityEntity));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInFacilityAttributes();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to check service id for detailed services associated with vha_402:"
+                + "json is marked non-null but is null"
+                + "Completed invalid service id check for all facility detailed services!");
+    mockFacilityEntity = mock(FacilityEntity.class);
+    when(mockFacilityEntity.facility()).thenReturn("{\"noSuchName\":\"noSuchValue\"}");
+    when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
+    mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenReturn(List.of(mockFacilityEntity));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInFacilityAttributes();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to check service id for detailed services associated with vha_402: "
+                + "Unrecognized field \"noSuchName\" (class gov.va.api.lighthouse.facilities.DatamartFacility), "
+                + "not marked as ignorable (3 known properties: \"type\", \"id\", \"attributes\"])\n"
+                + " at [Source: (String)\"{\"noSuchName\":\"noSuchValue\"}\"; "
+                + "line: 1, column: 16] "
+                + "(through reference chain: gov.va.api.lighthouse.facilities.DatamartFacility[\"noSuchName\"])"
+                + "Completed invalid service id check for all facility detailed services!");
+  }
+
+  @Test
+  @SneakyThrows
+  void checkForInvalidServiceIdsInFacilityAttributesWithValidServices() {
+    var pk = "vha_402";
+    var type = DatamartFacility.Type.va_facilities;
+    var state = "FL";
+    var zip = "32934";
+    var latitude = 1.2;
+    var longitude = 3.4;
+    var healthServices =
+        List.of(HealthService.Cardiology, HealthService.Covid19Vaccine, HealthService.Urology);
+    var facilityType = va_health_facility;
+    var facilityDetailedServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Other)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Benefits)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Urology.name()))
+                        .name(HealthService.Urology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartFacility facility =
+        DatamartFacility.builder()
+            .id(pk)
+            .type(type)
+            .attributes(
+                FacilityAttributes.builder()
+                    .address(
+                        Addresses.builder()
+                            .physical(Address.builder().state(state).zip(zip).build())
+                            .build())
+                    .latitude(BigDecimal.valueOf(latitude))
+                    .longitude(BigDecimal.valueOf(longitude))
+                    .services(Services.builder().health(healthServices).build())
+                    .mobile(false)
+                    .facilityType(facilityType)
+                    .detailedServices(facilityDetailedServices)
+                    .operatingStatus(
+                        OperatingStatus.builder()
+                            .code(OperatingStatusCode.LIMITED)
+                            .additionalInfo("Limited")
+                            .build())
+                    .build())
+            .build();
+    assertThat(facilityRepository.findAll()).isEmpty();
+    FacilityEntity facilityEntity = _facilityEntity(facility);
+    facilityRepository.save(facilityEntity);
+    assertThat(facilityRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(facilityEntity));
+    // Check for invalid service ids in facility attributes
+    ResponseEntity<String> response = _controller().checkForInvalidServiceIdsInFacilityAttributes();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "No failures to perform invalid service id check encountered."
+                + "No invalid service ids identified for existing facility attributes."
+                + "Completed invalid service id check for all facility detailed services!");
+    // Exception cases
+    FacilityEntity mockFacilityEntity = mock(FacilityEntity.class);
+    when(mockFacilityEntity.facility())
+        .thenReturn(
+            "{\"id\":\"vha_402\","
+                + "\"type\":\"va_facilities\","
+                + "\"attributes\":{"
+                + "\"detailed_services\":[{"
+                + "\"serviceId\":\"INVALID_ID\","
+                + "\"name\":\"noSuchName\","
+                + "\"appointment_phones\":[],"
+                + "\"service_locations\":[]"
+                + "}]"
+                + "}"
+                + "}");
+    when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
+    FacilityRepository mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenReturn(List.of(mockFacilityEntity));
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.checkForInvalidServiceIdsInFacilityAttributes();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "No failures to perform invalid service id check encountered."
+                + "No invalid service ids identified for existing facility attributes."
+                + "Completed invalid service id check for all facility detailed services!");
   }
 
   @Test
@@ -1142,7 +1609,14 @@ public class InternalFacilitiesControllerTest {
                         .build(),
                     pk)));
     // Transfer detailed services from facility to overlay
-    _controller().updateAllDetailedServiceIdAndTransferToCmsOverlay();
+    ResponseEntity<String> response =
+        _controller().updateAllDetailedServiceIdAndTransferToCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Updating service id for detailed services associated with facility vha_402"
+                + "Updating service id for existing vha_402 CMS overlay detailed services"
+                + "Completed update and transfer of all facility detailed services to cms_overlay table!");
     assertThat(overlayRepository.findAll())
         .usingRecursiveComparison()
         .isEqualTo(
@@ -1153,6 +1627,59 @@ public class InternalFacilitiesControllerTest {
                         .detailedServices(facilityDetailedServices)
                         .build(),
                     pk)));
+    // Exception Cases
+    FacilityRepository mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.updateAllDetailedServiceIdAndTransferToCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to update and transfer all facility detailed services to cms_overlay table: oh noes");
+    FacilityEntity mockFacilityEntity = mock(FacilityEntity.class);
+    when(mockFacilityEntity.facility()).thenReturn(null);
+    when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
+    mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenReturn(List.of(mockFacilityEntity));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.updateAllDetailedServiceIdAndTransferToCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to update and transfer all facility detailed services to cms_overlay table:"
+                + "json is marked non-null but is null");
+    mockFacilityEntity = mock(FacilityEntity.class);
+    when(mockFacilityEntity.facility()).thenReturn("{\"noSuchName\":\"noSuchValue\"}");
+    when(mockFacilityEntity.id()).thenReturn(FacilityEntity.Pk.fromIdString("vha_402"));
+    mockFacilityRepository = mock(FacilityRepository.class);
+    when(mockFacilityRepository.findAll()).thenReturn(List.of(mockFacilityEntity));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(mockFacilityRepository)
+            .cmsOverlayRepository(overlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.updateAllDetailedServiceIdAndTransferToCmsOverlay();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to update and transfer all facility detailed services to cms_overlay table: "
+                + "Unrecognized field \"noSuchName\" "
+                + "(class gov.va.api.lighthouse.facilities.DatamartFacility), "
+                + "not marked as ignorable (3 known properties: \"type\", \"id\", \"attributes\"]) "
+                + "at [Source: (String)\"{\"noSuchName\":\"noSuchValue\"}\"; "
+                + "line: 1, column: 16] "
+                + "(through reference chain: gov.va.api.lighthouse.facilities.DatamartFacility[\"noSuchName\"])");
   }
 
   @Test
@@ -1291,6 +1818,154 @@ public class InternalFacilitiesControllerTest {
     assertThat(reloadResponse.problems())
         .usingRecursiveComparison()
         .isEqualTo(List.of(ReloadResponse.Problem.of("invalid-id", "Cannot parse ID")));
+  }
+
+  @Test
+  @SneakyThrows
+  void updateServiceIdForExistingCmsOverlays() {
+    var pk = "vha_402";
+    var cmsServices =
+        List.of(
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Cardiology.name()))
+                        .name(HealthService.Cardiology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Other)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Benefits)
+                        .build())
+                .build(),
+            DatamartDetailedService.builder()
+                .serviceInfo(
+                    DatamartDetailedService.ServiceInfo.builder()
+                        .serviceId(uncapitalize(HealthService.Urology.name()))
+                        .name(HealthService.Urology.name())
+                        .serviceType(DatamartDetailedService.ServiceType.Health)
+                        .build())
+                .build());
+    DatamartCmsOverlay cmsOverlay =
+        DatamartCmsOverlay.builder()
+            .operatingStatus(
+                OperatingStatus.builder()
+                    .code(OperatingStatusCode.LIMITED)
+                    .additionalInfo("Limited")
+                    .build())
+            .detailedServices(cmsServices)
+            .build();
+    assertThat(overlayRepository.findAll()).isEmpty();
+    overlayRepository.save(_overlayEntity(cmsOverlay, pk));
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(_overlayEntity(cmsOverlay, pk)));
+    // Update service id for existing detailed services in CMS overlays
+    ResponseEntity<String> response = _controller().updateServiceIdForExistingCmsOverlays();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Updating service id for detailed services associated with overlay vha_402"
+                + "Completed service id update for existing detailed services in overlay!");
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(
+            List.of(
+                _overlayEntity(
+                    DatamartCmsOverlay.builder()
+                        .operatingStatus(_overlay_operating_status())
+                        .detailedServices(cmsServices)
+                        .build(),
+                    pk)));
+
+    // Add in invalid detailed services and redo update
+    List<DatamartDetailedService> updatedCmsServices = new ArrayList<>();
+    updatedCmsServices.addAll(cmsServices);
+    updatedCmsServices.add(
+        DatamartDetailedService.builder()
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                    .name(HealthService.SocialWork.name())
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
+            .build());
+    updatedCmsServices.add(
+        DatamartDetailedService.builder()
+            .serviceInfo(
+                DatamartDetailedService.ServiceInfo.builder()
+                    .serviceId(DatamartDetailedService.ServiceInfo.INVALID_SVC_ID)
+                    .name("Mental Health Care")
+                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .build())
+            .build());
+    cmsOverlay.detailedServices(updatedCmsServices);
+    overlayRepository.save(_overlayEntity(cmsOverlay, pk));
+    assertThat(overlayRepository.findAll())
+        .usingRecursiveComparison()
+        .isEqualTo(List.of(_overlayEntity(cmsOverlay, pk)));
+    // Update service id for existing detailed services in CMS overlays
+    response = _controller().updateServiceIdForExistingCmsOverlays();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Updating service id for detailed services associated with overlay vha_402"
+                + "Invalid service id(s) found for vha_402 existing detailed services in overlay"
+                + "Completed service id update for existing detailed services in overlay!");
+
+    // Exception Cases
+    CmsOverlayRepository mockOverlayRepository = mock(CmsOverlayRepository.class);
+    when(mockOverlayRepository.findAll()).thenThrow(new NullPointerException("oh noes"));
+    InternalFacilitiesController controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(facilityRepository)
+            .cmsOverlayRepository(mockOverlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.updateServiceIdForExistingCmsOverlays();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Failed to update service id for existing detailed services in overlay: oh noes");
+    mockOverlayRepository = mock(CmsOverlayRepository.class);
+    when(mockOverlayRepository.findAll()).thenReturn(List.of(_overlayEntity(cmsOverlay, pk)));
+    when(mockOverlayRepository.save(_overlayEntity(cmsOverlay, pk)))
+        .thenThrow(new NullPointerException("oh noes"));
+    controller =
+        InternalFacilitiesController.builder()
+            .facilityRepository(facilityRepository)
+            .cmsOverlayRepository(mockOverlayRepository)
+            .collector(collector)
+            .build();
+    response = controller.updateServiceIdForExistingCmsOverlays();
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody())
+        .isEqualToIgnoringWhitespace(
+            "Updating service id for detailed services associated with overlay vha_402"
+                + "Invalid service id(s) found for vha_402 existing detailed services in overlay"
+                + "Failed to update service id for vha_402 existing detailed services in overlay:"
+                + "oh noes"
+                + "Completed service id update for existing detailed services in overlay!");
   }
 
   @Test
