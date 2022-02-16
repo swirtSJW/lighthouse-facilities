@@ -2,8 +2,8 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.ControllersV1.page;
-import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
@@ -66,12 +66,11 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   }
 
   @GetMapping(
-      value = {"/facilities/{facility_id}/services/{service_id}"},
+      value = {"/facilities/{id}/services/{service}"},
       produces = "application/json")
   @SneakyThrows
   ResponseEntity<DetailedServiceResponse> getDetailedService(
-      @PathVariable("facility_id") String facilityId,
-      @PathVariable("service_id") String serviceId) {
+      @PathVariable("id") String facilityId, @PathVariable("service") String serviceId) {
     return ResponseEntity.ok(
         DetailedServiceResponse.builder()
             .data(
@@ -222,23 +221,26 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
       DatamartFacility.OperatingStatus operatingStatus = overlay.operatingStatus();
       if (operatingStatus != null) {
         facility.attributes().operatingStatus(operatingStatus);
-        if (operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED) {
-          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.T);
-        } else {
-          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.A);
-        }
+        facility
+            .attributes()
+            .activeStatus(
+                operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED
+                    ? DatamartFacility.ActiveStatus.T
+                    : DatamartFacility.ActiveStatus.A);
       }
+      if (overlay.detailedServices() != null) {
+        facility
+            .attributes()
+            .detailedServices(toSaveDetailedServices.isEmpty() ? null : toSaveDetailedServices);
+      }
+
       facilityEntity.facility(DATAMART_MAPPER.writeValueAsString(facility));
     }
 
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
-          detailedServices.add("Covid19Vaccine");
-        } else {
-          detailedServices.add(service.name());
-        }
+        detailedServices.add(capitalize(service.serviceId()));
       }
       facilityEntity.overlayServices(detailedServices);
     }
