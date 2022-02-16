@@ -46,6 +46,7 @@ public class DatamartFacilityAttributesDeserializer extends StdDeserializer<Faci
     JsonNode facilityTypeNode = node.get("facility_type");
     JsonNode classificationNode = node.get("classification");
     JsonNode websiteNode = node.get("website");
+    JsonNode parentIdNode = node.get("parentId");
     JsonNode latitudeNode = node.get("lat");
     JsonNode longitudeNode = node.get("long");
     JsonNode timeZoneNode = node.get("time_zone");
@@ -75,6 +76,8 @@ public class DatamartFacilityAttributesDeserializer extends StdDeserializer<Faci
             classificationNode != null
                 ? createMapper().convertValue(classificationNode, String.class)
                 : null)
+        .parentId(
+            parentIdNode != null ? createMapper().convertValue(parentIdNode, String.class) : null)
         .website(
             websiteNode != null ? createMapper().convertValue(websiteNode, String.class) : null)
         .latitude(
