@@ -131,6 +131,7 @@ public class SerializerTest {
     // Not empty
     DetailedService detailedService =
         DetailedService.builder()
+
             .serviceInfo(
                 DetailedService.ServiceInfo.builder()
                     .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
@@ -265,6 +266,7 @@ public class SerializerTest {
         DetailedServiceResponse.builder()
             .data(
                 DetailedService.builder()
+
                     .serviceInfo(
                         DetailedService.ServiceInfo.builder()
                             .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))

@@ -51,7 +51,6 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     JsonNode referralRequiredNode = node.get("referral_required");
     JsonNode serviceLocationsNode = node.get("service_locations");
     JsonNode walkInsAcceptedNode = node.get("walk_ins_accepted");
-
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
     final String serviceName =
@@ -77,6 +76,7 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 ? getServiceTypeForServiceId(serviceId)
                 : // Default to Health service type
                 ServiceType.Health;
+
 
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
@@ -181,4 +181,5 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
         .parallel()
         .anyMatch(st -> st.name().equalsIgnoreCase(type));
   }
+
 }

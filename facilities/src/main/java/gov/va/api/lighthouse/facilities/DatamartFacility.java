@@ -272,6 +272,7 @@ public class DatamartFacility {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
+
       return CMS_OVERLAY_SERVICE_NAME_COVID_19.equalsIgnoreCase(name)
           ? HealthService.Covid19Vaccine
           : "MentalHealthCare".equalsIgnoreCase(name)
