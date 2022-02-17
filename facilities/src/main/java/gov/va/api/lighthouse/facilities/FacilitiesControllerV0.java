@@ -246,7 +246,7 @@ public class FacilitiesControllerV0 {
     String state = rawState.trim().toUpperCase(Locale.US);
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<ServiceType> services = validateServices(rawServices);
-    FacilityRepository.FacilitySpecificationHelper spec =
+    return facilityRepository.findAll(
         FacilityRepository.FacilitySpecificationHelper.builder()
             .state(FacilityRepository.StateSpecification.builder().state(state).build())
             .facilityType(
@@ -263,9 +263,8 @@ public class FacilitiesControllerV0 {
                 rawMobile == null
                     ? null
                     : FacilityRepository.MobileSpecification.builder().mobile(rawMobile).build())
-            .build();
-    return facilityRepository.findAll(
-        spec, PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
+            .build(),
+        PageRequest.of(page - 1, perPage, FacilityEntity.naturalOrder()));
   }
 
   private Page<FacilityEntity> entitiesPageByZip(
