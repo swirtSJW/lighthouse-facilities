@@ -394,10 +394,11 @@ public class CmsOverlayControllerV0Test {
     ResponseEntity<CmsOverlayResponse> response = controller().getOverlay("vha_402");
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(response.getBody()).isNotNull();
+    // All non-Covid19 detailed services filtered out of V0
     assertThat(
             DetailedServiceTransformerV0.toVersionAgnosticDetailedServices(
                 response.getBody().overlay().detailedServices()))
-        .containsAll(combinedServices);
+        .containsAll(updateServiceUrlPaths("vha_402", List.of(covidDetailedService(false))));
   }
 
   @Test

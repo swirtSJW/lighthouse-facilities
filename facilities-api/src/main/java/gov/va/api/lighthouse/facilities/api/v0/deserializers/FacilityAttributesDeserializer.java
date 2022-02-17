@@ -1,14 +1,12 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
@@ -22,10 +20,9 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.WaitTimes;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
-public class FacilityAttributesDeserializer extends StdDeserializer<FacilityAttributes> {
+public class FacilityAttributesDeserializer extends BaseDeserializer<FacilityAttributes> {
   public FacilityAttributesDeserializer() {
     this(null);
   }
@@ -115,22 +112,12 @@ public class FacilityAttributesDeserializer extends StdDeserializer<FacilityAttr
                 ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
-            detailedServicesNode != null
-                ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
-                : null)
+            filterOutNonCovid19DetailedServices(
+                detailedServicesNode != null
+                    ? filterOutInvalidDetailedServices(
+                        createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                    : null))
         .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
         .build();
-  }
-
-  private List<DetailedService> filterOutInvalidDetailedServices(
-      List<DetailedService> detailedServices) {
-    if (detailedServices != null) {
-      // Filter out detailed services containing unrecognized service id
-      return detailedServices.stream()
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
-          .collect(Collectors.toList());
-    }
-    return null;
   }
 }
