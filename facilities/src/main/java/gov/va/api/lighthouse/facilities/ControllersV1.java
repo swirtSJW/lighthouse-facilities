@@ -15,14 +15,16 @@ import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
-
-import lombok.Builder;
 import lombok.NonNull;
-import lombok.Value;
 import lombok.experimental.UtilityClass;
-import org.springframework.data.jpa.domain.Specification;
 
 @UtilityClass
 final class ControllersV1 {
@@ -66,19 +68,18 @@ final class ControllersV1 {
     return objects.subList(fromIndex, Math.min(fromIndex + perPage, objects.size()));
   }
 
-  static Specification<FacilityEntity> validateBoundingBox(List<BigDecimal> bbox, Specification<FacilityEntity> spec){
+  static FacilityRepository.BoundingBoxSpecification validateBoundingBox(List<BigDecimal> bbox) {
     if (bbox != null && bbox.size() != 4) {
       throw new ExceptionsUtils.InvalidParameter("bbox", bbox);
     }
-    if(bbox == null){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.BoundingBoxSpecification.builder()
+    return bbox == null
+        ? null
+        : FacilityRepository.BoundingBoxSpecification.builder()
             .minLongitude(bbox.get(0).min(bbox.get(2)))
             .maxLongitude(bbox.get(0).max(bbox.get(2)))
             .minLatitude(bbox.get(1).min(bbox.get(3)))
-            .maxLatitude(bbox.get(1).max(bbox.get(3))).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
+            .maxLatitude(bbox.get(1).max(bbox.get(3)))
+            .build();
   }
 
   static FacilityEntity.Type validateFacilityType(String type) {
@@ -89,33 +90,16 @@ final class ControllersV1 {
     return mapped;
   }
 
-  static Specification<FacilityEntity> validateFacilityType(String type, Specification<FacilityEntity> spec){
-    FacilityEntity.Type validatedType = validateFacilityType(type);
-    if(validatedType == null){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.FacilityTypeSpecification.builder().facilityType(validatedType).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
-  }
-
-  static Specification<FacilityEntity> validateIds(String ids, Specification<FacilityEntity> spec) {
+  static FacilityRepository.TypeServicesIdsSpecification validateIds(String ids) {
     List<FacilityEntity.Pk> validIds;
-    try {
-      validIds = FacilityUtils.entityIds(ids);
-    } catch (Exception e) {
-      throw new ExceptionsUtils.InvalidParameter("ids", ids);
-    }
-    if(validIds.isEmpty()){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.TypeServicesIdsSpecification.builder().ids(validIds).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
+
+    validIds = FacilityUtils.entityIds(ids);
+    return validIds.isEmpty()
+        ? null
+        : FacilityRepository.TypeServicesIdsSpecification.builder().ids(validIds).build();
   }
 
-
-
-  static void validateLatLong(
-      BigDecimal latitude, BigDecimal longitude, BigDecimal radius) {
+  static void validateLatLong(BigDecimal latitude, BigDecimal longitude, BigDecimal radius) {
     if (latitude == null && longitude != null) {
       throw new ExceptionsUtils.ParameterInvalidWithoutOthers("longitude", "latitude");
     }
@@ -130,50 +114,18 @@ final class ControllersV1 {
     }
   }
 
-  static Specification<FacilityEntity> validateMobile(Boolean rawMobile, Specification<FacilityEntity> spec){
-    if(rawMobile == null){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.MobileSpecification.builder().mobile(rawMobile).build();
-    //return spec == null ? facilitySpec : spec.and(facilitySpec);
-    var x = spec.and(facilitySpec);
-    return x;
+  static FacilityRepository.MobileSpecification validateMobile(Boolean rawMobile) {
+    return rawMobile == null
+        ? null
+        : FacilityRepository.MobileSpecification.builder().mobile(rawMobile).build();
   }
 
-  static Specification<FacilityEntity> validateServices(Collection<String> rawServices, Specification<FacilityEntity> spec){
+  static FacilityRepository.ServicesSpecification validateRawServices(
+      Collection<String> rawServices) {
     Set<ServiceType> services = validateServices(rawServices);
-    if(services.isEmpty()){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.ServicesSpecification.builder().services(services).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
-  }
-
-  static Specification<FacilityEntity> validateState(String rawState, Specification<FacilityEntity> spec){
-    //Add logic to validate state
-    if(rawState == null){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.StateSpecification.builder().state(rawState).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
-  }
-
-  static Specification<FacilityEntity> validateZip(String zip, Specification<FacilityEntity> spec){
-    //Add logic to validate zip
-    if(zip == null){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.ZipSpecification.builder().zip(zip).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
-  }
-
-  static Specification<FacilityEntity> validateVisn(String visn, Specification<FacilityEntity> spec){
-    //Add logic to validate visn
-    if(visn == null){
-      return spec;
-    }
-    Specification<FacilityEntity> facilitySpec = FacilityRepository.VisnSpecification.builder().visn(visn).build();
-    return spec == null ? facilitySpec : spec.and(facilitySpec);
+    return services.isEmpty()
+        ? null
+        : FacilityRepository.ServicesSpecification.builder().services(services).build();
   }
 
   static Set<ServiceType> validateServices(Collection<String> services) {
@@ -189,5 +141,28 @@ final class ControllersV1 {
       results.add(mapped);
     }
     return ImmutableSet.copyOf(results);
+  }
+
+  static FacilityRepository.StateSpecification validateState(String rawState) {
+    return rawState == null
+        ? null
+        : FacilityRepository.StateSpecification.builder().state(rawState).build();
+  }
+
+  static FacilityRepository.FacilityTypeSpecification validateType(String type) {
+    FacilityEntity.Type validatedType = validateFacilityType(type);
+    return type == null
+        ? null
+        : FacilityRepository.FacilityTypeSpecification.builder()
+            .facilityType(validatedType)
+            .build();
+  }
+
+  static FacilityRepository.VisnSpecification validateVisn(String visn) {
+    return visn == null ? null : FacilityRepository.VisnSpecification.builder().visn(visn).build();
+  }
+
+  static FacilityRepository.ZipSpecification validateZip(String zip) {
+    return zip == null ? null : FacilityRepository.ZipSpecification.builder().zip(zip).build();
   }
 }

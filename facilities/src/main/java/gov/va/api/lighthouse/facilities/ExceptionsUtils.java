@@ -10,9 +10,12 @@ final class ExceptionsUtils {
     }
   }
 
-  static final class ParameterInvalidWithoutOthers extends RuntimeException{
-    ParameterInvalidWithoutOthers(String name, String missing){
-      super(String.format("'%s' cannot be included while the following parameters are null: %s", name, missing));
+  static final class ParameterInvalidWithoutOthers extends RuntimeException {
+    ParameterInvalidWithoutOthers(String name, String missing) {
+      super(
+          String.format(
+              "'%s' cannot be included while the following parameters are null: %s",
+              name, missing));
     }
   }
 

@@ -1,34 +1,37 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.ControllersV1.*;
+import static gov.va.api.lighthouse.facilities.ControllersV1.page;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateBoundingBox;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateFacilityType;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateIds;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateLatLong;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateMobile;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateRawServices;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateState;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateType;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateVisn;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateZip;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.distance;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.haversine;
 import static java.util.stream.Collectors.toList;
 
-import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -126,9 +129,8 @@ public class FacilitiesControllerV1 {
         .collect(toList());
   }
 
-  @SneakyThrows
   private List<DistanceEntity> filterByLatLong(
-          BigDecimal latitude, BigDecimal longitude, BigDecimal rad, List<FacilityEntity> entities) {
+      BigDecimal latitude, BigDecimal longitude, BigDecimal rad, List<FacilityEntity> entities) {
     double lng = longitude.doubleValue();
     double lat = latitude.doubleValue();
     Optional<BigDecimal> radius = Optional.ofNullable(rad);
@@ -165,24 +167,25 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "visn", required = false) String visn,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
-    Specification<FacilityEntity> spec = validateBoundingBox(bbox, null);
-    spec = validateState(state, spec);
-    spec = validateZip(zip, spec);
-    spec = validateFacilityType(rawType, spec);
-    spec = validateIds(ids, spec);
-    spec = validateServices(rawServices, spec);
-    spec = validateMobile(mobile, spec);
-    spec = validateVisn(visn, spec);
     validateLatLong(latitude, longitude, radius);
-    List<FacilityEntity> entities = spec == null ?
-            StreamSupport.stream(facilityRepository.findAll().spliterator(), false).collect(Collectors.toList()) :
-            facilityRepository.findAll(spec);
+    FacilityRepository.FacilitySpecificationHelper spec =
+        FacilityRepository.FacilitySpecificationHelper.builder()
+            .boundingBox(validateBoundingBox(bbox))
+            .state(validateState(state))
+            .zip(validateZip(zip))
+            .facilityType(validateType(rawType))
+            .ids(validateIds(ids))
+            .services(validateRawServices(rawServices))
+            .mobile(validateMobile(mobile))
+            .visn(validateVisn(visn))
+            .build();
+    List<FacilityEntity> entities = facilityRepository.findAll(spec);
     List<FacilitiesResponse.Distance> distances = null;
     if (bbox == null && latitude != null && longitude != null) {
-      List<DistanceEntity> filteredEntities = filterByLatLong(latitude, longitude, radius, entities);
+      List<DistanceEntity> filteredEntities =
+          filterByLatLong(latitude, longitude, radius, entities);
       entities = filteredEntities.stream().map(DistanceEntity::entity).collect(toList());
-      List<DistanceEntity> entitiesPage =
-          page(filteredEntities, page, perPage);
+      List<DistanceEntity> entitiesPage = page(filteredEntities, page, perPage);
       distances =
           entitiesPage.stream()
               .map(
@@ -192,9 +195,9 @@ public class FacilitiesControllerV1 {
                           .distance(e.distance().setScale(2, RoundingMode.HALF_EVEN))
                           .build())
               .collect(toList());
-    }else if (bbox != null && latitude == null && longitude == null) {
+    } else if (bbox != null && latitude == null && longitude == null) {
       entities = filterByBoundingBox(bbox, entities);
-    }else{
+    } else {
       entities.sort(Comparator.comparing(e -> e.id().toIdString()));
     }
     PageLinkerV1 linker =
@@ -220,14 +223,14 @@ public class FacilitiesControllerV1 {
             .build();
 
     return FacilitiesResponse.builder()
-            .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
-            .links(linker.links())
-            .meta(
-                FacilitiesResponse.FacilitiesMetadata.builder()
-                        .pagination(linker.pagination())
-                        .distances(distances)
-                        .build())
-            .build();
+        .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .links(linker.links())
+        .meta(
+            FacilitiesResponse.FacilitiesMetadata.builder()
+                .pagination(linker.pagination())
+                .distances(distances)
+                .build())
+        .build();
   }
 
   /** Read facility. */

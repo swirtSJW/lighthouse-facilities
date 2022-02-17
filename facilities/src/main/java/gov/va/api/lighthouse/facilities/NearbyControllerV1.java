@@ -100,13 +100,11 @@ public class NearbyControllerV1 {
         intersections(longitude, latitude, maybeBands);
     List<FacilityEntity> facilityEntities =
         facilityRepository.findAll(
-                FacilityRepository.StationNumbersSpecification.builder()
-                    .stationNumbers(bandsByStation.keySet())
-                    .build().and(
-                FacilityRepository.FacilityTypeSpecification.builder()
-                    .facilityType(FacilityEntity.Type.vha)
-                    .build()).and(
-                FacilityRepository.ServicesSpecification.builder().services(services).build()));
+            FacilityRepository.StationNumbersSpecification.builder()
+                .stationNumbers(bandsByStation.keySet())
+                .facilityType(FacilityEntity.Type.vha)
+                .services(services)
+                .build());
     return facilityEntities.stream()
         .map(
             e ->
