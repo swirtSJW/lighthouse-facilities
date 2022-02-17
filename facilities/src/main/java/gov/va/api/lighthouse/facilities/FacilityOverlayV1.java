@@ -27,7 +27,7 @@ public class FacilityOverlayV1 implements Function<HasFacilityPayload, Facility>
     } else {
       boolean needToSort = false;
       for (String overlayService : overlayServices) {
-        if ("Covid19Vaccine".equalsIgnoreCase(overlayService)) {
+        if (Facility.HealthService.Covid19Vaccine.name().equalsIgnoreCase(overlayService)) {
           if (facility.attributes().services().health() != null) {
             facility.attributes().services().health().add(Facility.HealthService.Covid19Vaccine);
           } else {
