@@ -61,7 +61,6 @@ public class FacilityOverlayV1Test {
       List<Facility.HealthService> expectedHealthServices,
       FacilityEntity entity) {
     Facility facility = FacilityOverlayV1.builder().build().apply(entity);
-    //    assertThat(facility.attributes().activeStatus()).isEqualTo(expectedActiveStatus);
     assertThat(facility.attributes().operatingStatus()).isEqualTo(expectedOperatingStatus);
     assertThat(facility.attributes().services().health()).isEqualTo(expectedHealthServices);
   }
