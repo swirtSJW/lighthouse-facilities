@@ -15,7 +15,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 
 public class DetailedServicesResponseDeserializer
-    extends BaseDeserializer<DetailedServicesResponse> {
+    extends BaseListDeserializer<DetailedServicesResponse> {
   public DetailedServicesResponseDeserializer() {
     this(null);
   }

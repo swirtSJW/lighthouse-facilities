@@ -21,7 +21,7 @@ import gov.va.api.lighthouse.facilities.api.v0.GeoFacility.Properties;
 import java.util.List;
 import lombok.SneakyThrows;
 
-public class GeoFacilityPropertiesDeserializer extends BaseDeserializer<Properties> {
+public class GeoFacilityPropertiesDeserializer extends BaseListDeserializer<Properties> {
   public GeoFacilityPropertiesDeserializer() {
     this(null);
   }

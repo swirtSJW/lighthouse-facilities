@@ -13,7 +13,7 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import java.util.List;
 import lombok.SneakyThrows;
 
-public class CmsOverlayDeserializer extends BaseDeserializer<CmsOverlay> {
+public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
   public CmsOverlayDeserializer() {
     this(null);
   }

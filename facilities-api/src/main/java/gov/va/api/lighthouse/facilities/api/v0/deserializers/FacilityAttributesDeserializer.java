@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import lombok.SneakyThrows;
 
-public class FacilityAttributesDeserializer extends BaseDeserializer<FacilityAttributes> {
+public class FacilityAttributesDeserializer extends BaseListDeserializer<FacilityAttributes> {
   public FacilityAttributesDeserializer() {
     this(null);
   }

@@ -11,12 +11,12 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class BaseDeserializer<T> extends StdDeserializer<T> {
-  public BaseDeserializer() {
+public abstract class BaseListDeserializer<T> extends StdDeserializer<T> {
+  public BaseListDeserializer() {
     this(null);
   }
 
-  public BaseDeserializer(Class<T> t) {
+  public BaseListDeserializer(Class<T> t) {
     super(t);
   }
 

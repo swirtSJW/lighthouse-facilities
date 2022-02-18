@@ -1,14 +1,12 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.INVALID_SVC_ID;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Addresses;
@@ -22,10 +20,9 @@ import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
 import gov.va.api.lighthouse.facilities.DatamartFacility.WaitTimes;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
-public class DatamartFacilityAttributesDeserializer extends StdDeserializer<FacilityAttributes> {
+public class DatamartFacilityAttributesDeserializer extends BaseListDeserializer<FacilityAttributes> {
   public DatamartFacilityAttributesDeserializer() {
     this(null);
   }
@@ -121,16 +118,5 @@ public class DatamartFacilityAttributesDeserializer extends StdDeserializer<Faci
                 : null)
         .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
         .build();
-  }
-
-  private List<DatamartDetailedService> filterOutInvalidDetailedServices(
-      List<DatamartDetailedService> detailedServices) {
-    if (detailedServices != null) {
-      // Filter out detailed services containing unrecognized service id
-      return detailedServices.stream()
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
-          .collect(Collectors.toList());
-    }
-    return null;
   }
 }
