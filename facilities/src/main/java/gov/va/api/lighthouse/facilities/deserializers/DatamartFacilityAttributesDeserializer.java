@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import lombok.SneakyThrows;
 
-public class DatamartFacilityAttributesDeserializer extends BaseListDeserializer<FacilityAttributes> {
+public class DatamartFacilityAttributesDeserializer
+    extends BaseListDeserializer<FacilityAttributes> {
   public DatamartFacilityAttributesDeserializer() {
     this(null);
   }

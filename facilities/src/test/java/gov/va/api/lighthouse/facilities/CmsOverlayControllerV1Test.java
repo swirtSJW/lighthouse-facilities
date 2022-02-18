@@ -81,7 +81,7 @@ public class CmsOverlayControllerV1Test {
   }
 
   private DatamartDetailedService getDatamartDetailedService(
-      HealthService healthService, boolean isActive) {
+      @NonNull HealthService healthService, boolean isActive) {
     return DatamartDetailedService.builder()
         .name(
             HealthService.Covid19Vaccine.equals(healthService)
@@ -149,7 +149,7 @@ public class CmsOverlayControllerV1Test {
   }
 
   private List<DatamartDetailedService> getDatamartDetailedServices(
-      List<HealthService> healthServices, boolean isActive) {
+      @NonNull List<HealthService> healthServices, boolean isActive) {
     return healthServices.stream()
         .map(
             hs -> {
