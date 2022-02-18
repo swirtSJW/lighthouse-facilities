@@ -161,7 +161,7 @@ public class FacilitiesControllerV1 {
       @RequestParam(value = "lat", required = false) BigDecimal latitude,
       @RequestParam(value = "long", required = false) BigDecimal longitude,
       @RequestParam(value = "radius", required = false) BigDecimal radius,
-      @RequestParam(value = "ids", required = false) String ids,
+      @RequestParam(value = "facilityIds", required = false) String ids,
       @RequestParam(value = "services[]", required = false) List<String> rawServices,
       @RequestParam(value = "mobile", required = false) Boolean mobile,
       @RequestParam(value = "visn", required = false) String visn,
