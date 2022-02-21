@@ -557,6 +557,7 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                         FacilityTransformerV0.toVersionAgnostic(facility)))))
         .usingRecursiveComparison()
         .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.activeStatus")
         .isEqualTo(facility);
   }
 
@@ -597,6 +598,7 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                         FacilityTransformerV0.toVersionAgnostic(facilityWithSpecialtyCare)))))
         .usingRecursiveComparison()
         .ignoringFields("attributes.detailedServices")
+        .ignoringFields("attributes.activeStatus")
         .isEqualTo(facilityWithoutSpecialtyCare);
     DatamartFacility facilityWithMoreThanJustCovid =
         datamartFacility(
