@@ -633,6 +633,7 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
             FacilityTransformerV1.toVersionAgnostic(
                 FacilityTransformerV1.toFacility(facilityWithMoreThanJustCovid)))
         .usingRecursiveComparison()
+        .ignoringFields("attributes.activeStatus")
         .isEqualTo(facilityWithNoDetailedServices);
     // V0 Facilities still contain detailed services in their facility attributes
     assertThat(
