@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -29,8 +31,10 @@ public class DatamartCmsOverlayDeserializer extends BaseListDeserializer<Datamar
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
-    JsonNode operatingStatusNode = node.get("operating_status");
-    JsonNode detailedServicesNode = node.get("detailed_services");
+
+    // Read values using snake_case or camelCase representations
+    JsonNode operatingStatusNode = getOpertingStatus(node);
+    JsonNode detailedServicesNode = getDetailedServices(node);
 
     TypeReference<List<DatamartDetailedService>> detailedServicesRef = new TypeReference<>() {};
 

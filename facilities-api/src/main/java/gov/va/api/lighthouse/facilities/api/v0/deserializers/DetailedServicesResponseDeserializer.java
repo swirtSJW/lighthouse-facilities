@@ -31,6 +31,8 @@ public class DetailedServicesResponseDeserializer
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
+
+    // Read values using snake_case or camelCase representations
     JsonNode dataNode = node.get("data");
     JsonNode linksNode = node.get("links");
     JsonNode metaNode = node.get("meta");
@@ -39,11 +41,10 @@ public class DetailedServicesResponseDeserializer
 
     return DetailedServicesResponse.builder()
         .data(
-            filterOutNonCovid19DetailedServices(
-                dataNode != null
-                    ? filterOutInvalidDetailedServices(
-                        createMapper().convertValue(dataNode, detailedServicesRef))
-                    : null))
+            dataNode != null
+                ? filterOutInvalidDetailedServices(
+                    createMapper().convertValue(dataNode, detailedServicesRef))
+                : null)
         .links(linksNode != null ? createMapper().convertValue(linksNode, PageLinks.class) : null)
         .meta(
             metaNode != null

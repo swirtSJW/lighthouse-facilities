@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -29,8 +31,10 @@ public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
-    JsonNode operatingStatusNode = node.get("operating_status");
-    JsonNode detailedServicesNode = node.get("detailed_services");
+
+    // Read values using snake_case or camelCase representations
+    JsonNode operatingStatusNode = getOpertingStatus(node);
+    JsonNode detailedServicesNode = getDetailedServices(node);
 
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
 
@@ -40,11 +44,10 @@ public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
                 ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
-            filterOutNonCovid19DetailedServices(
-                detailedServicesNode != null
-                    ? filterOutInvalidDetailedServices(
-                        createMapper().convertValue(detailedServicesNode, detailedServicesRef))
-                    : null))
+            detailedServicesNode != null
+                ? filterOutInvalidDetailedServices(
+                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                : null)
         .build();
   }
 }

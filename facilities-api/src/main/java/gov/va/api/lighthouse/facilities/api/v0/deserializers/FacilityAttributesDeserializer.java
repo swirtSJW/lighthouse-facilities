@@ -1,6 +1,13 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getActiveStatus;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityType;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOperationalHoursSpecialInstructions;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getTimeZone;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWaitTimes;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -39,25 +46,25 @@ public class FacilityAttributesDeserializer extends BaseListDeserializer<Facilit
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
 
+    // Read values using snake_case or camelCase representations
     JsonNode nameNode = node.get("name");
-    JsonNode facilityTypeNode = node.get("facility_type");
+    JsonNode facilityTypeNode = getFacilityType(node);
     JsonNode classificationNode = node.get("classification");
     JsonNode websiteNode = node.get("website");
     JsonNode latitudeNode = node.get("lat");
     JsonNode longitudeNode = node.get("long");
-    JsonNode timeZoneNode = node.get("time_zone");
+    JsonNode timeZoneNode = getTimeZone(node);
     JsonNode addressNode = node.get("address");
     JsonNode phoneNode = node.get("phone");
     JsonNode hoursNode = node.get("hours");
-    JsonNode operationalHoursSpecialInstructionsNode =
-        node.get("operational_hours_special_instructions");
+    JsonNode operationalHoursSpecialInstructionsNode = getOperationalHoursSpecialInstructions(node);
     JsonNode servicesNode = node.get("services");
     JsonNode satisfactionNode = node.get("satisfaction");
-    JsonNode waitTimesNode = node.get("wait_times");
+    JsonNode waitTimesNode = getWaitTimes(node);
     JsonNode mobileNode = node.get("mobile");
-    JsonNode activeStatusNode = node.get("active_status");
-    JsonNode operatingStatusNode = node.get("operating_status");
-    JsonNode detailedServicesNode = node.get("detailed_services");
+    JsonNode activeStatusNode = getActiveStatus(node);
+    JsonNode operatingStatusNode = getOpertingStatus(node);
+    JsonNode detailedServicesNode = getDetailedServices(node);
     JsonNode visnNode = node.get("visn");
 
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
@@ -112,11 +119,10 @@ public class FacilityAttributesDeserializer extends BaseListDeserializer<Facilit
                 ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
-            filterOutNonCovid19DetailedServices(
-                detailedServicesNode != null
-                    ? filterOutInvalidDetailedServices(
-                        createMapper().convertValue(detailedServicesNode, detailedServicesRef))
-                    : null))
+            detailedServicesNode != null
+                ? filterOutInvalidDetailedServices(
+                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                : null)
         .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
         .build();
   }

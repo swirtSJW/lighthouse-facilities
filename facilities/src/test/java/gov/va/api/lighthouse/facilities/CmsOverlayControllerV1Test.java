@@ -73,9 +73,7 @@ public class CmsOverlayControllerV1Test {
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
     when(mockFacilityRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
-    assertThatThrownBy(
-            () ->
-                controller().saveOverlay(id, CmsOverlayTransformerV1.toCmsOverlay(activeOverlay())))
+    assertThatThrownBy(() -> controller().saveOverlay(id, activeOverlay()))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
   }
@@ -362,8 +360,7 @@ public class CmsOverlayControllerV1Test {
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = activeOverlay();
-    ResponseEntity<Void> response =
-        controller().saveOverlay("vha_402", CmsOverlayTransformerV1.toCmsOverlay(overlay));
+    ResponseEntity<Void> response = controller().saveOverlay("vha_402", overlay);
     Set<String> detailedServices = new HashSet<>();
     for (DatamartDetailedService service : overlay.detailedServices()) {
       if (service.active()) {
@@ -409,8 +406,7 @@ public class CmsOverlayControllerV1Test {
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = activeOverlay();
-    ResponseEntity<Void> response =
-        controller().saveOverlay("vha_402", CmsOverlayTransformerV1.toCmsOverlay(overlay));
+    ResponseEntity<Void> response = controller().saveOverlay("vha_402", overlay);
     Set<String> detailedServices = new HashSet<>();
     for (DatamartDetailedService service : overlay.detailedServices()) {
       if (service.active()) {
@@ -446,8 +442,7 @@ public class CmsOverlayControllerV1Test {
   void updateIsSkippedForUnknownStation() {
     var pk = FacilityEntity.Pk.fromIdString("vha_666");
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.empty());
-    ResponseEntity<Void> response =
-        controller().saveOverlay("vha_666", CmsOverlayTransformerV1.toCmsOverlay(activeOverlay()));
+    ResponseEntity<Void> response = controller().saveOverlay("vha_666", activeOverlay());
     verifyNoMoreInteractions(mockFacilityRepository);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
   }
@@ -481,8 +476,7 @@ public class CmsOverlayControllerV1Test {
                 .active(true)
                 .build());
     overlay.detailedServices(additionalServices);
-    ResponseEntity<Void> resp =
-        controller().saveOverlay("vha_402", CmsOverlayTransformerV1.toCmsOverlay(overlay));
+    ResponseEntity<Void> resp = controller().saveOverlay("vha_402", overlay);
     assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.ACCEPTED);
     DatamartCmsOverlay updatedCovidPathOverlay = activeOverlay();
     List<DatamartDetailedService> datamartDetailedServices =
@@ -530,8 +524,8 @@ public class CmsOverlayControllerV1Test {
         assertThat(d.path()).isEqualTo("replaceable path here");
       }
     }
+    ResponseEntity<Void> response = controller().saveOverlay("vha_402", overlay);
     CmsOverlay cmsOverlay = CmsOverlayTransformerV1.toCmsOverlay(overlay);
-    ResponseEntity<Void> response = controller().saveOverlay("vha_402", cmsOverlay);
     assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     for (DetailedService d : cmsOverlay.detailedServices()) {
       if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {

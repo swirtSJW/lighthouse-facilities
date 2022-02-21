@@ -31,6 +31,8 @@ public class DetailedServicesResponseDeserializer
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
+
+    // Read values using snake_case or camelCase representations
     JsonNode dataNode = node.get("data");
     JsonNode linksNode = node.get("links");
     JsonNode metaNode = node.get("meta");

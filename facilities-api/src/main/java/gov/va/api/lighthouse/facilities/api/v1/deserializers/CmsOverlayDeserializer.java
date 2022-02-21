@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -29,8 +31,10 @@ public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
-    JsonNode operatingStatusNode = node.get("operatingStatus");
-    JsonNode detailedServicesNode = node.get("detailedServices");
+
+    // Read values using snake_case or camelCase representations
+    JsonNode operatingStatusNode = getOpertingStatus(node);
+    JsonNode detailedServicesNode = getDetailedServices(node);
 
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
 

@@ -221,19 +221,27 @@ public final class FacilityTransformerV1 extends BaseVersionedTransformer {
   /** Transform DatamartFacility health service to version 1 facility health service. */
   private static Facility.HealthService transformFacilityHealthService(
       @NonNull DatamartFacility.HealthService datamartFacilityHealthService) {
-    return containsValueOfName(
-            Facility.HealthService.values(), datamartFacilityHealthService.name())
-        ? Facility.HealthService.valueOf(datamartFacilityHealthService.name())
-        : null;
+    return datamartFacilityHealthService.equals(DatamartFacility.HealthService.MentalHealthCare)
+        ? Facility.HealthService.MentalHealth
+        : datamartFacilityHealthService.equals(DatamartFacility.HealthService.DentalServices)
+            ? Facility.HealthService.Dental
+            : containsValueOfName(
+                    Facility.HealthService.values(), datamartFacilityHealthService.name())
+                ? Facility.HealthService.valueOf(datamartFacilityHealthService.name())
+                : null;
   }
 
   /** Transform version 1 facility health service to DatamartFacility health service. */
   private static DatamartFacility.HealthService transformFacilityHealthService(
       @NonNull Facility.HealthService facilityHealthService) {
-    return containsValueOfName(
-            DatamartFacility.HealthService.values(), facilityHealthService.name())
-        ? DatamartFacility.HealthService.valueOf(facilityHealthService.name())
-        : null;
+    return facilityHealthService.equals(Facility.HealthService.MentalHealth)
+        ? DatamartFacility.HealthService.MentalHealth
+        : facilityHealthService.equals(Facility.HealthService.Dental)
+            ? DatamartFacility.HealthService.Dental
+            : containsValueOfName(
+                    DatamartFacility.HealthService.values(), facilityHealthService.name())
+                ? DatamartFacility.HealthService.valueOf(facilityHealthService.name())
+                : null;
   }
 
   /** Transform DatamartFacility hours to version 1 facility hours. */

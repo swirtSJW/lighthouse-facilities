@@ -30,7 +30,17 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeBenefitsCmsOverlay() {
     // All non-Covid-19 detailed services are filtered out for V0
-    CmsOverlay overlay = CmsOverlay.builder().detailedServices(emptyList()).build();
+    CmsOverlay overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\"}" + "]}", CmsOverlay.class, overlay);
     assertJson(
@@ -99,7 +109,16 @@ public class DeserializerTest {
   void deserializeBenefitsDetailedServicesResponse() {
     // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
-        DetailedServicesResponse.builder().data(emptyList()).build();
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"Pensions\"}" + "]}", DetailedServicesResponse.class, response);
     assertJson(
@@ -135,7 +154,16 @@ public class DeserializerTest {
   void deserializeBenefitsFacilityAttributes() {
     // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
-        FacilityAttributes.builder().detailedServices(emptyList()).build();
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\"}" + "]}",
         FacilityAttributes.class,
@@ -172,7 +200,17 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeBenefitsGeoFacilityProperties() {
     // All non-Covid-19 detailed services are filtered out for V0
-    Properties properties = Properties.builder().detailedServices(emptyList()).build();
+    Properties properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\"}" + "]}",
         Properties.class,
@@ -255,6 +293,12 @@ public class DeserializerTest {
         CmsOverlay.builder()
             .detailedServices(
                 List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
@@ -373,6 +417,12 @@ public class DeserializerTest {
             .data(
                 List.of(
                     DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
                         .phoneNumbers(emptyList())
@@ -490,6 +540,12 @@ public class DeserializerTest {
             .detailedServices(
                 List.of(
                     DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
                         .phoneNumbers(emptyList())
@@ -606,6 +662,12 @@ public class DeserializerTest {
             .detailedServices(
                 List.of(
                     DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
                         .phoneNumbers(emptyList())
@@ -675,7 +737,17 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeHealthCmsOverlay() {
     // All non-Covid-19 detailed services are filtered out for V0
-    CmsOverlay overlay = CmsOverlay.builder().detailedServices(emptyList()).build();
+    CmsOverlay overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"DentalServices\"}" + "]}",
         CmsOverlay.class,
@@ -796,7 +868,16 @@ public class DeserializerTest {
   void deserializeHealthDetailedServicesResponse() {
     // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
-        DetailedServicesResponse.builder().data(emptyList()).build();
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"DentalServices\"}" + "]}",
         DetailedServicesResponse.class,
@@ -876,7 +957,16 @@ public class DeserializerTest {
   void deserializeHealthFacilityAttributes() {
     // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
-        FacilityAttributes.builder().detailedServices(emptyList()).build();
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"DentalServices\"}" + "]}",
         FacilityAttributes.class,
@@ -963,7 +1053,17 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeHealthGeoFacilityProperties() {
     // All non-Covid-19 detailed services are filtered out for V0
-    Properties properties = Properties.builder().detailedServices(emptyList()).build();
+    Properties properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"DentalServices\"}" + "]}",
         Properties.class,
@@ -1078,7 +1178,17 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeOtherCmsOverlay() {
     // All non-Covid-19 detailed services are filtered out for V0
-    CmsOverlay overlay = CmsOverlay.builder().detailedServices(emptyList()).build();
+    CmsOverlay overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"OnlineScheduling\"}" + "]}",
         CmsOverlay.class,
@@ -1153,7 +1263,16 @@ public class DeserializerTest {
   void deserializeOtherDetailedServicesResponse() {
     // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
-        DetailedServicesResponse.builder().data(emptyList()).build();
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"OnlineScheduling\"}" + "]}",
         DetailedServicesResponse.class,
@@ -1191,7 +1310,16 @@ public class DeserializerTest {
   void deserializeOtherFacilityAttributes() {
     // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
-        FacilityAttributes.builder().detailedServices(emptyList()).build();
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"OnlineScheduling\"}" + "]}",
         FacilityAttributes.class,
@@ -1232,7 +1360,17 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeOtherGeoFacilityProperties() {
     // All non-Covid-19 detailed services are filtered out for V0
-    Properties properties = Properties.builder().detailedServices(emptyList()).build();
+    Properties properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"OnlineScheduling\"}" + "]}",
         Properties.class,
