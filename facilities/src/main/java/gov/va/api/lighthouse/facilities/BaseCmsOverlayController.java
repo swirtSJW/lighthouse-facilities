@@ -38,7 +38,7 @@ public abstract class BaseCmsOverlayController {
     finalDetailedServices.addAll(
         ds.parallelStream().filter(d -> d.active()).collect(Collectors.toList()));
     updateServiceUrlPaths(id, finalDetailedServices);
-    finalDetailedServices.sort(Comparator.comparing(DatamartDetailedService::name));
+    finalDetailedServices.sort(Comparator.comparing(DatamartDetailedService::serviceId));
     return finalDetailedServices;
   }
 
@@ -50,7 +50,7 @@ public abstract class BaseCmsOverlayController {
           detailedServices.parallelStream().filter(d -> d.active()).collect(Collectors.toList()));
     }
     updateServiceUrlPaths(id, activeServices);
-    activeServices.sort(Comparator.comparing(DatamartDetailedService::name));
+    activeServices.sort(Comparator.comparing(DatamartDetailedService::serviceId));
     return activeServices;
   }
 
@@ -61,7 +61,7 @@ public abstract class BaseCmsOverlayController {
       @NonNull String facilityId, @NonNull String serviceId) {
     List<DatamartDetailedService> detailedServices =
         getOverlayDetailedServices(facilityId).parallelStream()
-            .filter(ds -> ds.name().equalsIgnoreCase(serviceId))
+            .filter(ds -> ds.serviceId().equals(serviceId))
             .collect(Collectors.toList());
     return detailedServices.isEmpty() ? null : detailedServices.get(0);
   }

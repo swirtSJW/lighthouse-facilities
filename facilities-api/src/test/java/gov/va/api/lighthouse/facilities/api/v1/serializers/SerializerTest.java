@@ -128,11 +128,17 @@ public class SerializerTest {
   @SneakyThrows
   void serializeDetailedService() {
     // Not empty
-    DetailedService detailedService = DetailedService.builder().serviceId("test").build();
-    assertJson(detailedService, "{\"serviceId\":\"test\"}");
+    DetailedService detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+            .build();
+    assertJson(detailedService, "{\"serviceId\":\"cardiology\"}");
     detailedService =
-        DetailedService.builder().serviceId("test").serviceLocations(emptyList()).build();
-    assertJson(detailedService, "{\"serviceId\":\"test\"}");
+        DetailedService.builder()
+            .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+            .serviceLocations(emptyList())
+            .build();
+    assertJson(detailedService, "{\"serviceId\":\"cardiology\"}");
     detailedService =
         DetailedService.builder()
             .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
@@ -232,9 +238,12 @@ public class SerializerTest {
     // Not empty
     response =
         DetailedServiceResponse.builder()
-            .data(DetailedService.builder().serviceId("test").build())
+            .data(
+                DetailedService.builder()
+                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .build())
             .build();
-    assertJson(response, "{\"data\":{\"serviceId\":\"test\"}}");
+    assertJson(response, "{\"data\":{\"serviceId\":\"cardiology\"}}");
     response =
         DetailedServiceResponse.builder()
             .data(
