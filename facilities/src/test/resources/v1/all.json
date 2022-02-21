@@ -40,7 +40,6 @@
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -82,7 +81,6 @@
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -125,7 +123,6 @@
           "If you need to talk to someone or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS (1-877-927-8387)."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -167,7 +164,6 @@
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -209,7 +205,6 @@
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -253,7 +248,6 @@
           "If you need to talk to someone or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS (1-877-927-8387)."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -295,7 +289,6 @@
           "If you need to talk to someone or get advice right away, call the Vet Center anytime at 1-877-WAR-VETS (1-877-927-8387)."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -337,7 +330,6 @@
           "More hours are available for some services. To learn more, call our main phone number."
         ],
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -426,7 +418,6 @@
           "effectiveDate" : "2020-03-09"
         },
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
@@ -497,7 +488,6 @@
           "effectiveDate" : "2020-03-09"
         },
         "mobile" : false,
-        "activeStatus" : "A",
         "operatingStatus" : {
           "code" : "NORMAL"
         },
