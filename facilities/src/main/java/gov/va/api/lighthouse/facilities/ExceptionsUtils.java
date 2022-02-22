@@ -16,7 +16,7 @@ final class ExceptionsUtils {
       super(
           String.format(
               "'%s' cannot be included while the following parameters are null: %s",
-              name, String.join(",", missing)));
+              name, String.join(", ", missing)));
     }
   }
 

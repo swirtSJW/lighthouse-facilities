@@ -91,7 +91,7 @@ final class ControllersV1 {
     }
     if (latitude == null && longitude == null && radius != null) {
       throw new ExceptionsUtils.ParameterInvalidWithoutOthers(
-          "radius", List.of("latitude, longitude"));
+          "radius", List.of("latitude", "longitude"));
     }
     if (radius != null && radius.compareTo(BigDecimal.ZERO) < 0) {
       throw new ExceptionsUtils.InvalidParameter("radius", radius);
