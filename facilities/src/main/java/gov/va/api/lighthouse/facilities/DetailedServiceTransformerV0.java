@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
+
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import java.util.ArrayList;
@@ -83,6 +85,11 @@ public class DetailedServiceTransformerV0 {
         : !detailedServices.isEmpty()
             ? detailedServices.stream()
                 .map(DetailedServiceTransformerV0::toDetailedService)
+                .filter(
+                    ds ->
+                        ds.serviceId()
+                            .equals(
+                                uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name())))
                 .collect(Collectors.toList())
             : new ArrayList<>();
   }
