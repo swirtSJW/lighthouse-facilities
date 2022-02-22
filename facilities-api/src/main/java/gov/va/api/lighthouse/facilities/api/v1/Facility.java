@@ -249,7 +249,7 @@ public final class Facility implements CanBeEmpty {
     Smoking,
     @JsonProperty("socialWork")
     SocialWork,
-    @JsonProperty("specialtyCare")
+    // SpecialtyCare is a V0 holdover. V1 contains specific instances of its specialized care.
     SpecialtyCare,
     @JsonProperty("spinalInjury")
     SpinalInjury,
