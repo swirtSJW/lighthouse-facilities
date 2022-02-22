@@ -919,7 +919,8 @@ public class FacilitiesControllerV1Test {
                     1,
                     10))
         .isInstanceOf(InvocationTargetException.class)
-        .hasCause(new ExceptionsUtils.ParameterInvalidWithoutOthers("latitude", "longitude"));
+        .hasCause(
+            new ExceptionsUtils.ParameterInvalidWithoutOthers("latitude", List.of("longitude")));
     assertThatThrownBy(
             () ->
                 jsonFacilities.invoke(
@@ -938,7 +939,8 @@ public class FacilitiesControllerV1Test {
                     1,
                     10))
         .isInstanceOf(InvocationTargetException.class)
-        .hasCause(new ExceptionsUtils.ParameterInvalidWithoutOthers("longitude", "latitude"));
+        .hasCause(
+            new ExceptionsUtils.ParameterInvalidWithoutOthers("longitude", List.of("latitude")));
     assertThatThrownBy(
             () ->
                 jsonFacilities.invoke(
@@ -958,7 +960,8 @@ public class FacilitiesControllerV1Test {
                     10))
         .isInstanceOf(InvocationTargetException.class)
         .hasCause(
-            new ExceptionsUtils.ParameterInvalidWithoutOthers("radius", "latitude, longitude"));
+            new ExceptionsUtils.ParameterInvalidWithoutOthers(
+                "radius", List.of("latitude, longitude")));
   }
 
   @Test

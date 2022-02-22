@@ -68,18 +68,10 @@ final class ControllersV1 {
     return objects.subList(fromIndex, Math.min(fromIndex + perPage, objects.size()));
   }
 
-  static FacilityRepository.BoundingBoxSpecification validateBoundingBox(List<BigDecimal> bbox) {
+  static void validateBoundingBox(List<BigDecimal> bbox) {
     if (bbox != null && bbox.size() != 4) {
       throw new ExceptionsUtils.InvalidParameter("bbox", bbox);
     }
-    return bbox == null
-        ? null
-        : FacilityRepository.BoundingBoxSpecification.builder()
-            .minLongitude(bbox.get(0).min(bbox.get(2)))
-            .maxLongitude(bbox.get(0).max(bbox.get(2)))
-            .minLatitude(bbox.get(1).min(bbox.get(3)))
-            .maxLatitude(bbox.get(1).max(bbox.get(3)))
-            .build();
   }
 
   static FacilityEntity.Type validateFacilityType(String type) {
@@ -90,42 +82,20 @@ final class ControllersV1 {
     return mapped;
   }
 
-  static FacilityRepository.TypeServicesIdsSpecification validateIds(String ids) {
-    List<FacilityEntity.Pk> validIds;
-
-    validIds = FacilityUtils.entityIds(ids);
-    return validIds.isEmpty()
-        ? null
-        : FacilityRepository.TypeServicesIdsSpecification.builder().ids(validIds).build();
-  }
-
   static void validateLatLong(BigDecimal latitude, BigDecimal longitude, BigDecimal radius) {
     if (latitude == null && longitude != null) {
-      throw new ExceptionsUtils.ParameterInvalidWithoutOthers("longitude", "latitude");
+      throw new ExceptionsUtils.ParameterInvalidWithoutOthers("longitude", List.of("latitude"));
     }
     if (longitude == null && latitude != null) {
-      throw new ExceptionsUtils.ParameterInvalidWithoutOthers("latitude", "longitude");
+      throw new ExceptionsUtils.ParameterInvalidWithoutOthers("latitude", List.of("longitude"));
     }
     if (latitude == null && longitude == null && radius != null) {
-      throw new ExceptionsUtils.ParameterInvalidWithoutOthers("radius", "latitude, longitude");
+      throw new ExceptionsUtils.ParameterInvalidWithoutOthers(
+          "radius", List.of("latitude, longitude"));
     }
     if (radius != null && radius.compareTo(BigDecimal.ZERO) < 0) {
       throw new ExceptionsUtils.InvalidParameter("radius", radius);
     }
-  }
-
-  static FacilityRepository.MobileSpecification validateMobile(Boolean rawMobile) {
-    return rawMobile == null
-        ? null
-        : FacilityRepository.MobileSpecification.builder().mobile(rawMobile).build();
-  }
-
-  static FacilityRepository.ServicesSpecification validateRawServices(
-      Collection<String> rawServices) {
-    Set<ServiceType> services = validateServices(rawServices);
-    return services.isEmpty()
-        ? null
-        : FacilityRepository.ServicesSpecification.builder().services(services).build();
   }
 
   static Set<ServiceType> validateServices(Collection<String> services) {
@@ -141,28 +111,5 @@ final class ControllersV1 {
       results.add(mapped);
     }
     return ImmutableSet.copyOf(results);
-  }
-
-  static FacilityRepository.StateSpecification validateState(String rawState) {
-    return rawState == null
-        ? null
-        : FacilityRepository.StateSpecification.builder().state(rawState).build();
-  }
-
-  static FacilityRepository.FacilityTypeSpecification validateType(String type) {
-    FacilityEntity.Type validatedType = validateFacilityType(type);
-    return type == null
-        ? null
-        : FacilityRepository.FacilityTypeSpecification.builder()
-            .facilityType(validatedType)
-            .build();
-  }
-
-  static FacilityRepository.VisnSpecification validateVisn(String visn) {
-    return visn == null ? null : FacilityRepository.VisnSpecification.builder().visn(visn).build();
-  }
-
-  static FacilityRepository.ZipSpecification validateZip(String zip) {
-    return zip == null ? null : FacilityRepository.ZipSpecification.builder().zip(zip).build();
   }
 }

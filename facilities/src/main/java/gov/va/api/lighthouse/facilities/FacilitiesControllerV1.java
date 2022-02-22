@@ -3,27 +3,24 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.ControllersV1.page;
 import static gov.va.api.lighthouse.facilities.ControllersV1.validateBoundingBox;
 import static gov.va.api.lighthouse.facilities.ControllersV1.validateFacilityType;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateIds;
 import static gov.va.api.lighthouse.facilities.ControllersV1.validateLatLong;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateMobile;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateRawServices;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateState;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateType;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateVisn;
-import static gov.va.api.lighthouse.facilities.ControllersV1.validateZip;
+import static gov.va.api.lighthouse.facilities.ControllersV1.validateServices;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.distance;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.haversine;
 import static java.util.stream.Collectors.toList;
 
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
@@ -64,6 +61,63 @@ public class FacilitiesControllerV1 {
   @SneakyThrows
   private static Facility facility(HasFacilityPayload entity) {
     return FACILITY_OVERLAY.apply(entity);
+  }
+
+  private static FacilityRepository.BoundingBoxSpecification getBoundingBoxSpec(
+      List<BigDecimal> bbox) {
+    validateBoundingBox(bbox);
+    return bbox == null
+        ? null
+        : FacilityRepository.BoundingBoxSpecification.builder()
+            .minLongitude(bbox.get(0).min(bbox.get(2)))
+            .maxLongitude(bbox.get(0).max(bbox.get(2)))
+            .minLatitude(bbox.get(1).min(bbox.get(3)))
+            .maxLatitude(bbox.get(1).max(bbox.get(3)))
+            .build();
+  }
+
+  static FacilityRepository.FacilityTypeSpecification getFacilityTypeSpec(String type) {
+    FacilityEntity.Type validatedType = validateFacilityType(type);
+    return type == null
+        ? null
+        : FacilityRepository.FacilityTypeSpecification.builder()
+            .facilityType(validatedType)
+            .build();
+  }
+
+  private static FacilityRepository.TypeServicesIdsSpecification getIdsSpec(String ids) {
+    List<FacilityEntity.Pk> validIds;
+    validIds = FacilityUtils.entityIds(ids);
+    return validIds.isEmpty()
+        ? null
+        : FacilityRepository.TypeServicesIdsSpecification.builder().ids(validIds).build();
+  }
+
+  static FacilityRepository.MobileSpecification getMobileSpec(Boolean mobile) {
+    return mobile == null
+        ? null
+        : FacilityRepository.MobileSpecification.builder().mobile(mobile).build();
+  }
+
+  static FacilityRepository.ServicesSpecification getServicesSpec(Collection<String> rawServices) {
+    Set<ServiceType> services = validateServices(rawServices);
+    return services.isEmpty()
+        ? null
+        : FacilityRepository.ServicesSpecification.builder().services(services).build();
+  }
+
+  static FacilityRepository.StateSpecification getStateSpec(String state) {
+    return state == null
+        ? null
+        : FacilityRepository.StateSpecification.builder().state(state).build();
+  }
+
+  static FacilityRepository.VisnSpecification getVisnSpec(String visn) {
+    return visn == null ? null : FacilityRepository.VisnSpecification.builder().visn(visn).build();
+  }
+
+  static FacilityRepository.ZipSpecification getZipSpec(String zip) {
+    return zip == null ? null : FacilityRepository.ZipSpecification.builder().zip(zip).build();
   }
 
   /** Get all facilities as CSV. */
@@ -170,14 +224,14 @@ public class FacilitiesControllerV1 {
     validateLatLong(latitude, longitude, radius);
     FacilityRepository.FacilitySpecificationHelper spec =
         FacilityRepository.FacilitySpecificationHelper.builder()
-            .boundingBox(validateBoundingBox(bbox))
-            .state(validateState(state))
-            .zip(validateZip(zip))
-            .facilityType(validateType(rawType))
-            .ids(validateIds(ids))
-            .services(validateRawServices(rawServices))
-            .mobile(validateMobile(mobile))
-            .visn(validateVisn(visn))
+            .boundingBox(getBoundingBoxSpec(bbox))
+            .state(getStateSpec(state))
+            .zip(getZipSpec(zip))
+            .facilityType(getFacilityTypeSpec(rawType))
+            .ids(getIdsSpec(ids))
+            .services(getServicesSpec(rawServices))
+            .mobile(getMobileSpec(mobile))
+            .visn(getVisnSpec(visn))
             .build();
     List<FacilityEntity> entities = facilityRepository.findAll(spec);
     List<FacilitiesResponse.Distance> distances = null;
@@ -221,7 +275,6 @@ public class FacilitiesControllerV1 {
                     .build())
             .totalEntries(entities.size())
             .build();
-
     return FacilitiesResponse.builder()
         .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
         .links(linker.links())

@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
+import java.util.List;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -11,11 +12,11 @@ final class ExceptionsUtils {
   }
 
   static final class ParameterInvalidWithoutOthers extends RuntimeException {
-    ParameterInvalidWithoutOthers(String name, String missing) {
+    ParameterInvalidWithoutOthers(String name, List<String> missing) {
       super(
           String.format(
               "'%s' cannot be included while the following parameters are null: %s",
-              name, missing));
+              name, String.join(",", missing)));
     }
   }
 
