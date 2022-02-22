@@ -319,7 +319,7 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   public void getDetailedServicesWithEmptyServiceIdAndServiceType() {
-    DatamartCmsOverlay overlay = overlay();
+    DatamartCmsOverlay overlay = activeOverlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
     var page = 1;
@@ -345,10 +345,12 @@ public class CmsOverlayControllerV1Test {
                 DetailedServicesResponse.builder()
                     .data(
                         DetailedServiceTransformerV1.toDetailedServices(
-                            List.of(
-                                getCardiologyDetailedService(false),
-                                getCovid19DetailedService(false),
-                                getUrologyDetailedService(false))))
+                            getDatamartDetailedServices(
+                                List.of(
+                                    HealthService.Cardiology,
+                                    HealthService.Covid19Vaccine,
+                                    HealthService.Urology),
+                                false)))
                     .links(
                         PageLinks.builder()
                             .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=3")
@@ -373,7 +375,7 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   public void getDetailedServicesWithMultipleServiceIdAndEmptyServiceType() {
-    DatamartCmsOverlay overlay = overlay();
+    DatamartCmsOverlay overlay = activeOverlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
     var page = 1;
@@ -400,9 +402,9 @@ public class CmsOverlayControllerV1Test {
                 DetailedServicesResponse.builder()
                     .data(
                         DetailedServiceTransformerV1.toDetailedServices(
-                            List.of(
-                                getCardiologyDetailedService(false),
-                                getCovid19DetailedService(false))))
+                            getDatamartDetailedServices(
+                                List.of(HealthService.Cardiology, HealthService.Covid19Vaccine),
+                                false)))
                     .links(
                         PageLinks.builder()
                             .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=2")
@@ -427,7 +429,7 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   public void getDetailedServicesWithSingleServiceIdAndEmptyServiceType() {
-    DatamartCmsOverlay overlay = overlay();
+    DatamartCmsOverlay overlay = activeOverlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
     var page = 1;
@@ -453,7 +455,7 @@ public class CmsOverlayControllerV1Test {
                 DetailedServicesResponse.builder()
                     .data(
                         DetailedServiceTransformerV1.toDetailedServices(
-                            List.of(getCardiologyDetailedService(false))))
+                            getDatamartDetailedServices(List.of(HealthService.Cardiology), false)))
                     .links(
                         PageLinks.builder()
                             .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
@@ -478,7 +480,7 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   public void getDetailedServicesWithSingleServiceIdAndServiceType() {
-    DatamartCmsOverlay overlay = overlay();
+    DatamartCmsOverlay overlay = activeOverlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
     var page = 1;
@@ -504,7 +506,7 @@ public class CmsOverlayControllerV1Test {
                 DetailedServicesResponse.builder()
                     .data(
                         DetailedServiceTransformerV1.toDetailedServices(
-                            List.of(getCardiologyDetailedService(false))))
+                            getDatamartDetailedServices(List.of(HealthService.Cardiology), false)))
                     .links(
                         PageLinks.builder()
                             .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
