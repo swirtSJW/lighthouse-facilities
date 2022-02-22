@@ -10,7 +10,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceAddressDeserializer;
 import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceDeserializer;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceEmailContactDeserializer;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceHoursDeserializer;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartDetailedServiceLocationDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -127,6 +131,7 @@ public class DatamartDetailedService {
     "zip_code",
     "country_code"
   })
+  @JsonDeserialize(using = DatamartDetailedServiceAddressDeserializer.class)
   public static final class DetailedServiceAddress {
     @JsonProperty("address_line1")
     String address1;
@@ -178,6 +183,7 @@ public class DatamartDetailedService {
     "facility_service_hours",
     "additional_hours_info"
   })
+  @JsonDeserialize(using = DatamartDetailedServiceLocationDeserializer.class)
   public static final class DetailedServiceLocation {
     @JsonProperty("additional_hours_info")
     String additionalHoursInfo;
@@ -199,6 +205,7 @@ public class DatamartDetailedService {
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonDeserialize(using = DatamartDetailedServiceEmailContactDeserializer.class)
   public static final class DetailedServiceEmailContact {
     @JsonProperty("email_address")
     String emailAddress;
@@ -211,6 +218,7 @@ public class DatamartDetailedService {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonPropertyOrder({"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"})
+  @JsonDeserialize(using = DatamartDetailedServiceHoursDeserializer.class)
   public static final class DetailedServiceHours {
     @JsonProperty("Monday")
     String monday;

@@ -1,6 +1,13 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAppointmentLeadin;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityDescription;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOnlineSchedulingAvailable;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getPhoneNumbers;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getReferralRequired;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getServiceLocations;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWalkInsAccepted;
 import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo.INVALID_SVC_ID;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
@@ -45,14 +52,14 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode node = oc.readTree(jsonParser);
     JsonNode activeNode = node.get("active");
     JsonNode changedNode = node.get("changed");
-    JsonNode descriptionFacilityNode = node.get("descriptionFacility");
-    JsonNode appointmentLeadInNode = node.get("appointmentLeadIn");
-    JsonNode onlineSchedulingAvailableNode = node.get("onlineSchedulingAvailable");
+    JsonNode descriptionFacilityNode = getFacilityDescription(node);
+    JsonNode appointmentLeadInNode = getAppointmentLeadin(node);
+    JsonNode onlineSchedulingAvailableNode = getOnlineSchedulingAvailable(node);
     JsonNode pathNode = node.get("path");
-    JsonNode phoneNumbersNode = node.get("appointmentPhones");
-    JsonNode referralRequiredNode = node.get("referralRequired");
-    JsonNode serviceLocationsNode = node.get("serviceLocations");
-    JsonNode walkInsAcceptedNode = node.get("walkInsAccepted");
+    JsonNode phoneNumbersNode = getPhoneNumbers(node);
+    JsonNode referralRequiredNode = getReferralRequired(node);
+    JsonNode serviceLocationsNode = getServiceLocations(node);
+    JsonNode walkInsAcceptedNode = getWalkInsAccepted(node);
 
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");

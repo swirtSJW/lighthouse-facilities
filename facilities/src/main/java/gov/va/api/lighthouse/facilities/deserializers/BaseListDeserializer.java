@@ -1,6 +1,6 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.INVALID_SVC_ID;
+import static gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo.INVALID_SVC_ID;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -26,7 +26,7 @@ public abstract class BaseListDeserializer<T> extends StdDeserializer<T> {
     if (detailedServices != null) {
       // Filter out detailed services containing unrecognized service id
       return detailedServices.stream()
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
+          .filter(x -> !x.serviceInfo().serviceId().equals(INVALID_SVC_ID))
           .collect(Collectors.toList());
     }
     return null;

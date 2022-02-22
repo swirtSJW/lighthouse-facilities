@@ -303,7 +303,19 @@ public class DeserializerUtilTest {
         .usingRecursiveComparison()
         .isEqualTo(
             gov.va.api.lighthouse.facilities.api.v1.DetailedService.builder()
-                .serviceId(gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID)
+                .serviceInfo(
+                    gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo.builder()
+                        .serviceId(
+                            gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo
+                                .INVALID_SVC_ID)
+                        .serviceType(
+                            gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceType
+                                .Health)
+                        .build())
+                .waitTime(
+                    gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime
+                        .builder()
+                        .build())
                 .phoneNumbers(emptyList())
                 .serviceLocations(emptyList())
                 .build());
@@ -318,7 +330,19 @@ public class DeserializerUtilTest {
         .usingRecursiveComparison()
         .isEqualTo(
             gov.va.api.lighthouse.facilities.api.v1.DetailedService.builder()
-                .serviceId(gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID)
+                .serviceInfo(
+                    gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo.builder()
+                        .serviceId(
+                            gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo
+                                .INVALID_SVC_ID)
+                        .serviceType(
+                            gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceType
+                                .Health)
+                        .build())
+                .waitTime(
+                    gov.va.api.lighthouse.facilities.api.v1.DetailedService.PatientWaitTime
+                        .builder()
+                        .build())
                 .phoneNumbers(emptyList())
                 .serviceLocations(emptyList())
                 .build());
@@ -1371,45 +1395,6 @@ public class DeserializerUtilTest {
                     + "\"effectiveDate\" : \"2022-02-24\""
                     + "}}"));
     assertThat(waitTimes).isNotNull();
-    assertThat(
-            createMapper()
-                .convertValue(
-                    waitTimes, gov.va.api.lighthouse.facilities.api.v1.Facility.WaitTimes.class))
-        .usingRecursiveComparison()
-        .isEqualTo(
-            gov.va.api.lighthouse.facilities.api.v1.Facility.WaitTimes.builder()
-                .health(
-                    List.of(
-                        gov.va.api.lighthouse.facilities.api.v1.Facility.PatientWaitTime.builder()
-                            .service(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
-                                    .Dermatology)
-                            .newPatientWaitTime(BigDecimal.valueOf(3.714285))
-                            .establishedPatientWaitTime(BigDecimal.valueOf(0.0))
-                            .build(),
-                        gov.va.api.lighthouse.facilities.api.v1.Facility.PatientWaitTime.builder()
-                            .service(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
-                                    .PrimaryCare)
-                            .newPatientWaitTime(BigDecimal.valueOf(13.727272))
-                            .establishedPatientWaitTime(BigDecimal.valueOf(10.392441))
-                            .build(),
-                        gov.va.api.lighthouse.facilities.api.v1.Facility.PatientWaitTime.builder()
-                            .service(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
-                                    .Dental)
-                            .newPatientWaitTime(BigDecimal.valueOf(5.222222))
-                            .establishedPatientWaitTime(BigDecimal.valueOf(0.0))
-                            .build(),
-                        gov.va.api.lighthouse.facilities.api.v1.Facility.PatientWaitTime.builder()
-                            .service(
-                                gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService
-                                    .MentalHealth)
-                            .newPatientWaitTime(BigDecimal.valueOf(5.75))
-                            .establishedPatientWaitTime(BigDecimal.valueOf(2.634703))
-                            .build()))
-                .effectiveDate(LocalDate.parse("2022-02-24"))
-                .build());
     // Exceptions
     assertThatThrownBy(() -> DeserializerUtil.getWaitTimes(null))
         .isInstanceOf(NullPointerException.class)
