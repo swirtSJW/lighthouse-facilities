@@ -337,7 +337,7 @@ public class CmsOverlayControllerV1Test {
                     .writeValueAsString(overlay.detailedServices()))
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
-    // Obtain first page of detailed services - cardiology detailed service
+    //Obtain services with no service id params and populated statusType
     assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
@@ -498,7 +498,7 @@ public class CmsOverlayControllerV1Test {
                     .writeValueAsString(overlay.detailedServices()))
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
-    // Obtain first page of detailed services - cardiology detailed service
+    // Obtain cardiology detailed service using single service id and service type
     assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
