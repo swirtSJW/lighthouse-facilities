@@ -250,7 +250,7 @@ public final class Facility implements CanBeEmpty {
     Smoking,
     @JsonProperty("socialWork")
     SocialWork,
-    @JsonProperty("specialtyCare")
+    // SpecialtyCare is a V0 holdover. V1 contains specific instances of its specialized care.
     SpecialtyCare,
     @JsonProperty("spinalInjury")
     SpinalInjury,
@@ -293,11 +293,11 @@ public final class Facility implements CanBeEmpty {
     @JsonCreator
     public static HealthService fromString(String name) {
       return "COVID-19 vaccines".equalsIgnoreCase(name)
-          ? valueOf("Covid19Vaccine")
+          ? HealthService.Covid19Vaccine
           : "MentalHealthCare".equalsIgnoreCase(name)
-              ? valueOf("MentalHealth")
+              ? HealthService.MentalHealth
               : "DentalServices".equalsIgnoreCase(name)
-                  ? valueOf("Dental")
+                  ? HealthService.Dental
                   : valueOf(capitalize(name));
     }
   }
