@@ -1,22 +1,21 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
-public class CmsOverlayDeserializer extends StdDeserializer<CmsOverlay> {
+public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
   public CmsOverlayDeserializer() {
     this(null);
   }
@@ -32,8 +31,10 @@ public class CmsOverlayDeserializer extends StdDeserializer<CmsOverlay> {
       JsonParser jsonParser, DeserializationContext deserializationContext) {
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
-    JsonNode operatingStatusNode = node.get("operatingStatus");
-    JsonNode detailedServicesNode = node.get("detailedServices");
+
+    // Read values using snake_case or camelCase representations
+    JsonNode operatingStatusNode = getOpertingStatus(node);
+    JsonNode detailedServicesNode = getDetailedServices(node);
 
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
 
@@ -48,16 +49,5 @@ public class CmsOverlayDeserializer extends StdDeserializer<CmsOverlay> {
                     createMapper().convertValue(detailedServicesNode, detailedServicesRef))
                 : null)
         .build();
-  }
-
-  private List<DetailedService> filterOutInvalidDetailedServices(
-      List<DetailedService> detailedServices) {
-    if (detailedServices != null) {
-      // Filter out detailed services containing unrecognized service id
-      return detailedServices.stream()
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
-          .collect(Collectors.toList());
-    }
-    return null;
   }
 }
