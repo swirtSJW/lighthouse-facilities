@@ -1,14 +1,15 @@
 package gov.va.api.lighthouse.facilities;
 
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.api.lighthouse.facilities.DatamartFacility.ActiveStatus;
+import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.ActiveStatus;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OperatingStatusCode;
 import java.util.HashSet;
@@ -28,14 +29,14 @@ public class FacilityOverlayV1Test {
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, null),
-        null,
+        emptyList(),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(op(OperatingStatusCode.NORMAL, "neato"), false)));
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, null),
-        null,
+        emptyList(),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(op(OperatingStatusCode.NOTICE, "neato"), false)));
@@ -61,7 +62,6 @@ public class FacilityOverlayV1Test {
       List<Facility.HealthService> expectedHealthServices,
       FacilityEntity entity) {
     Facility facility = FacilityOverlayV1.builder().build().apply(entity);
-    assertThat(facility.attributes().activeStatus()).isEqualTo(expectedActiveStatus);
     assertThat(facility.attributes().operatingStatus()).isEqualTo(expectedOperatingStatus);
     assertThat(facility.attributes().services().health()).isEqualTo(expectedHealthServices);
   }
@@ -76,7 +76,7 @@ public class FacilityOverlayV1Test {
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
+        emptyList(),
         entity(fromActiveStatus(null), overlay(null, false)));
   }
 
@@ -171,9 +171,11 @@ public class FacilityOverlayV1Test {
   }
 
   private Facility fromActiveStatus(ActiveStatus status) {
-    return Facility.builder()
-        .attributes(FacilityAttributes.builder().activeStatus(status).build())
-        .build();
+    DatamartFacility df =
+        DatamartFacility.builder()
+            .attributes(FacilityAttributes.builder().activeStatus(status).build())
+            .build();
+    return (FacilityTransformerV1.toFacility(df));
   }
 
   private OperatingStatus op(OperatingStatusCode code, String info) {
@@ -185,17 +187,17 @@ public class FacilityOverlayV1Test {
     assertStatus(
         ActiveStatus.A,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
+        emptyList(),
         entity(fromActiveStatus(ActiveStatus.A), null));
     assertStatus(
         ActiveStatus.T,
         OperatingStatus.builder().code(OperatingStatusCode.CLOSED).build(),
-        null,
+        emptyList(),
         entity(fromActiveStatus(ActiveStatus.T), null));
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
+        emptyList(),
         entity(fromActiveStatus(null), null));
   }
 

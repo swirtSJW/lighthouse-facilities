@@ -2,6 +2,13 @@ package gov.va.api.lighthouse.facilities.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo.INVALID_SVC_ID;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAppointmentLeadin;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityDescription;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOnlineSchedulingAvailable;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getPhoneNumbers;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getReferralRequired;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getServiceLocations;
+import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWalkInsAccepted;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
@@ -42,16 +49,17 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
 
+    // Read values using snake_case or camelCase representations
     JsonNode activeNode = node.get("active");
     JsonNode changedNode = node.get("changed");
-    JsonNode descriptionFacilityNode = node.get("description_facility");
-    JsonNode appointmentLeadInNode = node.get("appointment_leadin");
-    JsonNode onlineSchedulingAvailableNode = node.get("online_scheduling_available");
+    JsonNode descriptionFacilityNode = getFacilityDescription(node);
+    JsonNode appointmentLeadInNode = getAppointmentLeadin(node);
+    JsonNode onlineSchedulingAvailableNode = getOnlineSchedulingAvailable(node);
     JsonNode pathNode = node.get("path");
-    JsonNode phoneNumbersNode = node.get("appointment_phones");
-    JsonNode referralRequiredNode = node.get("referral_required");
-    JsonNode serviceLocationsNode = node.get("service_locations");
-    JsonNode walkInsAcceptedNode = node.get("walk_ins_accepted");
+    JsonNode phoneNumbersNode = getPhoneNumbers(node);
+    JsonNode referralRequiredNode = getReferralRequired(node);
+    JsonNode serviceLocationsNode = getServiceLocations(node);
+    JsonNode walkInsAcceptedNode = getWalkInsAccepted(node);
 
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
