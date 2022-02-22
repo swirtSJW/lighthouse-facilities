@@ -15,12 +15,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +44,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/v1")
 public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
-
   private static final ObjectMapper DATAMART_MAPPER =
       DatamartFacilitiesJacksonConfig.createMapper();
 
@@ -63,6 +65,29 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
     linkerUrl = url + path + "v1/";
+  }
+
+  /** Filter DetailedServices using serviceIds and serviceType parameters. */
+  public static List<DetailedService> filterServices(
+      List<DetailedService> services, String serviceType, List<String> serviceIds) {
+    Predicate<DetailedService> isDetailedServiceIdPresent =
+        s -> serviceIds.contains(s.serviceInfo().serviceId());
+    Predicate<DetailedService> isDetailedServiceTypeValid =
+        s ->
+            EnumUtils.isValidEnum(
+                DetailedService.ServiceType.class, StringUtils.capitalize(serviceType));
+    Predicate<DetailedService> doesServiceTypeMatchDetailedServiceType =
+        s -> serviceType.equals(s.serviceInfo().serviceType().toString().toLowerCase());
+    if (!serviceIds.isEmpty()) {
+      services = services.stream().filter(isDetailedServiceIdPresent).collect(toList());
+    }
+    if (!serviceType.isEmpty()) {
+      services =
+          services.stream()
+              .filter(isDetailedServiceTypeValid.and(doesServiceTypeMatchDetailedServiceType))
+              .collect(toList());
+    }
+    return services;
   }
 
   @GetMapping(
@@ -87,17 +112,14 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
       @PathVariable("facilityId") String facilityId,
       @RequestParam(value = "serviceIds", required = false, defaultValue = "")
           List<String> serviceIds,
+      @RequestParam(value = "serviceType", required = false, defaultValue = "") String serviceType,
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<DetailedService> services =
-        DetailedServiceTransformerV1.toDetailedServices(getOverlayDetailedServices(facilityId));
-    if (serviceIds.size() > 0) {
-      services =
-          services.stream()
-              .filter(s -> serviceIds.contains(s.serviceInfo().serviceId()))
-              .collect(toList());
-    }
-
+        filterServices(
+            DetailedServiceTransformerV1.toDetailedServices(getOverlayDetailedServices(facilityId)),
+            serviceType,
+            serviceIds);
     PageLinkerV1 linker =
         PageLinkerV1.builder()
             .url(linkerUrl + "facilities/" + facilityId + "/services")
@@ -242,10 +264,8 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
             .attributes()
             .detailedServices(toSaveDetailedServices.isEmpty() ? null : toSaveDetailedServices);
       }
-
       facilityEntity.facility(DATAMART_MAPPER.writeValueAsString(facility));
     }
-
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {

@@ -70,7 +70,8 @@ public class CmsOverlayControllerV1Test {
     assertThatThrownBy(() -> controller().getExistingOverlayEntity(pk))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
-    assertThatThrownBy(() -> controller().getDetailedServices(id, new ArrayList<>(), page, perPage))
+    assertThatThrownBy(
+            () -> controller().getDetailedServices(id, new ArrayList<>(), "", page, perPage))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
     when(mockFacilityRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
@@ -253,6 +254,8 @@ public class CmsOverlayControllerV1Test {
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
     var page = 1;
     var perPage = 1;
+    List<String> serviceIds = new ArrayList<>();
+    String serviceType = "";
     CmsOverlayEntity cmsOverlayEntity =
         CmsOverlayEntity.builder()
             .id(pk)
@@ -265,10 +268,9 @@ public class CmsOverlayControllerV1Test {
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
     // Obtain first page of detailed services - cardiology detailed service
-    //    ResponseEntity<DetailedServicesResponse> test =
-    //        controller().getDetailedServices(facilityId, new ArrayList<>(), page, perPage);
-    List<String> serviceIds = new ArrayList<>(List.of("cardiology", "covid19Vaccine", "urology"));
-    assertThat(controller().getDetailedServices(facilityId, serviceIds, page, perPage))
+    ResponseEntity<DetailedServicesResponse> test =
+        controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage);
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -297,7 +299,7 @@ public class CmsOverlayControllerV1Test {
                     .build()));
     // Obtain second page of detailed services - covid-19 detailed service
     page = 2;
-    assertThat(controller().getDetailedServices(facilityId, new ArrayList<>(), page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -326,7 +328,7 @@ public class CmsOverlayControllerV1Test {
                     .build()));
     // Obtain third and final page of detailed services - urology detailed service
     page = 3;
-    assertThat(controller().getDetailedServices(facilityId, new ArrayList<>(), page, perPage))
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
             ResponseEntity.ok(
@@ -350,6 +352,216 @@ public class CmsOverlayControllerV1Test {
                                     .entriesPerPage(1)
                                     .totalPages(3)
                                     .totalEntries(3)
+                                    .build())
+                            .build())
+                    .build()));
+  }
+
+  @Test
+  @SneakyThrows
+  public void getDetailedServicesWithEmptyServiceIdAndServiceType() {
+    DatamartCmsOverlay overlay = overlay();
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
+    var page = 1;
+    var perPage = 3;
+    List<String> serviceIds = new ArrayList<>();
+    String serviceType = "health";
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    // Obtain first page of detailed services - cardiology detailed service
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            ResponseEntity.ok(
+                DetailedServicesResponse.builder()
+                    .data(
+                        DetailedServiceTransformerV1.toDetailedServices(
+                            List.of(
+                                getCardiologyDetailedService(false),
+                                getCovid19DetailedService(false),
+                                getUrologyDetailedService(false))))
+                    .links(
+                        PageLinks.builder()
+                            .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=3")
+                            .first("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=3")
+                            .prev(null)
+                            .next(null)
+                            .last("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=3")
+                            .build())
+                    .meta(
+                        DetailedServicesResponse.DetailedServicesMetadata.builder()
+                            .pagination(
+                                Pagination.builder()
+                                    .currentPage(1)
+                                    .entriesPerPage(3)
+                                    .totalPages(1)
+                                    .totalEntries(3)
+                                    .build())
+                            .build())
+                    .build()));
+  }
+
+  @Test
+  @SneakyThrows
+  public void getDetailedServicesWithMultipleServiceIdAndEmptyServiceType() {
+    DatamartCmsOverlay overlay = overlay();
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
+    var page = 1;
+    var perPage = 2;
+    List<String> serviceIds = new ArrayList<>(List.of("cardiology", "covid19Vaccine"));
+    String serviceType = "";
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    // Obtain cardiology and covid19vaccine detailed services using cardiology and covid19vaccine
+    // serviceId
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            ResponseEntity.ok(
+                DetailedServicesResponse.builder()
+                    .data(
+                        DetailedServiceTransformerV1.toDetailedServices(
+                            List.of(
+                                getCardiologyDetailedService(false),
+                                getCovid19DetailedService(false))))
+                    .links(
+                        PageLinks.builder()
+                            .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=2")
+                            .first("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=2")
+                            .prev(null)
+                            .next(null)
+                            .last("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=2")
+                            .build())
+                    .meta(
+                        DetailedServicesResponse.DetailedServicesMetadata.builder()
+                            .pagination(
+                                Pagination.builder()
+                                    .currentPage(1)
+                                    .entriesPerPage(2)
+                                    .totalPages(1)
+                                    .totalEntries(2)
+                                    .build())
+                            .build())
+                    .build()));
+  }
+
+  @Test
+  @SneakyThrows
+  public void getDetailedServicesWithSingleServiceIdAndEmptyServiceType() {
+    DatamartCmsOverlay overlay = overlay();
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
+    var page = 1;
+    var perPage = 1;
+    List<String> serviceIds = new ArrayList<>(List.of("cardiology"));
+    String serviceType = "";
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    // Obtain cardiology detailed service using cardiology serviceId
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            ResponseEntity.ok(
+                DetailedServicesResponse.builder()
+                    .data(
+                        DetailedServiceTransformerV1.toDetailedServices(
+                            List.of(getCardiologyDetailedService(false))))
+                    .links(
+                        PageLinks.builder()
+                            .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
+                            .first("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
+                            .prev(null)
+                            .next(null)
+                            .last("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
+                            .build())
+                    .meta(
+                        DetailedServicesResponse.DetailedServicesMetadata.builder()
+                            .pagination(
+                                Pagination.builder()
+                                    .currentPage(1)
+                                    .entriesPerPage(1)
+                                    .totalPages(1)
+                                    .totalEntries(1)
+                                    .build())
+                            .build())
+                    .build()));
+  }
+
+  @Test
+  @SneakyThrows
+  public void getDetailedServicesWithSingleServiceIdAndServiceType() {
+    DatamartCmsOverlay overlay = overlay();
+    var facilityId = "vha_402";
+    var pk = FacilityEntity.Pk.fromIdString(facilityId);
+    var page = 1;
+    var perPage = 1;
+    List<String> serviceIds = new ArrayList<>(List.of("cardiology"));
+    String serviceType = "health";
+    CmsOverlayEntity cmsOverlayEntity =
+        CmsOverlayEntity.builder()
+            .id(pk)
+            .cmsOperatingStatus(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.operatingStatus()))
+            .cmsServices(
+                DatamartFacilitiesJacksonConfig.createMapper()
+                    .writeValueAsString(overlay.detailedServices()))
+            .build();
+    when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
+    // Obtain first page of detailed services - cardiology detailed service
+    assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            ResponseEntity.ok(
+                DetailedServicesResponse.builder()
+                    .data(
+                        DetailedServiceTransformerV1.toDetailedServices(
+                            List.of(getCardiologyDetailedService(false))))
+                    .links(
+                        PageLinks.builder()
+                            .self("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
+                            .first("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
+                            .prev(null)
+                            .next(null)
+                            .last("http://foo/bp/v1/facilities/vha_402/services?page=1&per_page=1")
+                            .build())
+                    .meta(
+                        DetailedServicesResponse.DetailedServicesMetadata.builder()
+                            .pagination(
+                                Pagination.builder()
+                                    .currentPage(1)
+                                    .entriesPerPage(1)
+                                    .totalPages(1)
+                                    .totalEntries(1)
                                     .build())
                             .build())
                     .build()));
