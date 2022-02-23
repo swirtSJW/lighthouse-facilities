@@ -48,6 +48,7 @@ public class SerializationV1Test {
                     .serviceId(DetailedService.ServiceInfo.INVALID_SVC_ID)
                     .serviceType(DetailedService.ServiceType.Health)
                     .build())
+            .waitTime(DetailedService.PatientWaitTime.builder().build())
             .phoneNumbers(emptyList())
             .serviceLocations(emptyList())
             .build();
