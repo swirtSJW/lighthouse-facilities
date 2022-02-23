@@ -337,7 +337,7 @@ public class CmsOverlayControllerV1Test {
                     .writeValueAsString(overlay.detailedServices()))
             .build();
     when(mockCmsOverlayRepository.findById(pk)).thenReturn(Optional.of(cmsOverlayEntity));
-    //Obtain services with no service id params and populated statusType
+    // Obtain services with no service id params and populated statusType
     assertThat(controller().getDetailedServices(facilityId, serviceIds, serviceType, page, perPage))
         .usingRecursiveComparison()
         .isEqualTo(
