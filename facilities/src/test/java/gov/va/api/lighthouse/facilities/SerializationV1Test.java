@@ -54,7 +54,8 @@ public class SerializationV1Test {
     String json =
         FacilitiesJacksonConfigV1.quietlyWriteValueAsString(
             FacilitiesJacksonConfigV1.createMapper(), emptyDetailedService);
-    assertThat(json).isEqualTo("{\"serviceId\":\"INVALID_ID\"}");
+    assertThat(json)
+        .isEqualTo("{\"serviceInfo\":{\"serviceId\":\"INVALID_ID\",\"serviceType\":\"health\"}}");
     assertThat(
             FacilitiesJacksonConfigV1.quietlyMap(
                 FacilitiesJacksonConfigV1.createMapper(), json, DetailedService.class))
@@ -81,7 +82,7 @@ public class SerializationV1Test {
             () ->
                 FacilitiesJacksonConfigV1.quietlyMap(
                     FacilitiesJacksonConfigV1.createMapper(),
-                    "{\"serviceId\":\"INVALID_ID\"}",
+                    "{\"serviceInfo\":{\"serviceId\":\"INVALID_ID\",\"serviceType\":\"health\"}}",
                     null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Unrecognized Type: [null]");
@@ -91,7 +92,8 @@ public class SerializationV1Test {
                 FacilitiesJacksonConfigV1.quietlyMap(
                     FacilitiesJacksonConfigV1.createMapper(),
                     new ByteArrayInputStream(
-                        "{\"serviceId\":\"INVALID_ID\"}".getBytes(StandardCharsets.UTF_8)),
+                        "{\"serviceInfo\":{\"serviceId\":\"INVALID_ID\",\"serviceType\":\"health\"}}"
+                            .getBytes(StandardCharsets.UTF_8)),
                     null))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Unrecognized Type: [null]");

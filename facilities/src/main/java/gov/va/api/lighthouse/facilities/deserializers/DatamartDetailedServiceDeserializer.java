@@ -57,10 +57,8 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     JsonNode appointmentLeadInNode = getAppointmentLeadin(node);
     JsonNode onlineSchedulingAvailableNode = getOnlineSchedulingAvailable(node);
     JsonNode pathNode = node.get("path");
-
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
-
     JsonNode phoneNumbersNode = getPhoneNumbers(node);
     JsonNode referralRequiredNode = getReferralRequired(node);
     JsonNode serviceLocationsNode = getServiceLocations(node);
@@ -102,6 +100,7 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
         establishedNode != null
             ? createMapper().convertValue(effectiveDateNode, LocalDate.class)
             : null;
+
     TypeReference<List<AppointmentPhoneNumber>> appointmentNumbersRef = new TypeReference<>() {};
     TypeReference<List<DetailedServiceLocation>> serviceLocationsRef = new TypeReference<>() {};
 

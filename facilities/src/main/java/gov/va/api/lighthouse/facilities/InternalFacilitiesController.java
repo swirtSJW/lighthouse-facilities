@@ -281,7 +281,6 @@ public class InternalFacilitiesController {
                 try {
                   DatamartFacility facility =
                       datamartReadValue(f.facility(), DatamartFacility.class);
-
                   DatamartFacility.OperatingStatus operatingStatus =
                       facility.attributes().operatingStatus();
                   List<DatamartDetailedService> facilityDetailedServices =

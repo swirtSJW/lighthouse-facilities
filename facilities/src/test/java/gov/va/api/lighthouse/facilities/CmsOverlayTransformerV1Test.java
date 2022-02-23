@@ -85,8 +85,8 @@ public class CmsOverlayTransformerV1Test {
                 .serviceId(uncapitalize(healthService.name()))
                 .name(
                     healthService
-                        .name()
-                        .equals(DatamartFacility.HealthService.Covid19Vaccine.name())
+                            .name()
+                            .equals(DatamartFacility.HealthService.Covid19Vaccine.name())
                         ? "COVID-19 vaccines"
                         : healthService.name())
                 .serviceType(getDatamartServiceType(healthService))
@@ -182,20 +182,20 @@ public class CmsOverlayTransformerV1Test {
         .collect(Collectors.toList());
   }
 
-    private DatamartDetailedService.ServiceType getDatamartServiceType(
-        @NonNull ServiceType serviceType) {
-        return Arrays.stream(DatamartFacility.HealthService.values())
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
             .anyMatch(hs -> hs.name().equals(serviceType.name()))
-            ? DatamartDetailedService.ServiceType.Health
-            : Arrays.stream(DatamartFacility.BenefitsService.values())
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
                 .anyMatch(bs -> bs.name().equals(serviceType.name()))
-                ? DatamartDetailedService.ServiceType.Benefits
-                : Arrays.stream(DatamartFacility.OtherService.values())
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
                     .anyMatch(os -> os.name().equals(serviceType.name()))
-                    ? DatamartDetailedService.ServiceType.Other
-                    : // Default to health service type
-                        DatamartDetailedService.ServiceType.Health;
-    }
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
 
   private DetailedService getDetailedService(
       @NonNull Facility.HealthService healthService, boolean isActive) {
@@ -301,19 +301,19 @@ public class CmsOverlayTransformerV1Test {
         .collect(Collectors.toList());
   }
 
-    private DetailedService.ServiceType getServiceType(@NonNull ServiceType serviceType) {
-        return Arrays.stream(Facility.HealthService.values())
+  private DetailedService.ServiceType getServiceType(@NonNull ServiceType serviceType) {
+    return Arrays.stream(Facility.HealthService.values())
             .anyMatch(hs -> hs.name().equals(serviceType.name()))
-            ? DetailedService.ServiceType.Health
-            : Arrays.stream(Facility.BenefitsService.values())
+        ? DetailedService.ServiceType.Health
+        : Arrays.stream(Facility.BenefitsService.values())
                 .anyMatch(bs -> bs.name().equals(serviceType.name()))
-                ? DetailedService.ServiceType.Benefits
-                : Arrays.stream(Facility.OtherService.values())
+            ? DetailedService.ServiceType.Benefits
+            : Arrays.stream(Facility.OtherService.values())
                     .anyMatch(os -> os.name().equals(serviceType.name()))
-                    ? DetailedService.ServiceType.Other
-                    : // Default to health service type
-                        DetailedService.ServiceType.Health;
-    }
+                ? DetailedService.ServiceType.Other
+                : // Default to health service type
+                DetailedService.ServiceType.Health;
+  }
 
   private CmsOverlay overlay() {
     return overlay(

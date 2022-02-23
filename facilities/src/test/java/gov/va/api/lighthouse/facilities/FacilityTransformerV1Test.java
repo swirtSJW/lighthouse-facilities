@@ -1,19 +1,19 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
@@ -268,16 +268,34 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(facility);
   }
 
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
   private DatamartDetailedService getHealthDetailedService(
       @NonNull DatamartFacility.HealthService healthService, boolean isActive) {
     return DatamartDetailedService.builder()
+        .active(isActive)
         .serviceInfo(
             DatamartDetailedService.ServiceInfo.builder()
-                .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .serviceId(uncapitalize(healthService.name()))
+                .name(
+                    DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
+                        ? "COVID-19 vaccines"
+                        : healthService.name())
+                .serviceType(getDatamartServiceType(healthService))
                 .build())
-        .active(isActive)
         .phoneNumbers(
             List.of(
                 DatamartDetailedService.AppointmentPhoneNumber.builder()

@@ -29,7 +29,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsCmsOverlay() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -107,7 +106,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsDetailedServicesResponse() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -152,7 +150,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsFacilityAttributes() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -199,7 +196,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsGeoFacilityProperties() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(
@@ -288,7 +284,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeCmsOverlayWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -411,7 +406,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeDetailedServicesResponseWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -534,7 +528,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeFacilityAttributesWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -656,7 +649,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeGeoFacilityPropertiesWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(
@@ -736,7 +728,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeHealthCmsOverlay() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -866,7 +857,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeHealthDetailedServicesResponse() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -955,7 +945,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeHealthFacilityAttributes() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -1052,7 +1041,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeHealthGeoFacilityProperties() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(
@@ -1177,7 +1165,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherCmsOverlay() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -1261,7 +1248,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherDetailedServicesResponse() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -1308,7 +1294,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherFacilityAttributes() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -1359,7 +1344,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherGeoFacilityProperties() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(

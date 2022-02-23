@@ -117,7 +117,6 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                     healthForDetailedServices != null
                         ? getDatamartDetailedServices(healthForDetailedServices, isActive)
                         : null)
-
                 .operationalHoursSpecialInstructions("test special instructions")
                 .build())
         .build();
@@ -266,8 +265,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                 .serviceId(uncapitalize(healthService.name()))
                 .name(
                     healthService
-                        .name()
-                        .equals(DatamartFacility.HealthService.Covid19Vaccine.name())
+                            .name()
+                            .equals(DatamartFacility.HealthService.Covid19Vaccine.name())
                         ? "COVID-19 vaccines"
                         : healthService.name())
                 .serviceType(getDatamartServiceType(healthService))
@@ -366,18 +365,17 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
   private DatamartDetailedService.ServiceType getDatamartServiceType(
       @NonNull ServiceType serviceType) {
     return Arrays.stream(DatamartFacility.HealthService.values())
-        .anyMatch(hs -> hs.name().equals(serviceType.name()))
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
         ? DatamartDetailedService.ServiceType.Health
         : Arrays.stream(DatamartFacility.BenefitsService.values())
-            .anyMatch(bs -> bs.name().equals(serviceType.name()))
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
             ? DatamartDetailedService.ServiceType.Benefits
             : Arrays.stream(DatamartFacility.OtherService.values())
-                .anyMatch(os -> os.name().equals(serviceType.name()))
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
                 ? DatamartDetailedService.ServiceType.Other
                 : // Default to health service type
-                    DatamartDetailedService.ServiceType.Health;
+                DatamartDetailedService.ServiceType.Health;
   }
-
 
   private DetailedService getDetailedService(
       @NonNull Facility.HealthService healthService, boolean isActive) {
@@ -575,6 +573,7 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                 Facility.HealthService.EmergencyCare),
             List.of(Facility.HealthService.Covid19Vaccine),
             true);
+
     assertThatThrownBy(
             () ->
                 assertThat(
@@ -589,7 +588,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                     FacilityTransformerV1.toFacility(
                         FacilityTransformerV0.toVersionAgnostic(facility)))))
         .usingRecursiveComparison()
-        .ignoringFields("attributes.detailedServices", "attributes.activeStatus", "attributes.waitTimes")
+        .ignoringFields(
+            "attributes.detailedServices", "attributes.activeStatus", "attributes.waitTimes")
         .isEqualTo(facility);
   }
 
@@ -624,7 +624,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                 Facility.HealthService.EmergencyCare,
                 Facility.HealthService.MentalHealthCare,
                 Facility.HealthService.DentalServices,
-                Facility.HealthService.SpecialtyCare), true);
+                Facility.HealthService.SpecialtyCare),
+            true);
     assertThatThrownBy(
             () ->
                 assertThat(
@@ -639,7 +640,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                     FacilityTransformerV1.toFacility(
                         FacilityTransformerV0.toVersionAgnostic(facilityWithSpecialtyCare)))))
         .usingRecursiveComparison()
-        .ignoringFields("attributes.detailedServices", "attributes.activeStatus", "attributes.waitTimes")
+        .ignoringFields(
+            "attributes.detailedServices", "attributes.activeStatus", "attributes.waitTimes")
         .isEqualTo(facilityWithoutSpecialtyCare);
     DatamartFacility facilityWithMoreThanJustCovid =
         datamartFacility(

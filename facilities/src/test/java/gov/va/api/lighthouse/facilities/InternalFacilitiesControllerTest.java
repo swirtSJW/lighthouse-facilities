@@ -1947,7 +1947,6 @@ public class InternalFacilitiesControllerTest {
                     .operatingStatus(_overlay_operating_status())
                     .detailedServices(cmsServices)
                     .build()));
-
     // Add in invalid detailed services and redo update
     List<DatamartDetailedService> updatedCmsServices = new ArrayList<>();
     updatedCmsServices.addAll(cmsServices);
@@ -1997,7 +1996,6 @@ public class InternalFacilitiesControllerTest {
     assertThat(response.getBody())
         .isEqualToIgnoringWhitespace(
             "Failed to update service id for existing detailed services in overlay: oh noes");
-
     mockOverlayRepository = mock(CmsOverlayRepository.class);
     when(mockOverlayRepository.findAll()).thenReturn(List.of(_overlayEntity(cmsOverlay, pk)));
     when(mockOverlayRepository.save(_overlayEntity(cmsOverlay, pk)))

@@ -93,9 +93,9 @@ public final class Facility {
     public static HealthService fromString(String name) {
       return "COVID-19 vaccines".equalsIgnoreCase(name)
           ? HealthService.Covid19Vaccine
-          : "mentalHealth".equalsIgnoreCase(name)
+          : "MentalHealth".equalsIgnoreCase(name)
               ? HealthService.MentalHealthCare
-              : "dental".equalsIgnoreCase(name)
+              : "Dental".equalsIgnoreCase(name)
                   ? HealthService.DentalServices
                   : valueOf(capitalize(name));
     }

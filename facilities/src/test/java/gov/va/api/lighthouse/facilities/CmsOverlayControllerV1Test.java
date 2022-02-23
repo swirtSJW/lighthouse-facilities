@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.ExceptionsUtils.NotFound;
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
@@ -51,6 +52,21 @@ public class CmsOverlayControllerV1Test {
     return overlay(
         List.of(HealthService.Cardiology, HealthService.Covid19Vaccine, HealthService.Urology),
         true);
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
   }
 
   @Test
@@ -107,15 +123,9 @@ public class CmsOverlayControllerV1Test {
     return DatamartDetailedService.builder()
         .serviceInfo(
             DatamartDetailedService.ServiceInfo.builder()
-                .serviceId(uncapitalize(HealthService.Cardiology.name()))
-                .name(HealthService.Cardiology.name())
-                .serviceType(DatamartDetailedService.ServiceType.Health)
-                .build())
-        .waitTime(
-            DatamartDetailedService.PatientWaitTime.builder()
-                .newPatientWaitTime(BigDecimal.valueOf(14.583333))
-                .establishedPatientWaitTime(BigDecimal.valueOf(8.076923))
-                .effectiveDate(LocalDate.parse("2020-03-09"))
+                .serviceId(uncapitalize(healthService.name()))
+                .name(healthService.name())
+                .serviceType(getDatamartServiceType(healthService))
                 .build())
         .active(isActive)
         .changed(null)
@@ -185,6 +195,141 @@ public class CmsOverlayControllerV1Test {
               return getDatamartDetailedService(hs, isActive);
             })
         .collect(Collectors.toList());
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
+  }
+
+  private DatamartDetailedService.ServiceType getDatamartServiceType(
+      @NonNull ServiceType serviceType) {
+    return Arrays.stream(DatamartFacility.HealthService.values())
+            .anyMatch(hs -> hs.name().equals(serviceType.name()))
+        ? DatamartDetailedService.ServiceType.Health
+        : Arrays.stream(DatamartFacility.BenefitsService.values())
+                .anyMatch(bs -> bs.name().equals(serviceType.name()))
+            ? DatamartDetailedService.ServiceType.Benefits
+            : Arrays.stream(DatamartFacility.OtherService.values())
+                    .anyMatch(os -> os.name().equals(serviceType.name()))
+                ? DatamartDetailedService.ServiceType.Other
+                : // Default to health service type
+                DatamartDetailedService.ServiceType.Health;
   }
 
   @Test
@@ -406,13 +551,6 @@ public class CmsOverlayControllerV1Test {
         .hasMessage("The record identified by vha_041 could not be found");
   }
 
-  @Test
-  void getOverlayDetailedServicesException() {
-    assertThatThrownBy(() -> controller().getDetailedServices("vha_402", 1, 10))
-        .isInstanceOf(NotFound.class)
-        .hasMessage("The record identified by vha_402 could not be found");
-  }
-
   private DatamartCmsOverlay overlay(
       @NonNull List<HealthService> healthServices, boolean isActive) {
     return DatamartCmsOverlay.builder()
@@ -423,6 +561,13 @@ public class CmsOverlayControllerV1Test {
                 .build())
         .detailedServices(getDatamartDetailedServices(healthServices, isActive))
         .build();
+  }
+
+  @Test
+  void getOverlayDetailedServicesException() {
+    assertThatThrownBy(() -> controller().getDetailedServices("vha_402", 1, 10))
+        .isInstanceOf(NotFound.class)
+        .hasMessage("The record identified by vha_402 could not be found");
   }
 
   @Test

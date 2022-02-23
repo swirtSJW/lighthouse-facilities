@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>gov.va.api.health</groupId>
@@ -11,7 +9,7 @@
   </parent>
   <groupId>gov.va.api.lighthouse</groupId>
   <artifactId>facilities</artifactId>
-  <version>3.0.102-SNAPSHOT</version>
+  <version>3.0.103-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <commons-csv.version>1.8</commons-csv.version>
@@ -81,8 +79,7 @@
             </goals>
             <configuration>
               <resourceClasses>
-                <resourceClass>gov.va.api.lighthouse.facilities.api.v0.FacilitiesService
-                </resourceClass>
+                <resourceClass>gov.va.api.lighthouse.facilities.api.v0.FacilitiesService</resourceClass>
               </resourceClasses>
               <outputFileName>openapi</outputFileName>
               <contextId>openapi_v0</contextId>
@@ -99,8 +96,7 @@
             </goals>
             <configuration>
               <resourceClasses>
-                <resourceClass>gov.va.api.lighthouse.facilities.api.v1.FacilitiesService
-                </resourceClass>
+                <resourceClass>gov.va.api.lighthouse.facilities.api.v1.FacilitiesService</resourceClass>
               </resourceClasses>
               <outputFileName>openapi</outputFileName>
               <contextId>openapi_v1</contextId>
