@@ -137,10 +137,7 @@ public class CmsOverlayControllerV0Test {
   private List<DatamartDetailedService> getDatamartDetailedServices(
       @NonNull List<HealthService> healthServices, boolean isActive) {
     return healthServices.stream()
-        .map(
-            hs -> {
-              return getDatamartDetailedService(hs, isActive);
-            })
+        .map(hs -> getDatamartDetailedService(hs, isActive))
         .collect(Collectors.toList());
   }
 
