@@ -101,6 +101,7 @@ public class DatamartDetailedService {
 
     @Schema(description = "Service id.", example = "covid19Vaccine")
     @NonNull
+    // @JsonProperty("service_api_id")
     String serviceId;
 
     @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
