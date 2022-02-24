@@ -214,7 +214,7 @@ public final class FacilityTransformerV1 extends BaseVersionedTransformer {
       @NonNull DatamartFacility.BenefitsService datamartFacilityBenefitsService) {
     return containsValueOfName(
             Facility.BenefitsService.values(), datamartFacilityBenefitsService.name())
-        ? Facility.BenefitsService.valueOf(datamartFacilityBenefitsService.name())
+        ? Facility.BenefitsService.fromString(datamartFacilityBenefitsService.name())
         : null;
   }
 
@@ -223,7 +223,7 @@ public final class FacilityTransformerV1 extends BaseVersionedTransformer {
       @NonNull Facility.BenefitsService facilityBenefitsService) {
     return containsValueOfName(
             DatamartFacility.BenefitsService.values(), facilityBenefitsService.name())
-        ? DatamartFacility.BenefitsService.valueOf(facilityBenefitsService.name())
+        ? DatamartFacility.BenefitsService.fromString(facilityBenefitsService.name())
         : null;
   }
 
@@ -236,7 +236,7 @@ public final class FacilityTransformerV1 extends BaseVersionedTransformer {
             ? Facility.HealthService.Dental
             : containsValueOfName(
                     Facility.HealthService.values(), datamartFacilityHealthService.name())
-                ? Facility.HealthService.valueOf(datamartFacilityHealthService.name())
+                ? Facility.HealthService.fromString(datamartFacilityHealthService.name())
                 : null;
   }
 
@@ -249,7 +249,7 @@ public final class FacilityTransformerV1 extends BaseVersionedTransformer {
             ? DatamartFacility.HealthService.Dental
             : containsValueOfName(
                     DatamartFacility.HealthService.values(), facilityHealthService.name())
-                ? DatamartFacility.HealthService.valueOf(facilityHealthService.name())
+                ? DatamartFacility.HealthService.fromString(facilityHealthService.name())
                 : null;
   }
 

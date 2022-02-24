@@ -74,7 +74,15 @@ public final class Facility implements CanBeEmpty {
     TransitionAssistance,
     UpdatingDirectDepositInformation,
     VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance
+    VocationalRehabilitationAndEmploymentAssistance;
+
+    /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
+    @JsonCreator
+    public static BenefitsService fromString(String name) {
+      return "eBenefitsRegistrationAssistance".equalsIgnoreCase(name)
+          ? eBenefitsRegistrationAssistance
+          : valueOf(capitalize(name));
+    }
   }
 
   public enum FacilityType {
