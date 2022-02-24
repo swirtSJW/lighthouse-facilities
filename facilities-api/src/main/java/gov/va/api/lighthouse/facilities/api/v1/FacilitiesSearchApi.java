@@ -20,24 +20,23 @@ public interface FacilitiesSearchApi {
   @Operation(
       summary = "Query facilities by location or IDs, with optional filters",
       description =
-          "Query facilities by bounding box, latitude and longitude, state, visn, or zip code, "
-              + "or include no parameters to bulk download all facilities. "
+          "Query facilities using bounding box, latitude and longitude, state, visn, zip code, "
+              + "facility type, facility ids, available services, and mobile status. "
+              + "To bulk download all facilities, simply query without any parameters. "
               + "Bounding box is specified as four `bbox[]` parameters, long1, lat1, long2, lat2. "
               + "(Relative order is unimportant.)"
               + "\n\n"
-              + "A query by latitude and longitude returns all facilities in the system, "
-              + "sorted by distance from that location. Providing an optional radius in miles to "
-              + "this query will narrow the scope of the returned facilities to those falling "
+              + "A query by latitude and longitude returns all facilities matching "
+              + "other given parameters, sorted by distance from that location. "
+              + "Providing an optional radius in miles to this query will narrow "
+              + "the scope of the returned facilities to those falling "
               + "within the specified radius from that location."
               + "\n\n"
-              + "All location queries support filtering by facility type, available services, and"
-              + " mobile status."
-              + "\n\n"
-              + "One can also retrieve facilities by ID using a comma-separated "
-              + "list like `?ids=id1,id2`. "
+              + "If one wishes to only get facilities with specific ids, simply include "
+              + "a comma separated list like `?facilityIds=id1,id2`. "
               + "When requesting multiple facilities by ID, the API will return "
-              + "as many results as it can find matches for, omitting IDs where "
-              + "there is no match. "
+              + "as many results as it can find matches for given other included parameters, "
+              + "omitting ids where there is no match. "
               + "It will not return an HTTP error code if it is unable to match a requested ID. "
               + "Clients may supply IDs up to the limit their HTTP client enforces for "
               + "URI path lengths. (Usually 2048 characters.)"
@@ -48,23 +47,27 @@ public interface FacilitiesSearchApi {
               + "\n\n"
               + "### Parameter combinations\n"
               + "You may optionally specify `page` and `per_page` with any query. "
-              + "You must specify one of the following parameter combinations: "
+              + "You can query with any combination of the following: "
               + "\n\n"
-              + "- `bbox[]`, with the option of any combination of `type`, `services[]`, or"
-              + " `mobile`"
+              + "- `bbox[]`"
               + "\n\n"
               + "- `ids`"
               + "\n\n"
-              + "- `lat` and `long`, with the option "
-              + "of any combination of `radius`, `ids`, `type`, `services[]`, or `mobile`"
+              + "- `lat` and `long`, with the option to filter by `radius`"
               + "\n\n"
-              + "- `state`, with the option of any combination of `type`, `services[]`, or"
-              + " `mobile`"
+              + "- `state`"
               + "\n\n"
               + "- `visn`"
               + "\n\n"
-              + "- `zip`, with the option of any combination of `type`, `services[]`, or"
-              + " `mobile`"
+              + "- `zip`"
+              + "\n\n"
+              + "- `facilityIds`"
+              + "\n\n"
+              + "- `type`"
+              + "\n\n"
+              + "- `services[]`"
+              + "\n\n"
+              + "- `mobile`"
               + "\n\n"
               + " Invalid combinations will return `400 Bad Request`. ",
       tags = {"facilities"},
@@ -110,15 +113,12 @@ public interface FacilitiesSearchApi {
               schema = @Schema(implementation = ApiError.class)))
   FacilitiesResponse getFacilitiesByLocation(
       @Parameter(
-              name = "ids",
-              description =
-                  "List of comma-separated facility IDs to retrieve in a single request. "
-                      + "Can be combined with lat and long parameters to retrieve facilities "
-                      + "sorted by distance from a location.",
+              name = "facilityIds",
+              description = "List of comma-separated facility IDs",
               in = ParameterIn.QUERY,
               style = ParameterStyle.FORM,
               explode = Explode.FALSE,
-              examples = @ExampleObject(name = "ids", value = "[\"vha_688\",\"vha_644\"]"))
+              examples = @ExampleObject(name = "facilityIds", value = "[\"vha_688\",\"vha_644\"]"))
           List<String> id,
       @Parameter(
               name = "zip",
@@ -144,7 +144,8 @@ public interface FacilitiesSearchApi {
               in = ParameterIn.QUERY,
               description =
                   "Latitude of point to search for facilities, "
-                      + "in WGS84 coordinate reference system.",
+                      + "in WGS84 coordinate reference system."
+                      + "Must be accompanied by a valid longitude.",
               schema = @Schema(type = "number", format = "float"),
               examples = @ExampleObject(name = "coordinates", value = "56.7"))
           BigDecimal lat,
@@ -153,7 +154,8 @@ public interface FacilitiesSearchApi {
               in = ParameterIn.QUERY,
               description =
                   "Longitude of point to search for facilities, "
-                      + "in WGS84 coordinate reference system.",
+                      + "in WGS84 coordinate reference system."
+                      + "Must be accompanied by a valid latitude.",
               style = ParameterStyle.FORM,
               explode = Explode.TRUE,
               schema = @Schema(type = "number", format = "float"),
@@ -164,7 +166,8 @@ public interface FacilitiesSearchApi {
               in = ParameterIn.QUERY,
               description =
                   "Optional radial distance from specified latitude and longitude to "
-                      + "filter facilities search in WGS84 coordinate reference system.",
+                      + "filter facilities search in WGS84 coordinate reference system."
+                      + "Must be accompanied by a valid latitude and longitude.",
               style = ParameterStyle.FORM,
               explode = Explode.TRUE,
               schema = @Schema(type = "number", format = "float"),
@@ -194,7 +197,7 @@ public interface FacilitiesSearchApi {
           String visn,
       @Parameter(
               name = "type",
-              description = "Optional facility type search filter",
+              description = "Type of facility location",
               in = ParameterIn.QUERY,
               schema =
                   @Schema(
@@ -203,7 +206,7 @@ public interface FacilitiesSearchApi {
           String type,
       @Parameter(
               name = "services[]",
-              description = "Optional facility service search filter",
+              description = "List of services a facility offers",
               in = ParameterIn.QUERY,
               style = ParameterStyle.FORM,
               explode = Explode.TRUE)
@@ -211,8 +214,9 @@ public interface FacilitiesSearchApi {
       @Parameter(
               name = "mobile",
               in = ParameterIn.QUERY,
-              description = "Optional facility mobile search filter",
-              schema = @Schema(type = "Boolean"))
+              description = "Boolean flag to include or exclude mobile facilities",
+              schema = @Schema(type = "Boolean"),
+              examples = @ExampleObject(name= "mobile", value = "True"))
           Boolean mobile,
       @Parameter(
               name = "page",
