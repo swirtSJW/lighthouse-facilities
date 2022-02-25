@@ -484,37 +484,6 @@ public class InternalFacilitiesController {
     return ImmutableSet.copyOf(Sets.difference(oldIds, newIds));
   }
 
-  @GetMapping(value = "/populate-cms-overlay-table")
-  void populateCmsOverlayTable() {
-    // parallel stream all facilities response
-    // build entity for cms_overlay table
-    // operating status AND/OR detailed services exist add to entity otherwise it will just be null
-    // save entity
-    // done after all processing completes
-    boolean noErrors = true;
-    try {
-      log.warn("Attempting to save all facility overlay info to cms_overlay table.");
-      Streams.stream(facilityRepository.findAll())
-          .parallel()
-          .filter(f -> f.cmsOperatingStatus() != null || f.cmsServices() != null)
-          .forEach(
-              f ->
-                  cmsOverlayRepository.save(
-                      CmsOverlayEntity.builder()
-                          .id(f.id())
-                          .cmsOperatingStatus(f.cmsOperatingStatus())
-                          .cmsServices(f.cmsServices())
-                          .build()));
-    } catch (Exception e) {
-      noErrors = false;
-      log.error(
-          "Failed to save all facility overlay info to cms_overlay table. {}", e.getMessage());
-    }
-    if (noErrors) {
-      log.warn("Completed saving all facility overlay info to cms_overlay table!");
-    }
-  }
-
   private ResponseEntity<ReloadResponse> process(
       ReloadResponse response, List<DatamartFacility> collectedFacilities) {
     response.timing().markCompleteCollection();

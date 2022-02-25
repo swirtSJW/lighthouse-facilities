@@ -1241,14 +1241,6 @@ public class InternalFacilitiesControllerTest {
         .isEqualTo(List.of(facilityEntity));
     // Populate overlay using CMS services
     assertThat(overlayRepository.findAll()).isEmpty();
-    _controller().populateCmsOverlayTable();
-    assertThat(overlayRepository.findAll())
-        .usingRecursiveComparison()
-        .isEqualTo(
-            List.of(
-                _overlayEntity(
-                    DatamartCmsOverlay.builder().detailedServices(facilityDetailedServices).build(),
-                    pk)));
   }
 
   @Test
@@ -1262,12 +1254,6 @@ public class InternalFacilitiesControllerTest {
         () -> InternalFacilitiesController.populate(mockEntity, mockDatamartFacility));
     FacilityRepository mockRepo = mock(FacilityRepository.class);
     when(mockRepo.findAll()).thenThrow(new NullPointerException("oh noes"));
-    assertDoesNotThrow(
-        () ->
-            InternalFacilitiesController.builder()
-                .facilityRepository(mockRepo)
-                .build()
-                .populateCmsOverlayTable());
     assertDoesNotThrow(
         () ->
             InternalFacilitiesController.builder()
