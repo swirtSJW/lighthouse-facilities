@@ -125,6 +125,6 @@ public class ReadHealthByIdGeoJsonTest {
 
   @Test
   void unmarshallSample() {
-    assertReadable("/read-health-geojson.json");
+    assertReadable("/v0/read-health-geojson.json");
   }
 }
