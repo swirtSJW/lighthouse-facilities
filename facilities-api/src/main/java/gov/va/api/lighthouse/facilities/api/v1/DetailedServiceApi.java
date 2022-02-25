@@ -13,7 +13,18 @@ import javax.ws.rs.Path;
 public interface DetailedServiceApi {
   @Operation(
       summary = "Retrieve a specific service given an ID",
-      operationId = "getServiceById",
+      description =
+          "Query facility services using service parameter. "
+              + "Simply provide the service like `services/cardiology`. "
+              + "\n\n"
+              + "Results are paginated. "
+              + "JSON responses include pagination information in the standard JSON API "
+              + "\"links\" and \"meta\" elements. "
+              + "\n\n"
+              + "You may optionally specify `page` and `per_page` with any query. "
+              + "\n\n"
+              + " Not supplying `service` will return `400 Bad Request`. ",
+      operationId = "getServicesById",
       tags = {"facilities"},
       security = @SecurityRequirement(name = "apikey"))
   @GET
@@ -83,7 +94,7 @@ public interface DetailedServiceApi {
       @Parameter(
               in = ParameterIn.PATH,
               name = "service",
-              description = "Service ID",
+              description = "Service ID, unique identifier for service",
               required = false,
               example = "covid19Vaccine")
           String service);

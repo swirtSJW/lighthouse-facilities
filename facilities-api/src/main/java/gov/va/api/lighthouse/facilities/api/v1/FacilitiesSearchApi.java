@@ -216,7 +216,7 @@ public interface FacilitiesSearchApi {
               in = ParameterIn.QUERY,
               description = "Boolean flag to include or exclude mobile facilities",
               schema = @Schema(type = "Boolean"),
-              examples = @ExampleObject(name= "mobile", value = "True"))
+              examples = @ExampleObject(name = "mobile", value = "True"))
           Boolean mobile,
       @Parameter(
               name = "page",

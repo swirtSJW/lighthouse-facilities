@@ -13,6 +13,32 @@ import javax.ws.rs.Path;
 public interface DetailedServicesApi {
   @Operation(
       summary = "Retrieve all services for a given facility",
+      description =
+          "Query facility services using service and serviceType parameters. "
+              + "Multiple services may be provided by separating services using a comma "
+              + "like `services?serviceIds=cardiology,audiology`. "
+              + "One may also query for all services of specific type. "
+              + "Example is if one wanted all the health services "
+              + "simply supply health as parameter like "
+              + "`?serviceType=health` "
+              + "If you provide services with incorrect service type, "
+              + "no services will be returned. Example is if you provide  "
+              + "`?serviceIds=cardiology,audiology&serviceType=benefits` no results "
+              + "will be returned. "
+              + "\n\n"
+              + "Results are paginated. "
+              + "JSON responses include pagination information in the standard JSON API "
+              + "\"links\" and \"meta\" elements. "
+              + "\n\n"
+              + "### Parameter combinations\n"
+              + "You may optionally specify `page` and `per_page` with any query. "
+              + "You can query with any combination of the following: "
+              + "\n\n"
+              + "- `service`"
+              + "\n\n"
+              + "- `serviceType`"
+              + "\n\n"
+              + " Not supplying both parameters will return `400 Bad Request`. ",
       operationId = "getServicesById",
       tags = {"facilities"},
       security = @SecurityRequirement(name = "apikey"))
@@ -79,5 +105,19 @@ public interface DetailedServicesApi {
                       + "or vet center, respectively.",
               required = true,
               example = "vha_688")
-          String id);
+          String id,
+      @Parameter(
+              in = ParameterIn.QUERY,
+              name = "service",
+              description = "Service ID, unique identifier for service",
+              required = false,
+              example = "covid19Vaccine")
+          String service,
+      @Parameter(
+              in = ParameterIn.QUERY,
+              name = "serviceType",
+              description = "Type of service",
+              required = false,
+              example = "health")
+          String serviceType);
 }
