@@ -8,12 +8,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceEmailContact;
 import lombok.SneakyThrows;
 
 public class DatamartDetailedServiceEmailContactDeserializer
     extends StdDeserializer<DetailedServiceEmailContact> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartDetailedServiceEmailContactDeserializer() {
     this(null);
   }
@@ -35,13 +39,9 @@ public class DatamartDetailedServiceEmailContactDeserializer
 
     return DetailedServiceEmailContact.builder()
         .emailAddress(
-            emailAddressNode != null
-                ? createMapper().convertValue(emailAddressNode, String.class)
-                : null)
+            emailAddressNode != null ? MAPPER.convertValue(emailAddressNode, String.class) : null)
         .emailLabel(
-            emailLabelNode != null
-                ? createMapper().convertValue(emailLabelNode, String.class)
-                : null)
+            emailLabelNode != null ? MAPPER.convertValue(emailLabelNode, String.class) : null)
         .build();
   }
 }

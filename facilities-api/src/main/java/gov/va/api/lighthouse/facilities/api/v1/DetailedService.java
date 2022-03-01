@@ -122,7 +122,7 @@ public class DetailedService implements CanBeEmpty {
   /** Empty elements will be omitted from JSON serialization. */
   @JsonIgnore
   public boolean isEmpty() {
-    return ObjectUtils.isEmpty(serviceInfo())
+    return (serviceInfo() == null || serviceInfo().isEmpty())
         && isBlank(changed())
         && isBlank(descriptionFacility())
         && isBlank(appointmentLeadIn())

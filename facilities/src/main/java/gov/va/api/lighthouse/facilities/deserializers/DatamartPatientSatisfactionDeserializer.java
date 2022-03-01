@@ -10,12 +10,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.PatientSatisfaction;
 import java.math.BigDecimal;
 import lombok.SneakyThrows;
 
 public class DatamartPatientSatisfactionDeserializer extends StdDeserializer<PatientSatisfaction> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartPatientSatisfactionDeserializer() {
     this(null);
   }
@@ -40,19 +44,19 @@ public class DatamartPatientSatisfactionDeserializer extends StdDeserializer<Pat
     return PatientSatisfaction.builder()
         .primaryCareUrgent(
             primaryCareUrgentNode != null
-                ? createMapper().convertValue(primaryCareUrgentNode, BigDecimal.class)
+                ? MAPPER.convertValue(primaryCareUrgentNode, BigDecimal.class)
                 : null)
         .specialtyCareUrgent(
             specialtyCareUrgentNode != null
-                ? createMapper().convertValue(specialtyCareUrgentNode, BigDecimal.class)
+                ? MAPPER.convertValue(specialtyCareUrgentNode, BigDecimal.class)
                 : null)
         .primaryCareRoutine(
             primaryCareRoutineNode != null
-                ? createMapper().convertValue(primaryCareRoutineNode, BigDecimal.class)
+                ? MAPPER.convertValue(primaryCareRoutineNode, BigDecimal.class)
                 : null)
         .specialtyCareRoutine(
             specialtyCareRoutineNode != null
-                ? createMapper().convertValue(specialtyCareRoutineNode, BigDecimal.class)
+                ? MAPPER.convertValue(specialtyCareRoutineNode, BigDecimal.class)
                 : null)
         .build();
   }
