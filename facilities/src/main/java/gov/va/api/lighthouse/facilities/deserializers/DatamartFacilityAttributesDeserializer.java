@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getActiveStatus;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityType;
@@ -71,60 +70,49 @@ public class DatamartFacilityAttributesDeserializer
     TypeReference<List<DatamartDetailedService>> detailedServicesRef = new TypeReference<>() {};
 
     return FacilityAttributes.builder()
-        .name(nameNode != null ? createMapper().convertValue(nameNode, String.class) : null)
+        .name(nameNode != null ? MAPPER.convertValue(nameNode, String.class) : null)
         .facilityType(
             facilityTypeNode != null
-                ? createMapper().convertValue(facilityTypeNode, FacilityType.class)
+                ? MAPPER.convertValue(facilityTypeNode, FacilityType.class)
                 : null)
         .classification(
             classificationNode != null
-                ? createMapper().convertValue(classificationNode, String.class)
+                ? MAPPER.convertValue(classificationNode, String.class)
                 : null)
-        .website(
-            websiteNode != null ? createMapper().convertValue(websiteNode, String.class) : null)
-        .latitude(
-            latitudeNode != null
-                ? createMapper().convertValue(latitudeNode, BigDecimal.class)
-                : null)
+        .website(websiteNode != null ? MAPPER.convertValue(websiteNode, String.class) : null)
+        .latitude(latitudeNode != null ? MAPPER.convertValue(latitudeNode, BigDecimal.class) : null)
         .longitude(
-            longitudeNode != null
-                ? createMapper().convertValue(longitudeNode, BigDecimal.class)
-                : null)
-        .timeZone(
-            timeZoneNode != null ? createMapper().convertValue(timeZoneNode, String.class) : null)
-        .address(
-            addressNode != null ? createMapper().convertValue(addressNode, Addresses.class) : null)
-        .phone(phoneNode != null ? createMapper().convertValue(phoneNode, Phone.class) : null)
-        .hours(hoursNode != null ? createMapper().convertValue(hoursNode, Hours.class) : null)
+            longitudeNode != null ? MAPPER.convertValue(longitudeNode, BigDecimal.class) : null)
+        .timeZone(timeZoneNode != null ? MAPPER.convertValue(timeZoneNode, String.class) : null)
+        .address(addressNode != null ? MAPPER.convertValue(addressNode, Addresses.class) : null)
+        .phone(phoneNode != null ? MAPPER.convertValue(phoneNode, Phone.class) : null)
+        .hours(hoursNode != null ? MAPPER.convertValue(hoursNode, Hours.class) : null)
         .operationalHoursSpecialInstructions(
             operationalHoursSpecialInstructionsNode != null
-                ? createMapper().convertValue(operationalHoursSpecialInstructionsNode, String.class)
+                ? MAPPER.convertValue(operationalHoursSpecialInstructionsNode, String.class)
                 : null)
-        .services(
-            servicesNode != null ? createMapper().convertValue(servicesNode, Services.class) : null)
+        .services(servicesNode != null ? MAPPER.convertValue(servicesNode, Services.class) : null)
         .satisfaction(
             satisfactionNode != null
-                ? createMapper().convertValue(satisfactionNode, Satisfaction.class)
+                ? MAPPER.convertValue(satisfactionNode, Satisfaction.class)
                 : null)
         .waitTimes(
-            waitTimesNode != null
-                ? createMapper().convertValue(waitTimesNode, WaitTimes.class)
-                : null)
-        .mobile(mobileNode != null ? createMapper().convertValue(mobileNode, Boolean.class) : null)
+            waitTimesNode != null ? MAPPER.convertValue(waitTimesNode, WaitTimes.class) : null)
+        .mobile(mobileNode != null ? MAPPER.convertValue(mobileNode, Boolean.class) : null)
         .activeStatus(
             activeStatusNode != null
-                ? createMapper().convertValue(activeStatusNode, ActiveStatus.class)
+                ? MAPPER.convertValue(activeStatusNode, ActiveStatus.class)
                 : null)
         .operatingStatus(
             operatingStatusNode != null
-                ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
+                ? MAPPER.convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
             detailedServicesNode != null
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                    MAPPER.convertValue(detailedServicesNode, detailedServicesRef))
                 : null)
-        .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
+        .visn(visnNode != null ? MAPPER.convertValue(visnNode, String.class) : null)
         .build();
   }
 }

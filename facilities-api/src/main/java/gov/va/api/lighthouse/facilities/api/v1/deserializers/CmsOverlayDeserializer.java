@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
 
@@ -41,12 +40,12 @@ public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
     return CmsOverlay.builder()
         .operatingStatus(
             operatingStatusNode != null
-                ? createMapper().convertValue(operatingStatusNode, Facility.OperatingStatus.class)
+                ? MAPPER.convertValue(operatingStatusNode, Facility.OperatingStatus.class)
                 : null)
         .detailedServices(
             detailedServicesNode != null
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                    MAPPER.convertValue(detailedServicesNode, detailedServicesRef))
                 : null)
         .build();
   }

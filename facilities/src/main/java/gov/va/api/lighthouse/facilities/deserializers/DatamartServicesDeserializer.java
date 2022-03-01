@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
@@ -19,6 +20,9 @@ import java.util.List;
 import lombok.SneakyThrows;
 
 public class DatamartServicesDeserializer extends StdDeserializer<Services> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartServicesDeserializer() {
     this(null);
   }
@@ -46,17 +50,11 @@ public class DatamartServicesDeserializer extends StdDeserializer<Services> {
     TypeReference<List<OtherService>> otherRef = new TypeReference<>() {};
 
     return Services.builder()
-        .benefits(
-            healthNode != null
-                ? createMapper().convertValue(benefitsNode, benefitsRef)
-                : emptyList())
-        .health(
-            healthNode != null ? createMapper().convertValue(healthNode, healthRef) : emptyList())
-        .other(healthNode != null ? createMapper().convertValue(otherNode, otherRef) : emptyList())
+        .benefits(healthNode != null ? MAPPER.convertValue(benefitsNode, benefitsRef) : emptyList())
+        .health(healthNode != null ? MAPPER.convertValue(healthNode, healthRef) : emptyList())
+        .other(healthNode != null ? MAPPER.convertValue(otherNode, otherRef) : emptyList())
         .lastUpdated(
-            lastUpdatedNode != null
-                ? createMapper().convertValue(lastUpdatedNode, LocalDate.class)
-                : null)
+            lastUpdatedNode != null ? MAPPER.convertValue(lastUpdatedNode, LocalDate.class) : null)
         .build();
   }
 }

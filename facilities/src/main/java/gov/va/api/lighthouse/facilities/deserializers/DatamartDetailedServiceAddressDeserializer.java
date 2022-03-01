@@ -13,12 +13,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceAddress;
 import lombok.SneakyThrows;
 
 public class DatamartDetailedServiceAddressDeserializer
     extends StdDeserializer<DetailedServiceAddress> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartDetailedServiceAddressDeserializer() {
     this(null);
   }
@@ -47,33 +51,24 @@ public class DatamartDetailedServiceAddressDeserializer
 
     return DetailedServiceAddress.builder()
         .clinicName(
-            clinicNameNode != null
-                ? createMapper().convertValue(clinicNameNode, String.class)
-                : null)
+            clinicNameNode != null ? MAPPER.convertValue(clinicNameNode, String.class) : null)
         .address1(
-            addressLine1Node != null
-                ? createMapper().convertValue(addressLine1Node, String.class)
-                : null)
+            addressLine1Node != null ? MAPPER.convertValue(addressLine1Node, String.class) : null)
         .address2(
-            addressLine2Node != null
-                ? createMapper().convertValue(addressLine2Node, String.class)
-                : null)
+            addressLine2Node != null ? MAPPER.convertValue(addressLine2Node, String.class) : null)
         .buildingNameNumber(
             buildingNameNumberNode != null
-                ? createMapper().convertValue(buildingNameNumberNode, String.class)
+                ? MAPPER.convertValue(buildingNameNumberNode, String.class)
                 : null)
         .wingFloorOrRoomNumber(
             wingFloorOrRoomNumberNode != null
-                ? createMapper().convertValue(wingFloorOrRoomNumberNode, String.class)
+                ? MAPPER.convertValue(wingFloorOrRoomNumberNode, String.class)
                 : null)
-        .city(cityNode != null ? createMapper().convertValue(cityNode, String.class) : null)
-        .state(stateNode != null ? createMapper().convertValue(stateNode, String.class) : null)
-        .zipCode(
-            zipCodeNode != null ? createMapper().convertValue(zipCodeNode, String.class) : null)
+        .city(cityNode != null ? MAPPER.convertValue(cityNode, String.class) : null)
+        .state(stateNode != null ? MAPPER.convertValue(stateNode, String.class) : null)
+        .zipCode(zipCodeNode != null ? MAPPER.convertValue(zipCodeNode, String.class) : null)
         .countryCode(
-            countryCodeNode != null
-                ? createMapper().convertValue(countryCodeNode, String.class)
-                : null)
+            countryCodeNode != null ? MAPPER.convertValue(countryCodeNode, String.class) : null)
         .build();
   }
 }

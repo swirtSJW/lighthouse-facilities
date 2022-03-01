@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.AppointmentPhoneNumber;
@@ -36,6 +37,9 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 public class DatamartDetailedServiceDeserializer extends StdDeserializer<DatamartDetailedService> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartDetailedServiceDeserializer() {
     this(null);
   }
@@ -57,20 +61,21 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     JsonNode appointmentLeadInNode = getAppointmentLeadin(node);
     JsonNode onlineSchedulingAvailableNode = getOnlineSchedulingAvailable(node);
     JsonNode pathNode = node.get("path");
-    JsonNode serviceInfoNode = node.get("serviceInfo");
-    JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
     JsonNode phoneNumbersNode = getPhoneNumbers(node);
     JsonNode referralRequiredNode = getReferralRequired(node);
     JsonNode serviceLocationsNode = getServiceLocations(node);
     JsonNode walkInsAcceptedNode = getWalkInsAccepted(node);
-    String serviceName =
-        nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
+
+    JsonNode serviceInfoNode = node.get("serviceInfo");
+    JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
+    final String serviceName =
+        nameNode != null ? MAPPER.convertValue(nameNode, String.class) : null;
     JsonNode serviceIdNode =
         serviceInfoNode != null ? serviceInfoNode.get("serviceId") : node.get("serviceId");
     final String serviceId =
         serviceIdNode != null
-                && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))
-            ? createMapper().convertValue(serviceIdNode, String.class)
+                && isRecognizedServiceId(MAPPER.convertValue(serviceIdNode, String.class))
+            ? MAPPER.convertValue(serviceIdNode, String.class)
             : // Attempt to construct service id from service name
             serviceIdNode == null && isRecognizedServiceName(serviceName)
                 ? getServiceIdForRecognizedServiceName(serviceName)
@@ -78,9 +83,8 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
     JsonNode serviceTypeNode = serviceInfoNode != null ? serviceInfoNode.get("serviceType") : null;
     final ServiceType serviceType =
         serviceTypeNode != null
-                && isRecognizedServiceType(
-                    createMapper().convertValue(serviceTypeNode, String.class))
-            ? ServiceType.fromString(createMapper().convertValue(serviceTypeNode, String.class))
+                && isRecognizedServiceType(MAPPER.convertValue(serviceTypeNode, String.class))
+            ? ServiceType.fromString(MAPPER.convertValue(serviceTypeNode, String.class))
             : // Attempt to infer service type from service id
             !StringUtils.equals(serviceId, INVALID_SVC_ID)
                 ? getServiceTypeForServiceId(serviceId)
@@ -117,37 +121,36 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 .establishedPatientWaitTime(establishedPatientWaitTime)
                 .effectiveDate(effectiveDate)
                 .build())
-        .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
-        .changed(
-            changedNode != null ? createMapper().convertValue(changedNode, String.class) : null)
+        .active(activeNode != null ? MAPPER.convertValue(activeNode, Boolean.class) : false)
+        .changed(changedNode != null ? MAPPER.convertValue(changedNode, String.class) : null)
         .descriptionFacility(
             descriptionFacilityNode != null
-                ? createMapper().convertValue(descriptionFacilityNode, String.class)
+                ? MAPPER.convertValue(descriptionFacilityNode, String.class)
                 : null)
         .appointmentLeadIn(
             appointmentLeadInNode != null
-                ? createMapper().convertValue(appointmentLeadInNode, String.class)
+                ? MAPPER.convertValue(appointmentLeadInNode, String.class)
                 : null)
         .onlineSchedulingAvailable(
             onlineSchedulingAvailableNode != null
-                ? createMapper().convertValue(onlineSchedulingAvailableNode, String.class)
+                ? MAPPER.convertValue(onlineSchedulingAvailableNode, String.class)
                 : null)
-        .path(pathNode != null ? createMapper().convertValue(pathNode, String.class) : null)
+        .path(pathNode != null ? MAPPER.convertValue(pathNode, String.class) : null)
         .phoneNumbers(
             phoneNumbersNode != null
-                ? createMapper().convertValue(phoneNumbersNode, appointmentNumbersRef)
+                ? MAPPER.convertValue(phoneNumbersNode, appointmentNumbersRef)
                 : emptyList())
         .referralRequired(
             referralRequiredNode != null
-                ? createMapper().convertValue(referralRequiredNode, String.class)
+                ? MAPPER.convertValue(referralRequiredNode, String.class)
                 : null)
         .serviceLocations(
             serviceLocationsNode != null
-                ? createMapper().convertValue(serviceLocationsNode, serviceLocationsRef)
+                ? MAPPER.convertValue(serviceLocationsNode, serviceLocationsRef)
                 : emptyList())
         .walkInsAccepted(
             walkInsAcceptedNode != null
-                ? createMapper().convertValue(walkInsAcceptedNode, String.class)
+                ? MAPPER.convertValue(walkInsAcceptedNode, String.class)
                 : null)
         .build();
   }

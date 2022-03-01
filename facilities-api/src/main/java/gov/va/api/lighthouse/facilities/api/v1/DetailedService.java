@@ -136,7 +136,7 @@ public class DetailedService implements CanBeEmpty {
         && isBlank(referralRequired())
         && ObjectUtils.isEmpty(serviceLocations())
         && isBlank(walkInsAccepted())
-        && ObjectUtils.isEmpty(serviceInfo());
+        && (serviceInfo() == null || ObjectUtils.isEmpty(serviceInfo()));
   }
 
   public enum ServiceType {

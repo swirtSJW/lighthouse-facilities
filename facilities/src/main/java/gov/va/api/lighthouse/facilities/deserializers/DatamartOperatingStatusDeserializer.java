@@ -7,12 +7,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatusCode;
 import lombok.SneakyThrows;
 
 public class DatamartOperatingStatusDeserializer extends StdDeserializer<OperatingStatus> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartOperatingStatusDeserializer() {
     this(null);
   }
@@ -33,13 +37,10 @@ public class DatamartOperatingStatusDeserializer extends StdDeserializer<Operati
     JsonNode additionalInfoNode = getAdditionalInfo(node);
 
     return OperatingStatus.builder()
-        .code(
-            codeNode != null
-                ? createMapper().convertValue(codeNode, OperatingStatusCode.class)
-                : null)
+        .code(codeNode != null ? MAPPER.convertValue(codeNode, OperatingStatusCode.class) : null)
         .additionalInfo(
             additionalInfoNode != null
-                ? createMapper().convertValue(additionalInfoNode, String.class)
+                ? MAPPER.convertValue(additionalInfoNode, String.class)
                 : null)
         .build();
   }
