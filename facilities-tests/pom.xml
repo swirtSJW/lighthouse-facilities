@@ -173,7 +173,7 @@
                   <goal>java</goal>
                 </goals>
                 <configuration>
-                  <mainClass>gov.va.api.lighthouse.facilities.tests.internal.PssgRequestBot</mainClass>
+                  <mainClass>gov.va.api.lighthouse.facilities.tests.PssgRequestBot</mainClass>
                   <classpathScope>test</classpathScope>
                 </configuration>
               </execution>

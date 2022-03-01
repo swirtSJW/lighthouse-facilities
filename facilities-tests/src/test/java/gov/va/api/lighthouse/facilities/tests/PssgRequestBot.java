@@ -1,4 +1,4 @@
-package gov.va.api.lighthouse.facilities.tests.internal;
+package gov.va.api.lighthouse.facilities.tests;
 
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.CLIENT_KEY_DEFAULT;
 import static java.util.stream.Collectors.toList;
@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toList;
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.api.pssg.BandUpdateResponse;
-import gov.va.api.lighthouse.facilities.tests.SystemDefinitions;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import java.util.ArrayList;
