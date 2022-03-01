@@ -9,11 +9,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
 import lombok.SneakyThrows;
 
 public class DatamartAddressDeserializer extends StdDeserializer<Address> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartAddressDeserializer() {
     this(null);
   }
@@ -37,15 +41,12 @@ public class DatamartAddressDeserializer extends StdDeserializer<Address> {
     JsonNode zipNode = node.get("zip");
 
     return Address.builder()
-        .address1(
-            address1Node != null ? createMapper().convertValue(address1Node, String.class) : null)
-        .address2(
-            address2Node != null ? createMapper().convertValue(address2Node, String.class) : null)
-        .address3(
-            address3Node != null ? createMapper().convertValue(address3Node, String.class) : null)
-        .city(cityNode != null ? createMapper().convertValue(cityNode, String.class) : null)
-        .state(stateNode != null ? createMapper().convertValue(stateNode, String.class) : null)
-        .zip(zipNode != null ? createMapper().convertValue(zipNode, String.class) : null)
+        .address1(address1Node != null ? MAPPER.convertValue(address1Node, String.class) : null)
+        .address2(address2Node != null ? MAPPER.convertValue(address2Node, String.class) : null)
+        .address3(address3Node != null ? MAPPER.convertValue(address3Node, String.class) : null)
+        .city(cityNode != null ? MAPPER.convertValue(cityNode, String.class) : null)
+        .state(stateNode != null ? MAPPER.convertValue(stateNode, String.class) : null)
+        .zip(zipNode != null ? MAPPER.convertValue(zipNode, String.class) : null)
         .build();
   }
 }

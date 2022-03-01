@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.PatientWaitTime;
 import gov.va.api.lighthouse.facilities.DatamartFacility.WaitTimes;
@@ -17,6 +18,9 @@ import java.util.List;
 import lombok.SneakyThrows;
 
 public class DatamartWaitTimesDeserializer extends StdDeserializer<WaitTimes> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartWaitTimesDeserializer() {
     this(null);
   }
@@ -40,11 +44,10 @@ public class DatamartWaitTimesDeserializer extends StdDeserializer<WaitTimes> {
     TypeReference<List<PatientWaitTime>> healthRef = new TypeReference<>() {};
 
     return WaitTimes.builder()
-        .health(
-            healthNode != null ? createMapper().convertValue(healthNode, healthRef) : emptyList())
+        .health(healthNode != null ? MAPPER.convertValue(healthNode, healthRef) : emptyList())
         .effectiveDate(
             effectiveDateNode != null
-                ? createMapper().convertValue(effectiveDateNode, LocalDate.class)
+                ? MAPPER.convertValue(effectiveDateNode, LocalDate.class)
                 : null)
         .build();
   }

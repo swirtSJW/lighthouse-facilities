@@ -10,11 +10,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import lombok.SneakyThrows;
 
 public class DatamartPhoneDeserializer extends StdDeserializer<Phone> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartPhoneDeserializer() {
     this(null);
   }
@@ -39,25 +43,22 @@ public class DatamartPhoneDeserializer extends StdDeserializer<Phone> {
     JsonNode enrollmentCoordinator = getEnrollmentCoordinator(node);
 
     return Phone.builder()
-        .fax(faxNode != null ? createMapper().convertValue(faxNode, String.class) : null)
-        .main(mainNode != null ? createMapper().convertValue(mainNode, String.class) : null)
-        .pharmacy(
-            pharmacyNode != null ? createMapper().convertValue(pharmacyNode, String.class) : null)
+        .fax(faxNode != null ? MAPPER.convertValue(faxNode, String.class) : null)
+        .main(mainNode != null ? MAPPER.convertValue(mainNode, String.class) : null)
+        .pharmacy(pharmacyNode != null ? MAPPER.convertValue(pharmacyNode, String.class) : null)
         .afterHours(
-            afterHoursNode != null
-                ? createMapper().convertValue(afterHoursNode, String.class)
-                : null)
+            afterHoursNode != null ? MAPPER.convertValue(afterHoursNode, String.class) : null)
         .patientAdvocate(
             patientAdvocateNode != null
-                ? createMapper().convertValue(patientAdvocateNode, String.class)
+                ? MAPPER.convertValue(patientAdvocateNode, String.class)
                 : null)
         .mentalHealthClinic(
             mentalHealthClinicNode != null
-                ? createMapper().convertValue(mentalHealthClinicNode, String.class)
+                ? MAPPER.convertValue(mentalHealthClinicNode, String.class)
                 : null)
         .enrollmentCoordinator(
             enrollmentCoordinator != null
-                ? createMapper().convertValue(enrollmentCoordinator, String.class)
+                ? MAPPER.convertValue(enrollmentCoordinator, String.class)
                 : null)
         .build();
   }

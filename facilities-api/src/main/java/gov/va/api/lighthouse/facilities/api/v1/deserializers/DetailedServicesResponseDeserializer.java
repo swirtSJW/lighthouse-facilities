@@ -1,7 +1,5 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,13 +41,11 @@ public class DetailedServicesResponseDeserializer
         .data(
             dataNode != null
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(dataNode, detailedServicesRef))
+                    MAPPER.convertValue(dataNode, detailedServicesRef))
                 : null)
-        .links(linksNode != null ? createMapper().convertValue(linksNode, PageLinks.class) : null)
+        .links(linksNode != null ? MAPPER.convertValue(linksNode, PageLinks.class) : null)
         .meta(
-            metaNode != null
-                ? createMapper().convertValue(metaNode, DetailedServicesMetadata.class)
-                : null)
+            metaNode != null ? MAPPER.convertValue(metaNode, DetailedServicesMetadata.class) : null)
         .build();
   }
 }

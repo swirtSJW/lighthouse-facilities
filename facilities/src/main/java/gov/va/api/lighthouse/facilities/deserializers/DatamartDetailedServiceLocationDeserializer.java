@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.AppointmentPhoneNumber;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceAddress;
@@ -24,6 +25,9 @@ import lombok.SneakyThrows;
 
 public class DatamartDetailedServiceLocationDeserializer
     extends StdDeserializer<DetailedServiceLocation> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartDetailedServiceLocationDeserializer() {
     this(null);
   }
@@ -52,24 +56,23 @@ public class DatamartDetailedServiceLocationDeserializer
     return DetailedServiceLocation.builder()
         .additionalHoursInfo(
             additionalHoursInfoNode != null
-                ? createMapper().convertValue(additionalHoursInfoNode, String.class)
+                ? MAPPER.convertValue(additionalHoursInfoNode, String.class)
                 : null)
         .emailContacts(
             emailContactsNode != null
-                ? createMapper().convertValue(emailContactsNode, emailContactsRef)
+                ? MAPPER.convertValue(emailContactsNode, emailContactsRef)
                 : emptyList())
         .facilityServiceHours(
             facilityServiceHoursNode != null
-                ? createMapper().convertValue(facilityServiceHoursNode, DetailedServiceHours.class)
+                ? MAPPER.convertValue(facilityServiceHoursNode, DetailedServiceHours.class)
                 : null)
         .appointmentPhoneNumbers(
             appointmentPhoneNumbersNode != null
-                ? createMapper().convertValue(appointmentPhoneNumbersNode, phoneNumbersRef)
+                ? MAPPER.convertValue(appointmentPhoneNumbersNode, phoneNumbersRef)
                 : emptyList())
         .serviceLocationAddress(
             serviceLocationAddressNode != null
-                ? createMapper()
-                    .convertValue(serviceLocationAddressNode, DetailedServiceAddress.class)
+                ? MAPPER.convertValue(serviceLocationAddressNode, DetailedServiceAddress.class)
                 : null)
         .build();
   }

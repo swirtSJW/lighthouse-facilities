@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.PatientSatisfaction;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Satisfaction;
@@ -14,6 +15,9 @@ import java.time.LocalDate;
 import lombok.SneakyThrows;
 
 public class DatamartSatisfactionDeserializer extends StdDeserializer<Satisfaction> {
+
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DatamartSatisfactionDeserializer() {
     this(null);
   }
@@ -35,12 +39,10 @@ public class DatamartSatisfactionDeserializer extends StdDeserializer<Satisfacti
 
     return Satisfaction.builder()
         .health(
-            healthNode != null
-                ? createMapper().convertValue(healthNode, PatientSatisfaction.class)
-                : null)
+            healthNode != null ? MAPPER.convertValue(healthNode, PatientSatisfaction.class) : null)
         .effectiveDate(
             effectiveDateNode != null
-                ? createMapper().convertValue(effectiveDateNode, LocalDate.class)
+                ? MAPPER.convertValue(effectiveDateNode, LocalDate.class)
                 : null)
         .build();
   }
