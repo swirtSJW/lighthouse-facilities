@@ -267,7 +267,8 @@ public class FacilitiesCollector {
                     : cmsOverlay.detailedServices().parallelStream()
                         .filter(
                             ds ->
-                                ds.serviceId()
+                                ds.serviceInfo()
+                                    .serviceId()
                                     .equals(
                                         uncapitalize(
                                             DatamartFacility.HealthService.Covid19Vaccine.name())))

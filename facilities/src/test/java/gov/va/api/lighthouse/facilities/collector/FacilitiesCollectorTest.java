@@ -301,13 +301,23 @@ public class FacilitiesCollectorTest {
             .detailedServices(
                 List.of(
                     DatamartDetailedService.builder()
-                        .serviceId(
-                            uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
-                        .name("Covid-19 Vaccines")
+                        .serviceInfo(
+                            DatamartDetailedService.ServiceInfo.builder()
+                                .name("Covid-19 Vaccines")
+                                .serviceId(
+                                    uncapitalize(
+                                        DatamartFacility.HealthService.Covid19Vaccine.name()))
+                                .serviceType(DatamartDetailedService.ServiceType.Health)
+                                .build())
                         .build(),
                     DatamartDetailedService.builder()
-                        .serviceId(uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
-                        .name("Cardiology")
+                        .serviceInfo(
+                            DatamartDetailedService.ServiceInfo.builder()
+                                .name(DatamartFacility.HealthService.Cardiology.name())
+                                .serviceId(
+                                    uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                                .serviceType(DatamartDetailedService.ServiceType.Health)
+                                .build())
                         .build()))
             .build();
     HashMap<String, DatamartCmsOverlay> testCollectorMap = new HashMap<>();
@@ -316,12 +326,12 @@ public class FacilitiesCollectorTest {
     collector.updateOperatingStatusFromCmsOverlay(List.of(testFacility));
     assertThat(
             testFacility.attributes().detailedServices().stream()
-                .map(DatamartDetailedService::serviceId)
+                .map(ds -> ds.serviceInfo().serviceId())
                 .collect(Collectors.toList()))
         .contains(uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()));
     assertThat(
             testFacility.attributes().detailedServices().stream()
-                .map(DatamartDetailedService::serviceId)
+                .map(ds -> ds.serviceInfo().serviceId())
                 .collect(Collectors.toList()))
         .doesNotContain(uncapitalize(DatamartFacility.HealthService.Cardiology.name()));
   }
