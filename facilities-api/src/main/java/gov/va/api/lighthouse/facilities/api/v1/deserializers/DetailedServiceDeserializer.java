@@ -68,7 +68,9 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     final String serviceName =
         nameNode != null ? MAPPER.convertValue(nameNode, String.class) : null;
     JsonNode serviceIdNode =
-        serviceInfoNode != null ? serviceInfoNode.get("serviceId") : node.get("serviceId");
+        serviceInfoNode != null
+            ? serviceInfoNode.get("service_api_id")
+            : node.get("service_api_id");
     final String serviceId =
         serviceIdNode != null
                 && isRecognizedServiceId(MAPPER.convertValue(serviceIdNode, String.class))

@@ -154,7 +154,7 @@ public class DetailedService implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = DetailedServiceInfoSerializer.class)
-  @JsonPropertyOrder({"name", "serviceId", "serviceType"})
+  @JsonPropertyOrder({"name", "service_api_id", "serviceType"})
   @Schema(description = "Service information.")
   public static final class ServiceInfo implements CanBeEmpty {
     @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";

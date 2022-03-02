@@ -130,7 +130,7 @@ final class DatamartJacksonSerializers {
     public void serialize(ServiceInfo value, JsonGenerator jgen, SerializerProvider provider) {
       jgen.writeStartObject();
       jgen.writeStringField("name", value.name());
-      jgen.writeStringField("serviceId", value.serviceId());
+      jgen.writeStringField("service_api_id", value.serviceId());
       jgen.writeObjectField("serviceType", value.serviceType());
       jgen.writeEndObject();
     }

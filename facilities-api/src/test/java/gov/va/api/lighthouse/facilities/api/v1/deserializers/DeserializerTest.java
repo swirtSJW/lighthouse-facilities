@@ -183,13 +183,13 @@ public class DeserializerTest {
     CmsOverlay overlay = CmsOverlay.builder().detailedServices(emptyList()).build();
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}"
             + "]}",
         CmsOverlay.class,
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"}}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"}}"
             + "]}",
         CmsOverlay.class,
         overlay);
@@ -201,7 +201,7 @@ public class DeserializerTest {
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[]}"
             + "]}",
         CmsOverlay.class,
         overlay);
@@ -213,13 +213,13 @@ public class DeserializerTest {
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
             + "]}",
         CmsOverlay.class,
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
             + "]}",
         CmsOverlay.class,
         overlay);
@@ -263,10 +263,10 @@ public class DeserializerTest {
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
-            + "{\"serviceInfo\":{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"}},"
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
-            + "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"}}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"}},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"}}"
             + "]}",
         CmsOverlay.class,
         overlay);
@@ -280,10 +280,10 @@ public class DeserializerTest {
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[]}"
             + "]}",
         CmsOverlay.class,
         overlay);
@@ -297,10 +297,10 @@ public class DeserializerTest {
         overlay);
     assertJson(
         "{\"detailedServices\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
             + "]}",
         CmsOverlay.class,
         overlay);
@@ -313,13 +313,13 @@ public class DeserializerTest {
         DetailedServicesResponse.builder().data(emptyList()).build();
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}"
             + "]}",
         DetailedServicesResponse.class,
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"}}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"}}"
             + "]}",
         DetailedServicesResponse.class,
         response);
@@ -331,7 +331,7 @@ public class DeserializerTest {
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[]}"
             + "]}",
         DetailedServicesResponse.class,
         response);
@@ -343,13 +343,13 @@ public class DeserializerTest {
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
             + "]}",
         DetailedServicesResponse.class,
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"bar\",\"serviceType\":\"baz\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
             + "]}",
         DetailedServicesResponse.class,
         response);
@@ -393,10 +393,10 @@ public class DeserializerTest {
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
-            + "{\"serviceInfo\":{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"}},"
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
-            + "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"}}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"}},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"}},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"}}"
             + "]}",
         DetailedServicesResponse.class,
         response);
@@ -410,10 +410,10 @@ public class DeserializerTest {
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[]}"
             + "]}",
         DetailedServicesResponse.class,
         response);
@@ -427,10 +427,10 @@ public class DeserializerTest {
         response);
     assertJson(
         "{\"data\":["
-            + "{\"serviceInfo\":{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
-            + "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
+            + "{\"serviceInfo\":{\"service_api_id\":\"pensions\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"smoking\",\"name\":\"Smoking\",\"serviceType\":\"health\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"Pensions\",\"serviceType\":\"benefits\"},\"appointmentPhones\":[],\"serviceLocations\":[]},"
+            + "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"baz\",\"serviceType\":\"foo\"},\"appointmentPhones\":[],\"serviceLocations\":[]}"
             + "]}",
         DetailedServicesResponse.class,
         response);
@@ -607,18 +607,18 @@ public class DeserializerTest {
     invalidService.serviceInfo().name("OnlineScheduling");
     invalidService.serviceInfo().serviceType(DetailedService.ServiceType.Other);
     assertJson(
-        "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}",
+        "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"OnlineScheduling\",\"serviceType\":\"other\"}}",
         DetailedService.class,
         invalidService);
     invalidService.serviceInfo().name("baz");
     invalidService.serviceInfo().serviceType(DetailedService.ServiceType.Health);
     assertJson(
-        "{\"serviceInfo\":{\"serviceId\":\"foo\",\"name\":\"baz\",\"serviceType\":\"bar\"}}",
+        "{\"serviceInfo\":{\"service_api_id\":\"foo\",\"name\":\"baz\",\"serviceType\":\"bar\"}}",
         DetailedService.class,
         invalidService);
     invalidService.serviceInfo().name("Smoking");
     assertJson(
-        "{\"serviceInfo\":{\"serviceId\":\"bar\",\"name\":\"Smoking\",\"serviceType\":\"baz\"}}",
+        "{\"serviceInfo\":{\"service_api_id\":\"bar\",\"name\":\"Smoking\",\"serviceType\":\"baz\"}}",
         DetailedService.class,
         invalidService);
   }

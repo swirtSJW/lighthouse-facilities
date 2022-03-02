@@ -94,13 +94,14 @@ public class DatamartDetailedService {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = JsonInclude.Include.NON_EMPTY, content = JsonInclude.Include.NON_EMPTY)
-  @JsonPropertyOrder({"name", "serviceId", "serviceType"})
+  @JsonPropertyOrder({"name", "service_api_id", "serviceType"})
   @Schema(description = "Service information.")
   public static final class ServiceInfo {
     @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
 
     @Schema(description = "Service id.", example = "covid19Vaccine")
     @NonNull
+    @JsonProperty("service_api_id")
     String serviceId;
 
     @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
