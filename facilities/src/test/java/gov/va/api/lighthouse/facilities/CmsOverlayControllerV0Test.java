@@ -366,13 +366,13 @@ public class CmsOverlayControllerV0Test {
     List<DatamartDetailedService> additionalServices =
         List.of(
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(DatamartFacility.HealthService.Urology.name()))
                 .name("additional service1")
+                .serviceId("additionalService1")
                 .active(true)
                 .build(),
             DatamartDetailedService.builder()
-                .serviceId(uncapitalize(DatamartFacility.HealthService.CaregiverSupport.name()))
                 .name("additional service2")
+                .serviceId("additionalService2")
                 .active(true)
                 .build());
     overlay.detailedServices(additionalServices);
