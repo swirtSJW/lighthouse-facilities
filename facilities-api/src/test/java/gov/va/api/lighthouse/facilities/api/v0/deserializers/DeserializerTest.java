@@ -29,7 +29,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsCmsOverlay() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -107,7 +106,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsDetailedServicesResponse() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -152,7 +150,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsFacilityAttributes() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -199,7 +196,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeBenefitsGeoFacilityProperties() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(
@@ -288,7 +284,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeCmsOverlayWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -298,18 +293,11 @@ public class DeserializerTest {
                         .name(BenefitsService.Pensions.name())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
-                        .build(),
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\"},"
-            + "{\"name\":\"Covid19Vaccine\"},"
             + "{\"name\":\"Smoking\"},"
             + "{\"name\":\"foo\"}"
             + "]}",
@@ -318,7 +306,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\"},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\"},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\"}"
@@ -328,7 +315,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[]}"
             + "]}",
@@ -337,7 +323,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[]}"
@@ -347,7 +332,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[],\"service_locations\":[]}"
             + "]}",
@@ -356,7 +340,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -411,7 +394,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeDetailedServicesResponseWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -421,18 +403,11 @@ public class DeserializerTest {
                         .name(BenefitsService.Pensions.name())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
-                        .build(),
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Pensions\"},"
-            + "{\"name\":\"Covid19Vaccine\"},"
             + "{\"name\":\"Smoking\"},"
             + "{\"name\":\"foo\"}"
             + "]}",
@@ -441,7 +416,6 @@ public class DeserializerTest {
     assertJson(
         "{\"data\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\"},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\"},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\"}"
@@ -451,7 +425,6 @@ public class DeserializerTest {
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[]}"
             + "]}",
@@ -460,7 +433,6 @@ public class DeserializerTest {
     assertJson(
         "{\"data\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[]}"
@@ -470,7 +442,6 @@ public class DeserializerTest {
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[],\"service_locations\":[]}"
             + "]}",
@@ -479,7 +450,6 @@ public class DeserializerTest {
     assertJson(
         "{\"data\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -534,7 +504,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeFacilityAttributesWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -544,18 +513,11 @@ public class DeserializerTest {
                         .name(BenefitsService.Pensions.name())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
-                        .build(),
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\"},"
-            + "{\"name\":\"Covid19Vaccine\"},"
             + "{\"name\":\"Smoking\"},"
             + "{\"name\":\"foo\"}"
             + "]}",
@@ -564,7 +526,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\"},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\"},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\"}"
@@ -574,7 +535,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[]}"
             + "]}",
@@ -583,7 +543,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[]}"
@@ -593,7 +552,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[],\"service_locations\":[]}"
             + "]}",
@@ -602,7 +560,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -656,7 +613,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeGeoFacilityPropertiesWithMixedDetailedServices() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(
@@ -666,18 +622,11 @@ public class DeserializerTest {
                         .name(BenefitsService.Pensions.name())
                         .phoneNumbers(emptyList())
                         .serviceLocations(emptyList())
-                        .build(),
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\"},"
-            + "{\"name\":\"Covid19Vaccine\"},"
             + "{\"name\":\"Smoking\"},"
             + "{\"name\":\"foo\"}"
             + "]}",
@@ -686,7 +635,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\"},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\"},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\"}"
@@ -696,7 +644,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[]}"
             + "]}",
@@ -705,7 +652,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[]}"
@@ -715,7 +661,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"name\":\"foo\",\"appointment_phones\":[],\"service_locations\":[]}"
             + "]}",
@@ -724,7 +669,6 @@ public class DeserializerTest {
     assertJson(
         "{\"detailed_services\":["
             + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"smoking\",\"name\":\"Smoking\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"foo\",\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
             + "{\"serviceId\":\"bar\",\"name\":\"baz\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -736,7 +680,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeHealthCmsOverlay() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -782,52 +725,6 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
-
-    overlay =
-        CmsOverlay.builder()
-            .detailedServices(
-                List.of(
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
-                        .build()))
-            .build();
-    assertJson(
-        "{\"detailed_services\":[" + "{\"name\":\"Covid19Vaccine\"}" + "]}",
-        CmsOverlay.class,
-        overlay);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"}"
-            + "]}",
-        CmsOverlay.class,
-        overlay);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        CmsOverlay.class,
-        overlay);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        CmsOverlay.class,
-        overlay);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        CmsOverlay.class,
-        overlay);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        CmsOverlay.class,
-        overlay);
   }
 
   @Test
@@ -866,7 +763,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeHealthDetailedServicesResponse() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -908,54 +804,11 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
-
-    response =
-        DetailedServicesResponse.builder()
-            .data(
-                List.of(
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
-                        .build()))
-            .build();
-    assertJson(
-        "{\"data\":[" + "{\"name\":\"Covid19Vaccine\"}" + "]}",
-        DetailedServicesResponse.class,
-        response);
-    assertJson(
-        "{\"data\":[" + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"}" + "]}",
-        DetailedServicesResponse.class,
-        response);
-    assertJson(
-        "{\"data\":[" + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}" + "]}",
-        DetailedServicesResponse.class,
-        response);
-    assertJson(
-        "{\"data\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        DetailedServicesResponse.class,
-        response);
-    assertJson(
-        "{\"data\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        DetailedServicesResponse.class,
-        response);
-    assertJson(
-        "{\"data\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        DetailedServicesResponse.class,
-        response);
   }
 
   @Test
   @SneakyThrows
   void deserializeHealthFacilityAttributes() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -1001,58 +854,11 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
-
-    attributes =
-        FacilityAttributes.builder()
-            .detailedServices(
-                List.of(
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
-                        .build()))
-            .build();
-    assertJson(
-        "{\"detailed_services\":[" + "{\"name\":\"Covid19Vaccine\"}" + "]}",
-        FacilityAttributes.class,
-        attributes);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"}"
-            + "]}",
-        FacilityAttributes.class,
-        attributes);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        FacilityAttributes.class,
-        attributes);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        FacilityAttributes.class,
-        attributes);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        FacilityAttributes.class,
-        attributes);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        FacilityAttributes.class,
-        attributes);
   }
 
   @Test
   @SneakyThrows
   void deserializeHealthGeoFacilityProperties() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(
@@ -1098,52 +904,6 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
-
-    properties =
-        Properties.builder()
-            .detailedServices(
-                List.of(
-                    DetailedService.builder()
-                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
-                        .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
-                        .build()))
-            .build();
-    assertJson(
-        "{\"detailed_services\":[" + "{\"name\":\"Covid19Vaccine\"}" + "]}",
-        Properties.class,
-        properties);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"}"
-            + "]}",
-        Properties.class,
-        properties);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        Properties.class,
-        properties);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
-            + "]}",
-        Properties.class,
-        properties);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        Properties.class,
-        properties);
-    assertJson(
-        "{\"detailed_services\":["
-            + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
-            + "]}",
-        Properties.class,
-        properties);
   }
 
   @Test
@@ -1177,7 +937,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherCmsOverlay() {
-    // All non-Covid-19 detailed services are filtered out for V0
     CmsOverlay overlay =
         CmsOverlay.builder()
             .detailedServices(
@@ -1261,7 +1020,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherDetailedServicesResponse() {
-    // All non-Covid-19 detailed services are filtered out for V0
     DetailedServicesResponse response =
         DetailedServicesResponse.builder()
             .data(
@@ -1308,7 +1066,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherFacilityAttributes() {
-    // All non-Covid-19 detailed services are filtered out for V0
     FacilityAttributes attributes =
         FacilityAttributes.builder()
             .detailedServices(
@@ -1359,7 +1116,6 @@ public class DeserializerTest {
   @Test
   @SneakyThrows
   void deserializeOtherGeoFacilityProperties() {
-    // All non-Covid-19 detailed services are filtered out for V0
     Properties properties =
         Properties.builder()
             .detailedServices(

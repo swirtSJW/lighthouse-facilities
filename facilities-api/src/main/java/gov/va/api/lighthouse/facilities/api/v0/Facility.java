@@ -92,11 +92,11 @@ public final class Facility {
     @JsonCreator
     public static HealthService fromString(String name) {
       return "COVID-19 vaccines".equalsIgnoreCase(name)
-          ? HealthService.Covid19Vaccine
+          ? valueOf("Covid19Vaccine")
           : "mentalHealth".equalsIgnoreCase(name)
-              ? HealthService.MentalHealthCare
+              ? valueOf("MentalHealthCare")
               : "dental".equalsIgnoreCase(name)
-                  ? HealthService.DentalServices
+                  ? valueOf("DentalServices")
                   : valueOf(capitalize(name));
     }
   }

@@ -5,6 +5,7 @@ import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
@@ -90,12 +91,15 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
       consumes = "application/json")
   @SneakyThrows
   ResponseEntity<Void> saveOverlay(
-      @PathVariable("id") String id, @Valid @RequestBody DatamartCmsOverlay datamartCmsOverlay) {
+      @PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
     Optional<FacilityEntity> existingFacilityEntity =
         facilityRepository.findById(FacilityEntity.Pk.fromIdString(id));
     Optional<CmsOverlayEntity> existingCmsOverlayEntity =
         getExistingOverlayEntity(FacilityEntity.Pk.fromIdString(id));
+    DatamartCmsOverlay datamartCmsOverlay = CmsOverlayTransformerV0.toVersionAgnostic(overlay);
     updateCmsOverlayData(existingCmsOverlayEntity, id, datamartCmsOverlay);
+    overlay.detailedServices(
+        DetailedServiceTransformerV0.toDetailedServices(datamartCmsOverlay.detailedServices()));
     if (existingFacilityEntity.isEmpty()) {
       log.info("Received Unknown Facility ID ({}) for CMS Overlay", sanitize(id));
       return ResponseEntity.accepted().build();
