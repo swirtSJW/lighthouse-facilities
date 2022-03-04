@@ -3,7 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.ControllersV1.page;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
@@ -221,12 +220,11 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
       DatamartFacility.OperatingStatus operatingStatus = overlay.operatingStatus();
       if (operatingStatus != null) {
         facility.attributes().operatingStatus(operatingStatus);
-        facility
-            .attributes()
-            .activeStatus(
-                operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED
-                    ? DatamartFacility.ActiveStatus.T
-                    : DatamartFacility.ActiveStatus.A);
+        if (operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED) {
+          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.T);
+        } else {
+          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.A);
+        }
       }
       if (overlay.detailedServices() != null) {
         facility
@@ -240,7 +238,7 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(capitalize(service.serviceId()));
+        detailedServices.add(service.serviceId());
       }
       facilityEntity.overlayServices(detailedServices);
     }

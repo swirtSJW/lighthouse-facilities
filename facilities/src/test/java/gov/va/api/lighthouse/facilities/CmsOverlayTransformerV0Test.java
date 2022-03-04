@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities;
 
-import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
@@ -44,7 +43,6 @@ public class CmsOverlayTransformerV0Test {
                 DatamartDetailedService.builder()
                     .active(true)
                     .name("COVID-19 vaccines")
-                    .serviceId(uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
                     .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                     .phoneNumbers(
                         List.of(
@@ -129,8 +127,7 @@ public class CmsOverlayTransformerV0Test {
                     .build(),
                 DatamartDetailedService.builder()
                     .active(true)
-                    .name(DatamartFacility.HealthService.Cardiology.name())
-                    .serviceId(uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                    .name("Cardiology")
                     .path("https://www.melbourne.va.gov/services/cardiology.asp")
                     .phoneNumbers(
                         List.of(
@@ -236,7 +233,6 @@ public class CmsOverlayTransformerV0Test {
                 DetailedService.builder()
                     .active(true)
                     .name("COVID-19 vaccines")
-                    .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
                     .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                     .phoneNumbers(
                         List.of(
@@ -318,8 +314,7 @@ public class CmsOverlayTransformerV0Test {
                     .build(),
                 DetailedService.builder()
                     .active(true)
-                    .name(Facility.HealthService.Cardiology.name())
-                    .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                    .name("Cardiology")
                     .path("https://www.melbourne.va.gov/services/cardiology.asp")
                     .phoneNumbers(
                         List.of(

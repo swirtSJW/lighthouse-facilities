@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities;
 
-import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -120,8 +119,6 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                         DatamartDetailedService.builder()
                             .active(true)
                             .name("COVID-19 vaccines")
-                            .serviceId(
-                                uncapitalize(DatamartFacility.HealthService.Covid19Vaccine.name()))
                             .path("https://www.melbourne.va.gov/services/covid-19-vaccines.asp")
                             .phoneNumbers(
                                 List.of(
@@ -208,9 +205,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                             .build(),
                         DatamartDetailedService.builder()
                             .active(true)
-                            .name(DatamartFacility.HealthService.Cardiology.name())
-                            .serviceId(
-                                uncapitalize(DatamartFacility.HealthService.Cardiology.name()))
+                            .name("Cardiology")
                             .path("https://www.melbourne.va.gov/services/cardiology.asp")
                             .phoneNumbers(
                                 List.of(
