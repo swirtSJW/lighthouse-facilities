@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v1.serializers;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -865,7 +867,14 @@ public class SerializerIsEmptyTest {
         mock(SerializerProvider.class));
     // Not empty
     assertIsNotEmptyUsingObjectSerializer(
-        Facility.Services.builder().health(List.of(Facility.HealthService.PrimaryCare)).build(),
+        Facility.Services.builder()
+            .health(
+                getFacilityTypedServices(
+                    List.of(Facility.HealthService.PrimaryCare),
+                    "https://localhost:8085/v1/",
+                    "vha_402"))
+            .link(buildServicesLink("https://localhost:8085/v1/", "vha_402"))
+            .build(),
         new ServicesSerializer(),
         mock(SerializerProvider.class));
   }

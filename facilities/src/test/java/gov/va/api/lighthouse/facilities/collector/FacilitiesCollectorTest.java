@@ -197,6 +197,8 @@ public class FacilitiesCollectorTest {
                 mockInsecureRestTemplateProvider,
                 mockJdbcTemplate,
                 mockCmsOverlayCollector,
+                "http://localhost:8085",
+                "/",
                 null,
                 mockAtpBaseUrl,
                 mockCemeteriesBaseUrl));
@@ -207,6 +209,8 @@ public class FacilitiesCollectorTest {
                 mockInsecureRestTemplateProvider,
                 mockJdbcTemplate,
                 mockCmsOverlayCollector,
+                "http://localhost:8085",
+                "/",
                 mockAtcBaseUrl,
                 null,
                 mockCemeteriesBaseUrl));
@@ -217,6 +221,8 @@ public class FacilitiesCollectorTest {
                 mockInsecureRestTemplateProvider,
                 mockJdbcTemplate,
                 mockCmsOverlayCollector,
+                "http://localhost:8085",
+                "/",
                 mockAtcBaseUrl,
                 mockAtpBaseUrl,
                 null));
@@ -228,6 +234,8 @@ public class FacilitiesCollectorTest {
             mockInsecureRestTemplateProvider,
             mockJdbcTemplate,
             mockCmsOverlayCollector,
+            "http://localhost:8085",
+            "/",
             mockAtcBaseUrl,
             mockAtpBaseUrl,
             mockCemeteriesBaseUrl);
@@ -261,6 +269,8 @@ public class FacilitiesCollectorTest {
                     mockInsecureRestTemplateProvider,
                     mockTemplate,
                     new CmsOverlayCollector(mockCmsOverlayRepository),
+                    "http://localhost:8085",
+                    "/",
                     "http://atc",
                     "http://atp",
                     "http://statecems")
@@ -331,6 +341,8 @@ public class FacilitiesCollectorTest {
                     insecureRestTemplateProvider,
                     jdbcTemplate,
                     new CmsOverlayCollector(cmsOverlayRepository),
+                    "http://localhost:8085",
+                    "/",
                     "http://atc",
                     "http://atp",
                     "http://statecems")

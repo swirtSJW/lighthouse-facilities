@@ -1,5 +1,8 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,13 +15,33 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
   private DatamartFacility datamartFacility() {
+    return datamartFacility(
+        List.of(
+            DatamartFacility.BenefitsService.EducationClaimAssistance,
+            DatamartFacility.BenefitsService.FamilyMemberClaimAssistance),
+        List.of(
+            DatamartFacility.HealthService.PrimaryCare,
+            DatamartFacility.HealthService.UrgentCare,
+            DatamartFacility.HealthService.EmergencyCare),
+        List.of(DatamartFacility.OtherService.OnlineScheduling),
+        "http://localhost:8085/v1/",
+        "vha_123GA");
+  }
+
+  private DatamartFacility datamartFacility(
+      @NonNull List<DatamartFacility.BenefitsService> benefitsServices,
+      @NonNull List<DatamartFacility.HealthService> healthServices,
+      @NonNull List<DatamartFacility.OtherService> otherServices,
+      @NonNull String linkerUrl,
+      @NonNull String facilityId) {
     return DatamartFacility.builder()
-        .id("vha_123GA")
+        .id(facilityId)
         .type(DatamartFacility.Type.va_facilities)
         .attributes(
             DatamartFacility.FacilityAttributes.builder()
@@ -69,16 +92,10 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                 .mobile(false)
                 .services(
                     DatamartFacility.Services.builder()
-                        .benefits(
-                            List.of(
-                                DatamartFacility.BenefitsService.EducationClaimAssistance,
-                                DatamartFacility.BenefitsService.FamilyMemberClaimAssistance))
-                        .other(List.of(DatamartFacility.OtherService.OnlineScheduling))
-                        .health(
-                            List.of(
-                                DatamartFacility.HealthService.PrimaryCare,
-                                DatamartFacility.HealthService.UrgentCare,
-                                DatamartFacility.HealthService.EmergencyCare))
+                        .benefits(getDatamartTypedServices(benefitsServices, linkerUrl, facilityId))
+                        .other(getDatamartTypedServices(otherServices, linkerUrl, facilityId))
+                        .health(getDatamartTypedServices(healthServices, linkerUrl, facilityId))
+                        .link(buildServicesLink(linkerUrl, facilityId))
                         .lastUpdated(LocalDate.parse("2018-01-01"))
                         .build())
                 .activeStatus(DatamartFacility.ActiveStatus.A)
@@ -325,14 +342,24 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
   private Facility facility() {
     return facility(
         List.of(
+            Facility.BenefitsService.EducationClaimAssistance,
+            Facility.BenefitsService.FamilyMemberClaimAssistance),
+        List.of(
             Facility.HealthService.PrimaryCare,
             Facility.HealthService.UrgentCare,
-            Facility.HealthService.EmergencyCare));
+            Facility.HealthService.EmergencyCare),
+        List.of(Facility.OtherService.OnlineScheduling),
+        "http://localhost:8085/v1/");
   }
 
-  private Facility facility(List<Facility.HealthService> healthServices) {
+  private Facility facility(
+      @NonNull List<Facility.BenefitsService> benefitsServices,
+      @NonNull List<Facility.HealthService> healthServices,
+      @NonNull List<Facility.OtherService> otherServices,
+      @NonNull String linkerUrl) {
+    var facilityId = "vha_123GA";
     return Facility.builder()
-        .id("vha_123GA")
+        .id(facilityId)
         .type(Facility.Type.va_facilities)
         .attributes(
             Facility.FacilityAttributes.builder()
@@ -383,12 +410,10 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                 .mobile(false)
                 .services(
                     Facility.Services.builder()
-                        .benefits(
-                            List.of(
-                                Facility.BenefitsService.EducationClaimAssistance,
-                                Facility.BenefitsService.FamilyMemberClaimAssistance))
-                        .other(List.of(Facility.OtherService.OnlineScheduling))
-                        .health(healthServices)
+                        .benefits(getFacilityTypedServices(benefitsServices, linkerUrl, facilityId))
+                        .other(getFacilityTypedServices(otherServices, linkerUrl, facilityId))
+                        .health(getFacilityTypedServices(healthServices, linkerUrl, facilityId))
+                        .link(buildServicesLink(linkerUrl, facilityId))
                         .lastUpdated(LocalDate.parse("2018-01-01"))
                         .build())
                 .activeStatus(Facility.ActiveStatus.A)
@@ -540,7 +565,8 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
             FacilityTransformerV1.toFacility(
                 FacilityTransformerV0.toVersionAgnostic(
                     FacilityTransformerV0.toFacility(
-                        FacilityTransformerV1.toVersionAgnostic(facility)))))
+                        FacilityTransformerV1.toVersionAgnostic(facility)),
+                    "http://localhost:8085/v1/")))
         .usingRecursiveComparison()
         .isEqualTo(facility);
   }
@@ -550,25 +576,36 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     Facility facilityWithWholeHealth =
         facility(
             List.of(
-                Facility.HealthService.PrimaryCare,
-                Facility.HealthService.UrgentCare,
-                Facility.HealthService.EmergencyCare,
-                Facility.HealthService.MentalHealth,
-                Facility.HealthService.Dental,
-                Facility.HealthService.WholeHealth));
-    Facility facilityWithoutWholeHealth =
-        facility(
+                Facility.BenefitsService.EducationClaimAssistance,
+                Facility.BenefitsService.FamilyMemberClaimAssistance),
             List.of(
                 Facility.HealthService.PrimaryCare,
                 Facility.HealthService.UrgentCare,
                 Facility.HealthService.EmergencyCare,
                 Facility.HealthService.MentalHealth,
-                Facility.HealthService.Dental));
+                Facility.HealthService.Dental,
+                Facility.HealthService.WholeHealth),
+            List.of(Facility.OtherService.OnlineScheduling),
+            "http://localhost:8085/v1/");
+    Facility facilityWithoutWholeHealth =
+        facility(
+            List.of(
+                Facility.BenefitsService.EducationClaimAssistance,
+                Facility.BenefitsService.FamilyMemberClaimAssistance),
+            List.of(
+                Facility.HealthService.PrimaryCare,
+                Facility.HealthService.UrgentCare,
+                Facility.HealthService.EmergencyCare,
+                Facility.HealthService.MentalHealth,
+                Facility.HealthService.Dental),
+            List.of(Facility.OtherService.OnlineScheduling),
+            "http://localhost:8085/v1/");
     assertThat(
             FacilityTransformerV1.toFacility(
                 FacilityTransformerV0.toVersionAgnostic(
                     FacilityTransformerV0.toFacility(
-                        FacilityTransformerV1.toVersionAgnostic(facilityWithWholeHealth)))))
+                        FacilityTransformerV1.toVersionAgnostic(facilityWithWholeHealth)),
+                    "http://localhost:8085/v1/")))
         .usingRecursiveComparison()
         .isEqualTo(facilityWithoutWholeHealth);
   }
@@ -580,7 +617,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
     assertThrows(NullPointerException.class, () -> FacilityTransformerV1.toVersionAgnostic(null));
     final Method transformDatmartFacilityBenefitsServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityBenefitsService", DatamartFacility.BenefitsService.class);
+            "toFacilityBenefitsTypedService", DatamartFacility.TypedService.class);
     transformDatmartFacilityBenefitsServiceMethod.setAccessible(true);
     DatamartFacility.BenefitsService nullBenefits = null;
     assertThatThrownBy(
@@ -588,37 +625,41 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isInstanceOf(InvocationTargetException.class)
         .hasCause(
             new NullPointerException(
-                "datamartFacilityBenefitsService is marked non-null but is null"));
+                "datamartFacilityBenefitsTypedService is marked non-null but is null"));
     final Method transformFacilityBenefitsServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityBenefitsService", Facility.BenefitsService.class);
+            "toVersionAgnosticFacilityBenefitsTypedService", Facility.TypedService.class);
     transformFacilityBenefitsServiceMethod.setAccessible(true);
     Facility.BenefitsService nullBenefitsV1 = null;
     assertThatThrownBy(() -> transformFacilityBenefitsServiceMethod.invoke(null, nullBenefitsV1))
         .isInstanceOf(InvocationTargetException.class)
         .hasCause(
-            new NullPointerException("facilityBenefitsService is marked non-null but is null"));
+            new NullPointerException(
+                "facilityBenefitsTypedService is marked non-null but is null"));
     final Method transformDatmartFacilityHealthServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityHealthService", DatamartFacility.HealthService.class);
+            "toFacilityHealthTypedService", DatamartFacility.TypedService.class);
     transformDatmartFacilityHealthServiceMethod.setAccessible(true);
-    DatamartFacility.HealthService nullHealth = null;
-    assertThatThrownBy(() -> transformDatmartFacilityHealthServiceMethod.invoke(null, nullHealth))
+    DatamartFacility.TypedService<DatamartFacility.HealthService> nullHealthTypedService = null;
+    assertThatThrownBy(
+            () -> transformDatmartFacilityHealthServiceMethod.invoke(null, nullHealthTypedService))
         .isInstanceOf(InvocationTargetException.class)
         .hasCause(
             new NullPointerException(
-                "datamartFacilityHealthService is marked non-null but is null"));
+                "datamartFacilityHealthTypedService is marked non-null but is null"));
     final Method transformFacilityHealthServiceMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityHealthService", Facility.HealthService.class);
+            "toVersionAgnosticFacilityHealthTypedService", Facility.TypedService.class);
     transformFacilityHealthServiceMethod.setAccessible(true);
-    Facility.HealthService nullHealthV1 = null;
-    assertThatThrownBy(() -> transformFacilityHealthServiceMethod.invoke(null, nullHealthV1))
+    Facility.TypedService<Facility.HealthService> nullHealthTypedServiceV1 = null;
+    assertThatThrownBy(
+            () -> transformFacilityHealthServiceMethod.invoke(null, nullHealthTypedServiceV1))
         .isInstanceOf(InvocationTargetException.class)
-        .hasCause(new NullPointerException("facilityHealthService is marked non-null but is null"));
+        .hasCause(
+            new NullPointerException("facilityHealthTypedService is marked non-null but is null"));
     final Method transformDatmartFacilityServicesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityServices", DatamartFacility.Services.class);
+            "toFacilityServices", DatamartFacility.Services.class);
     transformDatmartFacilityServicesMethod.setAccessible(true);
     DatamartFacility.Services nullServices = null;
     assertThat(transformDatmartFacilityServicesMethod.invoke(null, nullServices))
@@ -626,7 +667,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(Facility.Services.builder().build());
     final Method transformFacilityServicesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityServices", Facility.Services.class);
+            "toVersionAgnosticFacilityServices", Facility.Services.class);
     transformFacilityServicesMethod.setAccessible(true);
     Facility.Services nullServicesV1 = null;
     assertThat(transformFacilityServicesMethod.invoke(null, nullServicesV1))
@@ -634,7 +675,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(DatamartFacility.Services.builder().build());
     final Method transformDatmartFacilitySatisfactionMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilitySatisfaction", DatamartFacility.Satisfaction.class);
+            "toFacilitySatisfaction", DatamartFacility.Satisfaction.class);
     transformDatmartFacilitySatisfactionMethod.setAccessible(true);
     DatamartFacility.Satisfaction nullSatisfaction = null;
     assertThat(transformDatmartFacilitySatisfactionMethod.invoke(null, nullSatisfaction))
@@ -642,7 +683,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(Facility.Satisfaction.builder().build());
     final Method transformFacilitySatisfactionMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilitySatisfaction", Facility.Satisfaction.class);
+            "toVersionAgnosticFacilitySatisfaction", Facility.Satisfaction.class);
     transformFacilitySatisfactionMethod.setAccessible(true);
     Facility.Satisfaction nullSatisfactionV1 = null;
     assertThat(transformFacilitySatisfactionMethod.invoke(null, nullSatisfactionV1))
@@ -650,7 +691,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(DatamartFacility.Satisfaction.builder().build());
     final Method transformDatmartFacilityPhoneMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityPhone", DatamartFacility.Phone.class);
+            "toFacilityPhone", DatamartFacility.Phone.class);
     transformDatmartFacilityPhoneMethod.setAccessible(true);
     DatamartFacility.Satisfaction nullPhone = null;
     assertThat(transformDatmartFacilityPhoneMethod.invoke(null, nullPhone))
@@ -658,7 +699,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(Facility.Phone.builder().build());
     final Method transformFacilityPhoneMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityPhone", Facility.Phone.class);
+            "toVersionAgnosticFacilityPhone", Facility.Phone.class);
     transformFacilityPhoneMethod.setAccessible(true);
     Facility.Satisfaction nullPhoneV1 = null;
     assertThat(transformFacilityPhoneMethod.invoke(null, nullPhoneV1))
@@ -666,7 +707,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(DatamartFacility.Phone.builder().build());
     final Method transformDatmartFacilityHoursMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityHours", DatamartFacility.Hours.class);
+            "toFacilityHours", DatamartFacility.Hours.class);
     transformDatmartFacilityHoursMethod.setAccessible(true);
     DatamartFacility.Hours nullHours = null;
     assertThat(transformDatmartFacilityHoursMethod.invoke(null, nullHours))
@@ -674,7 +715,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(Facility.Hours.builder().build());
     final Method transformFacilityHoursMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityHours", Facility.Hours.class);
+            "toVersionAgnosticFacilityHours", Facility.Hours.class);
     transformFacilityHoursMethod.setAccessible(true);
     Facility.Hours nullHoursV1 = null;
     assertThat(transformFacilityHoursMethod.invoke(null, nullHoursV1))
@@ -682,7 +723,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(DatamartFacility.Hours.builder().build());
     final Method transformDatmartFacilityAddressesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityAddresses", DatamartFacility.Addresses.class);
+            "toFacilityAddresses", DatamartFacility.Addresses.class);
     transformDatmartFacilityAddressesMethod.setAccessible(true);
     DatamartFacility.Addresses nullAddresses = null;
     assertThat(transformDatmartFacilityAddressesMethod.invoke(null, nullAddresses))
@@ -690,7 +731,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(Facility.Addresses.builder().build());
     final Method transformFacilityAddressesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityAddresses", Facility.Addresses.class);
+            "toVersionAgnosticFacilityAddresses", Facility.Addresses.class);
     transformFacilityAddressesMethod.setAccessible(true);
     Facility.Addresses nullAddressesV1 = null;
     assertThat(transformFacilityAddressesMethod.invoke(null, nullAddressesV1))
@@ -698,7 +739,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(DatamartFacility.Addresses.builder().build());
     final Method transformDatmartFacilityWaitTimesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityWaitTimes", DatamartFacility.WaitTimes.class);
+            "toFacilityWaitTimes", DatamartFacility.WaitTimes.class);
     transformDatmartFacilityWaitTimesMethod.setAccessible(true);
     DatamartFacility.WaitTimes nullWaitTimes = null;
     assertThat(transformDatmartFacilityWaitTimesMethod.invoke(null, nullWaitTimes))
@@ -706,7 +747,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .isEqualTo(Facility.WaitTimes.builder().build());
     final Method transformFacilityWaitTimesMethod =
         FacilityTransformerV1.class.getDeclaredMethod(
-            "transformFacilityWaitTimes", Facility.WaitTimes.class);
+            "toVersionAgnosticFacilityWaitTimes", Facility.WaitTimes.class);
     transformFacilityWaitTimesMethod.setAccessible(true);
     Facility.WaitTimes nullWaitTimesV1 = null;
     assertThat(transformFacilityWaitTimesMethod.invoke(null, nullWaitTimesV1))

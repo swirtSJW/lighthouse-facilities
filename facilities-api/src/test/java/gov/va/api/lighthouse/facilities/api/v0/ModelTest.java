@@ -1,5 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -271,6 +272,8 @@ public class ModelTest {
   private Facility.Services services() {
     return Facility.Services.builder()
         .benefits(List.of(Facility.BenefitsService.eBenefitsRegistrationAssistance))
+        .health(emptyList())
+        .other(emptyList())
         .lastUpdated(LocalDate.parse("2020-03-12"))
         .build();
   }

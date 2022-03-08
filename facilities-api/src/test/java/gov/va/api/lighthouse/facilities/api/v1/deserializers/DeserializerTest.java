@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo.INVALID_SVC_ID;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
@@ -10,9 +11,12 @@ import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServicesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
+import gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -434,6 +438,259 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+  }
+
+  @Test
+  @SneakyThrows
+  void deserializeFacilityWithInvalidServices() {
+    var linkerUrl = "http://localhost:8085/v1/";
+    var facilityId = "vha_402";
+    Facility facility =
+        Facility.builder()
+            .id(facilityId)
+            .type(Facility.Type.va_facilities)
+            .attributes(
+                Facility.FacilityAttributes.builder()
+                    .services(
+                        Facility.Services.builder()
+                            .link(Facility.TypedService.INVALID_LINK)
+                            .lastUpdated(LocalDate.parse("2022-03-07"))
+                            .build())
+                    .build())
+            .build();
+    // No services
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // Invalid services express in V0 format
+    facility
+        .attributes()
+        .services(
+            Facility.Services.builder()
+                .benefits(emptyList())
+                .health(emptyList())
+                .other(emptyList())
+                .link(Facility.TypedService.INVALID_LINK)
+                .lastUpdated(LocalDate.parse("2022-03-07"))
+                .build());
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [\"foo\"],"
+            + "\"health\": [\"bar\"],"
+            + "\"other\": [\"baz\"],"
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // Invalid services expressed in V1 format, missing facility services link
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [{"
+            + "\"serviceId\":\"foo\","
+            + "\"name\":\"Foo\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/foo\""
+            + "}],"
+            + "\"health\": [{"
+            + "\"serviceId\":\"bar\","
+            + "\"name\":\"Bar\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/bar\""
+            + "}],"
+            + "\"other\": [{"
+            + "\"serviceId\":\"baz\","
+            + "\"name\":\"Baz\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/baz\""
+            + "}],"
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // Invalid services expressed in mixed V0/V1 format
+    facility.attributes().services().link(buildServicesLink(linkerUrl, facilityId));
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [\"foo\"],"
+            + "\"health\": [\"bar\"],"
+            + "\"other\": [\"baz\"],"
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services\","
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // Invalid services expressed in V1 format
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [{"
+            + "\"serviceId\":\"foo\","
+            + "\"name\":\"Foo\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/foo\""
+            + "}],"
+            + "\"health\": [{"
+            + "\"serviceId\":\"bar\","
+            + "\"name\":\"Bar\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/bar\""
+            + "}],"
+            + "\"other\": [{"
+            + "\"serviceId\":\"baz\","
+            + "\"name\":\"Baz\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/baz\""
+            + "}],"
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services\","
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+  }
+
+  @Test
+  @SneakyThrows
+  void deserializeFacilityWithServicesInV1Format() {
+    var linkerUrl = "http://localhost:8085/v1/";
+    var facilityId = "vha_402";
+    Facility facility =
+        Facility.builder()
+            .id(facilityId)
+            .type(Facility.Type.va_facilities)
+            .attributes(
+                Facility.FacilityAttributes.builder()
+                    .services(
+                        Facility.Services.builder()
+                            .benefits(
+                                FacilityTypedServiceUtil.getFacilityTypedServices(
+                                    List.of(BenefitsService.Pensions), linkerUrl, facilityId))
+                            .health(
+                                FacilityTypedServiceUtil.getFacilityTypedServices(
+                                    List.of(HealthService.Cardiology, HealthService.PrimaryCare),
+                                    linkerUrl,
+                                    facilityId))
+                            .other(
+                                FacilityTypedServiceUtil.getFacilityTypedServices(
+                                    List.of(OtherService.OnlineScheduling), linkerUrl, facilityId))
+                            .link(buildServicesLink(linkerUrl, facilityId))
+                            .lastUpdated(LocalDate.parse("2022-03-07"))
+                            .build())
+                    .build())
+            .build();
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [{"
+            + "\"name\":\"Pensions\","
+            + "\"serviceId\":\"pensions\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/pensions\""
+            + "}],"
+            + "\"health\": [{"
+            + "\"name\":\"Cardiology\","
+            + "\"serviceId\":\"cardiology\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/cardiology\""
+            + "},"
+            + "{"
+            + "\"name\":\"PrimaryCare\","
+            + "\"serviceId\":\"primaryCare\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/primaryCare\""
+            + "}],"
+            + "\"other\": [{"
+            + "\"name\":\"OnlineScheduling\","
+            + "\"serviceId\":\"onlineScheduling\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services/onlineScheduling\""
+            + "}],"
+            + "\"link\":\"http://localhost:8085/v1/facilities/vha_402/services\","
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // With links missing
+    facility
+        .attributes()
+        .services(
+            Facility.Services.builder()
+                .benefits(
+                    List.of(
+                        FacilityTypedServiceUtil.getFacilityTypedService(
+                                BenefitsService.Pensions, linkerUrl, facilityId)
+                            .link(Facility.TypedService.INVALID_LINK)))
+                .health(
+                    List.of(
+                        FacilityTypedServiceUtil.getFacilityTypedService(
+                                HealthService.Cardiology, linkerUrl, facilityId)
+                            .link(Facility.TypedService.INVALID_LINK),
+                        FacilityTypedServiceUtil.getFacilityTypedService(
+                                HealthService.PrimaryCare, linkerUrl, facilityId)
+                            .link(Facility.TypedService.INVALID_LINK)))
+                .other(
+                    List.of(
+                        FacilityTypedServiceUtil.getFacilityTypedService(
+                                OtherService.OnlineScheduling, linkerUrl, facilityId)
+                            .link(Facility.TypedService.INVALID_LINK)))
+                .link(Facility.TypedService.INVALID_LINK)
+                .lastUpdated(LocalDate.parse("2022-03-07"))
+                .build());
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [{"
+            + "\"name\":\"Pensions\","
+            + "\"serviceId\":\"pensions\""
+            + "}],"
+            + "\"health\": [{"
+            + "\"name\":\"Cardiology\","
+            + "\"serviceId\":\"cardiology\""
+            + "},"
+            + "{"
+            + "\"name\":\"PrimaryCare\","
+            + "\"serviceId\":\"primaryCare\""
+            + "}],"
+            + "\"other\": [{"
+            + "\"name\":\"OnlineScheduling\","
+            + "\"serviceId\":\"onlineScheduling\""
+            + "}],"
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // With only service ids listed
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [{"
+            + "\"serviceId\":\"pensions\""
+            + "}],"
+            + "\"health\": [{"
+            + "\"serviceId\":\"cardiology\""
+            + "},"
+            + "{"
+            + "\"serviceId\":\"primaryCare\""
+            + "}],"
+            + "\"other\": [{"
+            + "\"serviceId\":\"onlineScheduling\""
+            + "}],"
+            + "\"lastUpdated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
   }
 
   @Test

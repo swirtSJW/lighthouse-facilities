@@ -29,6 +29,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -147,7 +148,8 @@ public class NearbyTest {
                         .longitude(BigDecimal.ONE)
                         .services(Facility.Services.builder().health(List.of(PrimaryCare)).build())
                         .build())
-                .build());
+                .build(),
+            "http://localhost:8085/v0/");
     return facility;
   }
 
@@ -277,6 +279,16 @@ public class NearbyTest {
 
   @Test
   void empty() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     facilityRepository.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     NearbyResponse response =
         _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null);

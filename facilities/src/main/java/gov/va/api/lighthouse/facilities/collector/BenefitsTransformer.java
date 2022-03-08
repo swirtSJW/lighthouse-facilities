@@ -18,6 +18,8 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.
 import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.eBenefitsRegistrationAssistance;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_benefits_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedService;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.phoneTrim;
@@ -31,6 +33,7 @@ import gov.va.api.lighthouse.facilities.DatamartFacility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Hours;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
+import gov.va.api.lighthouse.facilities.DatamartFacility.TypedService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -44,7 +47,7 @@ final class BenefitsTransformer {
 
   String csvWebsite;
 
-  private FacilityAttributes attributes() {
+  private FacilityAttributes attributes(@NonNull String linkerUrl, @NonNull String facilityId) {
     return FacilityAttributes.builder()
         .name(cdwFacility.facilityName())
         .facilityType(va_benefits_facility)
@@ -79,7 +82,7 @@ final class BenefitsTransformer {
                 .saturday(cdwFacility.saturday())
                 .sunday(cdwFacility.sunday())
                 .build())
-        .services(services())
+        .services(services(linkerUrl, facilityId))
         .build();
   }
 
@@ -93,64 +96,80 @@ final class BenefitsTransformer {
     }
   }
 
-  Services services() {
-    List<BenefitsService> benefitsServices = new ArrayList<>();
+  Services services(@NonNull String linkerUrl, @NonNull String facilityId) {
+    List<TypedService<BenefitsService>> benefitsServices = new ArrayList<>();
     if (yesNoToBoolean(cdwFacility.applyingForBenefits())) {
-      benefitsServices.add(ApplyingForBenefits);
+      benefitsServices.add(getDatamartTypedService(ApplyingForBenefits, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.burialClaimAssistance())) {
-      benefitsServices.add(BurialClaimAssistance);
+      benefitsServices.add(getDatamartTypedService(BurialClaimAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.disabilityClaimAssistance())) {
-      benefitsServices.add(DisabilityClaimAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(DisabilityClaimAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.ebenefitsRegistration())) {
-      benefitsServices.add(eBenefitsRegistrationAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(eBenefitsRegistrationAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.educationAndCareerCounseling())) {
-      benefitsServices.add(EducationAndCareerCounseling);
+      benefitsServices.add(
+          getDatamartTypedService(EducationAndCareerCounseling, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.educationClaimAssistance())) {
-      benefitsServices.add(EducationClaimAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(EducationClaimAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.familyMemberClaimAssistance())) {
-      benefitsServices.add(FamilyMemberClaimAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(FamilyMemberClaimAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.homelessAssistance())) {
-      benefitsServices.add(HomelessAssistance);
+      benefitsServices.add(getDatamartTypedService(HomelessAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.vaHomeLoanAssistance())) {
-      benefitsServices.add(VAHomeLoanAssistance);
+      benefitsServices.add(getDatamartTypedService(VAHomeLoanAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.insuranceClaimAssistance())) {
-      benefitsServices.add(InsuranceClaimAssistanceAndFinancialCounseling);
+      benefitsServices.add(
+          getDatamartTypedService(
+              InsuranceClaimAssistanceAndFinancialCounseling, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.integratedDisabilityEvaluationSystem())) {
-      benefitsServices.add(IntegratedDisabilityEvaluationSystemAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(
+              IntegratedDisabilityEvaluationSystemAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.preDischargeClaimAssistance())) {
-      benefitsServices.add(PreDischargeClaimAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(PreDischargeClaimAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.transitionAssistance())) {
-      benefitsServices.add(TransitionAssistance);
+      benefitsServices.add(getDatamartTypedService(TransitionAssistance, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.updatingDirectDepositInformation())) {
-      benefitsServices.add(UpdatingDirectDepositInformation);
+      benefitsServices.add(
+          getDatamartTypedService(UpdatingDirectDepositInformation, linkerUrl, facilityId));
     }
     if (yesNoToBoolean(cdwFacility.vocationalRehabilitationEmplo())) {
-      benefitsServices.add(VocationalRehabilitationAndEmploymentAssistance);
+      benefitsServices.add(
+          getDatamartTypedService(
+              VocationalRehabilitationAndEmploymentAssistance, linkerUrl, facilityId));
     }
     if (StringUtils.containsIgnoreCase(cdwFacility.otherServices(), "PENSION")) {
-      benefitsServices.add(Pensions);
+      benefitsServices.add(getDatamartTypedService(Pensions, linkerUrl, facilityId));
     }
-    return Services.builder().benefits(benefitsServices).build();
+    return Services.builder()
+        .benefits(benefitsServices)
+        .link(buildServicesLink(linkerUrl, facilityId))
+        .build();
   }
 
-  DatamartFacility toDatamartFacility() {
+  DatamartFacility toDatamartFacility(@NonNull String linkerUrl, @NonNull String facilityId) {
     return DatamartFacility.builder()
         .id("vba_" + cdwFacility.facilityNumber())
         .type(va_facilities)
-        .attributes(attributes())
+        .attributes(attributes(linkerUrl, facilityId))
         .build();
   }
 

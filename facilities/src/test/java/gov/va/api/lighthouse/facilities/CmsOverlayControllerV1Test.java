@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -470,6 +472,16 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   void updateIsAcceptedForKnownStationUsingServiceId() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     Facility f =
         Facility.builder()
             .id("vha_402")
@@ -517,6 +529,16 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   void updateIsAcceptedForKnownStationUsingServiceName() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     Facility f =
         Facility.builder()
             .id("vha_402")
@@ -641,6 +663,16 @@ public class CmsOverlayControllerV1Test {
   @Test
   @SneakyThrows
   void verifyServicePathUpdated() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     Facility f =
         Facility.builder()
             .id("vha_402")

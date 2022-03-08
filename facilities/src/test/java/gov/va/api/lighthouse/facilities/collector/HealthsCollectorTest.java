@@ -49,7 +49,7 @@ class HealthsCollectorTest {
                 .insecureRestTemplate(insecureRestTemplate)
                 .websites(emptyMap())
                 .build()
-                .collect());
+                .collect("http://localhost:8085/v1/"));
   }
 
   @Test

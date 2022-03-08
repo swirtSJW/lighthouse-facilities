@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,18 +101,23 @@ public class SearchByZipJsonTest {
                             .services(
                                 Facility.Services.builder()
                                     .health(
-                                        List.of(
-                                            Facility.HealthService.PrimaryCare,
-                                            Facility.HealthService.MentalHealth,
-                                            Facility.HealthService.Audiology,
-                                            Facility.HealthService.Cardiology,
-                                            Facility.HealthService.Dermatology,
-                                            Facility.HealthService.Gastroenterology,
-                                            Facility.HealthService.Ophthalmology,
-                                            Facility.HealthService.Optometry,
-                                            Facility.HealthService.Orthopedics,
-                                            Facility.HealthService.Urology,
-                                            Facility.HealthService.Dental))
+                                        getFacilityTypedServices(
+                                            List.of(
+                                                Facility.HealthService.PrimaryCare,
+                                                Facility.HealthService.MentalHealth,
+                                                Facility.HealthService.Audiology,
+                                                Facility.HealthService.Cardiology,
+                                                Facility.HealthService.Dermatology,
+                                                Facility.HealthService.Gastroenterology,
+                                                Facility.HealthService.Ophthalmology,
+                                                Facility.HealthService.Optometry,
+                                                Facility.HealthService.Orthopedics,
+                                                Facility.HealthService.Urology,
+                                                Facility.HealthService.Dental),
+                                            "http://localhost:8085/v1/",
+                                            "vha_675GA"))
+                                    .link(
+                                        buildServicesLink("http://localhost:8085/v1/", "vha_675GA"))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(

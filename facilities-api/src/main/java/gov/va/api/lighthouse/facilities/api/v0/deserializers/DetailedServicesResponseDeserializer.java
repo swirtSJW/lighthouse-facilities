@@ -1,24 +1,18 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedServicesResponse;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedServicesResponse.DetailedServicesMetadata;
 import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
 public class DetailedServicesResponseDeserializer
-    extends StdDeserializer<DetailedServicesResponse> {
+    extends BaseListDeserializer<DetailedServicesResponse> {
   public DetailedServicesResponseDeserializer() {
     this(null);
   }
@@ -31,9 +25,8 @@ public class DetailedServicesResponseDeserializer
   @SneakyThrows
   @SuppressWarnings("unchecked")
   public DetailedServicesResponse deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+      JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
     JsonNode dataNode = node.get("data");
     JsonNode linksNode = node.get("links");
     JsonNode metaNode = node.get("meta");
@@ -44,24 +37,11 @@ public class DetailedServicesResponseDeserializer
         .data(
             dataNode != null
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(dataNode, detailedServicesRef))
+                    MAPPER.convertValue(dataNode, detailedServicesRef))
                 : null)
-        .links(linksNode != null ? createMapper().convertValue(linksNode, PageLinks.class) : null)
+        .links(linksNode != null ? MAPPER.convertValue(linksNode, PageLinks.class) : null)
         .meta(
-            metaNode != null
-                ? createMapper().convertValue(metaNode, DetailedServicesMetadata.class)
-                : null)
+            metaNode != null ? MAPPER.convertValue(metaNode, DetailedServicesMetadata.class) : null)
         .build();
-  }
-
-  private List<DetailedService> filterOutInvalidDetailedServices(
-      List<DetailedService> detailedServices) {
-    if (detailedServices != null) {
-      // Filter out detailed services containing unrecognized service id
-      return detailedServices.stream()
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
-          .collect(Collectors.toList());
-    }
-    return null;
   }
 }

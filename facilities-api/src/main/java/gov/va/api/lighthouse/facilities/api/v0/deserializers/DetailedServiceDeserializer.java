@@ -6,10 +6,10 @@ import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService.AppointmentPhoneNumber;
@@ -23,6 +23,8 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 public class DetailedServiceDeserializer extends StdDeserializer<DetailedService> {
+  private static final ObjectMapper MAPPER = createMapper();
+
   public DetailedServiceDeserializer() {
     this(null);
   }
@@ -34,10 +36,8 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
   @Override
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public DetailedService deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public DetailedService deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
     JsonNode activeNode = node.get("active");
     JsonNode changedNode = node.get("changed");
     JsonNode descriptionFacilityNode = node.get("description_facility");
@@ -52,13 +52,13 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode serviceInfoNode = node.get("serviceInfo");
     JsonNode nameNode = serviceInfoNode != null ? serviceInfoNode.get("name") : node.get("name");
     final String serviceName =
-        nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
+        nameNode != null ? MAPPER.convertValue(nameNode, String.class) : null;
     JsonNode serviceIdNode =
         serviceInfoNode != null ? serviceInfoNode.get("serviceId") : node.get("serviceId");
     final String serviceId =
         serviceIdNode != null
-                && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))
-            ? createMapper().convertValue(serviceIdNode, String.class)
+                && isRecognizedServiceId(MAPPER.convertValue(serviceIdNode, String.class))
+            ? MAPPER.convertValue(serviceIdNode, String.class)
             : // Attempt to construct service id from service name
             serviceIdNode == null && isRecognizedServiceName(serviceName)
                 ? getServiceIdForRecognizedServiceName(serviceName)
@@ -70,37 +70,36 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     return DetailedService.builder()
         .serviceId(serviceId)
         .name(serviceName)
-        .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
-        .changed(
-            changedNode != null ? createMapper().convertValue(changedNode, String.class) : null)
+        .active(activeNode != null ? MAPPER.convertValue(activeNode, Boolean.class) : false)
+        .changed(changedNode != null ? MAPPER.convertValue(changedNode, String.class) : null)
         .descriptionFacility(
             descriptionFacilityNode != null
-                ? createMapper().convertValue(descriptionFacilityNode, String.class)
+                ? MAPPER.convertValue(descriptionFacilityNode, String.class)
                 : null)
         .appointmentLeadIn(
             appointmentLeadInNode != null
-                ? createMapper().convertValue(appointmentLeadInNode, String.class)
+                ? MAPPER.convertValue(appointmentLeadInNode, String.class)
                 : null)
         .onlineSchedulingAvailable(
             onlineSchedulingAvailableNode != null
-                ? createMapper().convertValue(onlineSchedulingAvailableNode, String.class)
+                ? MAPPER.convertValue(onlineSchedulingAvailableNode, String.class)
                 : null)
-        .path(pathNode != null ? createMapper().convertValue(pathNode, String.class) : null)
+        .path(pathNode != null ? MAPPER.convertValue(pathNode, String.class) : null)
         .phoneNumbers(
             phoneNumbersNode != null
-                ? createMapper().convertValue(phoneNumbersNode, appointmentNumbersRef)
+                ? MAPPER.convertValue(phoneNumbersNode, appointmentNumbersRef)
                 : emptyList())
         .referralRequired(
             referralRequiredNode != null
-                ? createMapper().convertValue(referralRequiredNode, String.class)
+                ? MAPPER.convertValue(referralRequiredNode, String.class)
                 : null)
         .serviceLocations(
             serviceLocationsNode != null
-                ? createMapper().convertValue(serviceLocationsNode, serviceLocationsRef)
+                ? MAPPER.convertValue(serviceLocationsNode, serviceLocationsRef)
                 : emptyList())
         .walkInsAccepted(
             walkInsAcceptedNode != null
-                ? createMapper().convertValue(walkInsAcceptedNode, String.class)
+                ? MAPPER.convertValue(walkInsAcceptedNode, String.class)
                 : null)
         .build();
   }
@@ -116,7 +115,7 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 : Arrays.stream(BenefitsService.values())
                         .parallel()
                         .anyMatch(bs -> bs.name().equalsIgnoreCase(name))
-                    ? BenefitsService.valueOf(name).name()
+                    ? BenefitsService.fromString(name).name()
                     : Arrays.stream(OtherService.values())
                             .parallel()
                             .anyMatch(os -> os.name().equalsIgnoreCase(name))

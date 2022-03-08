@@ -61,7 +61,7 @@ public class FacilitySamples {
             .id(FacilityEntity.Pk.fromIdString(id))
             .lastUpdated(Instant.now())
             .build(),
-        FacilityTransformerV0.toVersionAgnostic(facility(id)));
+        FacilityTransformerV0.toVersionAgnostic(facility(id), "http://localhost:8085/v1/"));
   }
 
   gov.va.api.lighthouse.facilities.api.v1.Facility facilityV1(String id) {

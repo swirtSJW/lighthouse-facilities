@@ -9,11 +9,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedServicesResponse;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.FacilityAttributes;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility.Properties;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -566,6 +568,96 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+  }
+
+  @Test
+  @SneakyThrows
+  void deserializeFacilityWithInvalidServices() {
+    var facilityId = "vha_402";
+    Facility facility =
+        Facility.builder()
+            .id(facilityId)
+            .type(Facility.Type.va_facilities)
+            .attributes(
+                FacilityAttributes.builder()
+                    .services(
+                        Facility.Services.builder()
+                            .lastUpdated(LocalDate.parse("2022-03-07"))
+                            .build())
+                    .build())
+            .build();
+    // No services
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"last_updated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+    // Invalid services
+    facility
+        .attributes()
+        .services(
+            Facility.Services.builder()
+                .benefits(emptyList())
+                .health(emptyList())
+                .other(emptyList())
+                .lastUpdated(LocalDate.parse("2022-03-07"))
+                .build());
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": [\"foo\"],"
+            + "\"health\": [\"bar\"],"
+            + "\"other\": [\"baz\"],"
+            + "\"last_updated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
+  }
+
+  @Test
+  @SneakyThrows
+  void deserializeFacilityWithServicesInV0Format() {
+    var facilityId = "vha_402";
+    Facility facility =
+        Facility.builder()
+            .id(facilityId)
+            .type(Facility.Type.va_facilities)
+            .attributes(
+                FacilityAttributes.builder()
+                    .services(
+                        Facility.Services.builder()
+                            .benefits(List.of(BenefitsService.Pensions))
+                            .health(List.of(HealthService.Cardiology, HealthService.PrimaryCare))
+                            .other(List.of(OtherService.OnlineScheduling))
+                            .lastUpdated(LocalDate.parse("2022-03-07"))
+                            .build())
+                    .build())
+            .build();
+    assertJson(
+        "{\"id\":\"vha_402\","
+            + "\"type\":\"va_facilities\","
+            + "\"attributes\":{"
+            + "\"services\":{"
+            + "\"benefits\": ["
+            + "\"Pensions\""
+            + "],"
+            + "\"health\": ["
+            + "\"Cardiology\","
+            + "\"PrimaryCare\""
+            + "],"
+            + "\"other\": ["
+            + "\"OnlineScheduling\""
+            + "],"
+            + "\"last_updated\":\"2022-03-07\""
+            + "}}}",
+        Facility.class,
+        facility);
   }
 
   @Test

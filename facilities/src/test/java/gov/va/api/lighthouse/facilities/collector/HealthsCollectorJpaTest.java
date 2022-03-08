@@ -8,6 +8,8 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Nu
 import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Podiatry;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.UrgentCare;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -184,7 +186,7 @@ class HealthsCollectorJpaTest {
                 .vastEntities(List.of(entity))
                 .websites(emptyMap())
                 .build()
-                .collect())
+                .collect("http://localhost:8085/v1/"))
         .isEqualTo(
             List.of(
                 DatamartFacility.builder()
@@ -234,13 +236,17 @@ class HealthsCollectorJpaTest {
                             .services(
                                 Services.builder()
                                     .health(
-                                        List.of(
-                                            Audiology,
-                                            Dental,
-                                            EmergencyCare,
-                                            Nutrition,
-                                            Podiatry,
-                                            UrgentCare))
+                                        getDatamartTypedServices(
+                                            List.of(
+                                                Audiology,
+                                                Dental,
+                                                EmergencyCare,
+                                                Nutrition,
+                                                Podiatry,
+                                                UrgentCare),
+                                            "http://localhost:8085/v1/",
+                                            "vha_666"))
+                                    .link(buildServicesLink("http://localhost:8085/v1/", "vha_666"))
                                     .lastUpdated(LocalDate.parse("2020-03-02"))
                                     .build())
                             .satisfaction(

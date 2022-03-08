@@ -41,20 +41,73 @@
     "services" : {
       "other" : [ ],
       "health" : [
-        "primaryCare",
-        "mentalHealth",
-        "womensHealth",
-        "audiology",
-        "cardiology",
-        "dermatology",
-        "gastroenterology",
-        "gynecology",
-        "ophthalmology",
-        "optometry",
-        "orthopedics",
-        "urology",
-        "dental"
+        {
+          "name" : "PrimaryCare",
+          "serviceId" : "primaryCare",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/primaryCare"
+        },
+        {
+          "name" : "MentalHealth",
+          "serviceId" : "mentalHealth",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/mentalHealth"
+        },
+        {
+          "name" : "WomensHealth",
+          "serviceId" : "womensHealth",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/womensHealth"
+        },
+        {
+          "name" : "Audiology",
+          "serviceId" : "audiology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/audiology"
+        },
+        {
+          "name" : "Cardiology",
+          "serviceId" : "cardiology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/cardiology"
+        },
+        {
+          "name" : "Dermatology",
+          "serviceId" : "dermatology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/dermatology"
+        },
+        {
+          "name" : "Gastroenterology",
+          "serviceId" : "gastroenterology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/gastroenterology"
+        },
+        {
+          "name" : "Gynecology",
+          "serviceId" : "gynecology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/gynecology"
+        },
+        {
+          "name" : "Ophthalmology",
+          "serviceId" : "ophthalmology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/ophthalmology"
+        },
+        {
+          "name" : "Optometry",
+          "serviceId" : "optometry",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/optometry"
+        },
+        {
+          "name" : "Orthopedics",
+          "serviceId" : "orthopedics",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/orthopedics"
+        },
+        {
+          "name" : "Urology",
+          "serviceId" : "urology",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/urology"
+        },
+        {
+          "name" : "Dental",
+          "serviceId" : "dental",
+          "link" : "http://localhost:8085/v1/facilities/vha_757/services/dental"
+        }
       ],
+      "link" : "http://localhost:8085/v1/facilities/vha_757/services",
       "last_updated" : "2020-03-16"
     },
     "satisfaction" : {

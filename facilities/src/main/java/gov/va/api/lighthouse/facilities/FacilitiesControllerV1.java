@@ -7,6 +7,7 @@ import static gov.va.api.lighthouse.facilities.ControllersV1.validateServices;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.distance;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.entityIds;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.haversine;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildLinkerUrlV1;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -28,6 +29,7 @@ import java.util.function.Function;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -46,8 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/v1")
 public class FacilitiesControllerV1 {
-
-  private static final FacilityOverlayV1 FACILITY_OVERLAY = FacilityOverlayV1.builder().build();
+  private static final FacilityOverlayV1 facilityOverlay = FacilityOverlayV1.builder().build();
 
   private final FacilityRepository facilityRepository;
 
@@ -59,15 +60,12 @@ public class FacilitiesControllerV1 {
       @Value("${facilities.url}") String baseUrl,
       @Value("${facilities.base-path}") String basePath) {
     this.facilityRepository = facilityRepository;
-    String url = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-    String path = basePath.replaceAll("/$", "");
-    path = path.isEmpty() ? path : path + "/";
-    linkerUrl = url + path + "v1/";
+    linkerUrl = buildLinkerUrlV1(baseUrl, basePath);
   }
 
   @SneakyThrows
-  private static Facility facility(HasFacilityPayload entity) {
-    return FACILITY_OVERLAY.apply(entity);
+  private static Facility facility(@NonNull HasFacilityPayload entity, @NonNull String linkerUrl) {
+    return facilityOverlay.apply(entity, linkerUrl);
   }
 
   /** Get all facilities. */
@@ -86,7 +84,10 @@ public class FacilitiesControllerV1 {
             .totalEntries(allFacilities.size())
             .build();
     return FacilitiesResponse.builder()
-        .data(page(allFacilities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .data(
+            page(allFacilities, page, perPage).stream()
+                .map(e -> facility(e, linkerUrl))
+                .collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
@@ -100,7 +101,7 @@ public class FacilitiesControllerV1 {
     List<List<String>> rows =
         facilityRepository.findAllProjectedBy().stream()
             .parallel()
-            .map(e -> CsvTransformerV1.builder().facility(facility(e)).build().toRow())
+            .map(e -> CsvTransformerV1.builder().facility(facility(e, linkerUrl)).build().toRow())
             .collect(toList());
     StringBuilder sb = new StringBuilder();
     try (CSVPrinter printer =
@@ -121,7 +122,6 @@ public class FacilitiesControllerV1 {
     }
     FacilityEntity.Type facilityType = validateFacilityType(rawType);
     Set<ServiceType> services = validateServices(rawServices);
-
     // lng lat lng lat
     List<FacilityEntity> allEntities =
         facilityRepository.findAll(
@@ -178,6 +178,7 @@ public class FacilitiesControllerV1 {
             e ->
                 DistanceEntity.builder()
                     .entity(e)
+                    .linkerUrl(linkerUrl)
                     .distance(BigDecimal.valueOf(haversine(e, lng, lat)))
                     .build())
         .filter(
@@ -290,7 +291,10 @@ public class FacilitiesControllerV1 {
             .totalEntries(entities.size())
             .build();
     return FacilitiesResponse.builder()
-        .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .data(
+            page(entities, page, perPage).stream()
+                .map(e -> facility(e, linkerUrl))
+                .collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
@@ -319,7 +323,10 @@ public class FacilitiesControllerV1 {
             .totalEntries(entities.size())
             .build();
     return FacilitiesResponse.builder()
-        .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .data(
+            page(entities, page, perPage).stream()
+                .map(e -> facility(e, linkerUrl))
+                .collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
@@ -416,7 +423,7 @@ public class FacilitiesControllerV1 {
         .data(
             perPage == 0
                 ? emptyList()
-                : entitiesPage.stream().map(e -> facility(e)).collect(toList()))
+                : entitiesPage.stream().map(e -> facility(e, linkerUrl)).collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
@@ -445,7 +452,10 @@ public class FacilitiesControllerV1 {
             .totalEntries(entities.size())
             .build();
     return FacilitiesResponse.builder()
-        .data(page(entities, page, perPage).stream().map(e -> facility(e)).collect(toList()))
+        .data(
+            page(entities, page, perPage).stream()
+                .map(e -> facility(e, linkerUrl))
+                .collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
@@ -484,7 +494,7 @@ public class FacilitiesControllerV1 {
         .data(
             perPage == 0
                 ? emptyList()
-                : entitiesPage.stream().map(e -> facility(e)).collect(toList()))
+                : entitiesPage.stream().map(e -> facility(e, linkerUrl)).collect(toList()))
         .links(linker.links())
         .meta(
             FacilitiesResponse.FacilitiesMetadata.builder().pagination(linker.pagination()).build())
@@ -494,21 +504,23 @@ public class FacilitiesControllerV1 {
   /** Read facility. */
   @GetMapping(value = "/facilities/{id}", produces = "application/json")
   FacilityReadResponse readJson(@PathVariable("id") String id) {
-    return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
+    return FacilityReadResponse.builder().facility(facility(entityById(id), linkerUrl)).build();
   }
 
   @Data
   @Builder
   private static final class DistanceEntity {
-    final FacilityEntity entity;
+    @NonNull final FacilityEntity entity;
 
     final BigDecimal distance;
+
+    @NonNull final String linkerUrl;
 
     Facility facility;
 
     Facility facility() {
       if (facility == null) {
-        facility = FacilitiesControllerV1.facility(entity);
+        facility = FacilitiesControllerV1.facility(entity, linkerUrl);
       }
       return facility;
     }

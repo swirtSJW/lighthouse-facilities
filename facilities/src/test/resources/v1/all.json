@@ -378,12 +378,33 @@
         },
         "services" : {
           "health" : [
-            "emergencyCare",
-            "gynecology",
-            "mentalHealth",
-            "primaryCare",
-            "womensHealth"
+            {
+              "name" : "EmergencyCare",
+              "serviceId" : "emergencyCare",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QD/services/emergencyCare"
+            },
+            {
+              "name" : "Gynecology",
+              "serviceId" : "gynecology",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QD/services/gynecology"
+            },
+            {
+              "name" : "MentalHealth",
+              "serviceId" : "mentalHealth",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QD/services/mentalHealth"
+            },
+            {
+              "name" : "PrimaryCare",
+              "serviceId" : "primaryCare",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QD/services/primaryCare"
+            },
+            {
+              "name" : "WomensHealth",
+              "serviceId" : "womensHealth",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QD/services/womensHealth"
+            }
           ],
+          "link" : "http://localhost:8085/v1/facilities/vha_657QD/services",
           "lastUpdated" : "2020-03-09"
         },
         "satisfaction" : {
@@ -463,10 +484,23 @@
         },
         "services" : {
           "health" : [
-            "emergencyCare",
-            "mentalHealth",
-            "primaryCare"
+            {
+              "name" : "EmergencyCare",
+              "serviceId" : "emergencyCare",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QE/services/emergencyCare"
+            },
+            {
+              "name" : "MentalHealth",
+              "serviceId" : "mentalHealth",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QE/services/mentalHealth"
+            },
+            {
+              "name" : "PrimaryCare",
+              "serviceId" : "primaryCare",
+              "link" : "http://localhost:8085/v1/facilities/vha_657QE/services/primaryCare"
+            }
           ],
+          "link" : "http://localhost:8085/v1/facilities/vha_657QE/services",
           "lastUpdated" : "2020-03-09"
         },
         "waitTimes" : {

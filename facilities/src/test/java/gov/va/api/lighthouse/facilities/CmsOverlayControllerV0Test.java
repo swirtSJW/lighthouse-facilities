@@ -1,11 +1,13 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildLinkerUrlV0;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -250,6 +253,16 @@ public class CmsOverlayControllerV0Test {
   @Test
   @SneakyThrows
   void updateIsAcceptedForKnownStationUsingServiceId() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     Facility f =
         Facility.builder()
             .id("vha_402")
@@ -261,7 +274,9 @@ public class CmsOverlayControllerV0Test {
             .id(pk)
             .facility(
                 DatamartFacilitiesJacksonConfig.createMapper()
-                    .writeValueAsString(FacilityTransformerV0.toVersionAgnostic(f)))
+                    .writeValueAsString(
+                        FacilityTransformerV0.toVersionAgnostic(
+                            f, buildLinkerUrlV0(baseUrl, basePath))))
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = overlay();
@@ -297,6 +312,16 @@ public class CmsOverlayControllerV0Test {
   @Test
   @SneakyThrows
   void updateIsAcceptedForKnownStationUsingServiceName() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     Facility f =
         Facility.builder()
             .id("vha_402")
@@ -308,7 +333,9 @@ public class CmsOverlayControllerV0Test {
             .id(pk)
             .facility(
                 DatamartFacilitiesJacksonConfig.createMapper()
-                    .writeValueAsString(FacilityTransformerV0.toVersionAgnostic(f)))
+                    .writeValueAsString(
+                        FacilityTransformerV0.toVersionAgnostic(
+                            f, buildLinkerUrlV0(baseUrl, basePath))))
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = overlay();
@@ -420,6 +447,16 @@ public class CmsOverlayControllerV0Test {
   @Test
   @SneakyThrows
   void verifyServicePathUpdated() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     Facility f =
         Facility.builder()
             .id("vha_402")
@@ -431,7 +468,9 @@ public class CmsOverlayControllerV0Test {
             .id(pk)
             .facility(
                 DatamartFacilitiesJacksonConfig.createMapper()
-                    .writeValueAsString(FacilityTransformerV0.toVersionAgnostic(f)))
+                    .writeValueAsString(
+                        FacilityTransformerV0.toVersionAgnostic(
+                            f, buildLinkerUrlV0(baseUrl, basePath))))
             .build();
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = overlay();

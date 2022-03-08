@@ -1,3 +1,5 @@
 package gov.va.api.lighthouse.facilities.api;
 
-public interface ServiceType {}
+public interface ServiceType {
+  String name();
+}

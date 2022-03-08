@@ -31,6 +31,36 @@ class DetailedServiceTransformerV1Test {
   }
 
   @Test
+  void nullReturn() {
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceEmailContacts(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceLocations(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServicePhoneNumbers(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServices(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceEmailContacts(null))
+        .isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceLocations(null))
+        .isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServicePhoneNumbers(null))
+        .isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServices(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceAddress(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceAddress(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceEmailContact(null))
+        .isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceEmailContact(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceHours(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceHours(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceLocation(null)).isNull();
+    assertThat(DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceLocation(null))
+        .isNull();
+    assertThat(DetailedServiceTransformerV1.toDetailedServiceAppointmentPhoneNumber(null)).isNull();
+    assertThat(
+            DetailedServiceTransformerV1.toVersionAgnosticDetailedServiceAppointmentPhoneNumber(
+                null))
+        .isNull();
+  }
+
+  @Test
   public void roundTripTransformation() {
     List<DatamartDetailedService> datamartDetailedServices =
         DatamartDetailedServicesTestUtils.datamartDetailedServices(true);

@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v0;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -101,7 +102,7 @@ public class SearchByZipJsonTest {
                                     .build())
                             .services(
                                 Facility.Services.builder()
-                                    .other(new ArrayList<>())
+                                    .other(emptyList())
                                     .health(
                                         List.of(
                                             Facility.HealthService.PrimaryCare,

@@ -41,13 +41,38 @@
     "services" : {
       "other" : [ ],
       "health" : [
-        "emergencyCare",
-        "primaryCare",
-        "mentalHealth",
-        "audiology",
-        "dermatology",
-        "dental"
+        {
+          "name" : "EmergencyCare",
+          "serviceId" : "emergencyCare",
+          "link" : "http://localhost:8085/v1/facilities/vha_740GA/services/emergencyCare"
+        },
+        {
+          "name" : "PrimaryCare",
+          "serviceId" : "primaryCare",
+          "link" : "http://localhost:8085/v1/facilities/vha_740GA/services/primaryCare"
+        },
+        {
+          "name" : "MentalHealth",
+          "serviceId" : "mentalHealth",
+          "link" : "http://localhost:8085/v1/facilities/vha_740GA/services/mentalHealth"
+        },
+        {
+          "name" : "Audiology",
+          "serviceId" : "audiology",
+          "link" : "http://localhost:8085/v1/facilities/vha_740GA/services/audiology"
+        },
+        {
+          "name" : "Dermatology",
+          "serviceId" : "dermatology",
+          "link" : "http://localhost:8085/v1/facilities/vha_740GA/services/dermatology"
+        },
+        {
+          "name" : "Dental",
+          "serviceId" : "dental",
+          "link" : "http://localhost:8085/v1/facilities/vha_740GA/services/dental"
+        }
       ],
+      "link" : "http://localhost:8085/v1/facilities/vha_740GA/services",
       "last_updated" : "2020-03-16"
     },
     "satisfaction" : {

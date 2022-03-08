@@ -17,6 +17,8 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.
 import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.eBenefitsRegistrationAssistance;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_benefits_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 
 import gov.va.api.lighthouse.facilities.DatamartFacility;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Address;
@@ -28,6 +30,7 @@ import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -88,7 +91,8 @@ class BenefitsSamples {
           .build();
     }
 
-    private FacilityAttributes attributes() {
+    private FacilityAttributes benefitsAttributes(
+        @NonNull String linkerUrl, @NonNull String facilityId) {
       return FacilityAttributes.builder()
           .name("Shanktopus VAMC")
           .facilityType(va_benefits_facility)
@@ -111,32 +115,37 @@ class BenefitsSamples {
           .services(
               Services.builder()
                   .benefits(
-                      List.of(
-                          ApplyingForBenefits,
-                          DisabilityClaimAssistance,
-                          eBenefitsRegistrationAssistance,
-                          EducationAndCareerCounseling,
-                          EducationClaimAssistance,
-                          FamilyMemberClaimAssistance,
-                          HomelessAssistance,
-                          VAHomeLoanAssistance,
-                          InsuranceClaimAssistanceAndFinancialCounseling,
-                          IntegratedDisabilityEvaluationSystemAssistance,
-                          PreDischargeClaimAssistance,
-                          TransitionAssistance,
-                          UpdatingDirectDepositInformation,
-                          VocationalRehabilitationAndEmploymentAssistance,
-                          Pensions))
+                      getDatamartTypedServices(
+                          List.of(
+                              ApplyingForBenefits,
+                              DisabilityClaimAssistance,
+                              eBenefitsRegistrationAssistance,
+                              EducationAndCareerCounseling,
+                              EducationClaimAssistance,
+                              FamilyMemberClaimAssistance,
+                              HomelessAssistance,
+                              VAHomeLoanAssistance,
+                              InsuranceClaimAssistanceAndFinancialCounseling,
+                              IntegratedDisabilityEvaluationSystemAssistance,
+                              PreDischargeClaimAssistance,
+                              TransitionAssistance,
+                              UpdatingDirectDepositInformation,
+                              VocationalRehabilitationAndEmploymentAssistance,
+                              Pensions),
+                          linkerUrl,
+                          facilityId))
+                  .link(buildServicesLink(linkerUrl, facilityId))
                   .build())
           .build();
     }
 
-    List<DatamartFacility> benefitsFacilities() {
+    List<DatamartFacility> benefitsFacilities(
+        @NonNull String linkerUrl, @NonNull String facilityId) {
       return List.of(
           DatamartFacility.builder()
-              .id("vba_306e")
+              .id(facilityId)
               .type(va_facilities)
-              .attributes(attributes())
+              .attributes(benefitsAttributes(linkerUrl, facilityId))
               .build());
     }
   }

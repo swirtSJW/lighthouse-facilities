@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +20,7 @@ import gov.va.api.lighthouse.facilities.api.v1.Facility.Type;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
@@ -54,11 +57,12 @@ public class ModelTest {
 
   @Test
   void facilitiesReadResponse() {
+    var facilityId = "98";
     roundTrip(
         FacilityReadResponse.builder()
             .facility(
                 Facility.builder()
-                    .id("98")
+                    .id(facilityId)
                     .type(Type.va_facilities)
                     .attributes(
                         FacilityAttributes.builder()
@@ -71,7 +75,7 @@ public class ModelTest {
                             .address(addresses())
                             .phone(phones())
                             .hours(hours())
-                            .services(services())
+                            .services(services(facilityId))
                             .satisfaction(satisfaction())
                             .waitTimes(waitTimes())
                             .mobile(false)
@@ -100,8 +104,9 @@ public class ModelTest {
   }
 
   private Facility facility() {
+    var facilityId = "98";
     return Facility.builder()
-        .id("98")
+        .id(facilityId)
         .type(Type.va_facilities)
         .attributes(
             FacilityAttributes.builder()
@@ -114,7 +119,7 @@ public class ModelTest {
                 .address(addresses())
                 .phone(phones())
                 .hours(hours())
-                .services(services())
+                .services(services(facilityId))
                 .satisfaction(satisfaction())
                 .waitTimes(waitTimes())
                 .mobile(false)
@@ -221,9 +226,14 @@ public class ModelTest {
         .build();
   }
 
-  private Facility.Services services() {
+  private Facility.Services services(@NonNull String facilityId) {
     return Facility.Services.builder()
-        .benefits(List.of(Facility.BenefitsService.eBenefitsRegistrationAssistance))
+        .benefits(
+            getFacilityTypedServices(
+                List.of(Facility.BenefitsService.eBenefitsRegistrationAssistance),
+                "http://localhost:8085/v1/",
+                facilityId))
+        .link(buildServicesLink("http://localhost:8085/v1/", facilityId))
         .lastUpdated(LocalDate.parse("2020-03-12"))
         .build();
   }

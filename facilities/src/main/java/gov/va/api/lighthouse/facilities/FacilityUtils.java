@@ -50,8 +50,9 @@ public class FacilityUtils {
     return 3958.8 * 2 * Math.asin(Math.sqrt(x * x + coeff * y * y));
   }
 
+  /** Ensure only non-null fields are serialized to JSON. */
   @SneakyThrows
-  static void writeNonNull(JsonGenerator jgen, String fieldName, Object value) {
+  public static void writeNonNull(JsonGenerator jgen, String fieldName, Object value) {
     if (value != null) {
       jgen.writeObjectField(fieldName, value);
     }

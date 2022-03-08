@@ -1,15 +1,21 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceInfo.INVALID_SVC_ID;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.deserializers.DatamartFacilityAttributesDeserializer;
+import gov.va.api.lighthouse.facilities.deserializers.DatamartFacilityDeserializer;
+import gov.va.api.lighthouse.facilities.serializers.TypedServiceSerializer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +31,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonDeserialize(using = DatamartFacilityDeserializer.class)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DatamartFacility {
@@ -55,7 +62,15 @@ public class DatamartFacility {
     TransitionAssistance,
     UpdatingDirectDepositInformation,
     VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance
+    VocationalRehabilitationAndEmploymentAssistance;
+
+    /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
+    @JsonCreator
+    public static BenefitsService fromString(String name) {
+      return "eBenefitsRegistrationAssistance".equalsIgnoreCase(name)
+          ? eBenefitsRegistrationAssistance
+          : valueOf(capitalize(name));
+    }
   }
 
   public enum FacilityType {
@@ -350,7 +365,6 @@ public class DatamartFacility {
     "detailed_services",
     "visn"
   })
-  @JsonDeserialize(using = DatamartFacilityAttributesDeserializer.class)
   public static final class FacilityAttributes {
     @NotNull String name;
 
@@ -549,14 +563,34 @@ public class DatamartFacility {
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   public static final class Services {
-    List<OtherService> other;
+    List<TypedService<OtherService>> other;
 
-    List<HealthService> health;
+    List<TypedService<HealthService>> health;
 
-    List<BenefitsService> benefits;
+    List<TypedService<BenefitsService>> benefits;
+
+    String link;
 
     @JsonProperty("last_updated")
     LocalDate lastUpdated;
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonSerialize(using = TypedServiceSerializer.class)
+  @JsonPropertyOrder({"name", "serviceId", "link"})
+  @AllArgsConstructor
+  public static final class TypedService<T extends ServiceType> {
+    @JsonIgnore @NotNull T serviceType;
+
+    String name;
+
+    @NotNull String link;
+
+    public String serviceId() {
+      return isNotEmpty(serviceType()) ? uncapitalize(serviceType().name()) : INVALID_SVC_ID;
+    }
   }
 
   @Data

@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.v1;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import lombok.SneakyThrows;
@@ -251,6 +252,38 @@ public class DetailedServiceEmptyFieldsTest {
             DetailedService.DetailedServiceLocation.builder()
                 .serviceLocationAddress(
                     DetailedService.DetailedServiceAddress.builder().city("Melbourne").build())
+                .build()
+                .isEmpty())
+        .isFalse();
+  }
+
+  @Test
+  @SneakyThrows
+  void emptyServiceInfo() {
+    // Empty
+    assertThatThrownBy(() -> DetailedService.ServiceInfo.builder().serviceType(null).build())
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("serviceType is marked non-null but is null");
+    assertThatThrownBy(() -> DetailedService.ServiceInfo.builder().serviceId(null).build())
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("serviceId is marked non-null but is null");
+    assertThatThrownBy(
+            () -> DetailedService.ServiceInfo.builder().serviceType(null).serviceId(null).build())
+        .isInstanceOf(NullPointerException.class)
+        .hasMessage("serviceType is marked non-null but is null");
+    // Not empty
+    assertThat(
+            DetailedService.ServiceInfo.builder()
+                .serviceType(DetailedService.ServiceType.Health)
+                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
+                .build()
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            DetailedService.ServiceInfo.builder()
+                .serviceType(DetailedService.ServiceType.Health)
+                .name(Facility.HealthService.Cardiology.name())
+                .serviceId(uncapitalize(Facility.HealthService.Cardiology.name()))
                 .build()
                 .isEmpty())
         .isFalse();

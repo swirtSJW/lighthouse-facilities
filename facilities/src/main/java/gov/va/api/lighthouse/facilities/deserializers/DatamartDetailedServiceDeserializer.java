@@ -134,7 +134,7 @@ public class DatamartDetailedServiceDeserializer extends StdDeserializer<Datamar
                 : Arrays.stream(BenefitsService.values())
                         .parallel()
                         .anyMatch(bs -> bs.name().equalsIgnoreCase(name))
-                    ? BenefitsService.valueOf(name).name()
+                    ? BenefitsService.fromString(name).name()
                     : Arrays.stream(OtherService.values())
                             .parallel()
                             .anyMatch(os -> os.name().equalsIgnoreCase(name))

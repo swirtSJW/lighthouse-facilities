@@ -21,6 +21,8 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Ur
 import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Urology;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.WomensHealth;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedService;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.allBlank;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.checkAngleBracketNull;
 import static gov.va.api.lighthouse.facilities.collector.Transformers.emptyToNull;
@@ -48,6 +50,7 @@ import gov.va.api.lighthouse.facilities.DatamartFacility.PatientWaitTime;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Satisfaction;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Services;
+import gov.va.api.lighthouse.facilities.DatamartFacility.TypedService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.WaitTimes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -167,7 +170,7 @@ final class HealthTransformer {
         .orElse(null);
   }
 
-  private FacilityAttributes attributes() {
+  private FacilityAttributes attributes(@NonNull String linkerUrl, @NonNull String facilityId) {
     if (allBlank(
         vast.stationName(),
         classification(),
@@ -178,7 +181,7 @@ final class HealthTransformer {
         phone(),
         hours(),
         vast.operationalHoursSpecialInstructions(),
-        services(),
+        services(linkerUrl, facilityId),
         satisfaction(),
         waitTimes(),
         vast.mobile(),
@@ -198,7 +201,7 @@ final class HealthTransformer {
         .phone(phone())
         .hours(hours())
         .operationalHoursSpecialInstructions(vast.operationalHoursSpecialInstructions())
-        .services(services())
+        .services(services(linkerUrl, facilityId))
         .satisfaction(satisfaction())
         .waitTimes(waitTimes())
         .mobile(vast.mobile())
@@ -342,38 +345,45 @@ final class HealthTransformer {
         .build();
   }
 
-  private Services services() {
-    if (allBlank(servicesHealth(), atcEffectiveDate())) {
+  private Services services(@NonNull String linkerUrl, @NonNull String facilityId) {
+    if (allBlank(servicesHealth(linkerUrl, facilityId), atcEffectiveDate())) {
       return null;
     }
-    return Services.builder().health(servicesHealth()).lastUpdated(atcEffectiveDate()).build();
+    return Services.builder()
+        .health(servicesHealth(linkerUrl, facilityId))
+        .link(buildServicesLink(linkerUrl, facilityId))
+        .lastUpdated(atcEffectiveDate())
+        .build();
   }
 
-  private List<HealthService> servicesHealth() {
-    List<HealthService> services =
+  private List<TypedService<HealthService>> servicesHealth(
+      @NonNull String linkerUrl, @NonNull String facilityId) {
+    List<TypedService<HealthService>> services =
         accessToCareEntries().stream()
             .map(ace -> serviceName(ace))
             .filter(Objects::nonNull)
+            .map(hs -> getDatamartTypedService(hs, linkerUrl, facilityId))
             .collect(toCollection(ArrayList::new));
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.emergencyCare()))) {
-      services.add(EmergencyCare);
+      services.add(getDatamartTypedService(EmergencyCare, linkerUrl, facilityId));
     }
     if (accessToCareEntries().stream().anyMatch(ace -> BooleanUtils.isTrue(ace.urgentCare()))) {
-      services.add(UrgentCare);
+      services.add(getDatamartTypedService(UrgentCare, linkerUrl, facilityId));
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.DENTISTRY.contains(trimToEmpty(sc.code())))) {
-      services.add(Dental);
+      services.add(getDatamartTypedService(Dental, linkerUrl, facilityId));
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.NUTRITION.contains(trimToEmpty(sc.code())))) {
-      services.add(Nutrition);
+      services.add(getDatamartTypedService(Nutrition, linkerUrl, facilityId));
     }
     if (stopCodes().stream().anyMatch(sc -> StopCode.PODIATRY.contains(trimToEmpty(sc.code())))) {
-      services.add(Podiatry);
+      services.add(getDatamartTypedService(Podiatry, linkerUrl, facilityId));
     }
     if (hasCaregiverSupport()) {
-      services.add(CaregiverSupport);
+      services.add(getDatamartTypedService(CaregiverSupport, linkerUrl, facilityId));
     }
-    Collections.sort(services, (left, right) -> left.name().compareToIgnoreCase(right.name()));
+    Collections.sort(
+        services, (left, right) -> left.serviceId().compareToIgnoreCase(right.serviceId()));
     return emptyToNull(services);
   }
 
@@ -381,11 +391,15 @@ final class HealthTransformer {
     return stopCodesMap.get(trimToEmpty(upperCase(id(), Locale.US)));
   }
 
-  DatamartFacility toDatamartFacility() {
+  DatamartFacility toDatamartFacility(@NonNull String linkerUrl, @NonNull String facilityId) {
     if (allBlank(id())) {
       return null;
     }
-    return DatamartFacility.builder().id(id()).type(va_facilities).attributes(attributes()).build();
+    return DatamartFacility.builder()
+        .id(id())
+        .type(va_facilities)
+        .attributes(attributes(linkerUrl, facilityId))
+        .build();
   }
 
   private WaitTimes waitTimes() {

@@ -1,7 +1,11 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
@@ -15,7 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 
 public class FacilityOverlayV1Test {
   private static final ObjectMapper MAPPER_V1 = FacilitiesJacksonConfigV1.createMapper();
@@ -28,28 +34,30 @@ public class FacilityOverlayV1Test {
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, null),
-        null,
+        emptyList(),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(op(OperatingStatusCode.NORMAL, "neato"), false)));
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, null),
-        null,
+        emptyList(),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(op(OperatingStatusCode.NOTICE, "neato"), false)));
     assertStatus(
         ActiveStatus.T,
         op(OperatingStatusCode.CLOSED, null),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        getFacilityTypedServices(
+            List.of(Facility.HealthService.Covid19Vaccine), "http://localhost:8085/v1/", "vha_x"),
         entity(
             fromActiveStatus(ActiveStatus.T),
             overlay(op(OperatingStatusCode.LIMITED, "neato"), true)));
     assertStatus(
         ActiveStatus.A,
         op(OperatingStatusCode.NORMAL, null),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        getFacilityTypedServices(
+            List.of(Facility.HealthService.Covid19Vaccine), "http://localhost:8085/v1/", "vha_x"),
         entity(
             fromActiveStatus(ActiveStatus.A),
             overlay(op(OperatingStatusCode.CLOSED, "neato"), true)));
@@ -58,9 +66,10 @@ public class FacilityOverlayV1Test {
   private void assertStatus(
       ActiveStatus expectedActiveStatus,
       OperatingStatus expectedOperatingStatus,
-      List<Facility.HealthService> expectedHealthServices,
+      List<Facility.TypedService<Facility.HealthService>> expectedHealthServices,
       FacilityEntity entity) {
-    Facility facility = FacilityOverlayV1.builder().build().apply(entity);
+    Facility facility =
+        FacilityOverlayV1.builder().build().apply(entity, "http://localhost:8085/v1/");
     assertThat(facility.attributes().activeStatus()).isEqualTo(expectedActiveStatus);
     assertThat(facility.attributes().operatingStatus()).isEqualTo(expectedOperatingStatus);
     assertThat(facility.attributes().services().health()).isEqualTo(expectedHealthServices);
@@ -70,13 +79,14 @@ public class FacilityOverlayV1Test {
   void covid19VaccineIsPopulatedWhenAvailable() {
     assertStatus(
         null,
-        OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        List.of(Facility.HealthService.Covid19Vaccine),
+        op(OperatingStatusCode.NORMAL, null),
+        getFacilityTypedServices(
+            List.of(Facility.HealthService.Covid19Vaccine), "http://localhost:8085/v1/", "vha_x"),
         entity(fromActiveStatus(null), overlay(null, true)));
     assertStatus(
         null,
-        OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
+        op(OperatingStatusCode.NORMAL, null),
+        emptyList(),
         entity(fromActiveStatus(null), overlay(null, false)));
   }
 
@@ -172,6 +182,7 @@ public class FacilityOverlayV1Test {
 
   private Facility fromActiveStatus(ActiveStatus status) {
     return Facility.builder()
+        .id("vha_x")
         .attributes(FacilityAttributes.builder().activeStatus(status).build())
         .build();
   }
@@ -184,18 +195,18 @@ public class FacilityOverlayV1Test {
   void operatingStatusIsPopulatedByActiveStatusWhenNotAvailable() {
     assertStatus(
         ActiveStatus.A,
-        OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
+        op(OperatingStatusCode.NORMAL, null),
+        emptyList(),
         entity(fromActiveStatus(ActiveStatus.A), null));
     assertStatus(
         ActiveStatus.T,
-        OperatingStatus.builder().code(OperatingStatusCode.CLOSED).build(),
-        null,
+        op(OperatingStatusCode.CLOSED, null),
+        emptyList(),
         entity(fromActiveStatus(ActiveStatus.T), null));
     assertStatus(
         null,
-        OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
+        op(OperatingStatusCode.NORMAL, null),
+        emptyList(),
         entity(fromActiveStatus(null), null));
   }
 
@@ -204,5 +215,16 @@ public class FacilityOverlayV1Test {
         .operatingStatus(neato)
         .detailedServices(List.of(createDetailedService(cmsServiceActiveValue)))
         .build();
+  }
+
+  @BeforeEach
+  void setUp() {
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl("http://localhost:8085");
+    serviceLinkHelper.basePath("/");
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
   }
 }

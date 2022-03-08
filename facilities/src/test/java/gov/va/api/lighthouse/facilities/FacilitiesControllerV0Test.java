@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -152,6 +154,8 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void geoFacilitiesByBoundingBox() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     when(fr.findAll(
             FacilityRepository.BoundingBoxSpecification.builder()
                 .minLongitude(BigDecimal.valueOf(-97.65).min(BigDecimal.valueOf(-97.67)))
@@ -167,7 +171,7 @@ public class FacilitiesControllerV0Test {
                             Facility.HealthService.Urology)))
                 .mobile(Boolean.FALSE)
                 .build()))
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+        .thenReturn(facilityEntities);
     assertThat(
             controller()
                 .geoFacilitiesByBoundingBox(
@@ -190,16 +194,17 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void geoFacilitiesByIds() {
+    List<FacilityEntity> facilityEntities =
+        List.of(
+            FacilitySamples.defaultSamples().facilityEntity("vha_757"),
+            FacilitySamples.defaultSamples().facilityEntity("vha_740GA"),
+            FacilitySamples.defaultSamples().facilityEntity("vha_691GB"));
     when(fr.findByIdIn(
             List.of(
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB"),
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "740GA"),
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "757"))))
-        .thenReturn(
-            List.of(
-                FacilitySamples.defaultSamples().facilityEntity("vha_757"),
-                FacilitySamples.defaultSamples().facilityEntity("vha_740GA"),
-                FacilitySamples.defaultSamples().facilityEntity("vha_691GB")));
+        .thenReturn(facilityEntities);
     assertThat(controller().geoFacilitiesByIds("x,vha_691GB,,x,,vha_740GA,vha_757", 2, 1))
         .isEqualTo(
             GeoFacilitiesResponse.builder()
@@ -210,6 +215,8 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void geoFacilitiesByLatLong() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     when(fr.findAll(
             FacilityRepository.TypeServicesIdsSpecification.builder()
                 .ids(List.of(FacilityEntity.Pk.of(FacilityEntity.Type.vha, "740GA")))
@@ -222,7 +229,7 @@ public class FacilitiesControllerV0Test {
                             Facility.HealthService.Urology)))
                 .mobile(Boolean.FALSE)
                 .build()))
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+        .thenReturn(facilityEntities);
     // Query for facilities without constraining to a specified radius
     assertThat(
             controller()
@@ -285,12 +292,12 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void geoFacilitiesByState() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     Page mockPage = mock(Page.class);
-    when(mockPage.get())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.get()).thenReturn(facilityEntities.stream());
     when(mockPage.getTotalElements()).thenReturn(1L);
-    when(mockPage.stream())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.stream()).thenReturn(facilityEntities.stream());
     when(fr.findAll(
             FacilityRepository.StateSpecification.builder()
                 .state("FL")
@@ -323,8 +330,9 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void geoFacilitiesByVisn() {
-    when(fr.findByVisn("test_visn"))
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
+    when(fr.findByVisn("test_visn")).thenReturn(facilityEntities);
     assertThat(controller().geoFacilitiesByVisn("test_visn", 1, 1))
         .isEqualTo(
             GeoFacilitiesResponse.builder()
@@ -335,12 +343,12 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void geoFacilitiesByZip() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     Page mockPage = mock(Page.class);
-    when(mockPage.get())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.get()).thenReturn(facilityEntities.stream());
     when(mockPage.getTotalElements()).thenReturn(1L);
-    when(mockPage.stream())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.stream()).thenReturn(facilityEntities.stream());
     when(fr.findAll(
             FacilityRepository.ZipSpecification.builder()
                 .zip("32934")
@@ -373,6 +381,8 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByBoundingBox() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     when(fr.findAll(
             FacilityRepository.BoundingBoxSpecification.builder()
                 .minLongitude(BigDecimal.valueOf(-97.65).min(BigDecimal.valueOf(-97.67)))
@@ -388,7 +398,7 @@ public class FacilitiesControllerV0Test {
                             Facility.HealthService.Urology)))
                 .mobile(Boolean.FALSE)
                 .build()))
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+        .thenReturn(facilityEntities);
     assertThat(
             controller()
                 .jsonFacilitiesByBoundingBox(
@@ -431,16 +441,17 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByIds() {
+    List<FacilityEntity> facilityEntities =
+        List.of(
+            FacilitySamples.defaultSamples().facilityEntity("vha_740GA"),
+            FacilitySamples.defaultSamples().facilityEntity("vha_691GB"),
+            FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     when(fr.findByIdIn(
             List.of(
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB"),
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "740GA"),
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "757"))))
-        .thenReturn(
-            List.of(
-                FacilitySamples.defaultSamples().facilityEntity("vha_740GA"),
-                FacilitySamples.defaultSamples().facilityEntity("vha_691GB"),
-                FacilitySamples.defaultSamples().facilityEntity("vha_757")));
+        .thenReturn(facilityEntities);
     assertThat(controller().jsonFacilitiesByIds("x,vha_691GB,,x,,vha_740GA,vha_757", 2, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
@@ -473,16 +484,17 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByIds_perPageZero() {
+    List<FacilityEntity> facilityEntities =
+        List.of(
+            FacilitySamples.defaultSamples().facilityEntity("vha_691GB"),
+            FacilitySamples.defaultSamples().facilityEntity("vha_740GA"),
+            FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     when(fr.findByIdIn(
             List.of(
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "691GB"),
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "740GA"),
                 FacilityEntity.Pk.of(FacilityEntity.Type.vha, "757"))))
-        .thenReturn(
-            List.of(
-                FacilitySamples.defaultSamples().facilityEntity("vha_691GB"),
-                FacilitySamples.defaultSamples().facilityEntity("vha_740GA"),
-                FacilitySamples.defaultSamples().facilityEntity("vha_757")));
+        .thenReturn(facilityEntities);
     assertThat(controller().jsonFacilitiesByIds("x,vha_691GB,,x,,vha_740GA,vha_757", 2, 0))
         .isEqualTo(
             FacilitiesResponse.builder()
@@ -507,6 +519,8 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByLatLong() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     when(fr.findAll(
             FacilityRepository.TypeServicesIdsSpecification.builder()
                 .ids(List.of(FacilityEntity.Pk.of(FacilityEntity.Type.vha, "740GA")))
@@ -519,7 +533,7 @@ public class FacilitiesControllerV0Test {
                             Facility.HealthService.Urology)))
                 .mobile(Boolean.FALSE)
                 .build()))
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+        .thenReturn(facilityEntities);
     // Query for facilities without constraining to a specified radius
     assertThat(
             controller()
@@ -657,12 +671,12 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByState() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     Page mockPage = mock(Page.class);
-    when(mockPage.get())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.get()).thenReturn(facilityEntities.stream());
     when(mockPage.getTotalElements()).thenReturn(1L);
-    when(mockPage.stream())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.stream()).thenReturn(facilityEntities.stream());
     when(fr.findAll(
             FacilityRepository.StateSpecification.builder()
                 .state("FL")
@@ -716,8 +730,9 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByVisn() {
-    when(fr.findByVisn("test_visn"))
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")));
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
+    when(fr.findByVisn("test_visn")).thenReturn(facilityEntities);
     assertThat(controller().jsonFacilitiesByVisn("test_visn", 1, 1))
         .isEqualTo(
             FacilitiesResponse.builder()
@@ -745,12 +760,12 @@ public class FacilitiesControllerV0Test {
 
   @Test
   void jsonFacilitiesByZip() {
+    List<FacilityEntity> facilityEntities =
+        List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA"));
     Page mockPage = mock(Page.class);
-    when(mockPage.get())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.get()).thenReturn(facilityEntities.stream());
     when(mockPage.getTotalElements()).thenReturn(1L);
-    when(mockPage.stream())
-        .thenReturn(List.of(FacilitySamples.defaultSamples().facilityEntity("vha_740GA")).stream());
+    when(mockPage.stream()).thenReturn(facilityEntities.stream());
     when(fr.findAll(
             FacilityRepository.ZipSpecification.builder()
                 .zip("32934")
@@ -829,5 +844,16 @@ public class FacilitiesControllerV0Test {
   @Test
   void readJson_notFound() {
     assertThrows(ExceptionsUtils.NotFound.class, () -> controller().readJson("vha_691GB"));
+  }
+
+  @BeforeEach
+  void setUp() {
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl("http://localhost:8085");
+    serviceLinkHelper.basePath("/");
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
   }
 }

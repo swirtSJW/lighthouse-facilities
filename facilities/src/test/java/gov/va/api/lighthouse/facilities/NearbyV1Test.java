@@ -1,7 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService.ApplyingForBenefits;
 import static gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService.PrimaryCare;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static gov.va.api.lighthouse.facilities.api.v1.NearbyResponse.Type.NearbyFacility;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
@@ -111,7 +114,12 @@ public class NearbyV1Test {
                 .latitude(BigDecimal.ONE)
                 .longitude(BigDecimal.ONE)
                 .services(
-                    Facility.Services.builder().benefits(List.of(ApplyingForBenefits)).build())
+                    Facility.Services.builder()
+                        .benefits(
+                            getFacilityTypedServices(
+                                List.of(ApplyingForBenefits), "http://localhost:8085/v1/", id))
+                        .link(buildServicesLink("http://localhost:8085/v1/", id))
+                        .build())
                 .build())
         .build();
   }
@@ -134,7 +142,13 @@ public class NearbyV1Test {
                     Facility.FacilityAttributes.builder()
                         .latitude(BigDecimal.ONE)
                         .longitude(BigDecimal.ONE)
-                        .services(Facility.Services.builder().health(List.of(PrimaryCare)).build())
+                        .services(
+                            Facility.Services.builder()
+                                .health(
+                                    getFacilityTypedServices(
+                                        List.of(PrimaryCare), "http://localhost:8085/v1/", id))
+                                .link(buildServicesLink("http://localhost:8085/v1/", id))
+                                .build())
                         .build())
                 .build());
     return facilityV1;
@@ -142,6 +156,16 @@ public class NearbyV1Test {
 
   @Test
   void empty() {
+    var baseUrl = "http://localhost:8085";
+    var basePath = "/";
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl(baseUrl);
+    serviceLinkHelper.basePath(basePath);
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
+
     facilityRepository.save(FacilitySamples.defaultSamples().facilityEntity("vha_757"));
     NearbyResponse response =
         _controller().nearbyLatLong(BigDecimal.ZERO, BigDecimal.ZERO, null, null);

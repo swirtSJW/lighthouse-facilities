@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v1.serializers;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
@@ -651,8 +653,26 @@ public class SerializerTest {
     assertJsonIsEmpty(services);
     // Not empty
     services =
-        Facility.Services.builder().benefits(List.of(Facility.BenefitsService.Pensions)).build();
-    assertJson(services, "{\"benefits\":[\"Pensions\"]}");
+        Facility.Services.builder()
+            .benefits(
+                getFacilityTypedServices(
+                    List.of(Facility.BenefitsService.Pensions),
+                    "http://localhost:8085/v1/",
+                    "vba_402"))
+            .link(buildServicesLink("http://localhost:8085/v1/", "vba_402"))
+            .build();
+    assertJson(
+        services,
+        "{"
+            + "\"benefits\":["
+            + "{"
+            + "\"name\":\"Pensions\","
+            + "\"serviceId\":\"pensions\","
+            + "\"link\":\"http://localhost:8085/v1/facilities/vba_402/services/pensions\""
+            + "}"
+            + "],"
+            + "\"link\":\"http://localhost:8085/v1/facilities/vba_402/services\""
+            + "}");
   }
 
   @Test

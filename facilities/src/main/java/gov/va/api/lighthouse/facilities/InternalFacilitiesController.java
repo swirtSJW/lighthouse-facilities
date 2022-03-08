@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -151,13 +152,16 @@ public class InternalFacilitiesController {
     }
     var allServices = new HashSet<ServiceType>();
     if (services.health() != null) {
-      allServices.addAll(services.health());
+      allServices.addAll(
+          services.health().stream().map(ts -> ts.serviceType()).collect(Collectors.toList()));
     }
     if (services.benefits() != null) {
-      allServices.addAll(services.benefits());
+      allServices.addAll(
+          services.benefits().stream().map(ts -> ts.serviceType()).collect(Collectors.toList()));
     }
     if (services.other() != null) {
-      allServices.addAll(services.other());
+      allServices.addAll(
+          services.other().stream().map(ts -> ts.serviceType()).collect(Collectors.toList()));
     }
     return allServices;
   }

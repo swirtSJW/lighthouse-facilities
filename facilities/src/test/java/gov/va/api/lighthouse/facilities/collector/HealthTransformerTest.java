@@ -4,6 +4,8 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_
 import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.Cardiology;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.CaregiverSupport;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static gov.va.api.lighthouse.facilities.collector.FacilitiesCollector.loadCaregiverSupport;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,7 +114,7 @@ public class HealthTransformerTest {
                 .stopCodesMap(ArrayListMultimap.create())
                 .websites(emptyMap())
                 .build()
-                .toDatamartFacility())
+                .toDatamartFacility("http://localhost:8085/v1/", "vha_x"))
         .isNull();
     ArrayListMultimap<String, AccessToCareEntry> atc = ArrayListMultimap.create();
     atc.put("VHA_X", AccessToCareEntry.builder().build());
@@ -130,7 +132,7 @@ public class HealthTransformerTest {
                 .stopCodesMap(sc)
                 .websites(emptyMap())
                 .build()
-                .toDatamartFacility())
+                .toDatamartFacility("http://localhost:8085/v1/", "vha_x"))
         .isEqualTo(DatamartFacility.builder().id("vha_x").type(va_facilities).build());
   }
 
@@ -200,7 +202,7 @@ public class HealthTransformerTest {
                 .stopCodesMap(sc)
                 .websites(emptyMap())
                 .build()
-                .toDatamartFacility())
+                .toDatamartFacility("http://localhost:8085/v1/", "vha_689"))
         .isEqualTo(
             DatamartFacility.builder()
                 .id("vha_689")
@@ -208,7 +210,15 @@ public class HealthTransformerTest {
                 .attributes(
                     FacilityAttributes.builder()
                         .facilityType(va_health_facility)
-                        .services(Services.builder().health(List.of(CaregiverSupport)).build())
+                        .services(
+                            Services.builder()
+                                .health(
+                                    getDatamartTypedServices(
+                                        List.of(CaregiverSupport),
+                                        "http://localhost:8085/v1/",
+                                        "vha_689"))
+                                .link(buildServicesLink("http://localhost:8085/v1/", "vha_689"))
+                                .build())
                         .build())
                 .build());
   }

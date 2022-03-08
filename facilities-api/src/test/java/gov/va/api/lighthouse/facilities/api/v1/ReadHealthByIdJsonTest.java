@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -82,11 +84,15 @@ public class ReadHealthByIdJsonTest {
                         .services(
                             Facility.Services.builder()
                                 .health(
-                                    List.of(
-                                        Facility.HealthService.EmergencyCare,
-                                        Facility.HealthService.PrimaryCare,
-                                        Facility.HealthService.MentalHealth,
-                                        Facility.HealthService.Dermatology))
+                                    getFacilityTypedServices(
+                                        List.of(
+                                            Facility.HealthService.EmergencyCare,
+                                            Facility.HealthService.PrimaryCare,
+                                            Facility.HealthService.MentalHealth,
+                                            Facility.HealthService.Dermatology),
+                                        "http://localhost:8085/v1/",
+                                        "vha_402GA"))
+                                .link(buildServicesLink("http://localhost:8085/v1/", "vha_402GA"))
                                 .lastUpdated(LocalDate.parse("2020-02-24"))
                                 .build())
                         .satisfaction(

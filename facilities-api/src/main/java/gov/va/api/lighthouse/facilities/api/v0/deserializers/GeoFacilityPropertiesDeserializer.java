@@ -1,14 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
@@ -17,14 +12,12 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.Hours;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Phone;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Satisfaction;
-import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.WaitTimes;
 import gov.va.api.lighthouse.facilities.api.v0.GeoFacility.Properties;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
-public class GeoFacilityPropertiesDeserializer extends StdDeserializer<Properties> {
+public class GeoFacilityPropertiesDeserializer extends BaseServicesDeserializer<Properties> {
   public GeoFacilityPropertiesDeserializer() {
     this(null);
   }
@@ -36,10 +29,8 @@ public class GeoFacilityPropertiesDeserializer extends StdDeserializer<Propertie
   @Override
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public Properties deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public Properties deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     JsonNode idNode = node.get("id");
     JsonNode nameNode = node.get("name");
@@ -64,64 +55,47 @@ public class GeoFacilityPropertiesDeserializer extends StdDeserializer<Propertie
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
 
     return Properties.builder()
-        .id(idNode != null ? createMapper().convertValue(idNode, String.class) : null)
-        .name(nameNode != null ? createMapper().convertValue(nameNode, String.class) : null)
+        .id(idNode != null ? MAPPER.convertValue(idNode, String.class) : null)
+        .name(nameNode != null ? MAPPER.convertValue(nameNode, String.class) : null)
         .facilityType(
             facilityTypeNode != null
-                ? createMapper().convertValue(facilityTypeNode, FacilityType.class)
+                ? MAPPER.convertValue(facilityTypeNode, FacilityType.class)
                 : null)
         .classification(
             classificationNode != null
-                ? createMapper().convertValue(classificationNode, String.class)
+                ? MAPPER.convertValue(classificationNode, String.class)
                 : null)
-        .website(
-            websiteNode != null ? createMapper().convertValue(websiteNode, String.class) : null)
-        .timeZone(
-            timeZoneNode != null ? createMapper().convertValue(timeZoneNode, String.class) : null)
-        .address(
-            addressNode != null ? createMapper().convertValue(addressNode, Addresses.class) : null)
-        .phone(phoneNode != null ? createMapper().convertValue(phoneNode, Phone.class) : null)
-        .hours(hoursNode != null ? createMapper().convertValue(hoursNode, Hours.class) : null)
+        .website(websiteNode != null ? MAPPER.convertValue(websiteNode, String.class) : null)
+        .timeZone(timeZoneNode != null ? MAPPER.convertValue(timeZoneNode, String.class) : null)
+        .address(addressNode != null ? MAPPER.convertValue(addressNode, Addresses.class) : null)
+        .phone(phoneNode != null ? MAPPER.convertValue(phoneNode, Phone.class) : null)
+        .hours(hoursNode != null ? MAPPER.convertValue(hoursNode, Hours.class) : null)
         .operationalHoursSpecialInstructions(
             operationalHoursSpecialInstructionsNode != null
-                ? createMapper().convertValue(operationalHoursSpecialInstructionsNode, String.class)
+                ? MAPPER.convertValue(operationalHoursSpecialInstructionsNode, String.class)
                 : null)
-        .services(
-            servicesNode != null ? createMapper().convertValue(servicesNode, Services.class) : null)
+        .services(servicesNode != null ? deserializeFacilityServices(servicesNode) : null)
         .satisfaction(
             satisfactionNode != null
-                ? createMapper().convertValue(satisfactionNode, Satisfaction.class)
+                ? MAPPER.convertValue(satisfactionNode, Satisfaction.class)
                 : null)
         .waitTimes(
-            waitTimesNode != null
-                ? createMapper().convertValue(waitTimesNode, WaitTimes.class)
-                : null)
-        .mobile(mobileNode != null ? createMapper().convertValue(mobileNode, Boolean.class) : null)
+            waitTimesNode != null ? MAPPER.convertValue(waitTimesNode, WaitTimes.class) : null)
+        .mobile(mobileNode != null ? MAPPER.convertValue(mobileNode, Boolean.class) : null)
         .activeStatus(
             activeStatusNode != null
-                ? createMapper().convertValue(activeStatusNode, ActiveStatus.class)
+                ? MAPPER.convertValue(activeStatusNode, ActiveStatus.class)
                 : null)
         .operatingStatus(
             operatingStatusNode != null
-                ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
+                ? MAPPER.convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
             detailedServicesNode != null
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                    MAPPER.convertValue(detailedServicesNode, detailedServicesRef))
                 : null)
-        .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
+        .visn(visnNode != null ? MAPPER.convertValue(visnNode, String.class) : null)
         .build();
-  }
-
-  private List<DetailedService> filterOutInvalidDetailedServices(
-      List<DetailedService> detailedServices) {
-    if (detailedServices != null) {
-      // Filter out detailed services containing unrecognized service id
-      return detailedServices.stream()
-          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
-          .collect(Collectors.toList());
-    }
-    return null;
   }
 }

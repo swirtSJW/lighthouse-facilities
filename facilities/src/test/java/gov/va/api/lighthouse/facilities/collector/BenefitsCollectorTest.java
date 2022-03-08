@@ -8,6 +8,8 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.
 import static gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService.eBenefitsRegistrationAssistance;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_benefits_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,7 +73,7 @@ public class BenefitsCollectorTest {
                 .websites(new HashMap<>())
                 .jdbcTemplate(jdbcTemplate)
                 .build()
-                .collect())
+                .collect("http://localhost:8085/v1/"))
         .isEqualTo(
             List.of(
                 DatamartFacility.builder()
@@ -109,13 +111,18 @@ public class BenefitsCollectorTest {
                             .services(
                                 Services.builder()
                                     .benefits(
-                                        List.of(
-                                            ApplyingForBenefits,
-                                            BurialClaimAssistance,
-                                            DisabilityClaimAssistance,
-                                            eBenefitsRegistrationAssistance,
-                                            FamilyMemberClaimAssistance,
-                                            UpdatingDirectDepositInformation))
+                                        getDatamartTypedServices(
+                                            List.of(
+                                                ApplyingForBenefits,
+                                                BurialClaimAssistance,
+                                                DisabilityClaimAssistance,
+                                                eBenefitsRegistrationAssistance,
+                                                FamilyMemberClaimAssistance,
+                                                UpdatingDirectDepositInformation),
+                                            "http://localhost:8085/v1/",
+                                            "vba_306e"))
+                                    .link(
+                                        buildServicesLink("http://localhost:8085/v1/", "vba_306e"))
                                     .build())
                             .build())
                     .build()));
@@ -130,7 +137,7 @@ public class BenefitsCollectorTest {
                 .jdbcTemplate(mock(JdbcTemplate.class))
                 .websites(emptyMap())
                 .build()
-                .collect());
+                .collect("http://localhost:8085/v1/"));
   }
 
   @Test

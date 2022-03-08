@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static com.google.common.base.Preconditions.checkState;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildLinkerUrlV1;
 import static gov.va.api.lighthouse.facilities.collector.CsvLoader.loadWebsites;
 import static java.util.stream.Collectors.toList;
 
@@ -48,6 +49,8 @@ public class FacilitiesCollector {
 
   protected final String cemeteriesBaseUrl;
 
+  private final String linkerUrl;
+
   private final CmsOverlayCollector cmsOverlayCollector;
 
   /** Primary facilities collector constructor. */
@@ -55,6 +58,8 @@ public class FacilitiesCollector {
       @Autowired InsecureRestTemplateProvider insecureRestTemplateProvider,
       @Autowired JdbcTemplate jdbcTemplate,
       @Autowired CmsOverlayCollector cmsOverlayCollector,
+      @Value("${facilities.url}") String baseUrl,
+      @Value("${facilities.base-path}") String basePath,
       @Value("${access-to-care.url}") String atcBaseUrl,
       @Value("${access-to-pwt.url}") String atpBaseUrl,
       @Value("${cemeteries.url}") String cemeteriesBaseUrl) {
@@ -64,6 +69,7 @@ public class FacilitiesCollector {
     this.atpBaseUrl = withTrailingSlash(atpBaseUrl);
     this.cemeteriesBaseUrl = withTrailingSlash(cemeteriesBaseUrl);
     this.cmsOverlayCollector = cmsOverlayCollector;
+    linkerUrl = buildLinkerUrlV1(baseUrl, basePath);
   }
 
   /** Caregiver support facilities given a resource name. */
@@ -157,7 +163,7 @@ public class FacilitiesCollector {
             .vastEntities(vastEntities)
             .websites(websites)
             .build()
-            .collect();
+            .collect(linkerUrl);
     Collection<DatamartFacility> stateCems =
         StateCemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)
@@ -172,7 +178,11 @@ public class FacilitiesCollector {
             .build()
             .collect();
     Collection<DatamartFacility> benefits =
-        BenefitsCollector.builder().websites(websites).jdbcTemplate(jdbcTemplate).build().collect();
+        BenefitsCollector.builder()
+            .websites(websites)
+            .jdbcTemplate(jdbcTemplate)
+            .build()
+            .collect(linkerUrl);
     Collection<DatamartFacility> cemeteries =
         CemeteriesCollector.builder()
             .baseUrl(cemeteriesBaseUrl)

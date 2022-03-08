@@ -1,7 +1,10 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo.INVALID_SVC_ID;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -10,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.api.v1.deserializers.FacilityDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.AddressSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.AddressesSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.FacilityAttributesSerializer;
@@ -23,6 +28,7 @@ import gov.va.api.lighthouse.facilities.api.v1.serializers.PatientWaitTimeSerial
 import gov.va.api.lighthouse.facilities.api.v1.serializers.PhoneSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.SatisfactionSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.ServicesSerializer;
+import gov.va.api.lighthouse.facilities.api.v1.serializers.TypedServiceSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.WaitTimesSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
@@ -31,6 +37,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.ObjectUtils;
@@ -40,6 +47,7 @@ import org.apache.commons.lang3.ObjectUtils;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
 @JsonSerialize(using = FacilitySerializer.class)
+@JsonDeserialize(using = FacilityDeserializer.class)
 @Schema(description = "JSON API-compliant object describing a VA facility")
 public final class Facility implements CanBeEmpty {
   @Schema(example = "vha_688")
@@ -79,7 +87,15 @@ public final class Facility implements CanBeEmpty {
     TransitionAssistance,
     UpdatingDirectDepositInformation,
     VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance
+    VocationalRehabilitationAndEmploymentAssistance;
+
+    /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
+    @JsonCreator
+    public static BenefitsService fromString(String name) {
+      return "eBenefitsRegistrationAssistance".equalsIgnoreCase(name)
+          ? eBenefitsRegistrationAssistance
+          : valueOf(capitalize(name));
+    }
   }
 
   public enum FacilityType {
@@ -770,13 +786,16 @@ public final class Facility implements CanBeEmpty {
   @Schema(nullable = true)
   public static final class Services implements CanBeEmpty {
     @Schema(nullable = true)
-    List<OtherService> other;
+    List<TypedService<OtherService>> other;
 
     @Schema(nullable = true)
-    List<HealthService> health;
+    List<TypedService<HealthService>> health;
 
     @Schema(nullable = true)
-    List<BenefitsService> benefits;
+    List<TypedService<BenefitsService>> benefits;
+
+    @Schema(nullable = true)
+    String link;
 
     @Schema(example = "2018-01-01", nullable = true)
     LocalDate lastUpdated;
@@ -787,7 +806,38 @@ public final class Facility implements CanBeEmpty {
       return ObjectUtils.isEmpty(other())
           && ObjectUtils.isEmpty(health())
           && ObjectUtils.isEmpty(benefits())
+          && ObjectUtils.isEmpty(link())
           && ObjectUtils.isEmpty(lastUpdated());
+    }
+  }
+
+  @Data
+  @Builder
+  @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+  @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
+  @JsonSerialize(using = TypedServiceSerializer.class)
+  @JsonPropertyOrder({"name", "serviceId", "link"})
+  @AllArgsConstructor
+  @Schema(nullable = true)
+  public static final class TypedService<T extends ServiceType> implements CanBeEmpty {
+    @JsonIgnore public static final String INVALID_LINK = "INVALID_LINK";
+
+    @JsonIgnore @NotNull T serviceType;
+
+    String name;
+
+    @NotNull String link;
+
+    /** Empty elements will be omitted from JSON serialization. */
+    @JsonIgnore
+    public boolean isEmpty() {
+      return ObjectUtils.isEmpty(serviceType())
+          && ObjectUtils.isEmpty(name())
+          && ObjectUtils.isEmpty(link());
+    }
+
+    public String serviceId() {
+      return isNotEmpty(serviceType()) ? uncapitalize(serviceType().name()) : INVALID_SVC_ID;
     }
   }
 

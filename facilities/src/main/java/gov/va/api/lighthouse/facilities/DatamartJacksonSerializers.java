@@ -586,6 +586,11 @@ final class DatamartJacksonSerializers {
       } else {
         writeNonNull(jgen, "benefits", value.benefits());
       }
+      if (value.link() == null || value.link().isEmpty()) {
+        jgen.writeObjectField("link", Optional.ofNullable(value.link()).orElse(null));
+      } else {
+        writeNonNull(jgen, "link", value.link());
+      }
       if (value.lastUpdated() != null || idStartsWith(jgen, "vha_")) {
         jgen.writeObjectField("last_updated", value.lastUpdated());
       }

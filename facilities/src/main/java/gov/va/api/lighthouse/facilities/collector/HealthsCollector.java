@@ -118,7 +118,11 @@ final class HealthsCollector {
             .build());
   }
 
-  Collection<DatamartFacility> collect() {
+  private String buildFacilityId(@NonNull String stationNumber) {
+    return "vha_" + stationNumber;
+  }
+
+  Collection<DatamartFacility> collect(@NonNull String linkerUrl) {
     try {
       ListMultimap<String, AccessToCareEntry> accessToCareEntries = loadAccessToCare();
       ListMultimap<String, AccessToPwtEntry> accessToPwtEntries = loadAccessToPwt();
@@ -138,7 +142,7 @@ final class HealthsCollector {
                       .stopCodesMap(stopCodesMap)
                       .websites(websites)
                       .build()
-                      .toDatamartFacility())
+                      .toDatamartFacility(linkerUrl, buildFacilityId(v.stationNumber())))
           .filter(Objects::nonNull)
           .collect(toList());
     } catch (Exception e) {

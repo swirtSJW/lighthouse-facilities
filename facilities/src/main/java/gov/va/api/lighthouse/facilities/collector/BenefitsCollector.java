@@ -67,17 +67,21 @@ final class BenefitsCollector {
         .build();
   }
 
+  private String buildFacilityId(@NonNull String facilityNumber) {
+    return "vba_" + facilityNumber;
+  }
+
   /** Collects and transforms all benefits into a list of facilities. */
-  public Collection<DatamartFacility> collect() {
+  public Collection<DatamartFacility> collect(@NonNull String linkerUrl) {
     try {
       return requestCdwBenefits().stream()
           .map(
               facility ->
                   BenefitsTransformer.builder()
                       .cdwFacility(facility)
-                      .csvWebsite(websites.get("vba_" + facility.facilityNumber()))
+                      .csvWebsite(websites.get(buildFacilityId(facility.facilityNumber())))
                       .build()
-                      .toDatamartFacility())
+                      .toDatamartFacility(linkerUrl, buildFacilityId(facility.facilityNumber())))
           .collect(toList());
     } catch (Exception e) {
       throw new CollectorExceptions.BenefitsCollectorException(e);

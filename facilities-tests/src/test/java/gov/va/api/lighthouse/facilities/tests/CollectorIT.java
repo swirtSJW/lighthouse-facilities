@@ -3,14 +3,20 @@ package gov.va.api.lighthouse.facilities.tests;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.CLIENT_KEY_DEFAULT;
 import static gov.va.api.lighthouse.facilities.tests.SystemDefinitions.systemDefinition;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import gov.va.api.health.sentinel.ExpectedResponse;
+import gov.va.api.lighthouse.facilities.ApplicationContextHolder;
 import gov.va.api.lighthouse.facilities.DatamartFacility;
+import gov.va.api.lighthouse.facilities.ServiceLinkHelper;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 
 @Slf4j
 public class CollectorIT {
@@ -39,6 +45,17 @@ public class CollectorIT {
     var items =
         makeRequest("internal/collector/mental-health-contact", 200).expectListOf(Map.class);
     assertThat(items.size()).isGreaterThan(500);
+  }
+
+  @BeforeEach
+  void setUp() {
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl("http://localhost:8085");
+    serviceLinkHelper.basePath("/");
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
   }
 
   @Test

@@ -38,9 +38,18 @@
       ],
       "services" : {
         "benefits" : [
-          "EducationAndCareerCounseling",
-          "VocationalRehabilitationAndEmploymentAssistance"
-        ]
+          {
+            "name" : "EducationAndCareerCounseling",
+            "serviceId" : "educationAndCareerCounseling",
+            "link" : "http://localhost:8085/v1/facilities/vba_322b/services/educationAndCareerCounseling"
+          },
+          {
+            "name" : "VocationalRehabilitationAndEmploymentAssistance",
+            "serviceId" : "vocationalRehabilitationAndEmploymentAssistance",
+            "link" : "http://localhost:8085/v1/facilities/vba_322b/services/vocationalRehabilitationAndEmploymentAssistance"
+          }
+        ],
+        "link" : "http://localhost:8085/v1/facilities/vba_322b/services"
       },
       "activeStatus" : "A",
       "operatingStatus" : {

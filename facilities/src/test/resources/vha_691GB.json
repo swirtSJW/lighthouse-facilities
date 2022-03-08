@@ -41,10 +41,23 @@
     "services" : {
       "other" : [ ],
       "health" : [
-        "primaryCare",
-        "mentalHealth",
-        "orthopedics"
+        {
+          "name" : "PrimaryCare",
+          "serviceId" : "primaryCare",
+          "link" : "http://localhost:8085/v1/facilities/vha_691GB/services/primaryCare"
+        },
+        {
+          "name" : "MentalHealth",
+          "serviceId" : "mentalHealth",
+          "link" : "http://localhost:8085/v1/facilities/vha_691GB/services/mentalHealth"
+        },
+        {
+          "name" : "Orthopedics",
+          "serviceId" : "orthopedics",
+          "link" : "http://localhost:8085/v1/facilities/vha_691GB/services/orthopedics"
+        }
       ],
+      "link" : "http://localhost:8085/v1/facilities/vha_691GB/services",
       "last_updated" : "2020-03-16"
     },
     "satisfaction" : {

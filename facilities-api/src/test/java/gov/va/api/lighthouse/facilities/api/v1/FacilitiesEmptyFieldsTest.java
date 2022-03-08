@@ -1,6 +1,8 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
 import static gov.va.api.lighthouse.facilities.api.TestUtils.getExpectedJson;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static gov.va.api.lighthouse.facilities.api.v1.SerializerUtil.createMapper;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
 public class FacilitiesEmptyFieldsTest {
@@ -199,7 +202,12 @@ public class FacilitiesEmptyFieldsTest {
             Facility.FacilityAttributes.builder()
                 .services(
                     Facility.Services.builder()
-                        .benefits(List.of(Facility.BenefitsService.Pensions))
+                        .benefits(
+                            getFacilityTypedServices(
+                                List.of(Facility.BenefitsService.Pensions),
+                                "https://localhost:8085/v1/",
+                                "vba_402"))
+                        .link(buildServicesLink("https://localhost:8085/v1/", "vba_402"))
                         .build())
                 .build()
                 .isEmpty())
@@ -412,27 +420,85 @@ public class FacilitiesEmptyFieldsTest {
     assertThat(Facility.Services.builder().health(emptyList()).build().isEmpty()).isTrue();
     assertThat(Facility.Services.builder().other(emptyList()).build().isEmpty()).isTrue();
     assertThat(Facility.Services.builder().benefits(emptyList()).build().isEmpty()).isTrue();
+    assertThat(Facility.Services.builder().link(null).build().isEmpty()).isTrue();
+    assertThat(Facility.Services.builder().lastUpdated(null).build().isEmpty()).isTrue();
     // Not empty
     assertThat(
             Facility.Services.builder()
-                .health(List.of(Facility.HealthService.PrimaryCare))
+                .health(
+                    getFacilityTypedServices(
+                        List.of(Facility.HealthService.PrimaryCare),
+                        "https://localhost:8085/v1/",
+                        "vha_402"))
+                .link(buildServicesLink("https://localhost:8085/v1/", "vha_402"))
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             Facility.Services.builder()
-                .other(List.of(Facility.OtherService.OnlineScheduling))
+                .other(
+                    getFacilityTypedServices(
+                        List.of(Facility.OtherService.OnlineScheduling),
+                        "https://localhost:8085/v1/",
+                        "vha_402"))
+                .link(buildServicesLink("https://localhost:8085/v1/", "vha_402"))
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(
             Facility.Services.builder()
-                .benefits(List.of(Facility.BenefitsService.Pensions))
+                .benefits(
+                    getFacilityTypedServices(
+                        List.of(Facility.BenefitsService.Pensions),
+                        "https://localhost:8085/v1/",
+                        "vba_402"))
+                .link(buildServicesLink("https://localhost:8085/v1/", "vba_402"))
                 .build()
                 .isEmpty())
         .isFalse();
     assertThat(Facility.Services.builder().lastUpdated(LocalDate.now()).build().isEmpty())
         .isFalse();
+  }
+
+  @Test
+  @SneakyThrows
+  void emptyTypedService() {
+    // Empty
+    assertThat(new Facility.TypedService<Facility.HealthService>(null, null, null).isEmpty())
+        .isTrue();
+    assertThat(new Facility.TypedService<Facility.HealthService>(null, null, null).serviceId())
+        .isEqualTo(DetailedService.ServiceInfo.INVALID_SVC_ID);
+    // Not empty
+    assertThat(
+            new Facility.TypedService<Facility.HealthService>(
+                    Facility.HealthService.Cardiology, null, null)
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            new Facility.TypedService<Facility.HealthService>(
+                    Facility.HealthService.Cardiology, null, null)
+                .serviceId())
+        .isEqualTo(StringUtils.uncapitalize(Facility.HealthService.Cardiology.name()));
+    assertThat(
+            new Facility.TypedService<Facility.HealthService>(
+                    Facility.HealthService.Cardiology, "Cardiology", null)
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            new Facility.TypedService<Facility.HealthService>(
+                    Facility.HealthService.Cardiology, "Cardiology", null)
+                .serviceId())
+        .isEqualTo(StringUtils.uncapitalize(Facility.HealthService.Cardiology.name()));
+    assertThat(
+            new Facility.TypedService<Facility.HealthService>(
+                    Facility.HealthService.Cardiology, "Cardiology", "http://localhost:8085/v1/")
+                .isEmpty())
+        .isFalse();
+    assertThat(
+            new Facility.TypedService<Facility.HealthService>(
+                    Facility.HealthService.Cardiology, "Cardiology", "http://localhost:8085/v1/")
+                .serviceId())
+        .isEqualTo(StringUtils.uncapitalize(Facility.HealthService.Cardiology.name()));
   }
 
   @Test

@@ -1,7 +1,10 @@
 package gov.va.api.lighthouse.facilities;
 
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
@@ -14,8 +17,11 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 
 public class FacilityOverlayV0Test {
   private static final ObjectMapper MAPPER_V0 = FacilitiesJacksonConfigV0.createMapper();
@@ -36,16 +42,17 @@ public class FacilityOverlayV0Test {
 
   @Test
   void covid19VaccineIsPopulatedWhenAvailable() {
+    var linkerUrl = "http://localhost:8085/v0/";
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
         List.of(Facility.HealthService.Covid19Vaccine),
-        entity(fromActiveStatus(null), overlay(null, true)));
+        entity(fromActiveStatus(null), overlay(null, true), linkerUrl));
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
-        entity(fromActiveStatus(null), overlay(null, false)));
+        emptyList(),
+        entity(fromActiveStatus(null), overlay(null, false), linkerUrl));
   }
 
   private DetailedService createDetailedService(boolean cmsServiceActiveValue) {
@@ -113,7 +120,8 @@ public class FacilityOverlayV0Test {
   }
 
   @SneakyThrows
-  private FacilityEntity entity(Facility facility, CmsOverlay overlay) {
+  private FacilityEntity entity(
+      @NonNull Facility facility, CmsOverlay overlay, @NonNull String linkerUrl) {
     Set<String> detailedServices = null;
     if (overlay != null) {
       detailedServices = new HashSet<>();
@@ -125,7 +133,8 @@ public class FacilityOverlayV0Test {
     }
     return FacilityEntity.builder()
         .facility(
-            DATAMART_MAPPER.writeValueAsString(FacilityTransformerV0.toVersionAgnostic(facility)))
+            DATAMART_MAPPER.writeValueAsString(
+                FacilityTransformerV0.toVersionAgnostic(facility, linkerUrl)))
         .cmsOperatingStatus(
             overlay == null ? null : MAPPER_V0.writeValueAsString(overlay.operatingStatus()))
         .overlayServices(overlay == null ? null : detailedServices)
@@ -136,6 +145,7 @@ public class FacilityOverlayV0Test {
 
   private Facility fromActiveStatus(ActiveStatus status) {
     return Facility.builder()
+        .id("vha_x")
         .attributes(FacilityAttributes.builder().activeStatus(status).build())
         .build();
   }
@@ -146,21 +156,22 @@ public class FacilityOverlayV0Test {
 
   @Test
   void operatingStatusIsPopulatedByActiveStatusWhenNotAvailable() {
+    var linkerUrl = "http://localhost:8085/v0/";
     assertStatus(
         ActiveStatus.A,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
-        entity(fromActiveStatus(ActiveStatus.A), null));
+        emptyList(),
+        entity(fromActiveStatus(ActiveStatus.A), null, linkerUrl));
     assertStatus(
         ActiveStatus.T,
         OperatingStatus.builder().code(OperatingStatusCode.CLOSED).build(),
-        null,
-        entity(fromActiveStatus(ActiveStatus.T), null));
+        emptyList(),
+        entity(fromActiveStatus(ActiveStatus.T), null, linkerUrl));
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        null,
-        entity(fromActiveStatus(null), null));
+        emptyList(),
+        entity(fromActiveStatus(null), null, linkerUrl));
   }
 
   private CmsOverlay overlay(OperatingStatus neato, boolean cmsServiceActiveValue) {
@@ -168,5 +179,16 @@ public class FacilityOverlayV0Test {
         .operatingStatus(neato)
         .detailedServices(List.of(createDetailedService(cmsServiceActiveValue)))
         .build();
+  }
+
+  @BeforeEach
+  void setUp() {
+    ServiceLinkHelper serviceLinkHelper = new ServiceLinkHelper();
+    serviceLinkHelper.baseUrl("http://localhost:8085");
+    serviceLinkHelper.basePath("/");
+    ApplicationContext mockContext = mock(ApplicationContext.class);
+    when(mockContext.getBean(ServiceLinkHelper.class)).thenReturn(serviceLinkHelper);
+    ApplicationContextHolder contextHolder = new ApplicationContextHolder();
+    contextHolder.setApplicationContext(mockContext);
   }
 }

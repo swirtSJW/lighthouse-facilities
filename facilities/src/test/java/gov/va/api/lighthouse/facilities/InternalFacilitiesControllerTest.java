@@ -3,12 +3,15 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_health_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.vet_center;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.Type.va_facilities;
+import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_1;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_2;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_OLD_3;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_UPDATED_1;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_UPDATED_2;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_UPDATED_3;
+import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static gov.va.api.lighthouse.facilities.api.v1.FacilityTypedServiceUtil.getFacilityTypedServices;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -157,7 +160,8 @@ public class InternalFacilitiesControllerTest {
                     .mobile(false)
                     .facilityType(Facility.FacilityType.va_cemetery)
                     .build())
-            .build());
+            .build(),
+        "http://localhost:8085/v1/");
   }
 
   private static DatamartFacility _facilityV1(
@@ -184,7 +188,9 @@ public class InternalFacilitiesControllerTest {
                     .longitude(BigDecimal.valueOf(longitude))
                     .services(
                         gov.va.api.lighthouse.facilities.api.v1.Facility.Services.builder()
-                            .health(health)
+                            .health(
+                                getFacilityTypedServices(health, "http://localhost:8085/v1/", id))
+                            .link(buildServicesLink("http://localhost:8085/v1/", id))
                             .build())
                     .mobile(false)
                     .facilityType(
@@ -845,7 +851,13 @@ public class InternalFacilitiesControllerTest {
                             .build())
                     .latitude(latitude)
                     .longitude(longitude)
-                    .services(Services.builder().health(healthServices).build())
+                    .services(
+                        Services.builder()
+                            .health(
+                                getDatamartTypedServices(
+                                    healthServices, "http://localhost:8085/v1/", pk))
+                            .link(buildServicesLink("http://localhost:8085/v1/", pk))
+                            .build())
                     .mobile(false)
                     .facilityType(facilityType)
                     .detailedServices(facilityDetailedServices)
@@ -985,13 +997,25 @@ public class InternalFacilitiesControllerTest {
                             .services(
                                 Services.builder()
                                     .health(
-                                        List.of(
-                                            HealthService.PrimaryCare, HealthService.MentalHealth))
+                                        getDatamartTypedServices(
+                                            List.of(
+                                                HealthService.PrimaryCare,
+                                                HealthService.MentalHealth),
+                                            "http://localhost:8085/v1/",
+                                            "vha_402"))
                                     .benefits(
-                                        List.of(
-                                            BenefitsService.ApplyingForBenefits,
-                                            BenefitsService.BurialClaimAssistance))
-                                    .other(List.of(OtherService.OnlineScheduling))
+                                        getDatamartTypedServices(
+                                            List.of(
+                                                BenefitsService.ApplyingForBenefits,
+                                                BenefitsService.BurialClaimAssistance),
+                                            "http://localhost:8085/v1/",
+                                            "vha_402"))
+                                    .other(
+                                        getDatamartTypedServices(
+                                            List.of(OtherService.OnlineScheduling),
+                                            "http://localhost:8085/v1/",
+                                            "vha_402"))
+                                    .link(buildServicesLink("http://localhost:8085/v1/", "vha_402"))
                                     .build())
                             .build())
                     .build()))
@@ -1112,7 +1136,13 @@ public class InternalFacilitiesControllerTest {
                             .build())
                     .latitude(BigDecimal.valueOf(latitude))
                     .longitude(BigDecimal.valueOf(longitude))
-                    .services(Services.builder().health(healthServices).build())
+                    .services(
+                        Services.builder()
+                            .health(
+                                getDatamartTypedServices(
+                                    healthServices, "http://localhost:8085/v1/", pk))
+                            .link(buildServicesLink("http://localhost:8085/v1/", pk))
+                            .build())
                     .mobile(false)
                     .facilityType(facilityType)
                     .detailedServices(facilityDetailedServices)
