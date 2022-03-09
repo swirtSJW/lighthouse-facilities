@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import gov.va.api.lighthouse.facilities.api.v1.deserializers.DetailedServiceDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAddressSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAppointmentPhoneNumberSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceEmailContactSerializer;
@@ -23,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
 
 @Data
@@ -36,9 +39,24 @@ import org.apache.commons.lang3.ObjectUtils;
 @JsonSerialize(using = DetailedServiceSerializer.class)
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonPropertyOrder({
+  "serviceId",
+  "name",
+  "descriptionFacility",
+  "appointmentLeadIn",
+  "appointmentPhones",
+  "onlineSchedulingAvailable",
+  "referralRequired",
+  "walkInsAccepted",
+  "serviceLocations"
+})
+@JsonDeserialize(using = DetailedServiceDeserializer.class)
 @Schema(description = "Detailed information of a facility service.", nullable = true)
 public class DetailedService implements CanBeEmpty {
-  @Schema(description = "Service id.", example = "covid19Vaccine", nullable = true)
+  @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
+
+  @Schema(description = "Service id.", example = "covid19Vaccine")
+  @NonNull
   String serviceId;
 
   @Schema(description = "Service name.", example = "COVID-19 vaccines", nullable = true)
