@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.DatamartTypedServiceUtil.getDatamartTypedServices;
 import static gov.va.api.lighthouse.facilities.api.ServiceLinkBuilder.buildServicesLink;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -337,12 +338,19 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
   private Facility facility() {
     return facility(
         List.of(
+            Facility.BenefitsService.EducationClaimAssistance,
+            Facility.BenefitsService.FamilyMemberClaimAssistance),
+        List.of(
             Facility.HealthService.PrimaryCare,
             Facility.HealthService.UrgentCare,
-            Facility.HealthService.EmergencyCare));
+            Facility.HealthService.EmergencyCare),
+        List.of(Facility.OtherService.OnlineScheduling));
   }
 
-  private Facility facility(List<Facility.HealthService> healthServices) {
+  private Facility facility(
+      @NonNull List<Facility.BenefitsService> benefitsServices,
+      @NonNull List<Facility.HealthService> healthServices,
+      @NonNull List<Facility.OtherService> otherServices) {
     return Facility.builder()
         .id("vha_123GA")
         .type(Facility.Type.va_facilities)
@@ -395,11 +403,8 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
                 .mobile(false)
                 .services(
                     Facility.Services.builder()
-                        .benefits(
-                            List.of(
-                                Facility.BenefitsService.EducationClaimAssistance,
-                                Facility.BenefitsService.FamilyMemberClaimAssistance))
-                        .other(List.of(Facility.OtherService.OnlineScheduling))
+                        .benefits(benefitsServices)
+                        .other(otherServices)
                         .health(healthServices)
                         .lastUpdated(LocalDate.parse("2018-01-01"))
                         .build())
@@ -731,22 +736,26 @@ public class FacilityTransformerV0Test extends BaseFacilityTransformerTest {
   public void losslessFacilityVisitorRoundtripWithMultipleHealthServices() {
     Facility facilityWithSpecialtyCare =
         facility(
+            emptyList(),
             List.of(
                 Facility.HealthService.PrimaryCare,
                 Facility.HealthService.UrgentCare,
                 Facility.HealthService.EmergencyCare,
                 Facility.HealthService.MentalHealthCare,
                 Facility.HealthService.DentalServices,
-                Facility.HealthService.SpecialtyCare));
+                Facility.HealthService.SpecialtyCare),
+            emptyList());
     Facility facilityWithoutSpecialtyCare =
         facility(
+            emptyList(),
             List.of(
                 Facility.HealthService.PrimaryCare,
                 Facility.HealthService.UrgentCare,
                 Facility.HealthService.EmergencyCare,
                 Facility.HealthService.MentalHealthCare,
                 Facility.HealthService.DentalServices,
-                Facility.HealthService.SpecialtyCare));
+                Facility.HealthService.SpecialtyCare),
+            emptyList());
     assertThat(
             FacilityTransformerV0.toFacility(
                 FacilityTransformerV1.toVersionAgnostic(
