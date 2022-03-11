@@ -105,8 +105,7 @@ public class CmsOverlayEmptyFieldsTest {
         .isFalse();
     assertThat(
             CmsOverlay.builder()
-                .detailedServices(
-                    List.of(DetailedService.builder().name("test").serviceId("test").build()))
+                .detailedServices(List.of(DetailedService.builder().name("test").build()))
                 .build()
                 .isEmpty())
         .isFalse();

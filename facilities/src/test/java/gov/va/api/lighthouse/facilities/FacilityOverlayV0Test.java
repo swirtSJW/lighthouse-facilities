@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities;
 
-import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,8 +49,8 @@ public class FacilityOverlayV0Test {
 
   private DetailedService createDetailedService(boolean cmsServiceActiveValue) {
     return DetailedService.builder()
-        .serviceId(uncapitalize(Facility.HealthService.Covid19Vaccine.name()))
-        .name(Facility.HealthService.Covid19Vaccine.name())
+        .serviceId("covid19Vaccine")
+        .name("Covid19Vaccine")
         .active(cmsServiceActiveValue)
         .changed("2021-02-04T22:36:49+00:00")
         .descriptionFacility("Facility description for vaccine availability for COVID-19")

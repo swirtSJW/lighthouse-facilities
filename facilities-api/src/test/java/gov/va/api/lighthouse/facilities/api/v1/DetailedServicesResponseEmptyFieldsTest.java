@@ -47,7 +47,7 @@ public class DetailedServicesResponseEmptyFieldsTest {
     // Not empty
     assertThat(
             DetailedServicesResponse.builder()
-                .data(List.of(DetailedService.builder().name("test").serviceId("test").build()))
+                .data(List.of(DetailedService.builder().name("test").build()))
                 .build()
                 .isEmpty())
         .isFalse();

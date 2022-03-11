@@ -9,7 +9,6 @@ import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPEC
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_UPDATED_2;
 import static gov.va.api.lighthouse.facilities.InternalFacilitiesController.SPECIAL_INSTRUCTION_UPDATED_3;
 import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -130,8 +129,7 @@ public class InternalFacilitiesControllerTest {
     return List.of(
         DatamartDetailedService.builder()
             .active(true)
-            .name(HealthService.Covid19Vaccine.name())
-            .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+            .name("Covid19Vaccine")
             .descriptionFacility(null)
             .appointmentLeadIn("Your VA health care team will contact you if you...more text")
             .onlineSchedulingAvailable("True")
