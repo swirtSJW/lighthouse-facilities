@@ -1,11 +1,16 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.CmsOverlayHelper.getOperatingStatus;
+import static gov.va.api.lighthouse.facilities.CmsOverlayHelper.serializeDetailedServices;
+import static gov.va.api.lighthouse.facilities.CmsOverlayHelper.serializeOperatingStatus;
 import static gov.va.api.lighthouse.facilities.ControllersV1.page;
+import static gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig.createMapper;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServiceResponse;
@@ -14,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import lombok.Builder;
@@ -41,8 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/v1")
 public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
 
-  private static final ObjectMapper DATAMART_MAPPER =
-      DatamartFacilitiesJacksonConfig.createMapper();
+  private static final ObjectMapper DATAMART_MAPPER = createMapper();
 
   private final FacilityRepository facilityRepository;
 
@@ -128,9 +133,7 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
             .overlay(
                 CmsOverlayTransformerV1.toCmsOverlay(
                     DatamartCmsOverlay.builder()
-                        .operatingStatus(
-                            CmsOverlayHelper.getOperatingStatus(
-                                cmsOverlayEntity.cmsOperatingStatus()))
+                        .operatingStatus(getOperatingStatus(cmsOverlayEntity.cmsOperatingStatus()))
                         .detailedServices(
                             CmsOverlayHelper.getDetailedServices(cmsOverlayEntity.cmsServices()))
                         .build()))
@@ -149,15 +152,12 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
       consumes = "application/json")
   @SneakyThrows
   ResponseEntity<Void> saveOverlay(
-      @PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
+      @PathVariable("id") String id, @Valid @RequestBody DatamartCmsOverlay datamartCmsOverlay) {
     Optional<FacilityEntity> existingFacilityEntity =
         facilityRepository.findById(FacilityEntity.Pk.fromIdString(id));
     Optional<CmsOverlayEntity> existingCmsOverlayEntity =
         getExistingOverlayEntity(FacilityEntity.Pk.fromIdString(id));
-    DatamartCmsOverlay datamartCmsOverlay = CmsOverlayTransformerV1.toVersionAgnostic(overlay);
     updateCmsOverlayData(existingCmsOverlayEntity, id, datamartCmsOverlay);
-    overlay.detailedServices(
-        DetailedServiceTransformerV1.toDetailedServices(datamartCmsOverlay.detailedServices()));
     if (existingFacilityEntity.isEmpty()) {
       log.info("Received Unknown Facility ID ({}) for CMS Overlay", sanitize(id));
       return ResponseEntity.accepted().build();
@@ -178,22 +178,19 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
       cmsOverlayEntity =
           CmsOverlayEntity.builder()
               .id(FacilityEntity.Pk.fromIdString(id))
-              .cmsOperatingStatus(
-                  CmsOverlayHelper.serializeOperatingStatus(overlay.operatingStatus()))
-              .cmsServices(CmsOverlayHelper.serializeDetailedServices(activeServices))
+              .cmsOperatingStatus(serializeOperatingStatus(overlay.operatingStatus()))
+              .cmsServices(serializeDetailedServices(activeServices))
               .build();
     } else {
       cmsOverlayEntity = existingCmsOverlayEntity.get();
       if (overlay.operatingStatus() != null) {
-        cmsOverlayEntity.cmsOperatingStatus(
-            CmsOverlayHelper.serializeOperatingStatus(overlay.operatingStatus()));
+        cmsOverlayEntity.cmsOperatingStatus(serializeOperatingStatus(overlay.operatingStatus()));
       }
       List<DatamartDetailedService> overlayServices = overlay.detailedServices();
       if (overlayServices != null) {
         List<DatamartDetailedService> toSaveDetailedServices =
             findServicesToSave(cmsOverlayEntity, id, overlay.detailedServices(), DATAMART_MAPPER);
-        cmsOverlayEntity.cmsServices(
-            CmsOverlayHelper.serializeDetailedServices(toSaveDetailedServices));
+        cmsOverlayEntity.cmsServices(serializeDetailedServices(toSaveDetailedServices));
       }
     }
     cmsOverlayRepository.save(cmsOverlayEntity);
@@ -220,16 +217,28 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
       DatamartFacility.OperatingStatus operatingStatus = overlay.operatingStatus();
       if (operatingStatus != null) {
         facility.attributes().operatingStatus(operatingStatus);
-        if (operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED) {
-          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.T);
-        } else {
-          facility.attributes().activeStatus(DatamartFacility.ActiveStatus.A);
-        }
-      }
-      if (overlay.detailedServices() != null) {
         facility
             .attributes()
-            .detailedServices(toSaveDetailedServices.isEmpty() ? null : toSaveDetailedServices);
+            .activeStatus(
+                operatingStatus.code() == DatamartFacility.OperatingStatusCode.CLOSED
+                    ? DatamartFacility.ActiveStatus.T
+                    : DatamartFacility.ActiveStatus.A);
+      }
+      if (overlay.detailedServices() != null) {
+        // For V0 backwards compatability, only save Covid-19 detailed service, if present
+        facility
+            .attributes()
+            .detailedServices(
+                toSaveDetailedServices.isEmpty()
+                    ? null
+                    : toSaveDetailedServices.stream()
+                        .filter(
+                            ds ->
+                                ds.serviceId()
+                                    .equals(
+                                        uncapitalize(
+                                            DatamartFacility.HealthService.Covid19Vaccine.name())))
+                        .collect(Collectors.toList()));
       }
 
       facilityEntity.facility(DATAMART_MAPPER.writeValueAsString(facility));
@@ -238,7 +247,14 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(service.serviceId());
+        if (DatamartFacility.BenefitsService.eBenefitsRegistrationAssistance
+            .name()
+            .equals(service.serviceId())) {
+          detailedServices.add(
+              DatamartFacility.BenefitsService.eBenefitsRegistrationAssistance.name());
+        } else {
+          detailedServices.add(capitalize(service.serviceId()));
+        }
       }
       facilityEntity.overlayServices(detailedServices);
     }

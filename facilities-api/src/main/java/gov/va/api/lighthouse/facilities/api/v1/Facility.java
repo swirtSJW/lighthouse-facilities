@@ -249,7 +249,7 @@ public final class Facility implements CanBeEmpty {
     Smoking,
     @JsonProperty("socialWork")
     SocialWork,
-    @JsonProperty("specialtyCare")
+    // SpecialtyCare is a V0 holdover. V1 contains specific instances of its specialized care.
     SpecialtyCare,
     @JsonProperty("spinalInjury")
     SpinalInjury,
@@ -291,9 +291,13 @@ public final class Facility implements CanBeEmpty {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
-      return "MentalHealthCare".equalsIgnoreCase(name)
-          ? valueOf("MentalHealth")
-          : "DentalServices".equalsIgnoreCase(name) ? valueOf("Dental") : valueOf(capitalize(name));
+      return "COVID-19 vaccines".equalsIgnoreCase(name)
+          ? HealthService.Covid19Vaccine
+          : "MentalHealthCare".equalsIgnoreCase(name)
+              ? HealthService.MentalHealth
+              : "DentalServices".equalsIgnoreCase(name)
+                  ? HealthService.Dental
+                  : valueOf(capitalize(name));
     }
   }
 
