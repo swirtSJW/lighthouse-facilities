@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
@@ -172,7 +173,11 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
     if (!toSaveDetailedServices.isEmpty()) {
       Set<String> detailedServices = new HashSet<>();
       for (DatamartDetailedService service : toSaveDetailedServices) {
-        detailedServices.add(service.serviceId());
+        if (service.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+          detailedServices.add("Covid19Vaccine");
+        } else {
+          detailedServices.add(service.name());
+        }
       }
       facilityEntity.overlayServices(detailedServices);
     }

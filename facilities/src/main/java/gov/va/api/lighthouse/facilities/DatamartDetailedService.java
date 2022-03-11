@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
-  "serviceId",
   "name",
   "description_facility",
   "appointment_leadin",
@@ -35,8 +34,6 @@ import lombok.NoArgsConstructor;
   "service_locations"
 })
 public class DatamartDetailedService {
-  String serviceId;
-
   String name;
 
   boolean active;
