@@ -1,5 +1,9 @@
-package gov.va.api.lighthouse.facilities.api.v1;
+package gov.va.api.lighthouse.facilities.api;
 
+import gov.va.api.lighthouse.facilities.api.v0.ApiError;
+import gov.va.api.lighthouse.facilities.api.v0.FacilityReadResponse;
+import gov.va.api.lighthouse.facilities.api.v0.GenericError;
+import gov.va.api.lighthouse.facilities.api.v0.GeoFacilityReadResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -10,21 +14,27 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-public interface DetailedServicesApi {
+public interface FacilitiesReadApi {
   @Operation(
-      summary = "Retrieve all services for a given facility",
-      operationId = "getServicesById",
+      summary = "Retrieve a specific facility by ID",
+      operationId = "getFacilityById",
       tags = {"facilities"},
       security = @SecurityRequirement(name = "apikey"))
   @GET
-  @Path("/facilities/{id}/services")
+  @Path("/facilities/{id}")
   @ApiResponse(
       responseCode = "200",
       description = "Success",
       content = {
         @Content(
             mediaType = "application/json",
-            schema = @Schema(implementation = DetailedServicesResponse.class))
+            schema = @Schema(implementation = FacilityReadResponse.class)),
+        @Content(
+            mediaType = "application/geo+json",
+            schema = @Schema(implementation = GeoFacilityReadResponse.class)),
+        @Content(
+            mediaType = "application/vnd.geo+json",
+            schema = @Schema(implementation = GeoFacilityReadResponse.class))
       })
   @ApiResponse(
       responseCode = "400",
@@ -68,7 +78,7 @@ public interface DetailedServicesApi {
           @Content(
               mediaType = "application/json",
               schema = @Schema(implementation = ApiError.class)))
-  FacilityReadResponse getServicesById(
+  FacilityReadResponse getFacilityById(
       @Parameter(
               in = ParameterIn.PATH,
               name = "id",
