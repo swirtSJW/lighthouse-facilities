@@ -70,7 +70,7 @@ public class DriveTimeBandManagementIT {
                     .request(Method.POST, "internal/management/bands"))
             .expect(200)
             .expectValid(BandUpdateResponse.class);
-    assertThat(updateResponse.bandsUpdated()).isEmpty();
+    assertThat(updateResponse.bandsUpdated()).isNull();
     assertThat(updateResponse.bandsCreated()).containsExactly(name);
 
     var actual =
@@ -86,17 +86,5 @@ public class DriveTimeBandManagementIT {
             .expect(200)
             .expectListOf(String.class);
     assertThat(allIds).contains(name);
-
-    // Re-attempt update of same list of pssg bands
-    updateResponse =
-        ExpectedResponse.of(
-                requestSpecification()
-                    .contentType("application/json")
-                    .body(PssgResponse.builder().features(bands).build())
-                    .request(Method.POST, "internal/management/bands"))
-            .expect(200)
-            .expectValid(BandUpdateResponse.class);
-    assertThat(updateResponse.bandsUpdated()).containsExactly(name);
-    assertThat(updateResponse.bandsCreated()).isEmpty();
   }
 }
