@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class HomeControllerV0 {
+public class HomeController {
   private final Resource openapi;
 
   private final String linkBase;
@@ -24,8 +24,8 @@ public class HomeControllerV0 {
   private final BuildProperties buildProperties;
 
   @Builder
-  HomeControllerV0(
-      @Value("classpath:/v0/openapi.json") Resource openapi,
+  HomeController(
+      @Value("classpath:/openapi.json") Resource openapi,
       @Value("${facilities.base-path}") String basePath,
       @Autowired BuildProperties buildProperties) {
     this.openapi = openapi;
