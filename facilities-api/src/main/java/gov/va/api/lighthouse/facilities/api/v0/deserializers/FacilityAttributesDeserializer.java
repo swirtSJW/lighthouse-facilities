@@ -1,19 +1,14 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getActiveStatus;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityType;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOperationalHoursSpecialInstructions;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getTimeZone;
-import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWaitTimes;
+import static gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.Addresses;
@@ -27,9 +22,10 @@ import gov.va.api.lighthouse.facilities.api.v0.Facility.Services;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.WaitTimes;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 
-public class FacilityAttributesDeserializer extends BaseListDeserializer<FacilityAttributes> {
+public class FacilityAttributesDeserializer extends StdDeserializer<FacilityAttributes> {
   public FacilityAttributesDeserializer() {
     this(null);
   }
@@ -46,25 +42,25 @@ public class FacilityAttributesDeserializer extends BaseListDeserializer<Facilit
     ObjectCodec oc = jsonParser.getCodec();
     JsonNode node = oc.readTree(jsonParser);
 
-    // Read values using snake_case or camelCase representations
     JsonNode nameNode = node.get("name");
-    JsonNode facilityTypeNode = getFacilityType(node);
+    JsonNode facilityTypeNode = node.get("facility_type");
     JsonNode classificationNode = node.get("classification");
     JsonNode websiteNode = node.get("website");
     JsonNode latitudeNode = node.get("lat");
     JsonNode longitudeNode = node.get("long");
-    JsonNode timeZoneNode = getTimeZone(node);
+    JsonNode timeZoneNode = node.get("time_zone");
     JsonNode addressNode = node.get("address");
     JsonNode phoneNode = node.get("phone");
     JsonNode hoursNode = node.get("hours");
-    JsonNode operationalHoursSpecialInstructionsNode = getOperationalHoursSpecialInstructions(node);
+    JsonNode operationalHoursSpecialInstructionsNode =
+        node.get("operational_hours_special_instructions");
     JsonNode servicesNode = node.get("services");
     JsonNode satisfactionNode = node.get("satisfaction");
-    JsonNode waitTimesNode = getWaitTimes(node);
+    JsonNode waitTimesNode = node.get("wait_times");
     JsonNode mobileNode = node.get("mobile");
-    JsonNode activeStatusNode = getActiveStatus(node);
-    JsonNode operatingStatusNode = getOpertingStatus(node);
-    JsonNode detailedServicesNode = getDetailedServices(node);
+    JsonNode activeStatusNode = node.get("active_status");
+    JsonNode operatingStatusNode = node.get("operating_status");
+    JsonNode detailedServicesNode = node.get("detailed_services");
     JsonNode visnNode = node.get("visn");
 
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
@@ -125,5 +121,16 @@ public class FacilityAttributesDeserializer extends BaseListDeserializer<Facilit
                 : null)
         .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
         .build();
+  }
+
+  private List<DetailedService> filterOutInvalidDetailedServices(
+      List<DetailedService> detailedServices) {
+    if (detailedServices != null) {
+      // Filter out detailed services containing unrecognized service id
+      return detailedServices.stream()
+          .filter(x -> !x.serviceId().equals(INVALID_SVC_ID))
+          .collect(Collectors.toList());
+    }
+    return null;
   }
 }

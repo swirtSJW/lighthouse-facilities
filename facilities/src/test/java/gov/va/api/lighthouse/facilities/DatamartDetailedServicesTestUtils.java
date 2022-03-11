@@ -10,10 +10,6 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class DatamartDetailedServicesTestUtils {
-  public static List<DatamartDetailedService> covidOnlyDatamartDetailedServices(boolean isActive) {
-    return List.of(getCovid19DatamartDetailedService(isActive));
-  }
-
   public static DatamartDetailedService datamartDetailedServiceWithEmptyAttributes() {
     return DatamartDetailedService.builder()
         .serviceId("emptyService")

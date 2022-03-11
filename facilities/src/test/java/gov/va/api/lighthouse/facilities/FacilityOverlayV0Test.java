@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities;
 
-import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,7 +44,7 @@ public class FacilityOverlayV0Test {
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        emptyList(),
+        null,
         entity(fromActiveStatus(null), overlay(null, false)));
   }
 
@@ -150,17 +149,17 @@ public class FacilityOverlayV0Test {
     assertStatus(
         ActiveStatus.A,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        emptyList(),
+        null,
         entity(fromActiveStatus(ActiveStatus.A), null));
     assertStatus(
         ActiveStatus.T,
         OperatingStatus.builder().code(OperatingStatusCode.CLOSED).build(),
-        emptyList(),
+        null,
         entity(fromActiveStatus(ActiveStatus.T), null));
     assertStatus(
         null,
         OperatingStatus.builder().code(OperatingStatusCode.NORMAL).build(),
-        emptyList(),
+        null,
         entity(fromActiveStatus(null), null));
   }
 
