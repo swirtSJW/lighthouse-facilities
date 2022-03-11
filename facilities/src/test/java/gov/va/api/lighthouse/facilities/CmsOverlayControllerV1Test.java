@@ -213,7 +213,7 @@ public class CmsOverlayControllerV1Test {
     DatamartCmsOverlay overlay = overlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
-    var serviceId = uncapitalize(HealthService.Covid19Vaccine.name());
+    var serviceId = CMS_OVERLAY_SERVICE_NAME_COVID_19;
     CmsOverlayEntity cmsOverlayEntity =
         CmsOverlayEntity.builder()
             .id(pk)
@@ -582,13 +582,13 @@ public class CmsOverlayControllerV1Test {
     List<DatamartDetailedService> additionalServices =
         List.of(
             DatamartDetailedService.builder()
-                .name(DatamartFacility.HealthService.CaregiverSupport.name())
-                .serviceId(uncapitalize(DatamartFacility.HealthService.CaregiverSupport.name()))
+                .name("additional service1")
+                .serviceId("additionalService1")
                 .active(true)
                 .build(),
             DatamartDetailedService.builder()
-                .name(DatamartFacility.HealthService.Ophthalmology.name())
-                .serviceId(uncapitalize(DatamartFacility.HealthService.Ophthalmology.name()))
+                .name("additional service2")
+                .serviceId("additionalService2")
                 .active(true)
                 .build());
     overlay.detailedServices(additionalServices);

@@ -300,7 +300,7 @@ public class CmsOverlayIT {
                     Method.GET,
                     svc.urlWithApiPath() + "v1/facilities/{facility_id}/services/{service_id}/",
                     "vba_1234",
-                    "covid19Vaccine"))
+                    "COVID-19%20vaccines"))
         .expect(404);
     // 406 - Request Format Unavailable
     ExpectedResponse.of(
@@ -310,7 +310,7 @@ public class CmsOverlayIT {
                     Method.GET,
                     svc.urlWithApiPath() + "v1/facilities/{facility_id}/services/{service_id}/",
                     "vha_558GA",
-                    "covid19Vaccine"))
+                    "COVID-19%20vaccines"))
         .expect(406);
   }
 

@@ -6,9 +6,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import gov.va.api.lighthouse.facilities.api.ServiceType;
-import gov.va.api.lighthouse.facilities.deserializers.DatamartFacilityAttributesDeserializer;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -271,13 +269,9 @@ public class DatamartFacility {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
-      return "COVID-19 vaccines".equalsIgnoreCase(name)
-          ? valueOf("Covid19Vaccine")
-          : "MentalHealthCare".equalsIgnoreCase(name)
-              ? valueOf("MentalHealth")
-              : "DentalServices".equalsIgnoreCase(name)
-                  ? valueOf("Dental")
-                  : valueOf(capitalize(name));
+      return "MentalHealthCare".equalsIgnoreCase(name)
+          ? valueOf("MentalHealth")
+          : "DentalServices".equalsIgnoreCase(name) ? valueOf("Dental") : valueOf(capitalize(name));
     }
   }
 
@@ -349,7 +343,6 @@ public class DatamartFacility {
     "detailed_services",
     "visn"
   })
-  @JsonDeserialize(using = DatamartFacilityAttributesDeserializer.class)
   public static final class FacilityAttributes {
     @NotNull String name;
 
