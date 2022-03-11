@@ -1,11 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOpertingStatus;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,10 +25,8 @@ public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
   @Override
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public CmsOverlay deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public CmsOverlay deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode operatingStatusNode = getOpertingStatus(node);
@@ -40,13 +36,13 @@ public class CmsOverlayDeserializer extends BaseListDeserializer<CmsOverlay> {
 
     return CmsOverlay.builder()
         .operatingStatus(
-            operatingStatusNode != null
-                ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
+            isNotNull(operatingStatusNode)
+                ? MAPPER.convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
-            detailedServicesNode != null
+            isNotNull(detailedServicesNode)
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                    MAPPER.convertValue(detailedServicesNode, detailedServicesRef))
                 : null)
         .build();
   }

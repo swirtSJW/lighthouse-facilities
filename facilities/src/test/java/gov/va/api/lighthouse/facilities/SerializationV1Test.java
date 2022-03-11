@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.FacilitiesJacksonConfigV1.createMapper;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -34,12 +33,8 @@ public class SerializationV1Test {
   @Test
   @SneakyThrows
   void jacksonConfigQuietlyMap() {
-    DetailedService emptyDetailedService =
-        DetailedService.builder()
-            .serviceId(DetailedService.INVALID_SVC_ID)
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
-            .build();
+    var emptyDetailedService =
+        DetailedService.builder().serviceId(DetailedService.INVALID_SVC_ID).build();
     String json =
         FacilitiesJacksonConfigV1.quietlyWriteValueAsString(
             FacilitiesJacksonConfigV1.createMapper(), emptyDetailedService);

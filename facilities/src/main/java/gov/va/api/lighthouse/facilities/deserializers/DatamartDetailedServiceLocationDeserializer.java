@@ -1,19 +1,15 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAdditionalHoursInfo;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getEmailContacts;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityServiceHours;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getPhoneNumbers;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getServiceLocationAddress;
-import static java.util.Collections.emptyList;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.AppointmentPhoneNumber;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceAddress;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceEmailContact;
@@ -23,7 +19,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 
 public class DatamartDetailedServiceLocationDeserializer
-    extends StdDeserializer<DetailedServiceLocation> {
+    extends BaseDeserializer<DetailedServiceLocation> {
   public DatamartDetailedServiceLocationDeserializer() {
     this(null);
   }
@@ -35,9 +31,8 @@ public class DatamartDetailedServiceLocationDeserializer
   @Override
   @SneakyThrows
   public DetailedServiceLocation deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+      JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode additionalHoursInfoNode = getAdditionalHoursInfo(node);
@@ -51,25 +46,22 @@ public class DatamartDetailedServiceLocationDeserializer
 
     return DetailedServiceLocation.builder()
         .additionalHoursInfo(
-            additionalHoursInfoNode != null
-                ? createMapper().convertValue(additionalHoursInfoNode, String.class)
-                : null)
+            isNotNull(additionalHoursInfoNode) ? additionalHoursInfoNode.asText() : null)
         .emailContacts(
-            emailContactsNode != null
-                ? createMapper().convertValue(emailContactsNode, emailContactsRef)
-                : emptyList())
+            isNotNull(emailContactsNode)
+                ? MAPPER.convertValue(emailContactsNode, emailContactsRef)
+                : null)
         .facilityServiceHours(
-            facilityServiceHoursNode != null
-                ? createMapper().convertValue(facilityServiceHoursNode, DetailedServiceHours.class)
+            isNotNull(facilityServiceHoursNode)
+                ? MAPPER.convertValue(facilityServiceHoursNode, DetailedServiceHours.class)
                 : null)
         .appointmentPhoneNumbers(
-            appointmentPhoneNumbersNode != null
-                ? createMapper().convertValue(appointmentPhoneNumbersNode, phoneNumbersRef)
-                : emptyList())
+            isNotNull(appointmentPhoneNumbersNode)
+                ? MAPPER.convertValue(appointmentPhoneNumbersNode, phoneNumbersRef)
+                : null)
         .serviceLocationAddress(
-            serviceLocationAddressNode != null
-                ? createMapper()
-                    .convertValue(serviceLocationAddressNode, DetailedServiceAddress.class)
+            isNotNull(serviceLocationAddressNode)
+                ? MAPPER.convertValue(serviceLocationAddressNode, DetailedServiceAddress.class)
                 : null)
         .build();
   }

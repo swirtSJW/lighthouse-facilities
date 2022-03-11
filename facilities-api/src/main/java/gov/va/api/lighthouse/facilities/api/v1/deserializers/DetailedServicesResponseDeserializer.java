@@ -1,9 +1,6 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,9 +25,8 @@ public class DetailedServicesResponseDeserializer
   @SneakyThrows
   @SuppressWarnings("unchecked")
   public DetailedServicesResponse deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+      JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode dataNode = node.get("data");
@@ -41,14 +37,14 @@ public class DetailedServicesResponseDeserializer
 
     return DetailedServicesResponse.builder()
         .data(
-            dataNode != null
+            isNotNull(dataNode)
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(dataNode, detailedServicesRef))
+                    MAPPER.convertValue(dataNode, detailedServicesRef))
                 : null)
-        .links(linksNode != null ? createMapper().convertValue(linksNode, PageLinks.class) : null)
+        .links(isNotNull(linksNode) ? MAPPER.convertValue(linksNode, PageLinks.class) : null)
         .meta(
-            metaNode != null
-                ? createMapper().convertValue(metaNode, DetailedServicesMetadata.class)
+            isNotNull(metaNode)
+                ? MAPPER.convertValue(metaNode, DetailedServicesMetadata.class)
                 : null)
         .build();
   }

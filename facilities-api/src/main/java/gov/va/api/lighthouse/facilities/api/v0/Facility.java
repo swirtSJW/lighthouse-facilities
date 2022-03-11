@@ -56,7 +56,15 @@ public final class Facility {
     TransitionAssistance,
     UpdatingDirectDepositInformation,
     VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance
+    VocationalRehabilitationAndEmploymentAssistance;
+
+    /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
+    @JsonCreator
+    public static BenefitsService fromString(String name) {
+      return eBenefitsRegistrationAssistance.name().equalsIgnoreCase(name)
+          ? eBenefitsRegistrationAssistance
+          : valueOf(capitalize(name));
+    }
   }
 
   public enum FacilityType {
@@ -92,12 +100,10 @@ public final class Facility {
     @JsonCreator
     public static HealthService fromString(String name) {
       return "COVID-19 vaccines".equalsIgnoreCase(name)
-          ? HealthService.Covid19Vaccine
+          ? Covid19Vaccine
           : "mentalHealth".equalsIgnoreCase(name)
-              ? HealthService.MentalHealthCare
-              : "dental".equalsIgnoreCase(name)
-                  ? HealthService.DentalServices
-                  : valueOf(capitalize(name));
+              ? MentalHealthCare
+              : "dental".equalsIgnoreCase(name) ? DentalServices : valueOf(capitalize(name));
     }
   }
 

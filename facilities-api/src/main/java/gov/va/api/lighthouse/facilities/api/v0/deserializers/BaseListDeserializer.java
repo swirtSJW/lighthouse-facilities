@@ -4,16 +4,12 @@ import static gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SV
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import gov.va.api.lighthouse.facilities.api.common.deserializers.BaseDeserializer;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class BaseListDeserializer<T> extends StdDeserializer<T> {
-  public BaseListDeserializer() {
-    this(null);
-  }
-
+public abstract class BaseListDeserializer<T> extends BaseDeserializer<T> {
   public BaseListDeserializer(Class<T> t) {
     super(t);
   }

@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.api.v0.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getActiveStatus;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getDetailedServices;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityType;
@@ -10,7 +9,6 @@ import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getTimeZone;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWaitTimes;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -40,10 +38,8 @@ public class GeoFacilityPropertiesDeserializer extends BaseListDeserializer<Prop
   @Override
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public Properties deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public Properties deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode idNode = node.get("id");
@@ -68,53 +64,45 @@ public class GeoFacilityPropertiesDeserializer extends BaseListDeserializer<Prop
     TypeReference<List<DetailedService>> detailedServicesRef = new TypeReference<>() {};
 
     return Properties.builder()
-        .id(idNode != null ? createMapper().convertValue(idNode, String.class) : null)
-        .name(nameNode != null ? createMapper().convertValue(nameNode, String.class) : null)
+        .id(isNotNull(idNode) ? idNode.asText() : null)
+        .name(isNotNull(nameNode) ? nameNode.asText() : null)
         .facilityType(
-            facilityTypeNode != null
-                ? createMapper().convertValue(facilityTypeNode, FacilityType.class)
+            isNotNull(facilityTypeNode)
+                ? MAPPER.convertValue(facilityTypeNode, FacilityType.class)
                 : null)
-        .classification(
-            classificationNode != null
-                ? createMapper().convertValue(classificationNode, String.class)
-                : null)
-        .website(
-            websiteNode != null ? createMapper().convertValue(websiteNode, String.class) : null)
-        .timeZone(
-            timeZoneNode != null ? createMapper().convertValue(timeZoneNode, String.class) : null)
-        .address(
-            addressNode != null ? createMapper().convertValue(addressNode, Addresses.class) : null)
-        .phone(phoneNode != null ? createMapper().convertValue(phoneNode, Phone.class) : null)
-        .hours(hoursNode != null ? createMapper().convertValue(hoursNode, Hours.class) : null)
+        .classification(isNotNull(classificationNode) ? classificationNode.asText() : null)
+        .website(isNotNull(websiteNode) ? websiteNode.asText() : null)
+        .timeZone(isNotNull(timeZoneNode) ? timeZoneNode.asText() : null)
+        .address(isNotNull(addressNode) ? MAPPER.convertValue(addressNode, Addresses.class) : null)
+        .phone(isNotNull(phoneNode) ? MAPPER.convertValue(phoneNode, Phone.class) : null)
+        .hours(isNotNull(hoursNode) ? MAPPER.convertValue(hoursNode, Hours.class) : null)
         .operationalHoursSpecialInstructions(
-            operationalHoursSpecialInstructionsNode != null
-                ? createMapper().convertValue(operationalHoursSpecialInstructionsNode, String.class)
+            isNotNull(operationalHoursSpecialInstructionsNode)
+                ? operationalHoursSpecialInstructionsNode.asText()
                 : null)
         .services(
-            servicesNode != null ? createMapper().convertValue(servicesNode, Services.class) : null)
+            isNotNull(servicesNode) ? MAPPER.convertValue(servicesNode, Services.class) : null)
         .satisfaction(
-            satisfactionNode != null
-                ? createMapper().convertValue(satisfactionNode, Satisfaction.class)
+            isNotNull(satisfactionNode)
+                ? MAPPER.convertValue(satisfactionNode, Satisfaction.class)
                 : null)
         .waitTimes(
-            waitTimesNode != null
-                ? createMapper().convertValue(waitTimesNode, WaitTimes.class)
-                : null)
-        .mobile(mobileNode != null ? createMapper().convertValue(mobileNode, Boolean.class) : null)
+            isNotNull(waitTimesNode) ? MAPPER.convertValue(waitTimesNode, WaitTimes.class) : null)
+        .mobile(isNotNull(mobileNode) ? mobileNode.asBoolean() : null)
         .activeStatus(
-            activeStatusNode != null
-                ? createMapper().convertValue(activeStatusNode, ActiveStatus.class)
+            isNotNull(activeStatusNode)
+                ? MAPPER.convertValue(activeStatusNode, ActiveStatus.class)
                 : null)
         .operatingStatus(
-            operatingStatusNode != null
-                ? createMapper().convertValue(operatingStatusNode, OperatingStatus.class)
+            isNotNull(operatingStatusNode)
+                ? MAPPER.convertValue(operatingStatusNode, OperatingStatus.class)
                 : null)
         .detailedServices(
-            detailedServicesNode != null
+            isNotNull(detailedServicesNode)
                 ? filterOutInvalidDetailedServices(
-                    createMapper().convertValue(detailedServicesNode, detailedServicesRef))
+                    MAPPER.convertValue(detailedServicesNode, detailedServicesRef))
                 : null)
-        .visn(visnNode != null ? createMapper().convertValue(visnNode, String.class) : null)
+        .visn(isNotNull(visnNode) ? visnNode.asText() : null)
         .build();
   }
 }

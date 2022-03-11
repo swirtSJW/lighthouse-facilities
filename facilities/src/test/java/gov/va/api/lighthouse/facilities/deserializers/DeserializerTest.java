@@ -85,7 +85,7 @@ public class DeserializerTest {
                 new DatamartAddressDeserializer(null).deserialize(null, mockDeserializationContext))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -98,8 +98,6 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -110,6 +108,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}" + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\",\"appointment_phones\":[]}" + "]}",
         DatamartCmsOverlay.class,
@@ -120,6 +128,17 @@ public class DeserializerTest {
             + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -145,7 +164,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -155,14 +174,18 @@ public class DeserializerTest {
         DatamartDetailedService.builder()
             .serviceId(uncapitalize(BenefitsService.Pensions.name()))
             .name(BenefitsService.Pensions.name())
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
             .build();
     assertJson("{\"name\":\"Pensions\"}", DatamartDetailedService.class, detailedService);
     assertJson(
         "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}",
         DatamartDetailedService.class,
         detailedService);
+    detailedService =
+        DatamartDetailedService.builder()
+            .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+            .name(BenefitsService.Pensions.name())
+            .phoneNumbers(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"Pensions\",\"appointment_phones\":[]}",
         DatamartDetailedService.class,
@@ -171,6 +194,13 @@ public class DeserializerTest {
         "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[]}",
         DatamartDetailedService.class,
         detailedService);
+    detailedService =
+        DatamartDetailedService.builder()
+            .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+            .name(BenefitsService.Pensions.name())
+            .phoneNumbers(emptyList())
+            .serviceLocations(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}",
         DatamartDetailedService.class,
@@ -190,7 +220,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -203,8 +233,6 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -215,6 +243,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}" + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\",\"appointment_phones\":[]}" + "]}",
         FacilityAttributes.class,
@@ -225,6 +263,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -303,14 +352,10 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build(),
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Smoking.name()))
                         .name(HealthService.Smoking.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -330,6 +375,21 @@ public class DeserializerTest {
             + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build(),
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Smoking.name()))
+                        .name(HealthService.Smoking.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
@@ -347,6 +407,23 @@ public class DeserializerTest {
             + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Smoking.name()))
+                        .name(HealthService.Smoking.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
@@ -426,7 +503,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -470,7 +547,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -520,7 +597,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -734,7 +811,6 @@ public class DeserializerTest {
         serviceLocation);
     serviceLocation =
         DetailedServiceLocation.builder()
-            .appointmentPhoneNumbers(emptyList())
             .emailContacts(
                 List.of(
                     DetailedServiceEmailContact.builder()
@@ -797,8 +873,6 @@ public class DeserializerTest {
         serviceLocation);
     serviceLocation =
         DetailedServiceLocation.builder()
-            .appointmentPhoneNumbers(emptyList())
-            .emailContacts(emptyList())
             .facilityServiceHours(
                 DetailedServiceHours.builder()
                     .monday("8:30AM-7:00PM")
@@ -842,11 +916,7 @@ public class DeserializerTest {
         DetailedServiceLocation.class,
         serviceLocation);
     serviceLocation =
-        DetailedServiceLocation.builder()
-            .appointmentPhoneNumbers(emptyList())
-            .emailContacts(emptyList())
-            .additionalHoursInfo("additional hours info")
-            .build();
+        DetailedServiceLocation.builder().additionalHoursInfo("additional hours info").build();
     assertJson(
         "{" + "\"additional_hours_info\":\"additional hours info\"" + "}",
         DetailedServiceLocation.class,
@@ -855,11 +925,7 @@ public class DeserializerTest {
         "{" + "\"additionalHoursInfo\":\"additional hours info\"" + "}",
         DetailedServiceLocation.class,
         serviceLocation);
-    serviceLocation =
-        DetailedServiceLocation.builder()
-            .appointmentPhoneNumbers(emptyList())
-            .emailContacts(emptyList())
-            .build();
+    serviceLocation = DetailedServiceLocation.builder().build();
     assertJson("{}", DetailedServiceLocation.class, serviceLocation);
     assertJson("{}", DetailedServiceLocation.class, serviceLocation);
     // Exceptions
@@ -869,7 +935,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -931,14 +997,10 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build(),
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Smoking.name()))
                         .name(HealthService.Smoking.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -958,6 +1020,21 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build(),
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Smoking.name()))
+                        .name(HealthService.Smoking.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
@@ -975,6 +1052,23 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Smoking.name()))
+                        .name(HealthService.Smoking.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
@@ -1013,8 +1107,6 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Dental.name()))
                         .name(HealthService.Dental.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1025,6 +1117,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"dental\",\"name\":\"Dental\"}" + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Dental.name()))
+                        .name(HealthService.Dental.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Dental\",\"appointment_phones\":[]}" + "]}",
         DatamartCmsOverlay.class,
@@ -1035,6 +1137,17 @@ public class DeserializerTest {
             + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Dental.name()))
+                        .name(HealthService.Dental.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Dental\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1062,14 +1175,18 @@ public class DeserializerTest {
         DatamartDetailedService.builder()
             .serviceId(uncapitalize(HealthService.Dental.name()))
             .name(HealthService.Dental.name())
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
             .build();
     assertJson("{\"name\":\"Dental\"}", DatamartDetailedService.class, detailedService);
     assertJson(
         "{\"serviceId\":\"dental\",\"name\":\"Dental\"}",
         DatamartDetailedService.class,
         detailedService);
+    detailedService =
+        DatamartDetailedService.builder()
+            .serviceId(uncapitalize(HealthService.Dental.name()))
+            .name(HealthService.Dental.name())
+            .phoneNumbers(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"Dental\",\"appointment_phones\":[]}",
         DatamartDetailedService.class,
@@ -1078,6 +1195,13 @@ public class DeserializerTest {
         "{\"serviceId\":\"dental\",\"name\":\"Dental\",\"appointment_phones\":[]}",
         DatamartDetailedService.class,
         detailedService);
+    detailedService =
+        DatamartDetailedService.builder()
+            .serviceId(uncapitalize(HealthService.Dental.name()))
+            .name(HealthService.Dental.name())
+            .phoneNumbers(emptyList())
+            .serviceLocations(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"Dental\",\"appointment_phones\":[],\"service_locations\":[]}",
         DatamartDetailedService.class,
@@ -1102,8 +1226,6 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Dental.name()))
                         .name(HealthService.Dental.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1114,6 +1236,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"dental\",\"name\":\"Dental\"}" + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Dental.name()))
+                        .name(HealthService.Dental.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Dental\",\"appointment_phones\":[]}" + "]}",
         FacilityAttributes.class,
@@ -1124,6 +1256,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Dental.name()))
+                        .name(HealthService.Dental.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Dental\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1188,19 +1331,14 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
   @SneakyThrows
   void deserializeInvalidDetailedService() {
     DatamartDetailedService invalidService =
-        DatamartDetailedService.builder()
-            .serviceId(INVALID_SVC_ID)
-            .name("foo")
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
-            .build();
+        DatamartDetailedService.builder().serviceId(INVALID_SVC_ID).name("foo").build();
     assertJson("{\"name\":\"foo\"}", DatamartDetailedService.class, invalidService);
     invalidService.name("OnlineScheduling");
     assertJson(
@@ -1249,7 +1387,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -1262,8 +1400,6 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
                         .name(OtherService.OnlineScheduling.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1276,6 +1412,16 @@ public class DeserializerTest {
             + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}"
@@ -1288,6 +1434,17 @@ public class DeserializerTest {
             + "]}",
         DatamartCmsOverlay.class,
         overlay);
+    overlay =
+        DatamartCmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1315,14 +1472,18 @@ public class DeserializerTest {
         DatamartDetailedService.builder()
             .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
             .name(OtherService.OnlineScheduling.name())
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
             .build();
     assertJson("{\"name\":\"OnlineScheduling\"}", DatamartDetailedService.class, detailedService);
     assertJson(
         "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\"}",
         DatamartDetailedService.class,
         detailedService);
+    detailedService =
+        DatamartDetailedService.builder()
+            .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+            .name(OtherService.OnlineScheduling.name())
+            .phoneNumbers(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}",
         DatamartDetailedService.class,
@@ -1331,6 +1492,13 @@ public class DeserializerTest {
         "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}",
         DatamartDetailedService.class,
         detailedService);
+    detailedService =
+        DatamartDetailedService.builder()
+            .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+            .name(OtherService.OnlineScheduling.name())
+            .phoneNumbers(emptyList())
+            .serviceLocations(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}",
         DatamartDetailedService.class,
@@ -1355,8 +1523,6 @@ public class DeserializerTest {
                     DatamartDetailedService.builder()
                         .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
                         .name(OtherService.OnlineScheduling.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1369,6 +1535,16 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}"
@@ -1381,6 +1557,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DatamartDetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1437,7 +1624,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -1485,7 +1672,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -1534,7 +1721,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -1587,8 +1774,7 @@ public class DeserializerTest {
             + "}",
         Services.class,
         services);
-    services =
-        Services.builder().benefits(emptyList()).health(emptyList()).other(emptyList()).build();
+    services = Services.builder().build();
     assertJson("{}", Services.class, services);
     // Exceptions
     assertThatThrownBy(
@@ -1597,7 +1783,7 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 
   @Test
@@ -1640,7 +1826,7 @@ public class DeserializerTest {
             + "}",
         WaitTimes.class,
         waitTimes);
-    assertJson("{}", WaitTimes.class, WaitTimes.builder().health(emptyList()).build());
+    assertJson("{}", WaitTimes.class, WaitTimes.builder().build());
     // Exceptions
     assertThatThrownBy(
             () ->
@@ -1648,6 +1834,6 @@ public class DeserializerTest {
                     .deserialize(null, mock(DeserializationContext.class)))
         .isInstanceOf(NullPointerException.class)
         .hasMessage(
-            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jsonParser\" is null");
+            "Cannot invoke \"com.fasterxml.jackson.core.JsonParser.getCodec()\" because \"jp\" is null");
   }
 }

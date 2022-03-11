@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAddressLine1;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAddressLine2;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getBuildingNameNumber;
@@ -10,15 +9,13 @@ import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWingFloor
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getZipCode;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceAddress;
 import lombok.SneakyThrows;
 
 public class DatamartDetailedServiceAddressDeserializer
-    extends StdDeserializer<DetailedServiceAddress> {
+    extends BaseDeserializer<DetailedServiceAddress> {
   public DatamartDetailedServiceAddressDeserializer() {
     this(null);
   }
@@ -30,9 +27,8 @@ public class DatamartDetailedServiceAddressDeserializer
   @Override
   @SneakyThrows
   public DetailedServiceAddress deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+      JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode clinicNameNode = getClinicName(node);
@@ -46,34 +42,17 @@ public class DatamartDetailedServiceAddressDeserializer
     JsonNode countryCodeNode = getCountryCode(node);
 
     return DetailedServiceAddress.builder()
-        .clinicName(
-            clinicNameNode != null
-                ? createMapper().convertValue(clinicNameNode, String.class)
-                : null)
-        .address1(
-            addressLine1Node != null
-                ? createMapper().convertValue(addressLine1Node, String.class)
-                : null)
-        .address2(
-            addressLine2Node != null
-                ? createMapper().convertValue(addressLine2Node, String.class)
-                : null)
+        .clinicName(isNotNull(clinicNameNode) ? clinicNameNode.asText() : null)
+        .address1(isNotNull(addressLine1Node) ? addressLine1Node.asText() : null)
+        .address2(isNotNull(addressLine2Node) ? addressLine2Node.asText() : null)
         .buildingNameNumber(
-            buildingNameNumberNode != null
-                ? createMapper().convertValue(buildingNameNumberNode, String.class)
-                : null)
+            isNotNull(buildingNameNumberNode) ? buildingNameNumberNode.asText() : null)
         .wingFloorOrRoomNumber(
-            wingFloorOrRoomNumberNode != null
-                ? createMapper().convertValue(wingFloorOrRoomNumberNode, String.class)
-                : null)
-        .city(cityNode != null ? createMapper().convertValue(cityNode, String.class) : null)
-        .state(stateNode != null ? createMapper().convertValue(stateNode, String.class) : null)
-        .zipCode(
-            zipCodeNode != null ? createMapper().convertValue(zipCodeNode, String.class) : null)
-        .countryCode(
-            countryCodeNode != null
-                ? createMapper().convertValue(countryCodeNode, String.class)
-                : null)
+            isNotNull(wingFloorOrRoomNumberNode) ? wingFloorOrRoomNumberNode.asText() : null)
+        .city(isNotNull(cityNode) ? cityNode.asText() : null)
+        .state(isNotNull(stateNode) ? stateNode.asText() : null)
+        .zipCode(isNotNull(zipCodeNode) ? zipCodeNode.asText() : null)
+        .countryCode(isNotNull(countryCodeNode) ? countryCodeNode.asText() : null)
         .build();
   }
 }

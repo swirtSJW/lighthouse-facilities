@@ -1,15 +1,11 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getLastUpdated;
-import static java.util.Collections.emptyList;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
@@ -18,7 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.SneakyThrows;
 
-public class DatamartServicesDeserializer extends StdDeserializer<Services> {
+public class DatamartServicesDeserializer extends BaseDeserializer<Services> {
   public DatamartServicesDeserializer() {
     this(null);
   }
@@ -30,10 +26,8 @@ public class DatamartServicesDeserializer extends StdDeserializer<Services> {
   @Override
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public Services deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public Services deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode benefitsNode = node.get("benefits");
@@ -46,16 +40,12 @@ public class DatamartServicesDeserializer extends StdDeserializer<Services> {
     TypeReference<List<OtherService>> otherRef = new TypeReference<>() {};
 
     return Services.builder()
-        .benefits(
-            healthNode != null
-                ? createMapper().convertValue(benefitsNode, benefitsRef)
-                : emptyList())
-        .health(
-            healthNode != null ? createMapper().convertValue(healthNode, healthRef) : emptyList())
-        .other(healthNode != null ? createMapper().convertValue(otherNode, otherRef) : emptyList())
+        .benefits(isNotNull(benefitsNode) ? MAPPER.convertValue(benefitsNode, benefitsRef) : null)
+        .health(isNotNull(healthNode) ? MAPPER.convertValue(healthNode, healthRef) : null)
+        .other(isNotNull(otherNode) ? MAPPER.convertValue(otherNode, otherRef) : null)
         .lastUpdated(
-            lastUpdatedNode != null
-                ? createMapper().convertValue(lastUpdatedNode, LocalDate.class)
+            isNotNull(lastUpdatedNode)
+                ? MAPPER.convertValue(lastUpdatedNode, LocalDate.class)
                 : null)
         .build();
   }

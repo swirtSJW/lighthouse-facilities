@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -14,7 +15,6 @@ import gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig;
 import gov.va.api.lighthouse.facilities.DatamartFacility;
 import gov.va.api.lighthouse.facilities.FacilityEntity;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -36,7 +36,7 @@ public class CmsOverlayCollectorTest {
     when(mockEntity.cmsServices()).thenThrow(new NullPointerException("oh noes"));
     when(mockCmsOverlayRepository.findAll()).thenReturn(List.of(mockEntity));
     CmsOverlayCollector collector = new CmsOverlayCollector(mockCmsOverlayRepository);
-    assertThat(collector.loadAndUpdateCmsOverlays()).isEqualTo(Collections.emptyMap());
+    assertThat(collector.loadAndUpdateCmsOverlays()).isEqualTo(emptyMap());
   }
 
   @Test

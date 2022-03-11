@@ -4,16 +4,11 @@ import static gov.va.api.lighthouse.facilities.DatamartDetailedService.INVALID_S
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class BaseListDeserializer<T> extends StdDeserializer<T> {
-  public BaseListDeserializer() {
-    this(null);
-  }
-
+public abstract class BaseListDeserializer<T> extends BaseDeserializer<T> {
   public BaseListDeserializer(Class<T> t) {
     super(t);
   }

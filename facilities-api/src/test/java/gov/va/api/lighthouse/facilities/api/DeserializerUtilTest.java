@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities.api;
 
 import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -262,6 +261,14 @@ public class DeserializerUtilTest {
   @Test
   @SneakyThrows
   void detailedServices() {
+    var detailedServicesV0 =
+        gov.va.api.lighthouse.facilities.api.v0.DetailedService.builder()
+            .serviceId(gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID)
+            .build();
+    var detailedServicesV1 =
+        gov.va.api.lighthouse.facilities.api.v1.DetailedService.builder()
+            .serviceId(gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID)
+            .build();
     JsonNode detailedServices =
         DeserializerUtil.getDetailedServices(generateNode("{\"detailed_services\":\"[]\"}"));
     assertThat(detailedServices).isNotNull();
@@ -271,12 +278,7 @@ public class DeserializerUtilTest {
                     detailedServices,
                     gov.va.api.lighthouse.facilities.api.v0.DetailedService.class))
         .usingRecursiveComparison()
-        .isEqualTo(
-            gov.va.api.lighthouse.facilities.api.v0.DetailedService.builder()
-                .serviceId(gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID)
-                .phoneNumbers(emptyList())
-                .serviceLocations(emptyList())
-                .build());
+        .isEqualTo(detailedServicesV0);
     detailedServices =
         DeserializerUtil.getDetailedServices(generateNode("{\"detailedServices\":\"[]\"}"));
     assertThat(detailedServices).isNotNull();
@@ -286,12 +288,7 @@ public class DeserializerUtilTest {
                     detailedServices,
                     gov.va.api.lighthouse.facilities.api.v0.DetailedService.class))
         .usingRecursiveComparison()
-        .isEqualTo(
-            gov.va.api.lighthouse.facilities.api.v0.DetailedService.builder()
-                .serviceId(gov.va.api.lighthouse.facilities.api.v0.DetailedService.INVALID_SVC_ID)
-                .phoneNumbers(emptyList())
-                .serviceLocations(emptyList())
-                .build());
+        .isEqualTo(detailedServicesV0);
     detailedServices =
         DeserializerUtil.getDetailedServices(generateNode("{\"detailed_services\":\"[]\"}"));
     assertThat(detailedServices).isNotNull();
@@ -301,12 +298,7 @@ public class DeserializerUtilTest {
                     detailedServices,
                     gov.va.api.lighthouse.facilities.api.v1.DetailedService.class))
         .usingRecursiveComparison()
-        .isEqualTo(
-            gov.va.api.lighthouse.facilities.api.v1.DetailedService.builder()
-                .serviceId(gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID)
-                .phoneNumbers(emptyList())
-                .serviceLocations(emptyList())
-                .build());
+        .isEqualTo(detailedServicesV1);
     detailedServices =
         DeserializerUtil.getDetailedServices(generateNode("{\"detailedServices\":\"[]\"}"));
     assertThat(detailedServices).isNotNull();
@@ -316,12 +308,7 @@ public class DeserializerUtilTest {
                     detailedServices,
                     gov.va.api.lighthouse.facilities.api.v1.DetailedService.class))
         .usingRecursiveComparison()
-        .isEqualTo(
-            gov.va.api.lighthouse.facilities.api.v1.DetailedService.builder()
-                .serviceId(gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID)
-                .phoneNumbers(emptyList())
-                .serviceLocations(emptyList())
-                .build());
+        .isEqualTo(detailedServicesV1);
     // Exceptions
     assertThatThrownBy(() -> DeserializerUtil.getDetailedServices(null))
         .isInstanceOf(NullPointerException.class)

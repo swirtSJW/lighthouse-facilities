@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFridayHours;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getMondayHours;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getSaturdayHours;
@@ -10,15 +9,13 @@ import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getTuesdayHo
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWednesdayHours;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceHours;
 import lombok.SneakyThrows;
 
 public class DatamartDetailedServiceHoursDeserializer
-    extends StdDeserializer<DetailedServiceHours> {
+    extends BaseDeserializer<DetailedServiceHours> {
   public DatamartDetailedServiceHoursDeserializer() {
     this(null);
   }
@@ -30,9 +27,8 @@ public class DatamartDetailedServiceHoursDeserializer
   @Override
   @SneakyThrows
   public DetailedServiceHours deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+      JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode mondayHoursNode = getMondayHours(node);
@@ -44,34 +40,13 @@ public class DatamartDetailedServiceHoursDeserializer
     JsonNode sundayHoursNode = getSundayHours(node);
 
     return DetailedServiceHours.builder()
-        .monday(
-            mondayHoursNode != null
-                ? createMapper().convertValue(mondayHoursNode, String.class)
-                : null)
-        .tuesday(
-            tuesdayHoursNode != null
-                ? createMapper().convertValue(tuesdayHoursNode, String.class)
-                : null)
-        .wednesday(
-            wednesdayHoursNode != null
-                ? createMapper().convertValue(wednesdayHoursNode, String.class)
-                : null)
-        .thursday(
-            thursdayHoursNode != null
-                ? createMapper().convertValue(thursdayHoursNode, String.class)
-                : null)
-        .friday(
-            fridayHoursNode != null
-                ? createMapper().convertValue(fridayHoursNode, String.class)
-                : null)
-        .saturday(
-            saturdayHoursNode != null
-                ? createMapper().convertValue(saturdayHoursNode, String.class)
-                : null)
-        .sunday(
-            sundayHoursNode != null
-                ? createMapper().convertValue(sundayHoursNode, String.class)
-                : null)
+        .monday(isNotNull(mondayHoursNode) ? mondayHoursNode.asText() : null)
+        .tuesday(isNotNull(tuesdayHoursNode) ? tuesdayHoursNode.asText() : null)
+        .wednesday(isNotNull(wednesdayHoursNode) ? wednesdayHoursNode.asText() : null)
+        .thursday(isNotNull(thursdayHoursNode) ? thursdayHoursNode.asText() : null)
+        .friday(isNotNull(fridayHoursNode) ? fridayHoursNode.asText() : null)
+        .saturday(isNotNull(saturdayHoursNode) ? saturdayHoursNode.asText() : null)
+        .sunday(isNotNull(sundayHoursNode) ? sundayHoursNode.asText() : null)
         .build();
   }
 }

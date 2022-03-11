@@ -1,20 +1,17 @@
 package gov.va.api.lighthouse.facilities.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAfterHours;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getEnrollmentCoordinator;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getMentalHealthClinic;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getPatientAdvocate;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import gov.va.api.lighthouse.facilities.DatamartFacility.Phone;
 import lombok.SneakyThrows;
 
-public class DatamartPhoneDeserializer extends StdDeserializer<Phone> {
+public class DatamartPhoneDeserializer extends BaseDeserializer<Phone> {
   public DatamartPhoneDeserializer() {
     this(null);
   }
@@ -25,9 +22,8 @@ public class DatamartPhoneDeserializer extends StdDeserializer<Phone> {
 
   @Override
   @SneakyThrows
-  public Phone deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public Phone deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode faxNode = node.get("fax");
@@ -39,26 +35,15 @@ public class DatamartPhoneDeserializer extends StdDeserializer<Phone> {
     JsonNode enrollmentCoordinator = getEnrollmentCoordinator(node);
 
     return Phone.builder()
-        .fax(faxNode != null ? createMapper().convertValue(faxNode, String.class) : null)
-        .main(mainNode != null ? createMapper().convertValue(mainNode, String.class) : null)
-        .pharmacy(
-            pharmacyNode != null ? createMapper().convertValue(pharmacyNode, String.class) : null)
-        .afterHours(
-            afterHoursNode != null
-                ? createMapper().convertValue(afterHoursNode, String.class)
-                : null)
-        .patientAdvocate(
-            patientAdvocateNode != null
-                ? createMapper().convertValue(patientAdvocateNode, String.class)
-                : null)
+        .fax(isNotNull(faxNode) ? faxNode.asText() : null)
+        .main(isNotNull(mainNode) ? mainNode.asText() : null)
+        .pharmacy(isNotNull(pharmacyNode) ? pharmacyNode.asText() : null)
+        .afterHours(isNotNull(afterHoursNode) ? afterHoursNode.asText() : null)
+        .patientAdvocate(isNotNull(patientAdvocateNode) ? patientAdvocateNode.asText() : null)
         .mentalHealthClinic(
-            mentalHealthClinicNode != null
-                ? createMapper().convertValue(mentalHealthClinicNode, String.class)
-                : null)
+            isNotNull(mentalHealthClinicNode) ? mentalHealthClinicNode.asText() : null)
         .enrollmentCoordinator(
-            enrollmentCoordinator != null
-                ? createMapper().convertValue(enrollmentCoordinator, String.class)
-                : null)
+            isNotNull(enrollmentCoordinator) ? enrollmentCoordinator.asText() : null)
         .build();
   }
 }

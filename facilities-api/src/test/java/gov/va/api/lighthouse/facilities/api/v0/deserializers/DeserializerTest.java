@@ -37,8 +37,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -47,6 +45,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}" + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\",\"appointment_phones\":[]}" + "]}",
         CmsOverlay.class,
@@ -57,6 +65,17 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -78,14 +97,18 @@ public class DeserializerTest {
         DetailedService.builder()
             .serviceId(uncapitalize(BenefitsService.Pensions.name()))
             .name(BenefitsService.Pensions.name())
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
             .build();
     assertJson("{\"name\":\"Pensions\"}", DetailedService.class, detailedService);
     assertJson(
         "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}",
         DetailedService.class,
         detailedService);
+    detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+            .name(BenefitsService.Pensions.name())
+            .phoneNumbers(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"Pensions\",\"appointment_phones\":[]}",
         DetailedService.class,
@@ -94,6 +117,13 @@ public class DeserializerTest {
         "{\"serviceId\":\"pensions\",\"name\":\"Pensions\",\"appointment_phones\":[]}",
         DetailedService.class,
         detailedService);
+    detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+            .name(BenefitsService.Pensions.name())
+            .phoneNumbers(emptyList())
+            .serviceLocations(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}",
         DetailedService.class,
@@ -115,8 +145,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -125,6 +153,16 @@ public class DeserializerTest {
         "{\"data\":[" + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}" + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"Pensions\",\"appointment_phones\":[]}" + "]}",
         DetailedServicesResponse.class,
@@ -135,6 +173,17 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -160,8 +209,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -172,6 +219,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}" + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\",\"appointment_phones\":[]}" + "]}",
         FacilityAttributes.class,
@@ -182,6 +239,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -207,8 +275,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -219,6 +285,16 @@ public class DeserializerTest {
         "{\"detailed_services\":[" + "{\"serviceId\":\"pensions\",\"name\":\"Pensions\"}" + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":[" + "{\"name\":\"Pensions\",\"appointment_phones\":[]}" + "]}",
         Properties.class,
@@ -229,6 +305,17 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -296,14 +383,10 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build(),
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -325,6 +408,21 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
@@ -344,6 +442,23 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
@@ -419,14 +534,10 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build(),
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -448,6 +559,21 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
@@ -467,6 +593,23 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
@@ -542,14 +685,10 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build(),
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -571,6 +710,21 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
@@ -590,6 +744,23 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
@@ -664,14 +835,10 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(BenefitsService.Pensions.name()))
                         .name(BenefitsService.Pensions.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build(),
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -693,6 +860,21 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[]},"
@@ -712,6 +894,23 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(BenefitsService.Pensions.name()))
+                        .name(BenefitsService.Pensions.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build(),
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Pensions\",\"appointment_phones\":[],\"service_locations\":[]},"
@@ -744,8 +943,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.DentalServices.name()))
                         .name(HealthService.DentalServices.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -758,6 +955,16 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[]}"
@@ -770,6 +977,17 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -790,8 +1008,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -804,6 +1020,16 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
@@ -816,6 +1042,17 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -837,14 +1074,18 @@ public class DeserializerTest {
         DetailedService.builder()
             .serviceId(uncapitalize(HealthService.DentalServices.name()))
             .name(HealthService.DentalServices.name())
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
             .build();
     assertJson("{\"name\":\"DentalServices\"}", DetailedService.class, detailedService);
     assertJson(
         "{\"serviceId\":\"dentalServices\",\"name\":\"DentalServices\"}",
         DetailedService.class,
         detailedService);
+    detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(HealthService.DentalServices.name()))
+            .name(HealthService.DentalServices.name())
+            .phoneNumbers(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"DentalServices\",\"appointment_phones\":[]}",
         DetailedService.class,
@@ -853,6 +1094,13 @@ public class DeserializerTest {
         "{\"serviceId\":\"dentalServices\",\"name\":\"DentalServices\",\"appointment_phones\":[]}",
         DetailedService.class,
         detailedService);
+    detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(HealthService.DentalServices.name()))
+            .name(HealthService.DentalServices.name())
+            .phoneNumbers(emptyList())
+            .serviceLocations(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"DentalServices\",\"appointment_phones\":[],\"service_locations\":[]}",
         DetailedService.class,
@@ -874,8 +1122,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.DentalServices.name()))
                         .name(HealthService.DentalServices.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -886,6 +1132,16 @@ public class DeserializerTest {
         "{\"data\":[" + "{\"serviceId\":\"dentalServices\",\"name\":\"DentalServices\"}" + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"DentalServices\",\"appointment_phones\":[]}" + "]}",
         DetailedServicesResponse.class,
@@ -896,6 +1152,17 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -916,8 +1183,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -928,6 +1193,16 @@ public class DeserializerTest {
         "{\"data\":[" + "{\"serviceId\":\"covid19Vaccine\",\"name\":\"Covid19Vaccine\"}" + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}" + "]}",
         DetailedServicesResponse.class,
@@ -938,6 +1213,17 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -963,8 +1249,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.DentalServices.name()))
                         .name(HealthService.DentalServices.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -977,6 +1261,16 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[]}"
@@ -989,6 +1283,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1009,8 +1314,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1023,6 +1326,16 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
@@ -1035,6 +1348,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1060,8 +1384,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.DentalServices.name()))
                         .name(HealthService.DentalServices.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1074,6 +1396,16 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[]}"
@@ -1086,6 +1418,17 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.DentalServices.name()))
+                        .name(HealthService.DentalServices.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"DentalServices\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1106,8 +1449,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
                         .name(HealthService.Covid19Vaccine.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1120,6 +1461,16 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[]}"
@@ -1132,6 +1483,17 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(HealthService.Covid19Vaccine.name()))
+                        .name(HealthService.Covid19Vaccine.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"Covid19Vaccine\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1150,12 +1512,7 @@ public class DeserializerTest {
   @SneakyThrows
   void deserializeInvalidDetailedService() {
     DetailedService invalidService =
-        DetailedService.builder()
-            .serviceId(INVALID_SVC_ID)
-            .name("foo")
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
-            .build();
+        DetailedService.builder().serviceId(INVALID_SVC_ID).name("foo").build();
     assertJson("{\"name\":\"foo\"}", DetailedService.class, invalidService);
     invalidService.name("OnlineScheduling");
     assertJson(
@@ -1185,8 +1542,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
                         .name(OtherService.OnlineScheduling.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1199,6 +1554,16 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}"
@@ -1211,6 +1576,17 @@ public class DeserializerTest {
             + "]}",
         CmsOverlay.class,
         overlay);
+    overlay =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1232,14 +1608,18 @@ public class DeserializerTest {
         DetailedService.builder()
             .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
             .name(OtherService.OnlineScheduling.name())
-            .phoneNumbers(emptyList())
-            .serviceLocations(emptyList())
             .build();
     assertJson("{\"name\":\"OnlineScheduling\"}", DetailedService.class, detailedService);
     assertJson(
         "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\"}",
         DetailedService.class,
         detailedService);
+    detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+            .name(OtherService.OnlineScheduling.name())
+            .phoneNumbers(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}",
         DetailedService.class,
@@ -1248,6 +1628,13 @@ public class DeserializerTest {
         "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}",
         DetailedService.class,
         detailedService);
+    detailedService =
+        DetailedService.builder()
+            .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+            .name(OtherService.OnlineScheduling.name())
+            .phoneNumbers(emptyList())
+            .serviceLocations(emptyList())
+            .build();
     assertJson(
         "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}",
         DetailedService.class,
@@ -1269,8 +1656,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
                         .name(OtherService.OnlineScheduling.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1281,6 +1666,16 @@ public class DeserializerTest {
         "{\"data\":[" + "{\"serviceId\":\"onlineScheduling\",\"name\":\"OnlineScheduling\"}" + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":[" + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}" + "]}",
         DetailedServicesResponse.class,
@@ -1291,6 +1686,17 @@ public class DeserializerTest {
             + "]}",
         DetailedServicesResponse.class,
         response);
+    response =
+        DetailedServicesResponse.builder()
+            .data(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"data\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1316,8 +1722,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
                         .name(OtherService.OnlineScheduling.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1330,6 +1734,16 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}"
@@ -1342,6 +1756,17 @@ public class DeserializerTest {
             + "]}",
         FacilityAttributes.class,
         attributes);
+    attributes =
+        FacilityAttributes.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}"
@@ -1367,8 +1792,6 @@ public class DeserializerTest {
                     DetailedService.builder()
                         .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
                         .name(OtherService.OnlineScheduling.name())
-                        .phoneNumbers(emptyList())
-                        .serviceLocations(emptyList())
                         .build()))
             .build();
     assertJson(
@@ -1381,6 +1804,16 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[]}"
@@ -1393,6 +1826,17 @@ public class DeserializerTest {
             + "]}",
         Properties.class,
         properties);
+    properties =
+        Properties.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceId(uncapitalize(OtherService.OnlineScheduling.name()))
+                        .name(OtherService.OnlineScheduling.name())
+                        .phoneNumbers(emptyList())
+                        .serviceLocations(emptyList())
+                        .build()))
+            .build();
     assertJson(
         "{\"detailed_services\":["
             + "{\"name\":\"OnlineScheduling\",\"appointment_phones\":[],\"service_locations\":[]}"

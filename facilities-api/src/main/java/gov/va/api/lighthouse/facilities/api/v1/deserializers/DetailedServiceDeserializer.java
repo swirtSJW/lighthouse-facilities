@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities.api.v1.deserializers;
 
-import static gov.va.api.health.autoconfig.configuration.JacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getAppointmentLeadin;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getFacilityDescription;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getOnlineSchedulingAvailable;
@@ -9,15 +8,13 @@ import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getReferralR
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getServiceLocations;
 import static gov.va.api.lighthouse.facilities.api.DeserializerUtil.getWalkInsAccepted;
 import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.INVALID_SVC_ID;
-import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import gov.va.api.lighthouse.facilities.api.common.deserializers.BaseDeserializer;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.AppointmentPhoneNumber;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService.DetailedServiceLocation;
@@ -29,7 +26,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
-public class DetailedServiceDeserializer extends StdDeserializer<DetailedService> {
+public class DetailedServiceDeserializer extends BaseDeserializer<DetailedService> {
   public DetailedServiceDeserializer() {
     this(null);
   }
@@ -41,10 +38,8 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
   @Override
   @SneakyThrows
   @SuppressWarnings("unchecked")
-  public DetailedService deserialize(
-      JsonParser jsonParser, DeserializationContext deserializationContext) {
-    ObjectCodec oc = jsonParser.getCodec();
-    JsonNode node = oc.readTree(jsonParser);
+  public DetailedService deserialize(JsonParser jp, DeserializationContext deserializationContext) {
+    JsonNode node = jp.getCodec().readTree(jp);
 
     // Read values using snake_case or camelCase representations
     JsonNode nameNode = node.get("name");
@@ -60,14 +55,12 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     JsonNode serviceLocationsNode = getServiceLocations(node);
     JsonNode walkInsAcceptedNode = getWalkInsAccepted(node);
 
-    String serviceName =
-        nameNode != null ? createMapper().convertValue(nameNode, String.class) : null;
+    String serviceName = isNotNull(nameNode) ? nameNode.asText() : null;
     String serviceId =
-        serviceIdNode != null
-                && isRecognizedServiceId(createMapper().convertValue(serviceIdNode, String.class))
-            ? createMapper().convertValue(serviceIdNode, String.class)
+        isNotNull(serviceIdNode) && isRecognizedServiceId(serviceIdNode.asText())
+            ? serviceIdNode.asText()
             : // Attempt to construct service id from service name
-            serviceIdNode == null && isRecognizedServiceName(serviceName)
+            isNull(serviceIdNode) && isRecognizedServiceName(serviceName)
                 ? getServiceIdForRecognizedServiceName(serviceName)
                 : INVALID_SVC_ID;
 
@@ -77,38 +70,26 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
     return DetailedService.builder()
         .serviceId(serviceId)
         .name(serviceName)
-        .active(activeNode != null ? createMapper().convertValue(activeNode, Boolean.class) : false)
-        .changed(
-            changedNode != null ? createMapper().convertValue(changedNode, String.class) : null)
+        .active(isNotNull(activeNode) ? activeNode.asBoolean() : false)
+        .changed(isNotNull(changedNode) ? changedNode.asText() : null)
         .descriptionFacility(
-            descriptionFacilityNode != null
-                ? createMapper().convertValue(descriptionFacilityNode, String.class)
-                : null)
-        .appointmentLeadIn(
-            appointmentLeadInNode != null
-                ? createMapper().convertValue(appointmentLeadInNode, String.class)
-                : null)
+            isNotNull(descriptionFacilityNode) ? descriptionFacilityNode.asText() : null)
+        .appointmentLeadIn(isNotNull(appointmentLeadInNode) ? appointmentLeadInNode.asText() : null)
         .onlineSchedulingAvailable(
-            onlineSchedulingAvailableNode != null
-                ? createMapper().convertValue(onlineSchedulingAvailableNode, String.class)
+            isNotNull(onlineSchedulingAvailableNode)
+                ? onlineSchedulingAvailableNode.asText()
                 : null)
-        .path(pathNode != null ? createMapper().convertValue(pathNode, String.class) : null)
+        .path(isNotNull(pathNode) ? pathNode.asText() : null)
         .phoneNumbers(
-            phoneNumbersNode != null
-                ? createMapper().convertValue(phoneNumbersNode, appointmentNumbersRef)
-                : emptyList())
-        .referralRequired(
-            referralRequiredNode != null
-                ? createMapper().convertValue(referralRequiredNode, String.class)
+            isNotNull(phoneNumbersNode)
+                ? MAPPER.convertValue(phoneNumbersNode, appointmentNumbersRef)
                 : null)
+        .referralRequired(isNotNull(referralRequiredNode) ? referralRequiredNode.asText() : null)
         .serviceLocations(
-            serviceLocationsNode != null
-                ? createMapper().convertValue(serviceLocationsNode, serviceLocationsRef)
-                : emptyList())
-        .walkInsAccepted(
-            walkInsAcceptedNode != null
-                ? createMapper().convertValue(walkInsAcceptedNode, String.class)
+            isNotNull(serviceLocationsNode)
+                ? MAPPER.convertValue(serviceLocationsNode, serviceLocationsRef)
                 : null)
+        .walkInsAccepted(isNotNull(walkInsAcceptedNode) ? walkInsAcceptedNode.asText() : null)
         .build();
   }
 
@@ -123,7 +104,7 @@ public class DetailedServiceDeserializer extends StdDeserializer<DetailedService
                 : Arrays.stream(BenefitsService.values())
                         .parallel()
                         .anyMatch(bs -> bs.name().equalsIgnoreCase(name))
-                    ? BenefitsService.valueOf(name).name()
+                    ? BenefitsService.fromString(name).name()
                     : Arrays.stream(OtherService.values())
                             .parallel()
                             .anyMatch(os -> os.name().equalsIgnoreCase(name))
