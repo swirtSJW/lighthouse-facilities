@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
@@ -18,8 +17,7 @@ public interface FacilitiesIdsApi {
       tags = {"facilities"},
       summary = "Bulk download of all facility IDs",
       description = "Retrieves all available facility IDs only",
-      operationId = "getFacilityIds",
-      security = @SecurityRequirement(name = "apikey"))
+      operationId = "getFacilityIds")
   @GET
   @Path("/ids")
   @ApiResponse(
