@@ -17,6 +17,8 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.annotation.Validated;
@@ -80,12 +82,18 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
     dataBinder.initDirectFieldAccess();
   }
 
+  /** Upload CMS overlay associated with specified facility. */
+  @Caching(
+      evict = {
+        @CacheEvict(value = "v0-all-facilities", allEntries = true),
+        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true)
+      })
   @PostMapping(
       value = {"/facilities/{id}/cms-overlay"},
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows
-  ResponseEntity<Void> saveOverlay(
+  public ResponseEntity<Void> saveOverlay(
       @PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
     Optional<FacilityEntity> existingFacilityEntity =
         facilityRepository.findById(FacilityEntity.Pk.fromIdString(id));
