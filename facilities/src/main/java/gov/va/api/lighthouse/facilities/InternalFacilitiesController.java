@@ -208,6 +208,8 @@ public class InternalFacilitiesController {
    */
   @Caching(
       evict = {
+        @CacheEvict(value = "v0-all-facilities", allEntries = true),
+        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true),
         @CacheEvict(value = "v1-all-facilities", allEntries = true),
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
@@ -263,6 +265,8 @@ public class InternalFacilitiesController {
   /** Delete facility belonging to specified id. */
   @Caching(
       evict = {
+        @CacheEvict(value = "v0-all-facilities", allEntries = true),
+        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true),
         @CacheEvict(value = "v1-all-facilities", allEntries = true),
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
@@ -411,6 +415,8 @@ public class InternalFacilitiesController {
   /** Reload all facility information. */
   @Caching(
       evict = {
+        @CacheEvict(value = "v0-all-facilities", allEntries = true),
+        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true),
         @CacheEvict(value = "v1-all-facilities", allEntries = true),
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
@@ -650,6 +656,8 @@ public class InternalFacilitiesController {
 
   @Caching(
       evict = {
+        @CacheEvict(value = "v0-all-facilities", allEntries = true),
+        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true),
         @CacheEvict(value = "v1-all-facilities", allEntries = true),
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
