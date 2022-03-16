@@ -33,6 +33,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
@@ -72,10 +73,11 @@ public class FacilitiesControllerV1 {
 
   /** Get all facilities. */
   @SneakyThrows
+  @Cacheable("v1-all-facilities")
   @GetMapping(
       value = "/facilities",
       produces = {"application/json"})
-  FacilitiesResponse all(
+  public FacilitiesResponse all(
       @RequestParam(value = "page", defaultValue = "1") @Min(1) int page,
       @RequestParam(value = "per_page", defaultValue = "10") @Min(0) int perPage) {
     List<HasFacilityPayload> allFacilities = facilityRepository.findAllProjectedBy();
@@ -95,8 +97,9 @@ public class FacilitiesControllerV1 {
 
   /** Get all facilities as CSV. */
   @SneakyThrows
+  @Cacheable("v1-all-facilities-csv")
   @GetMapping(value = "/facilities", produces = "text/csv")
-  String allCsv() {
+  public String allCsv() {
     List<List<String>> rows =
         facilityRepository.findAllProjectedBy().stream()
             .parallel()
