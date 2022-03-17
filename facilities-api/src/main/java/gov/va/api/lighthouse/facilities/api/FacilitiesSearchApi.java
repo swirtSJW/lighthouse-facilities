@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.math.BigDecimal;
 import java.util.List;
 import javax.ws.rs.GET;
@@ -70,7 +71,8 @@ public interface FacilitiesSearchApi {
               + "\n\n"
               + " Invalid combinations will return `400 Bad Request`. ",
       tags = {"facilities"},
-      operationId = "getFacilitiesByLocation")
+      operationId = "getFacilitiesByLocation",
+      security = @SecurityRequirement(name = "apikey"))
   @GET
   @Path("/facilities")
   @ApiResponse(
