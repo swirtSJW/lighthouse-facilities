@@ -73,7 +73,9 @@ public class FacilitiesControllerV1 {
 
   /** Get all facilities. */
   @SneakyThrows
-  @Cacheable("v1-all-facilities")
+  @Cacheable(
+      value = "v1-all-facilities",
+      key = "T(java.lang.Integer).toString(#page).concat(T(java.lang.Integer).toString(#perPage))")
   @GetMapping(
       value = "/facilities",
       produces = {"application/json"})
