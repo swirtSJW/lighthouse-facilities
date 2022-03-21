@@ -3,6 +3,9 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
+import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
+import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,8 +14,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 
 public abstract class BaseCmsOverlayController {
+  /** Filter out unrecognized datamart detailed services from overlay. */
+  @SneakyThrows
+  protected DatamartCmsOverlay filterOutUnrecognizedServicesFromOverlay(
+      @NonNull DatamartCmsOverlay overlay) {
+    if (ObjectUtils.isNotEmpty(overlay.detailedServices())) {
+      overlay.detailedServices(
+          overlay.detailedServices().parallelStream()
+              .filter(ds -> isRecognizedServiceName(ds.name()))
+              .collect(Collectors.toList()));
+    }
+    return overlay;
+  }
+
   @SneakyThrows
   protected List<DatamartDetailedService> findServicesToSave(
       CmsOverlayEntity cmsOverlayEntity,
@@ -74,5 +91,12 @@ public abstract class BaseCmsOverlayController {
       throw new ExceptionsUtils.NotFound(facilityId);
     }
     return CmsOverlayHelper.getDetailedServices(existingOverlayEntity.get().cmsServices());
+  }
+
+  /** Determine whether specified service name matches that for datamart service. */
+  protected boolean isRecognizedServiceName(String name) {
+    return HealthService.isRecognizedServiceName(name)
+        || BenefitsService.isRecognizedServiceName(name)
+        || OtherService.isRecognizedServiceName(name);
   }
 }

@@ -1,6 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +16,7 @@ public class DetailedServiceTransformerV1 {
   /** Transform DatamartDetailedService to version 1 DetailedService. */
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
-        .name(dds.name())
+        .name(toDetailedServiceName(dds.name()))
         .active(dds.active())
         .changed(dds.changed())
         .descriptionFacility(dds.descriptionFacility())
@@ -58,6 +61,19 @@ public class DetailedServiceTransformerV1 {
             : new ArrayList<>();
   }
 
+  /** Transform DatamartDetailedService name to version 1 DetailedService name. */
+  public static String toDetailedServiceName(String name) {
+    return Facility.HealthService.isRecognizedCovid19ServiceName(name)
+        ? CMS_OVERLAY_SERVICE_NAME_COVID_19
+        : Facility.HealthService.isRecognizedServiceName(name)
+            ? Facility.HealthService.fromString(name).name()
+            : Facility.BenefitsService.isRecognizedServiceName(name)
+                ? Facility.BenefitsService.fromString(name).name()
+                : Facility.OtherService.isRecognizedServiceName(name)
+                    ? Facility.OtherService.valueOf(name).name()
+                    : name;
+  }
+
   /**
    * Transform a list of DatamartDetailedService.AppointmentPhoneNumber to a list of version 1
    * DetailedService.AppointmentPhoneNumber.
@@ -89,7 +105,7 @@ public class DetailedServiceTransformerV1 {
   public static DatamartDetailedService toVersionAgnosticDetailedService(
       @NonNull DetailedService dds) {
     return DatamartDetailedService.builder()
-        .name(dds.name())
+        .name(toVersionAgnosticDetailedServiceName(dds.name()))
         .active(dds.active())
         .changed(dds.changed())
         .descriptionFacility(dds.descriptionFacility())
@@ -133,6 +149,19 @@ public class DetailedServiceTransformerV1 {
                 .map(DetailedServiceTransformerV1::transformDetailedServiceLocation)
                 .collect(Collectors.toList())
             : new ArrayList<>();
+  }
+
+  /** Transform version 1 DetailedService name to DatamartDetailedService name. */
+  public static String toVersionAgnosticDetailedServiceName(String name) {
+    return DatamartFacility.HealthService.isRecognizedCovid19ServiceName(name)
+        ? CMS_OVERLAY_SERVICE_NAME_COVID_19
+        : DatamartFacility.HealthService.isRecognizedServiceName(name)
+            ? DatamartFacility.HealthService.fromString(name).name()
+            : DatamartFacility.BenefitsService.isRecognizedServiceName(name)
+                ? DatamartFacility.BenefitsService.fromString(name).name()
+                : DatamartFacility.OtherService.isRecognizedServiceName(name)
+                    ? DatamartFacility.OtherService.valueOf(name).name()
+                    : name;
   }
 
   /**

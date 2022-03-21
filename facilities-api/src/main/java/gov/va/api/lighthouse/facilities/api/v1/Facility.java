@@ -27,6 +27,7 @@ import gov.va.api.lighthouse.facilities.api.v1.serializers.WaitTimesSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -79,7 +80,22 @@ public final class Facility implements CanBeEmpty {
     TransitionAssistance,
     UpdatingDirectDepositInformation,
     VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance
+    VocationalRehabilitationAndEmploymentAssistance;
+
+    /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
+    @JsonCreator
+    public static BenefitsService fromString(String name) {
+      return eBenefitsRegistrationAssistance.name().equalsIgnoreCase(name)
+          ? eBenefitsRegistrationAssistance
+          : valueOf(capitalize(name));
+    }
+
+    /** Determine whether specified service name represents benefits service. */
+    public static boolean isRecognizedServiceName(String serviceName) {
+      return Arrays.stream(values())
+          .parallel()
+          .anyMatch(bs -> bs.name().equalsIgnoreCase(serviceName));
+    }
   }
 
   public enum FacilityType {
@@ -296,14 +312,37 @@ public final class Facility implements CanBeEmpty {
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
-      return "MentalHealthCare".equalsIgnoreCase(name)
-          ? valueOf("MentalHealth")
-          : "DentalServices".equalsIgnoreCase(name) ? valueOf("Dental") : valueOf(capitalize(name));
+      return "COVID-19 vaccines".equalsIgnoreCase(name)
+          ? Covid19Vaccine
+          : "MentalHealthCare".equalsIgnoreCase(name)
+              ? MentalHealth
+              : "DentalServices".equalsIgnoreCase(name) ? Dental : valueOf(capitalize(name));
+    }
+
+    /** Determine whether specified service name represents Covid-19 health service. */
+    public static boolean isRecognizedCovid19ServiceName(String serviceName) {
+      return "COVID-19 vaccines".equals(serviceName)
+          || Covid19Vaccine.name().equalsIgnoreCase(serviceName);
+    }
+
+    /** Determine whether specified service name represents health service. */
+    public static boolean isRecognizedServiceName(String serviceName) {
+      return isRecognizedCovid19ServiceName(serviceName)
+          || "DentalServices".equalsIgnoreCase(serviceName)
+          || "MentalHealthCare".equalsIgnoreCase(serviceName)
+          || Arrays.stream(values())
+              .parallel()
+              .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
     }
   }
 
   public enum OtherService implements ServiceType {
-    OnlineScheduling
+    OnlineScheduling;
+
+    /** Determine whether specified service name represents other service. */
+    public static boolean isRecognizedServiceName(String serviceName) {
+      return Arrays.stream(values()).parallel().anyMatch(os -> os.name().equals(serviceName));
+    }
   }
 
   public enum Type {
