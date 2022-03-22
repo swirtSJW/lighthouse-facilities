@@ -73,7 +73,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all csv returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -84,7 +84,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 200L);
     // Delete a facility, thus evicting cache
     var facilityId = "vha_521GF";
     ExpectedResponse.of(
@@ -103,7 +103,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -135,7 +135,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all csv returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -146,7 +146,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 100L);
     // Delete an overlay, thus evicting cache
     ExpectedResponse.of(
             requestSpecification()
@@ -167,7 +167,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -189,7 +189,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all csv returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -200,7 +200,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 100L);
     // Perform reload, thus evicting cache
     ExpectedResponse.of(
             requestSpecification()
@@ -216,7 +216,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -238,7 +238,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all csv returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -249,7 +249,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 100L);
     // Upload overlay, thus evicting cache
     var facilityId = "vha_521GF";
     ExpectedResponse.of(
@@ -270,7 +270,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -292,7 +292,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -303,7 +303,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 100L);
     // Delete a facility, thus evicting cache
     var facilityId = "vha_521GF";
     ExpectedResponse.of(
@@ -322,7 +322,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -344,7 +344,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -355,7 +355,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 200L);
     // Delete an overlay, thus evicting cache
     var facilityId = "vha_521GF";
     ExpectedResponse.of(
@@ -377,7 +377,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -399,7 +399,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -410,7 +410,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 100L);
     // Perform reload, thus evicting cache
     ExpectedResponse.of(
             requestSpecification()
@@ -426,7 +426,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 
   @Test
@@ -448,7 +448,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(100L, 2500L);
     // Call to /all returning cached result
     start = Instant.now();
     ExpectedResponse.of(
@@ -459,7 +459,7 @@ public class CacheIT {
     finish = Instant.now();
     long cachedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedResponseTimeInMillis < initialCallTimeInMillis).isTrue();
-    assertThat(cachedResponseTimeInMillis).isBetween(0L, 2500L);
+    assertThat(cachedResponseTimeInMillis).isBetween(0L, 100L);
     // Upload overlay, thus evicting cache
     var facilityId = "vha_521GF";
     ExpectedResponse.of(
@@ -480,6 +480,6 @@ public class CacheIT {
     finish = Instant.now();
     long cachedEvictedResponseTimeInMillis = Duration.between(start, finish).toMillis();
     assertThat(cachedEvictedResponseTimeInMillis > cachedResponseTimeInMillis).isTrue();
-    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 4500L);
+    assertThat(cachedEvictedResponseTimeInMillis).isBetween(100L, 2500L);
   }
 }
