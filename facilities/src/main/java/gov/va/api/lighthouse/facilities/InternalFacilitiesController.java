@@ -40,8 +40,6 @@ import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -206,13 +204,8 @@ public class InternalFacilitiesController {
    * Delete an overlay if thisNodeOnly is not specified or partial overlay identified by
    * thisNodeOnly.
    */
-  @Caching(
-      evict = {
-        @CacheEvict(value = "v0-all-facilities", allEntries = true),
-        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true)
-      })
   @DeleteMapping(value = {"/facilities/{id}/cms-overlay", "/facilities/{id}/cms-overlay/{node}"})
-  public ResponseEntity<Void> deleteCmsOverlayById(
+  ResponseEntity<Void> deleteCmsOverlayById(
       @PathVariable("id") String id,
       @PathVariable(value = "node", required = false) String thisNodeOnly) {
     CmsOverlayEntity overlayEntity = cmsOverlayEntityById(id).orElse(null);
@@ -260,14 +253,8 @@ public class InternalFacilitiesController {
     return ResponseEntity.ok().build();
   }
 
-  /** Delete facility belonging to specified id. */
-  @Caching(
-      evict = {
-        @CacheEvict(value = "v0-all-facilities", allEntries = true),
-        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true)
-      })
   @DeleteMapping(value = "/facilities/{id}")
-  public ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
+  ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
     Optional<FacilityEntity> entity = facilityEntityById(id);
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
@@ -408,14 +395,8 @@ public class InternalFacilitiesController {
     facilityRepository.delete(entity);
   }
 
-  /** Reload all facility information. */
-  @Caching(
-      evict = {
-        @CacheEvict(value = "v0-all-facilities", allEntries = true),
-        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true)
-      })
   @GetMapping(value = "/reload")
-  public ResponseEntity<ReloadResponse> reload() {
+  ResponseEntity<ReloadResponse> reload() {
     var response = ReloadResponse.start();
     var collectedFacilities = collector.collectFacilities();
     response.totalFacilities(collectedFacilities.size());
@@ -648,15 +629,9 @@ public class InternalFacilitiesController {
     updateAndSave(response, FacilityEntity.builder().id(pk).build(), datamartFacility);
   }
 
-  @Caching(
-      evict = {
-        @CacheEvict(value = "v0-all-facilities", allEntries = true),
-        @CacheEvict(value = "v0-all-facilities-csv", allEntries = true)
-      })
   @PostMapping(value = "/reload")
   @Loggable(arguments = false)
-  public ResponseEntity<ReloadResponse> upload(
-      @RequestBody List<DatamartFacility> collectedFacilities) {
+  ResponseEntity<ReloadResponse> upload(@RequestBody List<DatamartFacility> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
   }
