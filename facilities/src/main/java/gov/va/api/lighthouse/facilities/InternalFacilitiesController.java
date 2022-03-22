@@ -214,7 +214,7 @@ public class InternalFacilitiesController {
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
   @DeleteMapping(value = {"/facilities/{id}/cms-overlay", "/facilities/{id}/cms-overlay/{node}"})
-  public ResponseEntity<Void> deleteCmsOverlayById(
+  ResponseEntity<Void> deleteCmsOverlayById(
       @PathVariable("id") String id,
       @PathVariable(value = "node", required = false) String thisNodeOnly) {
     CmsOverlayEntity overlayEntity = cmsOverlayEntityById(id).orElse(null);
@@ -271,7 +271,7 @@ public class InternalFacilitiesController {
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
   @DeleteMapping(value = "/facilities/{id}")
-  public ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
+  ResponseEntity<String> deleteFacilityById(@PathVariable("id") String id) {
     Optional<FacilityEntity> entity = facilityEntityById(id);
     if (entity.isEmpty()) {
       log.info("Facility {} does not exist, ignoring request.", sanitize(id));
@@ -421,7 +421,7 @@ public class InternalFacilitiesController {
         @CacheEvict(value = "v1-all-facilities-csv", allEntries = true)
       })
   @GetMapping(value = "/reload")
-  public ResponseEntity<ReloadResponse> reload() {
+  ResponseEntity<ReloadResponse> reload() {
     var response = ReloadResponse.start();
     var collectedFacilities = collector.collectFacilities();
     response.totalFacilities(collectedFacilities.size());
@@ -663,8 +663,7 @@ public class InternalFacilitiesController {
       })
   @PostMapping(value = "/reload")
   @Loggable(arguments = false)
-  public ResponseEntity<ReloadResponse> upload(
-      @RequestBody List<DatamartFacility> collectedFacilities) {
+  ResponseEntity<ReloadResponse> upload(@RequestBody List<DatamartFacility> collectedFacilities) {
     var response = ReloadResponse.start();
     return process(response, collectedFacilities);
   }

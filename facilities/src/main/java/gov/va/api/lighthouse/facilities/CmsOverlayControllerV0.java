@@ -104,7 +104,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
       produces = "application/json",
       consumes = "application/json")
   @SneakyThrows
-  public ResponseEntity<Void> saveOverlay(
+  ResponseEntity<Void> saveOverlay(
       @PathVariable("id") String id, @Valid @RequestBody CmsOverlay overlay) {
     Optional<FacilityEntity> existingFacilityEntity =
         facilityRepository.findById(FacilityEntity.Pk.fromIdString(id));
