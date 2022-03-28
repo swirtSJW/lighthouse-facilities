@@ -1,7 +1,9 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.DatamartDetailedService.getServiceTypeForServiceId;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
+import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
@@ -60,7 +62,6 @@ public class CmsOverlayControllerV1Test {
     assertThatThrownBy(() -> controller().getDetailedServices(id, page, perPage))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("oh noes");
-    when(mockFacilityRepository.findById(pk)).thenThrow(new NullPointerException("oh noes"));
     assertThatThrownBy(
             () -> controller().saveOverlay(id, CmsOverlayTransformerV1.toCmsOverlay(overlay())))
         .isInstanceOf(NullPointerException.class)
@@ -70,10 +71,15 @@ public class CmsOverlayControllerV1Test {
   private DatamartDetailedService getDatamartDetailedService(
       @NonNull DatamartFacility.HealthService healthService, boolean isActive) {
     return DatamartDetailedService.builder()
-        .name(
-            DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
-                ? CMS_OVERLAY_SERVICE_NAME_COVID_19
-                : healthService.name())
+        .serviceInfo(
+            DatamartDetailedService.ServiceInfo.builder()
+                .serviceId(healthService.serviceId())
+                .name(
+                    DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
+                        ? CMS_OVERLAY_SERVICE_NAME_COVID_19
+                        : healthService.name())
+                .serviceType(getServiceTypeForServiceId(healthService.serviceId()))
+                .build())
         .active(isActive)
         .changed(null)
         .descriptionFacility(null)
@@ -159,7 +165,7 @@ public class CmsOverlayControllerV1Test {
     DatamartCmsOverlay overlay = overlay();
     var facilityId = "vha_402";
     var pk = FacilityEntity.Pk.fromIdString(facilityId);
-    var serviceId = CMS_OVERLAY_SERVICE_NAME_COVID_19;
+    var serviceId = DatamartFacility.HealthService.Covid19Vaccine.serviceId();
     CmsOverlayEntity cmsOverlayEntity =
         CmsOverlayEntity.builder()
             .id(pk)
@@ -364,9 +370,20 @@ public class CmsOverlayControllerV1Test {
     Set<String> detailedServices = new HashSet<>();
     for (DatamartDetailedService service : overlay.detailedServices()) {
       if (service.active()) {
-        detailedServices.add(service.name());
+        detailedServices.add(capitalize(service.serviceInfo().serviceId()));
       }
     }
+    // Test contained DetailedService is one of HealthService, BenefitsService, or OtherService
+    assertThat(
+            detailedServices.parallelStream()
+                .filter(
+                    ds ->
+                        DatamartFacility.HealthService.isRecognizedServiceName(ds)
+                            || DatamartFacility.BenefitsService.isRecognizedServiceName(ds)
+                            || DatamartFacility.OtherService.isRecognizedServiceName(ds))
+                .collect(Collectors.toList()))
+        .usingRecursiveComparison()
+        .isEqualTo(detailedServices);
     entity.cmsOperatingStatus(
         DatamartFacilitiesJacksonConfig.createMapper()
             .writeValueAsString(overlay.operatingStatus()));
@@ -451,14 +468,17 @@ public class CmsOverlayControllerV1Test {
     when(mockFacilityRepository.findById(pk)).thenReturn(Optional.of(entity));
     DatamartCmsOverlay overlay = overlay();
     for (DatamartDetailedService d : overlay.detailedServices()) {
-      if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+      if (d.serviceInfo()
+          .serviceId()
+          .equals(DatamartFacility.HealthService.Covid19Vaccine.serviceId())) {
         assertThat(d.path()).isEqualTo("replaceable path here");
       }
     }
     CmsOverlay cmsOverlay = CmsOverlayTransformerV1.toCmsOverlay(overlay);
-    controller().saveOverlay("vha_402", cmsOverlay);
+    ResponseEntity<Void> response = controller().saveOverlay("vha_402", cmsOverlay);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     for (DetailedService d : cmsOverlay.detailedServices()) {
-      if (d.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19)) {
+      if (d.serviceInfo().serviceId().equals(Facility.HealthService.Covid19Vaccine.serviceId())) {
         assertThat(d.path())
             .isEqualTo("https://www.va.gov/maine-health-care/programs/covid-19-vaccines/");
       }

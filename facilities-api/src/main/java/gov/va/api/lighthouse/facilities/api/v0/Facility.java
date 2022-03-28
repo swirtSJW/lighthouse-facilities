@@ -2,6 +2,7 @@ package gov.va.api.lighthouse.facilities.api.v0;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -40,22 +41,31 @@ public final class Facility {
   }
 
   public enum BenefitsService implements ServiceType {
-    ApplyingForBenefits,
-    BurialClaimAssistance,
-    DisabilityClaimAssistance,
-    eBenefitsRegistrationAssistance,
-    EducationAndCareerCounseling,
-    EducationClaimAssistance,
-    FamilyMemberClaimAssistance,
-    HomelessAssistance,
-    InsuranceClaimAssistanceAndFinancialCounseling,
-    IntegratedDisabilityEvaluationSystemAssistance,
-    Pensions,
-    PreDischargeClaimAssistance,
-    TransitionAssistance,
-    UpdatingDirectDepositInformation,
-    VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance;
+    ApplyingForBenefits("applyingForBenefits"),
+    BurialClaimAssistance("burialClaimAssistance"),
+    DisabilityClaimAssistance("disabilityClaimAssistance"),
+    eBenefitsRegistrationAssistance("eBenefitsRegistrationAssistance"),
+    EducationAndCareerCounseling("educationAndCareerCounseling"),
+    EducationClaimAssistance("educationClaimAssistance"),
+    FamilyMemberClaimAssistance("familyMemberClaimAssistance"),
+    HomelessAssistance("homelessAssistance"),
+    InsuranceClaimAssistanceAndFinancialCounseling(
+        "insuranceClaimAssistanceAndFinancialCounseling"),
+    IntegratedDisabilityEvaluationSystemAssistance(
+        "integratedDisabilityEvaluationSystemAssistance"),
+    Pensions("pensions"),
+    PreDischargeClaimAssistance("preDischargeClaimAssistance"),
+    TransitionAssistance("transitionAssistance"),
+    UpdatingDirectDepositInformation("updatingDirectDepositInformation"),
+    VAHomeLoanAssistance("vaHomeLoanAssistance"),
+    VocationalRehabilitationAndEmploymentAssistance(
+        "vocationalRehabilitationAndEmploymentAssistance");
+
+    private final String serviceId;
+
+    BenefitsService(@NotNull String serviceId) {
+      this.serviceId = serviceId;
+    }
 
     /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
     @JsonCreator
@@ -65,11 +75,18 @@ public final class Facility {
           : valueOf(capitalize(name));
     }
 
+    /** Determine whether specified service id represents benefits service. */
+    public static boolean isRecognizedServiceId(String serviceId) {
+      return Arrays.stream(values()).parallel().anyMatch(bs -> bs.serviceId().equals(serviceId));
+    }
+
     /** Determine whether specified service name represents benefits service. */
     public static boolean isRecognizedServiceName(String serviceName) {
-      return Arrays.stream(values())
-          .parallel()
-          .anyMatch(bs -> bs.name().equalsIgnoreCase(serviceName));
+      return Arrays.stream(values()).parallel().anyMatch(bs -> bs.name().equals(serviceName));
+    }
+
+    public String serviceId() {
+      return serviceId;
     }
   }
 
@@ -81,26 +98,32 @@ public final class Facility {
   }
 
   public enum HealthService implements ServiceType {
-    Audiology,
-    Cardiology,
-    CaregiverSupport,
-    Covid19Vaccine,
-    DentalServices,
-    Dermatology,
-    EmergencyCare,
-    Gastroenterology,
-    Gynecology,
-    MentalHealthCare,
-    Ophthalmology,
-    Optometry,
-    Orthopedics,
-    Nutrition,
-    Podiatry,
-    PrimaryCare,
-    SpecialtyCare,
-    UrgentCare,
-    Urology,
-    WomensHealth;
+    Audiology("audiology"),
+    Cardiology("cardiology"),
+    CaregiverSupport("caregiverSupport"),
+    Covid19Vaccine("covid19Vaccine"),
+    DentalServices("dentalServices"),
+    Dermatology("dermatology"),
+    EmergencyCare("emergencyCare"),
+    Gastroenterology("gastroenterology"),
+    Gynecology("gynecology"),
+    MentalHealthCare("mentalHealthCare"),
+    Ophthalmology("ophthalmology"),
+    Optometry("optometry"),
+    Orthopedics("orthopedics"),
+    Nutrition("nutrition"),
+    Podiatry("podiatry"),
+    PrimaryCare("primaryCare"),
+    SpecialtyCare("specialtyCare"),
+    UrgentCare("urgentCare"),
+    Urology("urology"),
+    WomensHealth("womensHealth");
+
+    private final String serviceId;
+
+    HealthService(@NotNull String serviceId) {
+      this.serviceId = serviceId;
+    }
 
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
@@ -118,23 +141,45 @@ public final class Facility {
           || Covid19Vaccine.name().equalsIgnoreCase(serviceName);
     }
 
+    /** Determine whether specified service id represents health service. */
+    public static boolean isRecognizedServiceId(String serviceId) {
+      return Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
+    }
+
     /** Determine whether specified service name represents health service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return isRecognizedCovid19ServiceName(serviceName)
-          || "dental".equalsIgnoreCase(serviceName)
-          || "mentalHealth".equalsIgnoreCase(serviceName)
-          || Arrays.stream(values())
-              .parallel()
-              .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
+          || "dental".equals(serviceName)
+          || "mentalHealth".equals(serviceName)
+          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.name().equals(serviceName));
+    }
+
+    public String serviceId() {
+      return serviceId;
     }
   }
 
   public enum OtherService implements ServiceType {
-    OnlineScheduling;
+    OnlineScheduling("onlineScheduling");
+
+    private final String serviceId;
+
+    OtherService(@NotNull String serviceId) {
+      this.serviceId = serviceId;
+    }
+
+    /** Determine whether specified service id represents other service. */
+    public static boolean isRecognizedServiceId(String serviceId) {
+      return Arrays.stream(values()).parallel().anyMatch(os -> os.serviceId().equals(serviceId));
+    }
 
     /** Determine whether specified service name represents other service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return Arrays.stream(values()).parallel().anyMatch(os -> os.name().equals(serviceName));
+    }
+
+    public String serviceId() {
+      return serviceId;
     }
   }
 
@@ -406,6 +451,7 @@ public final class Facility {
     OperatingStatusCode code;
 
     @JsonProperty(value = "additional_info", required = false)
+    @JsonAlias("additionalInfo")
     @Size(max = 300)
     @Schema(
         description =

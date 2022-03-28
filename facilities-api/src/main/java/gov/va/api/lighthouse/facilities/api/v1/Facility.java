@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities.api.v1;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -65,22 +66,31 @@ public final class Facility implements CanBeEmpty {
   }
 
   public enum BenefitsService implements ServiceType {
-    ApplyingForBenefits,
-    BurialClaimAssistance,
-    DisabilityClaimAssistance,
-    eBenefitsRegistrationAssistance,
-    EducationAndCareerCounseling,
-    EducationClaimAssistance,
-    FamilyMemberClaimAssistance,
-    HomelessAssistance,
-    InsuranceClaimAssistanceAndFinancialCounseling,
-    IntegratedDisabilityEvaluationSystemAssistance,
-    Pensions,
-    PreDischargeClaimAssistance,
-    TransitionAssistance,
-    UpdatingDirectDepositInformation,
-    VAHomeLoanAssistance,
-    VocationalRehabilitationAndEmploymentAssistance;
+    ApplyingForBenefits("applyingForBenefits"),
+    BurialClaimAssistance("burialClaimAssistance"),
+    DisabilityClaimAssistance("disabilityClaimAssistance"),
+    eBenefitsRegistrationAssistance("eBenefitsRegistrationAssistance"),
+    EducationAndCareerCounseling("educationAndCareerCounseling"),
+    EducationClaimAssistance("educationClaimAssistance"),
+    FamilyMemberClaimAssistance("familyMemberClaimAssistance"),
+    HomelessAssistance("homelessAssistance"),
+    InsuranceClaimAssistanceAndFinancialCounseling(
+        "insuranceClaimAssistanceAndFinancialCounseling"),
+    IntegratedDisabilityEvaluationSystemAssistance(
+        "integratedDisabilityEvaluationSystemAssistance"),
+    Pensions("pensions"),
+    PreDischargeClaimAssistance("preDischargeClaimAssistance"),
+    TransitionAssistance("transitionAssistance"),
+    UpdatingDirectDepositInformation("updatingDirectDepositInformation"),
+    VAHomeLoanAssistance("vaHomeLoanAssistance"),
+    VocationalRehabilitationAndEmploymentAssistance(
+        "vocationalRehabilitationAndEmploymentAssistance");
+
+    private final String serviceId;
+
+    BenefitsService(@NotNull String serviceId) {
+      this.serviceId = serviceId;
+    }
 
     /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
     @JsonCreator
@@ -90,11 +100,18 @@ public final class Facility implements CanBeEmpty {
           : valueOf(capitalize(name));
     }
 
+    /** Determine whether specified service id represents benefits service. */
+    public static boolean isRecognizedServiceId(String serviceId) {
+      return Arrays.stream(values()).parallel().anyMatch(bs -> bs.serviceId().equals(serviceId));
+    }
+
     /** Determine whether specified service name represents benefits service. */
     public static boolean isRecognizedServiceName(String serviceName) {
-      return Arrays.stream(values())
-          .parallel()
-          .anyMatch(bs -> bs.name().equalsIgnoreCase(serviceName));
+      return Arrays.stream(values()).parallel().anyMatch(bs -> bs.name().equals(serviceName));
+    }
+
+    public String serviceId() {
+      return serviceId;
     }
   }
 
@@ -107,207 +124,213 @@ public final class Facility implements CanBeEmpty {
 
   public enum HealthService implements ServiceType {
     @JsonProperty("adaptiveSports")
-    AdaptiveSports,
+    AdaptiveSports("adaptiveSports"),
     @JsonProperty("addiction")
-    Addiction,
+    Addiction("addiction"),
     @JsonProperty("adviceNurse")
-    AdviceNurse,
+    AdviceNurse("adviceNurse"),
     @JsonProperty("allergy")
-    Allergy,
+    Allergy("allergy"),
     @JsonProperty("amputation")
-    Amputation,
+    Amputation("amputation"),
     @JsonProperty("anesthesia")
-    Anesthesia,
+    Anesthesia("anesthesia"),
     @JsonProperty("audiology")
-    Audiology,
+    Audiology("audiology"),
     @JsonProperty("bariatricSurgery")
-    BariatricSurgery,
+    BariatricSurgery("bariatricSurgery"),
     @JsonProperty("billing")
-    Billing,
+    Billing("billing"),
     @JsonProperty("vision")
-    Vision,
+    Vision("vision"),
     @JsonProperty("cancer")
-    Cancer,
+    Cancer("cancer"),
     @JsonProperty("cardiology")
-    Cardiology,
+    Cardiology("cardiology"),
     @JsonProperty("cardiovascularSurgery")
-    CardiovascularSurgery,
+    CardiovascularSurgery("cardiovascularSurgery"),
     @JsonProperty("caregiverSupport")
-    CaregiverSupport,
+    CaregiverSupport("caregiverSupport"),
     @JsonProperty("cashier")
-    Cashier,
+    Cashier("cashier"),
     @JsonProperty("chiropractic")
-    Chiropractic,
+    Chiropractic("chiropractic"),
     @JsonProperty("colonSurgery")
-    ColonSurgery,
+    ColonSurgery("colonSurgery"),
     @JsonProperty("communityEngagement")
-    CommunityEngagement,
+    CommunityEngagement("communityEngagement"),
     @JsonProperty("complementaryHealth")
-    ComplementaryHealth,
+    ComplementaryHealth("complementaryHealth"),
     @JsonProperty("familyCounseling")
-    FamilyCounseling,
+    FamilyCounseling("familyCounseling"),
     @JsonProperty("covid19Vaccine")
-    Covid19Vaccine,
+    Covid19Vaccine("covid19Vaccine"),
     @JsonProperty("criticalCare")
-    CriticalCare,
+    CriticalCare("criticalCare"),
     @JsonProperty("dental")
-    Dental,
+    Dental("dental"),
     @JsonProperty("dermatology")
-    Dermatology,
+    Dermatology("dermatology"),
     @JsonProperty("diabetic")
-    Diabetic,
+    Diabetic("diabetic"),
     @JsonProperty("emergencyCare")
-    EmergencyCare,
+    EmergencyCare("emergencyCare"),
     @JsonProperty("endocrinology")
-    Endocrinology,
+    Endocrinology("endocrinology"),
     @JsonProperty("gastroenterology")
-    Gastroenterology,
+    Gastroenterology("gastroenterology"),
     @JsonProperty("genomicMedicine")
-    GenomicMedicine,
+    GenomicMedicine("genomicMedicine"),
     @JsonProperty("geriatrics")
-    Geriatrics,
+    Geriatrics("geriatrics"),
     @JsonProperty("griefCounseling")
-    GriefCounseling,
+    GriefCounseling("griefCounseling"),
     @JsonProperty("gynecology")
-    Gynecology,
+    Gynecology("gynecology"),
     @JsonProperty("hematology")
-    Hematology,
+    Hematology("hematology"),
     @JsonProperty("hiv")
-    Hiv,
+    Hiv("hiv"),
     @JsonProperty("homeless")
-    Homeless,
+    Homeless("homeless"),
     @JsonProperty("hospitalMedicine")
-    HospitalMedicine,
+    HospitalMedicine("hospitalMedicine"),
     @JsonProperty("infectiousDisease")
-    InfectiousDisease,
+    InfectiousDisease("infectiousDisease"),
     @JsonProperty("internalMedicine")
-    InternalMedicine,
+    InternalMedicine("internalMedicine"),
     @JsonProperty("domesticAbuseSupport")
-    DomesticAbuseSupport,
+    DomesticAbuseSupport("domesticAbuseSupport"),
     @JsonProperty("laboratory")
-    Laboratory,
+    Laboratory("laboratory"),
     @JsonProperty("lgbtq")
-    Lgbtq,
+    Lgbtq("lgbtq"),
     @JsonProperty("medicalRecords")
-    MedicalRecords,
+    MedicalRecords("medicalRecords"),
     @JsonProperty("mentalHealth")
-    MentalHealth,
+    MentalHealth("mentalHealth"),
     @JsonProperty("militarySexualTrauma")
-    MilitarySexualTrauma,
+    MilitarySexualTrauma("militarySexualTrauma"),
     @JsonProperty("minorityCare")
-    MinorityCare,
+    MinorityCare("minorityCare"),
     @JsonProperty("weightManagement")
-    WeightManagement,
+    WeightManagement("weightManagement"),
     @JsonProperty("myHealtheVetCoordinator")
-    MyHealtheVetCoordinator,
+    MyHealtheVetCoordinator("myHealtheVetCoordinator"),
     @JsonProperty("nephrology")
-    Nephrology,
+    Nephrology("nephrology"),
     @JsonProperty("neurology")
-    Neurology,
+    Neurology("neurology"),
     @JsonProperty("neurosurgery")
-    Neurosurgery,
+    Neurosurgery("neurosurgery"),
     @JsonProperty("nutrition")
-    Nutrition,
+    Nutrition("nutrition"),
     @JsonProperty("ophthalmology")
-    Ophthalmology,
+    Ophthalmology("ophthalmology"),
     @JsonProperty("optometry")
-    Optometry,
+    Optometry("optometry"),
     @JsonProperty("orthopedics")
-    Orthopedics,
+    Orthopedics("orthopedics"),
     @JsonProperty("otolaryngology")
-    Otolaryngology,
+    Otolaryngology("otolaryngology"),
     @JsonProperty("outpatientSurgery")
-    OutpatientSurgery,
+    OutpatientSurgery("outpatientSurgery"),
     @JsonProperty("painManagement")
-    PainManagement,
+    PainManagement("painManagement"),
     @JsonProperty("hospice")
-    Hospice,
+    Hospice("hospice"),
     @JsonProperty("patientAdvocates")
-    PatientAdvocates,
+    PatientAdvocates("patientAdvocates"),
     @JsonProperty("pharmacy")
-    Pharmacy,
+    Pharmacy("pharmacy"),
     @JsonProperty("physicalMedicine")
-    PhysicalMedicine,
+    PhysicalMedicine("physicalMedicine"),
     @JsonProperty("physicalTherapy")
-    PhysicalTherapy,
+    PhysicalTherapy("physicalTherapy"),
     @JsonProperty("plasticSurgery")
-    PlasticSurgery,
+    PlasticSurgery("plasticSurgery"),
     @JsonProperty("podiatry")
-    Podiatry,
+    Podiatry("podiatry"),
     @JsonProperty("polytrauma")
-    Polytrauma,
+    Polytrauma("polytrauma"),
     @JsonProperty("primaryCare")
-    PrimaryCare,
+    PrimaryCare("primaryCare"),
     @JsonProperty("psychiatry")
-    Psychiatry,
+    Psychiatry("psychiatry"),
     @JsonProperty("psychology")
-    Psychology,
+    Psychology("psychology"),
     @JsonProperty("ptsd")
-    Ptsd,
+    Ptsd("ptsd"),
     @JsonProperty("pulmonaryMedicine")
-    PulmonaryMedicine,
+    PulmonaryMedicine("pulmonaryMedicine"),
     @JsonProperty("radiationOncology")
-    RadiationOncology,
+    RadiationOncology("radiationOncology"),
     @JsonProperty("radiology")
-    Radiology,
+    Radiology("radiology"),
     @JsonProperty("recreationTherapy")
-    RecreationTherapy,
+    RecreationTherapy("recreationTherapy"),
     @JsonProperty("registerForCare")
-    RegisterForCare,
+    RegisterForCare("registerForCare"),
     @JsonProperty("registryExams")
-    RegistryExams,
+    RegistryExams("registryExams"),
     @JsonProperty("rehabilitation")
-    Rehabilitation,
+    Rehabilitation("rehabilitation"),
     @JsonProperty("prosthetics")
-    Prosthetics,
+    Prosthetics("prosthetics"),
     @JsonProperty("transitionCounseling")
-    TransitionCounseling,
+    TransitionCounseling("transitionCounseling"),
     @JsonProperty("rheumatology")
-    Rheumatology,
+    Rheumatology("rheumatology"),
     @JsonProperty("sleepMedicine")
-    SleepMedicine,
+    SleepMedicine("sleepMedicine"),
     @JsonProperty("smoking")
-    Smoking,
+    Smoking("smoking"),
     @JsonProperty("socialWork")
-    SocialWork,
+    SocialWork("socialWork"),
     @JsonProperty("specialtyCare")
-    SpecialtyCare,
+    SpecialtyCare("specialtyCare"),
     @JsonProperty("spinalInjury")
-    SpinalInjury,
+    SpinalInjury("spinalInjury"),
     @JsonProperty("suicidePrevention")
-    SuicidePrevention,
+    SuicidePrevention("suicidePrevention"),
     @JsonProperty("surgery")
-    Surgery,
+    Surgery("surgery"),
     @JsonProperty("surgicalOncology")
-    SurgicalOncology,
+    SurgicalOncology("surgicalOncology"),
     @JsonProperty("telehealth")
-    Telehealth,
+    Telehealth("telehealth"),
     @JsonProperty("thoracicSurgery")
-    ThoracicSurgery,
+    ThoracicSurgery("thoracicSurgery"),
     @JsonProperty("transplantSurgery")
-    TransplantSurgery,
+    TransplantSurgery("transplantSurgery"),
     @JsonProperty("travelReimbursement")
-    TravelReimbursement,
+    TravelReimbursement("travelReimbursement"),
     @JsonProperty("urgentCare")
-    UrgentCare,
+    UrgentCare("urgentCare"),
     @JsonProperty("urology")
-    Urology,
+    Urology("urology"),
     @JsonProperty("vascularSurgery")
-    VascularSurgery,
+    VascularSurgery("vascularSurgery"),
     @JsonProperty("veteranConnections")
-    VeteranConnections,
+    VeteranConnections("veteranConnections"),
     @JsonProperty("employmentPrograms")
-    EmploymentPrograms,
+    EmploymentPrograms("employmentPrograms"),
     @JsonProperty("mobility")
-    Mobility,
+    Mobility("mobility"),
     @JsonProperty("wholeHealth")
-    WholeHealth,
+    WholeHealth("wholeHealth"),
     @JsonProperty("womensHealth")
-    WomensHealth,
+    WomensHealth("womensHealth"),
     @JsonProperty("workshops")
-    Workshops,
+    Workshops("workshops"),
     @JsonProperty("wound")
-    Wound;
+    Wound("wound");
+
+    private final String serviceId;
+
+    HealthService(@NotNull String serviceId) {
+      this.serviceId = serviceId;
+    }
 
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
@@ -321,27 +344,48 @@ public final class Facility implements CanBeEmpty {
 
     /** Determine whether specified service name represents Covid-19 health service. */
     public static boolean isRecognizedCovid19ServiceName(String serviceName) {
-      return "COVID-19 vaccines".equals(serviceName)
-          || Covid19Vaccine.name().equalsIgnoreCase(serviceName);
+      return "COVID-19 vaccines".equals(serviceName) || Covid19Vaccine.name().equals(serviceName);
+    }
+
+    /** Determine whether specified service id represents health service. */
+    public static boolean isRecognizedServiceId(String serviceId) {
+      return Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
     }
 
     /** Determine whether specified service name represents health service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return isRecognizedCovid19ServiceName(serviceName)
-          || "DentalServices".equalsIgnoreCase(serviceName)
-          || "MentalHealthCare".equalsIgnoreCase(serviceName)
-          || Arrays.stream(values())
-              .parallel()
-              .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
+          || "DentalServices".equals(serviceName)
+          || "MentalHealthCare".equals(serviceName)
+          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.name().equals(serviceName));
+    }
+
+    public String serviceId() {
+      return serviceId;
     }
   }
 
   public enum OtherService implements ServiceType {
-    OnlineScheduling;
+    OnlineScheduling("onlineScheduling");
+
+    private final String serviceId;
+
+    OtherService(@NotNull String serviceId) {
+      this.serviceId = serviceId;
+    }
+
+    /** Determine whether specified service id represents other service. */
+    public static boolean isRecognizedServiceId(String serviceId) {
+      return Arrays.stream(values()).parallel().anyMatch(os -> os.serviceId().equals(serviceId));
+    }
 
     /** Determine whether specified service name represents other service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return Arrays.stream(values()).parallel().anyMatch(os -> os.name().equals(serviceName));
+    }
+
+    public String serviceId() {
+      return serviceId;
     }
   }
 
@@ -625,6 +669,7 @@ public final class Facility implements CanBeEmpty {
     OperatingStatusCode code;
 
     @JsonProperty(required = false)
+    @JsonAlias("additional_info")
     @Size(max = 300)
     @Schema(
         description =

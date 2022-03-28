@@ -3,9 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
-import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
-import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,7 +21,7 @@ public abstract class BaseCmsOverlayController {
     if (ObjectUtils.isNotEmpty(overlay.detailedServices())) {
       overlay.detailedServices(
           overlay.detailedServices().parallelStream()
-              .filter(ds -> isRecognizedServiceName(ds.name()))
+              .filter(ds -> isRecognizedServiceId(ds.serviceInfo().serviceId()))
               .collect(Collectors.toList()));
     }
     return overlay;
@@ -43,19 +40,19 @@ public abstract class BaseCmsOverlayController {
             ? Collections.emptyList()
             : List.of(
                 mapper.readValue(cmsOverlayEntity.cmsServices(), DatamartDetailedService[].class));
-    final List<String> overlayServiceNames =
-        ds.stream().map(DatamartDetailedService::name).collect(Collectors.toList());
+    final List<String> overlayServiceIds =
+        ds.stream().map(dds -> dds.serviceInfo().serviceId()).collect(Collectors.toList());
     final List<DatamartDetailedService> finalDetailedServices = new ArrayList<>();
     finalDetailedServices.addAll(
         currentDetailedServices.parallelStream()
             .filter(
                 currentDetailedService ->
-                    !overlayServiceNames.contains(currentDetailedService.name()))
+                    !overlayServiceIds.contains(currentDetailedService.serviceInfo().serviceId()))
             .collect(Collectors.toList()));
     finalDetailedServices.addAll(
         ds.parallelStream().filter(d -> d.active()).collect(Collectors.toList()));
     updateServiceUrlPaths(id, finalDetailedServices);
-    finalDetailedServices.sort(Comparator.comparing(DatamartDetailedService::name));
+    finalDetailedServices.sort(Comparator.comparing(dds -> dds.serviceInfo().serviceId()));
     return finalDetailedServices;
   }
 
@@ -67,7 +64,7 @@ public abstract class BaseCmsOverlayController {
           detailedServices.parallelStream().filter(d -> d.active()).collect(Collectors.toList()));
     }
     updateServiceUrlPaths(id, activeServices);
-    activeServices.sort(Comparator.comparing(DatamartDetailedService::name));
+    activeServices.sort(Comparator.comparing(dds -> dds.serviceInfo().serviceId()));
     return activeServices;
   }
 
@@ -78,7 +75,7 @@ public abstract class BaseCmsOverlayController {
       @NonNull String facilityId, @NonNull String serviceId) {
     List<DatamartDetailedService> detailedServices =
         getOverlayDetailedServices(facilityId).parallelStream()
-            .filter(ds -> ds.name().equalsIgnoreCase(serviceId))
+            .filter(ds -> ds.serviceInfo().serviceId().equals(serviceId))
             .collect(Collectors.toList());
     return detailedServices.isEmpty() ? null : detailedServices.get(0);
   }
@@ -93,10 +90,6 @@ public abstract class BaseCmsOverlayController {
     return CmsOverlayHelper.getDetailedServices(existingOverlayEntity.get().cmsServices());
   }
 
-  /** Determine whether specified service name matches that for datamart service. */
-  protected boolean isRecognizedServiceName(String name) {
-    return HealthService.isRecognizedServiceName(name)
-        || BenefitsService.isRecognizedServiceName(name)
-        || OtherService.isRecognizedServiceName(name);
-  }
+  /** Determine whether specified service id matches that for service. */
+  protected abstract boolean isRecognizedServiceId(String serviceId);
 }

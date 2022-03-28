@@ -1,7 +1,6 @@
 package gov.va.api.lighthouse.facilities.collector;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
-import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 
 import com.google.common.collect.Streams;
 import gov.va.api.lighthouse.facilities.CmsOverlayEntity;
@@ -9,6 +8,7 @@ import gov.va.api.lighthouse.facilities.CmsOverlayHelper;
 import gov.va.api.lighthouse.facilities.CmsOverlayRepository;
 import gov.va.api.lighthouse.facilities.DatamartCmsOverlay;
 import gov.va.api.lighthouse.facilities.DatamartDetailedService;
+import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -31,7 +31,9 @@ public class CmsOverlayCollector {
   public static boolean containsCovidService(List<DatamartDetailedService> detailedServices) {
     return detailedServices != null
         && detailedServices.parallelStream()
-            .anyMatch(f -> f.name().equals(CMS_OVERLAY_SERVICE_NAME_COVID_19));
+            .anyMatch(
+                ds ->
+                    ds.serviceInfo().serviceId().equals(HealthService.Covid19Vaccine.serviceId()));
   }
 
   private static <K, V>

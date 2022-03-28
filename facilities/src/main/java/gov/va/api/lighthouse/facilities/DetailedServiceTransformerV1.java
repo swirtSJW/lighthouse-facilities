@@ -1,10 +1,10 @@
 package gov.va.api.lighthouse.facilities;
 
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
+import static java.util.Collections.emptyList;
 
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -16,7 +16,7 @@ public class DetailedServiceTransformerV1 {
   /** Transform DatamartDetailedService to version 1 DetailedService. */
   public static DetailedService toDetailedService(@NonNull DatamartDetailedService dds) {
     return DetailedService.builder()
-        .name(toDetailedServiceName(dds.name()))
+        .serviceInfo(toDetailedServiceInfo(dds.serviceInfo()))
         .active(dds.active())
         .changed(dds.changed())
         .descriptionFacility(dds.descriptionFacility())
@@ -43,7 +43,18 @@ public class DetailedServiceTransformerV1 {
             ? datamartDetailedServiceEmailContacts.stream()
                 .map(DetailedServiceTransformerV1::transformDetailedServiceEmailContact)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
+  }
+
+  /** Transform DatamartDetailedService ServiceInfo object into DetailedService ServiceInfo. */
+  public static DetailedService.ServiceInfo toDetailedServiceInfo(
+      @NonNull DatamartDetailedService.ServiceInfo datamartDetailedServiceInfo) {
+    return DetailedService.ServiceInfo.builder()
+        .serviceId(datamartDetailedServiceInfo.serviceId())
+        .name(toDetailedServiceName(datamartDetailedServiceInfo.name()))
+        .serviceType(
+            DetailedService.ServiceType.valueOf(datamartDetailedServiceInfo.serviceType().name()))
+        .build();
   }
 
   /**
@@ -58,7 +69,7 @@ public class DetailedServiceTransformerV1 {
             ? datamartDetailedServiceLocations.stream()
                 .map(DetailedServiceTransformerV1::transformDetailedServiceLocation)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
   }
 
   /** Transform DatamartDetailedService name to version 1 DetailedService name. */
@@ -86,7 +97,7 @@ public class DetailedServiceTransformerV1 {
             ? datamartDetailedServicePhoneNumbers.stream()
                 .map(DetailedServiceTransformerV1::transfromDetailedServiceAppointmentPhoneNumber)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
   }
 
   /** Transform a list of DatamartDetailedService> to a list of version 1 DetailedService. */
@@ -98,24 +109,24 @@ public class DetailedServiceTransformerV1 {
             ? detailedServices.stream()
                 .map(DetailedServiceTransformerV1::toDetailedService)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
   }
 
   /** Transform version 1 DetailedService to version agnostic DatamartDetailedService. */
   public static DatamartDetailedService toVersionAgnosticDetailedService(
-      @NonNull DetailedService dds) {
+      @NonNull DetailedService ds) {
     return DatamartDetailedService.builder()
-        .name(toVersionAgnosticDetailedServiceName(dds.name()))
-        .active(dds.active())
-        .changed(dds.changed())
-        .descriptionFacility(dds.descriptionFacility())
-        .appointmentLeadIn(dds.appointmentLeadIn())
-        .onlineSchedulingAvailable(dds.onlineSchedulingAvailable())
-        .path(dds.path())
-        .phoneNumbers(toVersionAgnosticDetailedServicePhoneNumbers(dds.phoneNumbers()))
-        .referralRequired(dds.referralRequired())
-        .serviceLocations(toVersionAgnosticDetailedServiceLocations(dds.serviceLocations()))
-        .walkInsAccepted(dds.walkInsAccepted())
+        .serviceInfo(toVersionAgnosticServiceInfo(ds.serviceInfo()))
+        .active(ds.active())
+        .changed(ds.changed())
+        .descriptionFacility(ds.descriptionFacility())
+        .appointmentLeadIn(ds.appointmentLeadIn())
+        .onlineSchedulingAvailable(ds.onlineSchedulingAvailable())
+        .path(ds.path())
+        .phoneNumbers(toVersionAgnosticDetailedServicePhoneNumbers(ds.phoneNumbers()))
+        .referralRequired(ds.referralRequired())
+        .serviceLocations(toVersionAgnosticDetailedServiceLocations(ds.serviceLocations()))
+        .walkInsAccepted(ds.walkInsAccepted())
         .build();
   }
 
@@ -132,7 +143,7 @@ public class DetailedServiceTransformerV1 {
             ? detailedServiceEmailContacts.stream()
                 .map(DetailedServiceTransformerV1::transformDetailedServiceEmailContact)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
   }
 
   /**
@@ -148,7 +159,7 @@ public class DetailedServiceTransformerV1 {
             ? detailedServiceLocations.stream()
                 .map(DetailedServiceTransformerV1::transformDetailedServiceLocation)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
   }
 
   /** Transform version 1 DetailedService name to DatamartDetailedService name. */
@@ -177,7 +188,7 @@ public class DetailedServiceTransformerV1 {
             ? detailedServicePhoneNumbers.stream()
                 .map(DetailedServiceTransformerV1::transfromDetailedServiceAppointmentPhoneNumber)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
   }
 
   /**
@@ -192,7 +203,17 @@ public class DetailedServiceTransformerV1 {
             ? detailedServices.stream()
                 .map(DetailedServiceTransformerV1::toVersionAgnosticDetailedService)
                 .collect(Collectors.toList())
-            : new ArrayList<>();
+            : emptyList();
+  }
+
+  /** Transform DetailedService ServiceInfo object into DatamartDetailedService ServiceInfo. */
+  public static DatamartDetailedService.ServiceInfo toVersionAgnosticServiceInfo(
+      @NonNull DetailedService.ServiceInfo serviceInfo) {
+    return DatamartDetailedService.ServiceInfo.builder()
+        .serviceId(serviceInfo.serviceId())
+        .name(toVersionAgnosticDetailedServiceName(serviceInfo.name()))
+        .serviceType(DatamartDetailedService.ServiceType.valueOf(serviceInfo.serviceType().name()))
+        .build();
   }
 
   /**

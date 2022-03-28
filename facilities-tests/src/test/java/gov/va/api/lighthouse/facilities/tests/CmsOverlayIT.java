@@ -12,6 +12,7 @@ import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.ActiveStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatus;
 import gov.va.api.lighthouse.facilities.api.v0.Facility.OperatingStatusCode;
@@ -35,6 +36,7 @@ public class CmsOverlayIT {
   private static final String DETAILED_SERVICE_JSON_BODY =
       "{    \"detailed_services\":["
           + "{"
+          + "\"service_id\":\"covid19Vaccine\","
           + "\"name\":\"COVID-19 vaccines\","
           + "\"active\":true,"
           + "\"changed\": \"2021-02-04T22:36:49+00:00\","
@@ -202,6 +204,7 @@ public class CmsOverlayIT {
   private List<DetailedService> detailedServices() {
     return List.of(
         DetailedService.builder()
+            .serviceId(Facility.HealthService.Covid19Vaccine.serviceId())
             .name("COVID-19 vaccines")
             .descriptionFacility("I'm a facility service!")
             .appointmentLeadIn("Your VA health care team will contact you if you...more text")
