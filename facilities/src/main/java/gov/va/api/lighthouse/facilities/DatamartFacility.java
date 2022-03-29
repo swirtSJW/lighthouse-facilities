@@ -126,8 +126,6 @@ public class DatamartFacility {
     CriticalCare,
     @JsonProperty("dental")
     Dental,
-    // DentalServices is a V0 holdover
-    DentalServices,
     @JsonProperty("dermatology")
     Dermatology,
     @JsonProperty("diabetic")
@@ -168,8 +166,6 @@ public class DatamartFacility {
     MedicalRecords,
     @JsonProperty("mentalHealth")
     MentalHealth,
-    // MentalHealthCare is a V0 holdover
-    MentalHealthCare,
     @JsonProperty("militarySexualTrauma")
     MilitarySexualTrauma,
     @JsonProperty("minorityCare")

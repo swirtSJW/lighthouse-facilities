@@ -3,9 +3,6 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
-import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
-import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -93,10 +90,6 @@ public abstract class BaseCmsOverlayController {
     return CmsOverlayHelper.getDetailedServices(existingOverlayEntity.get().cmsServices());
   }
 
-  /** Determine whether specified service name matches that for datamart service. */
-  protected boolean isRecognizedServiceName(String name) {
-    return HealthService.isRecognizedServiceName(name)
-        || BenefitsService.isRecognizedServiceName(name)
-        || OtherService.isRecognizedServiceName(name);
-  }
+  /** Determine whether specified service name matches that for service. */
+  protected abstract boolean isRecognizedServiceName(String name);
 }

@@ -7,7 +7,9 @@ import static gov.va.api.lighthouse.facilities.DatamartFacility.HealthService.is
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v0.CmsOverlayResponse;
-import gov.va.api.lighthouse.facilities.api.v0.Facility;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.HealthService;
+import gov.va.api.lighthouse.facilities.api.v0.Facility.OtherService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -74,7 +76,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
                         .detailedServices(
                             CmsOverlayHelper.getDetailedServices(cmsOverlayEntity.cmsServices())
                                 .parallelStream()
-                                .filter(ds -> isRecognizedV0ServiceName(ds.name()))
+                                .filter(ds -> isRecognizedServiceName(ds.name()))
                                 .collect(Collectors.toList()))
                         .build()))
             .build();
@@ -87,10 +89,10 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
   }
 
   /** Determine whether specified service name matches that for V0 service. */
-  private boolean isRecognizedV0ServiceName(String name) {
-    return Facility.HealthService.isRecognizedServiceName(name)
-        || Facility.BenefitsService.isRecognizedServiceName(name)
-        || Facility.OtherService.isRecognizedServiceName(name);
+  protected boolean isRecognizedServiceName(String name) {
+    return HealthService.isRecognizedServiceName(name)
+        || BenefitsService.isRecognizedServiceName(name)
+        || OtherService.isRecognizedServiceName(name);
   }
 
   /** Upload CMS overlay associated with specified facility. */

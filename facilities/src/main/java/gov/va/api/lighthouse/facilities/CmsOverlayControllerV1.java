@@ -12,6 +12,9 @@ import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServiceResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedServicesResponse;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
+import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -144,6 +147,13 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
   @InitBinder
   void initDirectFieldAccess(DataBinder dataBinder) {
     dataBinder.initDirectFieldAccess();
+  }
+
+  /** Determine whether specified service name matches that for V1 service. */
+  protected boolean isRecognizedServiceName(String name) {
+    return HealthService.isRecognizedServiceName(name)
+        || BenefitsService.isRecognizedServiceName(name)
+        || OtherService.isRecognizedServiceName(name);
   }
 
   /** Upload CMS overlay associated with specified facility. */
