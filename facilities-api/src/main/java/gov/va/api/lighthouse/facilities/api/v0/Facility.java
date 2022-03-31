@@ -149,9 +149,11 @@ public final class Facility {
     /** Determine whether specified service name represents health service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return isRecognizedCovid19ServiceName(serviceName)
-          || "dental".equals(serviceName)
-          || "mentalHealth".equals(serviceName)
-          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.name().equals(serviceName));
+          || "dental".equalsIgnoreCase(serviceName)
+          || "mentalHealth".equalsIgnoreCase(serviceName)
+          || Arrays.stream(values())
+              .parallel()
+              .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
     }
 
     public String serviceId() {

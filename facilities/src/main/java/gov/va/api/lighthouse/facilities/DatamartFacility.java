@@ -329,9 +329,11 @@ public class DatamartFacility {
     /** Determine whether specified service name represents health service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return isRecognizedCovid19ServiceName(serviceName)
-          || "DentalServices".equals(serviceName)
-          || "MentalHealthCare".equals(serviceName)
-          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.name().equals(serviceName));
+          || "DentalServices".equalsIgnoreCase(serviceName)
+          || "MentalHealthCare".equalsIgnoreCase(serviceName)
+          || Arrays.stream(values())
+              .parallel()
+              .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
     }
 
     public String serviceId() {

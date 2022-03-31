@@ -344,7 +344,8 @@ public final class Facility implements CanBeEmpty {
 
     /** Determine whether specified service name represents Covid-19 health service. */
     public static boolean isRecognizedCovid19ServiceName(String serviceName) {
-      return "COVID-19 vaccines".equals(serviceName) || Covid19Vaccine.name().equals(serviceName);
+      return "COVID-19 vaccines".equals(serviceName)
+          || Covid19Vaccine.name().equalsIgnoreCase(serviceName);
     }
 
     /** Determine whether specified service id represents health service. */
@@ -355,9 +356,11 @@ public final class Facility implements CanBeEmpty {
     /** Determine whether specified service name represents health service. */
     public static boolean isRecognizedServiceName(String serviceName) {
       return isRecognizedCovid19ServiceName(serviceName)
-          || "DentalServices".equals(serviceName)
-          || "MentalHealthCare".equals(serviceName)
-          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.name().equals(serviceName));
+          || "DentalServices".equalsIgnoreCase(serviceName)
+          || "MentalHealthCare".equalsIgnoreCase(serviceName)
+          || Arrays.stream(values())
+              .parallel()
+              .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
     }
 
     public String serviceId() {
