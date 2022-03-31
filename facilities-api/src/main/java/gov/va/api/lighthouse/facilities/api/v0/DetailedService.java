@@ -31,7 +31,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonPropertyOrder({
-  "serviceId",
+  "service_id",
   "name",
   "description_facility",
   "appointment_leadin",
