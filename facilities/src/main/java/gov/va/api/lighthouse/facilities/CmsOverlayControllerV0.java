@@ -21,7 +21,6 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -102,7 +101,7 @@ public class CmsOverlayControllerV0 extends BaseCmsOverlayController {
           overlay.detailedServices().parallelStream()
               .map(
                   ds ->
-                      StringUtils.isNotEmpty(ds.serviceId())
+                      isNotEmpty(ds.serviceId())
                           ? ds
                           : ds.serviceId(getServiceIdFromServiceName(ds.name())))
               .filter(ds -> isRecognizedServiceId(ds.serviceId()))
