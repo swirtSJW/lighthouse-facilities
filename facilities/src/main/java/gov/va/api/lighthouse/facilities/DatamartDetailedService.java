@@ -1,6 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -82,6 +83,43 @@ public class DatamartDetailedService {
                 ? DatamartDetailedService.ServiceType.Other
                 : // Default to health service type
                 DatamartDetailedService.ServiceType.Health;
+  }
+
+  private static boolean isRecognizedServiceName(String serviceName) {
+    return isNotEmpty(serviceName)
+        && (HealthService.isRecognizedServiceName(serviceName)
+            || BenefitsService.isRecognizedServiceName(serviceName)
+            || OtherService.isRecognizedServiceName(serviceName));
+  }
+
+  /** Provide backwards compatability with version 0 detailed services. */
+  @JsonProperty("name")
+  public DatamartDetailedService serviceName(String serviceName) {
+    if (isRecognizedServiceName(serviceName)) {
+      serviceInfo(
+          serviceInfo() == null
+              ? ServiceInfo.builder()
+                  .serviceId(
+                      HealthService.isRecognizedServiceName(serviceName)
+                          ? HealthService.fromString(serviceName).serviceId()
+                          : BenefitsService.isRecognizedServiceId(serviceName)
+                              ? BenefitsService.fromString(serviceName).serviceId()
+                              : OtherService.isRecognizedServiceId(serviceName)
+                                  ? OtherService.valueOf(serviceName).serviceId()
+                                  : ServiceInfo.INVALID_SVC_ID)
+                  .name(serviceName)
+                  .serviceType(
+                      HealthService.isRecognizedServiceId(serviceName)
+                          ? ServiceType.Health
+                          : BenefitsService.isRecognizedServiceId(serviceName)
+                              ? ServiceType.Benefits
+                              : OtherService.isRecognizedServiceId(serviceName)
+                                  ? ServiceType.Other
+                                  : ServiceType.Health)
+                  .build()
+              : serviceInfo().name(serviceName));
+    }
+    return this;
   }
 
   public enum ServiceType {

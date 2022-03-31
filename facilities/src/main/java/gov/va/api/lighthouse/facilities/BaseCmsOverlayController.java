@@ -35,13 +35,19 @@ public abstract class BaseCmsOverlayController {
       ObjectMapper mapper) {
     final List<DatamartDetailedService> ds =
         (detailedServices == null) ? Collections.emptyList() : detailedServices;
-    List<DatamartDetailedService> currentDetailedServices =
+    final List<String> overlayServiceIds =
+        ds.parallelStream().map(dds -> dds.serviceInfo().serviceId()).collect(Collectors.toList());
+    // Detailed services represented in pre-serviceInfo block format that have unrecognized service
+    // names will have null serviceInfo block when deserialized.
+    final List<DatamartDetailedService> currentDetailedServices =
         cmsOverlayEntity.cmsServices() == null
             ? Collections.emptyList()
             : List.of(
-                mapper.readValue(cmsOverlayEntity.cmsServices(), DatamartDetailedService[].class));
-    final List<String> overlayServiceIds =
-        ds.stream().map(dds -> dds.serviceInfo().serviceId()).collect(Collectors.toList());
+                    mapper.readValue(
+                        cmsOverlayEntity.cmsServices(), DatamartDetailedService[].class))
+                .parallelStream()
+                .filter(dds -> dds.serviceInfo() != null)
+                .collect(Collectors.toList());
     final List<DatamartDetailedService> finalDetailedServices = new ArrayList<>();
     finalDetailedServices.addAll(
         currentDetailedServices.parallelStream()
