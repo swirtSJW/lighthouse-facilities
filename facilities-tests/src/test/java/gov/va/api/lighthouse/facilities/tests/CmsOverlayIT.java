@@ -417,6 +417,7 @@ public class CmsOverlayIT {
     assertThat(cmsOverlay.overlay().operatingStatus()).isEqualTo(ops);
     assertThat(cmsOverlay.overlay().detailedServices())
         .usingRecursiveComparison()
+        .ignoringFields("serviceId")
         .isEqualTo(detailedServices());
     facility =
         ExpectedResponse.of(
@@ -428,6 +429,7 @@ public class CmsOverlayIT {
     assertThat(facility.attributes().operatingStatus()).isEqualTo(ops);
     assertThat(facility.attributes().detailedServices())
         .usingRecursiveComparison()
+        .ignoringFields("serviceId")
         .isEqualTo(detailedServices());
   }
 
