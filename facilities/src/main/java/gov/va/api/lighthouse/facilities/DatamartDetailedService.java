@@ -96,24 +96,25 @@ public class DatamartDetailedService {
   @JsonProperty("name")
   public DatamartDetailedService serviceName(String serviceName) {
     if (isRecognizedServiceName(serviceName)) {
+      // Update service info based on recognized service name
       serviceInfo(
           serviceInfo() == null
               ? ServiceInfo.builder()
                   .serviceId(
                       HealthService.isRecognizedServiceName(serviceName)
                           ? HealthService.fromString(serviceName).serviceId()
-                          : BenefitsService.isRecognizedServiceId(serviceName)
+                          : BenefitsService.isRecognizedServiceName(serviceName)
                               ? BenefitsService.fromString(serviceName).serviceId()
-                              : OtherService.isRecognizedServiceId(serviceName)
+                              : OtherService.isRecognizedServiceName(serviceName)
                                   ? OtherService.valueOf(serviceName).serviceId()
                                   : ServiceInfo.INVALID_SVC_ID)
                   .name(serviceName)
                   .serviceType(
-                      HealthService.isRecognizedServiceId(serviceName)
+                      HealthService.isRecognizedServiceName(serviceName)
                           ? ServiceType.Health
-                          : BenefitsService.isRecognizedServiceId(serviceName)
+                          : BenefitsService.isRecognizedServiceName(serviceName)
                               ? ServiceType.Benefits
-                              : OtherService.isRecognizedServiceId(serviceName)
+                              : OtherService.isRecognizedServiceName(serviceName)
                                   ? ServiceType.Other
                                   : ServiceType.Health)
                   .build()
