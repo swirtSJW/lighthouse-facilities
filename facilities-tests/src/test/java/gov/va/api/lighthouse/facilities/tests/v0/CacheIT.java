@@ -173,14 +173,14 @@ public class CacheIT {
   @Test
   void allCsvWithCacheEvictedByPerformingReload() {
     assumeEnvironmentNotIn(Environment.LAB, Environment.PROD);
-    SystemDefinitions.Service svc = systemDefinition().facilities();
-    SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
     // Load all facilities
+    SystemDefinitions.Service svcInternal = systemDefinition().facilitiesInternal();
     ExpectedResponse.of(
             requestSpecification()
                 .request(Method.GET, svcInternal.urlWithApiPath() + "internal/management/reload"))
         .expect(200);
     // Initial call to /all csv
+    SystemDefinitions.Service svc = systemDefinition().facilities();
     Instant start = Instant.now();
     ExpectedResponse.of(
             requestSpecification()
@@ -399,7 +399,7 @@ public class CacheIT {
         .expect(200);
     Instant finish = Instant.now();
     long initialCallTimeInMillis = Duration.between(start, finish).toMillis();
-    assertThat(initialCallTimeInMillis).isBetween(100L, 4500L);
+    assertThat(initialCallTimeInMillis).isBetween(50L, 4500L);
     // Call to /all returning cached result
     start = Instant.now();
     ExpectedResponse.of(
