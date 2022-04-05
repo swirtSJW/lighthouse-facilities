@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig.createMapper;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_benefits_facility;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_cemetery;
 import static gov.va.api.lighthouse.facilities.DatamartFacility.FacilityType.va_health_facility;
@@ -86,8 +87,7 @@ public class InternalFacilitiesController {
 
   private static final Pattern ZIP_PATTERN = Pattern.compile(ZIP_REGEX);
 
-  private static final ObjectMapper DATAMART_MAPPER =
-      DatamartFacilitiesJacksonConfig.createMapper();
+  private static final ObjectMapper DATAMART_MAPPER = createMapper();
 
   private final FacilitiesCollector collector;
 

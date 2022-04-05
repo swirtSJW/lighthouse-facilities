@@ -1,5 +1,7 @@
 package gov.va.api.lighthouse.facilities;
 
+import static gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig.createMapper;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
 import java.util.List;
@@ -10,8 +12,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class CmsOverlayHelper {
 
-  private static final ObjectMapper DATAMART_MAPPER =
-      DatamartFacilitiesJacksonConfig.createMapper();
+  private static final ObjectMapper DATAMART_MAPPER = createMapper();
 
   /** Obtain list of detailed services from JSON string. */
   @SneakyThrows
