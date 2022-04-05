@@ -7,6 +7,8 @@ import static gov.va.api.lighthouse.facilities.ControllersV1.validateLatLong;
 import static gov.va.api.lighthouse.facilities.ControllersV1.validateServices;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.distance;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.haversine;
+import static gov.va.api.lighthouse.vulcan.Vulcan.returnNothing;
+import static gov.va.api.lighthouse.vulcan.Vulcan.useUrl;
 import static java.util.stream.Collectors.toList;
 
 import gov.va.api.lighthouse.facilities.api.ServiceType;
@@ -14,6 +16,9 @@ import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
+import gov.va.api.lighthouse.vulcan.Vulcan;
+import gov.va.api.lighthouse.vulcan.VulcanConfiguration;
+import gov.va.api.lighthouse.vulcan.mappings.Mappings;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
@@ -21,6 +26,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +35,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -141,6 +149,30 @@ public class FacilitiesControllerV1 {
     }
   }
 
+  // VulcanFAPIConfig
+  private VulcanConfiguration<FacilityEntity> configuration() {
+    return VulcanConfiguration.forEntity(FacilityEntity.class)
+        .paging(
+            VulcanConfiguration.PagingConfiguration.builder()
+                .pageParameter("page")
+                .countParameter("count")
+                .defaultCount(30)
+                .maxCount(100)
+                .sortDefault(Sort.by("id").ascending())
+                .baseUrlStrategy(useUrl("http://localhost:8085/"))
+                .build())
+        .mappings(
+            Mappings.forEntity(FacilityEntity.class)
+                .string("state")
+                .string("ids")
+                .string("lat")
+                .string("long")
+                .dateAsInstant("when", "date")
+                .get())
+            .defaultQuery(returnNothing())
+        .build();
+  }
+
   private FacilityEntity entityById(String id) {
     FacilityEntity.Pk pk = null;
     try {
@@ -201,6 +233,17 @@ public class FacilitiesControllerV1 {
                 : de -> true)
         .sorted((left, right) -> left.distance().compareTo(right.distance()))
         .collect(toList());
+  }
+
+  /** Vulcan Mapping. */
+  @GetMapping(value = "/vulcan")
+  public ResponseEntity<List<Facility>> get(HttpServletRequest request) {
+    // Invoke Vulcan to perform determine and perform the approriate query
+    var result = Vulcan.forRepo(facilityRepository).config(configuration()).build().search(request);
+    // Process the entities anyway you want. Here we'll map them a 7.
+    var body = result.entities().map(FacilitiesControllerV1::facility).collect(toList());
+    var response = ResponseEntity.ok(body);
+    return response;
   }
 
   @SneakyThrows
