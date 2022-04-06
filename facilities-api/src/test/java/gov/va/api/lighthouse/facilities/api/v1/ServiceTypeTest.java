@@ -4,15 +4,19 @@ import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import gov.va.api.lighthouse.facilities.api.ServiceType;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
 import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
 import java.util.Arrays;
 import java.util.List;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class ServiceTypeTest {
+  private static final int ONE = 1;
+
   @Test
   @SneakyThrows
   void benefitsFromString() {
@@ -74,6 +78,18 @@ public class ServiceTypeTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
             "No enum constant gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService.No Such Name");
+  }
+
+  private int countOfServiceTypesWithMatchingServiceId(
+      @NonNull List<ServiceType> serviceTypes, @NonNull String serviceId) {
+    int count = 0;
+    for (final ServiceType st : serviceTypes) {
+      if (st.serviceId().equals(serviceId)) {
+        count++;
+      }
+    }
+    ;
+    return count;
   }
 
   @Test
@@ -206,5 +222,37 @@ public class ServiceTypeTest {
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
             "No enum constant gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService.NoSuchName");
+  }
+
+  @Test
+  @SneakyThrows
+  void uniqueServiceIds() {
+    Arrays.stream(BenefitsService.values())
+        .parallel()
+        .forEach(
+            bs -> {
+              assertThat(
+                      countOfServiceTypesWithMatchingServiceId(
+                          List.of(BenefitsService.values()), bs.serviceId()))
+                  .isEqualTo(ONE);
+            });
+    Arrays.stream(HealthService.values())
+        .parallel()
+        .forEach(
+            hs -> {
+              assertThat(
+                      countOfServiceTypesWithMatchingServiceId(
+                          List.of(HealthService.values()), hs.serviceId()))
+                  .isEqualTo(ONE);
+            });
+    Arrays.stream(OtherService.values())
+        .parallel()
+        .forEach(
+            os -> {
+              assertThat(
+                      countOfServiceTypesWithMatchingServiceId(
+                          List.of(OtherService.values()), os.serviceId()))
+                  .isEqualTo(ONE);
+            });
   }
 }

@@ -12,10 +12,14 @@ import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.List;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 
 public class DatamartDetailedServiceTest {
+  private static final int ONE = 1;
+
   @Test
   @SneakyThrows
   void backwardsCompatibleBenefitsServiceName() {
@@ -74,6 +78,19 @@ public class DatamartDetailedServiceTest {
                                     .serviceType(ServiceType.Other)
                                     .build())
                             .build()));
+  }
+
+  private int countOfServiceTypesWithMatchingServiceId(
+      @NonNull List<gov.va.api.lighthouse.facilities.api.ServiceType> serviceTypes,
+      @NonNull String serviceId) {
+    int count = 0;
+    for (final gov.va.api.lighthouse.facilities.api.ServiceType st : serviceTypes) {
+      if (st.serviceId().equals(serviceId)) {
+        count++;
+      }
+    }
+    ;
+    return count;
   }
 
   @Test
@@ -274,5 +291,37 @@ public class DatamartDetailedServiceTest {
     assertThatThrownBy(() -> getServiceTypeForServiceId(null))
         .isInstanceOf(NullPointerException.class)
         .hasMessage("serviceId is marked non-null but is null");
+  }
+
+  @Test
+  @SneakyThrows
+  void uniqueServiceIds() {
+    Arrays.stream(BenefitsService.values())
+        .parallel()
+        .forEach(
+            bs -> {
+              assertThat(
+                      countOfServiceTypesWithMatchingServiceId(
+                          List.of(BenefitsService.values()), bs.serviceId()))
+                  .isEqualTo(ONE);
+            });
+    Arrays.stream(HealthService.values())
+        .parallel()
+        .forEach(
+            hs -> {
+              assertThat(
+                      countOfServiceTypesWithMatchingServiceId(
+                          List.of(HealthService.values()), hs.serviceId()))
+                  .isEqualTo(ONE);
+            });
+    Arrays.stream(OtherService.values())
+        .parallel()
+        .forEach(
+            os -> {
+              assertThat(
+                      countOfServiceTypesWithMatchingServiceId(
+                          List.of(OtherService.values()), os.serviceId()))
+                  .isEqualTo(ONE);
+            });
   }
 }
