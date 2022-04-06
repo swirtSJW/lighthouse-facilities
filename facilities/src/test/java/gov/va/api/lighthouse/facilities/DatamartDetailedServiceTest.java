@@ -24,6 +24,7 @@ public class DatamartDetailedServiceTest {
         .forEach(
             bs ->
                 assertThat(new DatamartDetailedService().serviceName(bs.name()))
+                    .usingRecursiveComparison()
                     .isEqualTo(
                         DatamartDetailedService.builder()
                             .serviceInfo(
@@ -43,6 +44,7 @@ public class DatamartDetailedServiceTest {
         .forEach(
             hs ->
                 assertThat(new DatamartDetailedService().serviceName(hs.name()))
+                    .usingRecursiveComparison()
                     .isEqualTo(
                         DatamartDetailedService.builder()
                             .serviceInfo(
@@ -62,6 +64,7 @@ public class DatamartDetailedServiceTest {
         .forEach(
             os ->
                 assertThat(new DatamartDetailedService().serviceName(os.name()))
+                    .usingRecursiveComparison()
                     .isEqualTo(
                         DatamartDetailedService.builder()
                             .serviceInfo(
