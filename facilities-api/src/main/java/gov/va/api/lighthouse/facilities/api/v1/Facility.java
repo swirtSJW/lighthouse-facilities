@@ -24,6 +24,7 @@ import gov.va.api.lighthouse.facilities.api.v1.serializers.PhoneSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.SatisfactionSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.ServicesSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.WaitTimesSerializer;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -40,13 +41,19 @@ import org.apache.commons.lang3.ObjectUtils;
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
 @JsonSerialize(using = FacilitySerializer.class)
-@Schema(description = "JSON API-compliant object describing a VA facility")
+@Schema(description = "JSON API representation of a Facility.")
 public final class Facility implements CanBeEmpty {
-  @Schema(example = "vha_688")
+  @Schema(description = "Identifier representing facility.", example = "vha_688")
   @NotNull
   String id;
 
-  @NotNull Type type;
+  @Schema(
+      description =
+          "One of 4 facility top-level type categories "
+              + "(e.g. health, benefits, cemetery and vet center).",
+      example = "va_facilities")
+  @NotNull
+  Type type;
 
   @Valid @NotNull FacilityAttributes attributes;
 
@@ -322,24 +329,33 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = AddressSerializer.class)
-  @Schema(nullable = true)
+  @Schema(description = "Description of an address.", nullable = true)
   public static final class Address implements CanBeEmpty {
-    @Schema(example = "50 Irving Street, Northwest", nullable = true)
+    @Schema(
+        description = "Street name and number.",
+        example = "50 Irving Street, Northwest",
+        nullable = true)
     String address1;
 
-    @Schema(example = "Bldg 2", nullable = true)
+    @Schema(
+        description = "Second line of address if applicable (such as a building number).",
+        example = "Bldg 2",
+        nullable = true)
     String address2;
 
-    @Schema(example = "Suite 7", nullable = true)
+    @Schema(
+        description = "Third line of address if applicable (such as a unit or suite number).",
+        example = "Suite 7",
+        nullable = true)
     String address3;
 
-    @Schema(example = "20422-0001", nullable = true)
+    @Schema(description = "Postal (ZIP) code.", example = "20422-0001", nullable = true)
     String zip;
 
-    @Schema(example = "Washington", nullable = true)
+    @Schema(description = "City name.", example = "Washington", nullable = true)
     String city;
 
-    @Schema(example = "DC", nullable = true)
+    @Schema(description = "State code.", example = "DC", nullable = true)
     String state;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -359,14 +375,14 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = AddressesSerializer.class)
-  @Schema(nullable = true)
+  @Schema(description = "Collection of addresses associated with a facility.", nullable = true)
   public static final class Addresses implements CanBeEmpty {
-    @Schema(nullable = true)
     @Valid
+    @Schema(description = "Mailing address that facility receives incoming mail.", nullable = true)
     Address mailing;
 
-    @Schema(nullable = true)
     @Valid
+    @Schema(description = "Physical location where facility is located.", nullable = true)
     Address physical;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -403,48 +419,67 @@ public final class Facility implements CanBeEmpty {
     "detailedServices",
     "visn"
   })
-  @Schema(nullable = true)
+  @Schema(description = "Details describing a facility.", nullable = true)
   public static final class FacilityAttributes implements CanBeEmpty {
     @NotNull
-    @Schema(example = "Washington VA Medical Center")
+    @Schema(
+        description = "Name associated with given facility.",
+        example = "Washington VA Medical Center")
     String name;
 
     @NotNull
-    @Schema(example = "va_health_facility")
+    @Schema(
+        description =
+            "One of facility top-level type categories (e.g.) "
+                + "health, benefits, cemetery and vet center.",
+        example = "va_health_facility")
     FacilityType facilityType;
 
-    @Schema(example = "VA Medical Center (VAMC)", nullable = true)
+    @Schema(
+        description = "Subtype of facility which can further be used to describe facility.",
+        example = "VA Medical Center (VAMC)",
+        nullable = true)
     String classification;
 
-    @Schema(example = "http://www.washingtondc.va.gov", nullable = true)
+    @Schema(
+        description = "Web address of facility.",
+        example = "http://www.washingtondc.va.gov",
+        nullable = true)
     String website;
 
     @NotNull
-    @Schema(description = "Facility latitude", format = "float", example = "38.9311137")
+    @Schema(description = "Facility latitude.", format = "float", example = "38.9311137")
     @JsonProperty("lat")
     BigDecimal latitude;
 
     @NotNull
-    @Schema(description = "Facility longitude", format = "float", example = "-77.0109110499999")
+    @Schema(description = "Facility longitude.", format = "float", example = "-77.0109110499999")
     @JsonProperty("long")
     BigDecimal longitude;
 
-    @Schema(description = "Facility time zone", format = "String", example = "America/New_York")
+    @Schema(description = "Facility time zone.", format = "String", example = "America/New_York")
     String timeZone;
 
-    @Schema(nullable = true)
     @Valid
+    @Schema(description = "Collection of addresses associated with a facility.", nullable = true)
     Addresses address;
 
-    @Schema(nullable = true)
+    @Schema(
+        description = "Phone number contact for facility.",
+        example = "1-800-827-1000",
+        nullable = true)
     @Valid
     Phone phone;
 
-    @Schema(nullable = true)
+    @Schema(
+        description = "Operating hours for facility.",
+        example = "\"monday\": \"9:30AM-4:00PM\",",
+        nullable = true)
     @Valid
     Hours hours;
 
     @Schema(
+        description = "Additional information about facility operating hours.",
         example =
             "[\"More hours are available for some services.\","
                 + "\"If you need to talk to someone, call the Vet Center at 1-877-927-8387.\","
@@ -524,25 +559,25 @@ public final class Facility implements CanBeEmpty {
               + "Hours of operation may vary due to holidays or other events.",
       nullable = true)
   public static final class Hours implements CanBeEmpty {
-    @Schema(example = "9AM-5PM", nullable = true)
+    @Schema(description = "Hours of operation for Monday.", example = "9AM-5PM", nullable = true)
     String monday;
 
-    @Schema(example = "9AM-5PM", nullable = true)
+    @Schema(description = "Hours of operation for Tuesday.", example = "9AM-5PM", nullable = true)
     String tuesday;
 
-    @Schema(example = "9AM-5PM", nullable = true)
+    @Schema(description = "Hours of operation for Wednesday.", example = "9AM-5PM", nullable = true)
     String wednesday;
 
-    @Schema(example = "9AM-5PM", nullable = true)
+    @Schema(description = "Hours of operation for Thursday.", example = "9AM-5PM", nullable = true)
     String thursday;
 
-    @Schema(example = "9AM-5PM", nullable = true)
+    @Schema(description = "Hours of operation for Friday.", example = "9AM-5PM", nullable = true)
     String friday;
 
-    @Schema(example = "Closed", nullable = true)
+    @Schema(description = "Hours of operation for Saturday.", example = "Closed", nullable = true)
     String saturday;
 
-    @Schema(example = "Closed", nullable = true)
+    @Schema(description = "Hours of operation for Sunday.", example = "Closed", nullable = true)
     String sunday;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -608,7 +643,7 @@ public final class Facility implements CanBeEmpty {
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = PatientSatisfactionSerializer.class)
   @Schema(
-      description = "Veteran-reported satisfaction scores for health care services",
+      description = "Veteran-reported satisfaction scores for health care services.",
       nullable = true)
   public static final class PatientSatisfaction implements CanBeEmpty {
     @Schema(
@@ -664,10 +699,12 @@ public final class Facility implements CanBeEmpty {
   @JsonSerialize(using = PatientWaitTimeSerializer.class)
   @Schema(
       description =
-          "Expected wait times for new and established patients for a given health care service",
+          "Expected wait times for new and established patients for a given health care service.",
       nullable = true)
   public static final class PatientWaitTime implements CanBeEmpty {
-    @NotNull HealthService service;
+    @Schema(description = "Service being offered by facility.")
+    @NotNull
+    HealthService service;
 
     @Schema(
         example = "10",
@@ -701,27 +738,51 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = PhoneSerializer.class)
-  @Schema(nullable = true)
+  @Schema(
+      description = "Collection of all telephone contact numbers for given facility. ",
+      nullable = true)
   public static final class Phone implements CanBeEmpty {
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description = "Phone number used for faxing to given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String fax;
 
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description = "Phone number for given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String main;
 
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description = "Phone number for pharmacy for given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String pharmacy;
 
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description =
+            "Phone number that may be reached outside of operating hours for given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String afterHours;
 
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description = "Phone number for patient advocate for given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String patientAdvocate;
 
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description = "Phone number for mental health clinic for given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String mentalHealthClinic;
 
-    @Schema(example = "202-555-1212", nullable = true)
+    @Schema(
+        description = "Phone number for enrollment coordinator for given facility.",
+        example = "202-555-1212",
+        nullable = true)
     String enrollmentCoordinator;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -742,7 +803,9 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = SatisfactionSerializer.class)
-  @Schema(nullable = true)
+  @Schema(
+      description = "Scores that indicate patient satisfaction at given facility " + "per service.",
+      nullable = true)
   public static final class Satisfaction implements CanBeEmpty {
     @Schema(nullable = true)
     @Valid
@@ -763,18 +826,37 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = ServicesSerializer.class)
-  @Schema(nullable = true)
+  @Schema(
+      description = "All services offered by a facility grouped by service type.",
+      nullable = true)
   public static final class Services implements CanBeEmpty {
-    @Schema(nullable = true)
+
+    @ArraySchema(
+        arraySchema =
+            @Schema(
+                description =
+                    "List of other services not included in one of the other service categories.",
+                nullable = true))
     List<OtherService> other;
 
-    @Schema(nullable = true)
+    @ArraySchema(
+        arraySchema =
+            @Schema(
+                description = "List of health services " + "for given facility.",
+                nullable = true))
     List<HealthService> health;
 
-    @Schema(nullable = true)
+    @ArraySchema(
+        arraySchema =
+            @Schema(
+                description = "List of benefits services " + "for given facility.",
+                nullable = true))
     List<BenefitsService> benefits;
 
-    @Schema(example = "2018-01-01", nullable = true)
+    @Schema(
+        description = "Date of the most recent change in offered services.",
+        example = "2018-01-01",
+        nullable = true)
     LocalDate lastUpdated;
 
     /** Empty elements will be omitted from JSON serialization. */
@@ -792,12 +874,20 @@ public final class Facility implements CanBeEmpty {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
   @JsonInclude(value = Include.NON_EMPTY, content = Include.NON_EMPTY)
   @JsonSerialize(using = WaitTimesSerializer.class)
-  @Schema(nullable = true)
+  @Schema(
+      description =
+          "Collection of wait times reported for various services based on access to care survey.",
+      nullable = true)
   public static final class WaitTimes implements CanBeEmpty {
-    @Schema(nullable = true)
+    @Schema(
+        description = "List of expected patient wait times for given health service.",
+        nullable = true)
     List<@Valid PatientWaitTime> health;
 
-    @Schema(example = "2018-01-01", nullable = true)
+    @Schema(
+        description = "The effective date of when the access to care survey was carried out.",
+        example = "2018-01-01",
+        nullable = true)
     LocalDate effectiveDate;
 
     /** Empty elements will be omitted from JSON serialization. */
