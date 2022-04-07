@@ -28,7 +28,8 @@ public final class PageLinks implements CanBeEmpty {
 
   @Schema(
       description = "Link to current page of response.",
-      example = "https://api.va.gov/services/va_facilities/v1/facilities?type=health&page=1&per_page=1000",
+      example =
+          "https://api.va.gov/services/va_facilities/v1/facilities?type=health&page=1&per_page=1000",
       nullable = true)
   @NotNull
   String self;
