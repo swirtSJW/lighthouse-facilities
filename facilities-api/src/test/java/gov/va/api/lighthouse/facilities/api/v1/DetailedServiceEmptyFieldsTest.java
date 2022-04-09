@@ -264,7 +264,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .build()
                 .isEmpty())
@@ -276,7 +276,7 @@ public class DetailedServiceEmptyFieldsTest {
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
                         .name(blank)
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .build()
                 .isEmpty())
@@ -286,7 +286,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .serviceLocations(emptyList())
                 .build()
@@ -297,7 +297,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .appointmentLeadIn(blank)
                 .build()
@@ -308,7 +308,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .changed(blank)
                 .build()
@@ -319,7 +319,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .descriptionFacility(blank)
                 .build()
@@ -330,7 +330,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .onlineSchedulingAvailable(blank)
                 .build()
@@ -341,7 +341,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .path(blank)
                 .build()
@@ -352,7 +352,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .phoneNumbers(emptyList())
                 .build()
@@ -363,7 +363,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .referralRequired(blank)
                 .build()
@@ -374,7 +374,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .walkInsAccepted(blank)
                 .build()
@@ -387,7 +387,7 @@ public class DetailedServiceEmptyFieldsTest {
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
                         .name(nonBlank)
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .build()
                 .isEmpty())
@@ -397,7 +397,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .appointmentLeadIn(nonBlank)
                 .build()
@@ -408,7 +408,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .changed(nonBlank)
                 .build()
@@ -419,7 +419,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .descriptionFacility(nonBlank)
                 .build()
@@ -430,7 +430,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .onlineSchedulingAvailable(nonBlank)
                 .build()
@@ -441,7 +441,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .path(nonBlank)
                 .build()
@@ -452,7 +452,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .referralRequired(nonBlank)
                 .build()
@@ -463,7 +463,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .walkInsAccepted(nonBlank)
                 .build()
@@ -474,7 +474,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .phoneNumbers(
                     List.of(
@@ -489,7 +489,7 @@ public class DetailedServiceEmptyFieldsTest {
                 .serviceInfo(
                     DetailedService.ServiceInfo.builder()
                         .serviceId(Facility.HealthService.Cardiology.serviceId())
-                        .serviceType(DetailedService.ServiceType.Health)
+                        .serviceType(Facility.HealthService.Cardiology.serviceType())
                         .build())
                 .serviceLocations(
                     List.of(

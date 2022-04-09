@@ -4,6 +4,7 @@ import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS
 import static java.util.Collections.emptyList;
 
 import gov.va.api.lighthouse.facilities.DatamartDetailedService.DetailedServiceLocation;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
 import gov.va.api.lighthouse.facilities.api.v0.DetailedService;
 import gov.va.api.lighthouse.facilities.api.v0.Facility;
 import java.util.List;
@@ -208,13 +209,13 @@ public class DetailedServiceTransformerV0 {
         // Infer service type from service id
         .serviceType(
             Facility.HealthService.isRecognizedServiceId(serviceId)
-                ? DatamartDetailedService.ServiceType.Health
+                ? TypeOfService.Health
                 : Facility.BenefitsService.isRecognizedServiceId(serviceId)
-                    ? DatamartDetailedService.ServiceType.Benefits
+                    ? TypeOfService.Benefits
                     : Facility.OtherService.isRecognizedServiceId(serviceId)
-                        ? DatamartDetailedService.ServiceType.Other
+                        ? TypeOfService.Other
                         // Default to Health service type
-                        : DatamartDetailedService.ServiceType.Health)
+                        : TypeOfService.Health)
         .build();
   }
 

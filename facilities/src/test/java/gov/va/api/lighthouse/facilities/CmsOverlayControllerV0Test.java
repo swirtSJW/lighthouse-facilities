@@ -66,7 +66,7 @@ public class CmsOverlayControllerV0Test {
                     DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .serviceType(healthService.serviceType())
                 .build())
         .active(isActive)
         .changed(null)

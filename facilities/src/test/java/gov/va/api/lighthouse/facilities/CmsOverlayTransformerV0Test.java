@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.getServiceTypeForServiceId;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -76,7 +75,7 @@ public class CmsOverlayTransformerV0Test {
                     DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(getServiceTypeForServiceId(healthService.serviceId()))
+                .serviceType(healthService.serviceType())
                 .build())
         .path("https://path/to/service/goodness")
         .phoneNumbers(

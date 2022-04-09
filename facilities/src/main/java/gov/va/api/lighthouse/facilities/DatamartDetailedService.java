@@ -1,10 +1,8 @@
 package gov.va.api.lighthouse.facilities;
 
-import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -13,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
@@ -72,19 +72,6 @@ public class DatamartDetailedService {
   @JsonProperty("walk_ins_accepted")
   String walkInsAccepted;
 
-  /** Obtain datamart detailed service type for specified service id. */
-  public static DatamartDetailedService.ServiceType getServiceTypeForServiceId(
-      @NonNull String serviceId) {
-    return HealthService.isRecognizedServiceId(serviceId)
-        ? DatamartDetailedService.ServiceType.Health
-        : BenefitsService.isRecognizedServiceId(serviceId)
-            ? DatamartDetailedService.ServiceType.Benefits
-            : OtherService.isRecognizedServiceId(serviceId)
-                ? DatamartDetailedService.ServiceType.Other
-                : // Default to health service type
-                DatamartDetailedService.ServiceType.Health;
-  }
-
   private static boolean isRecognizedServiceName(String serviceName) {
     return isNotEmpty(serviceName)
         && (HealthService.isRecognizedServiceName(serviceName)
@@ -107,35 +94,20 @@ public class DatamartDetailedService {
                               ? BenefitsService.fromString(serviceName).serviceId()
                               : OtherService.isRecognizedServiceName(serviceName)
                                   ? OtherService.valueOf(serviceName).serviceId()
-                                  : ServiceInfo.INVALID_SVC_ID)
+                                  : TypedService.INVALID_SVC_ID)
                   .name(serviceName)
                   .serviceType(
                       HealthService.isRecognizedServiceName(serviceName)
-                          ? ServiceType.Health
+                          ? TypeOfService.Health
                           : BenefitsService.isRecognizedServiceName(serviceName)
-                              ? ServiceType.Benefits
+                              ? TypeOfService.Benefits
                               : OtherService.isRecognizedServiceName(serviceName)
-                                  ? ServiceType.Other
-                                  : ServiceType.Health)
+                                  ? TypeOfService.Other
+                                  : TypeOfService.Health)
                   .build()
               : serviceInfo().name(serviceName));
     }
     return this;
-  }
-
-  public enum ServiceType {
-    @JsonProperty("benefits")
-    Benefits,
-    @JsonProperty("health")
-    Health,
-    @JsonProperty("other")
-    Other;
-
-    /** Ensure that Jackson can create ServiceType enum regardless of capitalization. */
-    @JsonCreator
-    public static ServiceType fromString(String name) {
-      return valueOf(capitalize(name));
-    }
   }
 
   @Data
@@ -145,8 +117,6 @@ public class DatamartDetailedService {
   @JsonPropertyOrder({"name", "serviceId", "serviceType"})
   @Schema(description = "Service information.")
   public static final class ServiceInfo {
-    @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
-
     @Schema(description = "Service id.", example = "covid19Vaccine")
     @NonNull
     String serviceId;
@@ -156,7 +126,7 @@ public class DatamartDetailedService {
 
     @Schema(description = "Service type.", example = "Health")
     @NonNull
-    ServiceType serviceType;
+    TypeOfService serviceType;
   }
 
   @Data

@@ -3,6 +3,7 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.Collections.emptyList;
 
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.NonNull;
@@ -15,7 +16,7 @@ public class DatamartDetailedServicesTestUtils {
         .serviceInfo(
             DatamartDetailedService.ServiceInfo.builder()
                 .serviceId("emptyService")
-                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .serviceType(TypeOfService.Health)
                 .build())
         .phoneNumbers(emptyList())
         .serviceLocations(emptyList())
@@ -27,7 +28,7 @@ public class DatamartDetailedServicesTestUtils {
         .serviceInfo(
             DatamartDetailedService.ServiceInfo.builder()
                 .serviceId("emptyService")
-                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .serviceType(TypeOfService.Health)
                 .build())
         .phoneNumbers(null)
         .serviceLocations(null)
@@ -53,7 +54,7 @@ public class DatamartDetailedServicesTestUtils {
                     DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .serviceType(healthService.serviceType())
                 .build())
         .active(isActive)
         .changed(null)

@@ -18,7 +18,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.Cardiology.serviceId())
                     .name(DatamartFacility.HealthService.Cardiology.name())
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Cardiology.serviceType())
                     .build())
             .path("http://www.service.one.va.gov")
             .build();
@@ -28,7 +28,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.CaregiverSupport.serviceId())
                     .name(DatamartFacility.HealthService.CaregiverSupport.name())
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.CaregiverSupport.serviceType())
                     .build())
             .path("http://www.service.two.va.gov")
             .build();
@@ -38,7 +38,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.Chiropractic.serviceId())
                     .name(DatamartFacility.HealthService.Chiropractic.name())
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Chiropractic.serviceType())
                     .build())
             .path("http://www.service.three.va.gov")
             .build();
@@ -58,7 +58,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.Cardiology.serviceId())
                     .name(DatamartFacility.HealthService.Cardiology.name())
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Cardiology.serviceType())
                     .build())
             .path("http://www.service.one.va.gov")
             .build();
@@ -68,7 +68,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.CaregiverSupport.serviceId())
                     .name(DatamartFacility.HealthService.CaregiverSupport.name())
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.CaregiverSupport.serviceType())
                     .build())
             .path("http://www.service.two.va.gov")
             .build();
@@ -78,7 +78,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.Covid19Vaccine.serviceId())
                     .name(CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Covid19Vaccine.serviceType())
                     .build())
             .path("http://path.to.update.gov")
             .build();
@@ -88,7 +88,7 @@ public class CovidServiceUpdaterTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(uncapitalize(DatamartFacility.HealthService.Chiropractic.name()))
                     .name(DatamartFacility.HealthService.Chiropractic.name())
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Chiropractic.serviceType())
                     .build())
             .path("http://www.service.three.va.gov")
             .build();

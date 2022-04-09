@@ -143,7 +143,7 @@ public class InternalFacilitiesControllerTest {
                     HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(DatamartDetailedService.ServiceType.Health)
+                .serviceType(healthService.serviceType())
                 .build())
         .descriptionFacility(null)
         .appointmentLeadIn("Your VA health care team will contact you if you...more text")

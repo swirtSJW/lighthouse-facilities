@@ -1,19 +1,17 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
-import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.getServiceTypeForServiceId;
-
-import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import java.util.List;
 import lombok.NonNull;
 
 public class DetailedServiceUtils {
-  public static DetailedService getDetailedService(@NonNull ServiceType serviceType) {
+  public static DetailedService getDetailedService(@NonNull TypedService serviceType) {
     return DetailedService.builder()
         .serviceInfo(
             DetailedService.ServiceInfo.builder()
                 .serviceId(serviceType.serviceId())
                 .name(serviceType.name())
-                .serviceType(getServiceTypeForServiceId(serviceType.serviceId()))
+                .serviceType(serviceType.serviceType())
                 .build())
         .active(true)
         .changed(null)

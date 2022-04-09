@@ -75,8 +75,7 @@ public class CmsOverlayTransformerV1Test {
                     DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(
-                    DatamartDetailedService.getServiceTypeForServiceId(healthService.serviceId()))
+                .serviceType(healthService.serviceType())
                 .build())
         .path("https://path/to/service/goodness")
         .phoneNumbers(
@@ -180,7 +179,7 @@ public class CmsOverlayTransformerV1Test {
                     Facility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(DetailedService.getServiceTypeForServiceId(healthService.serviceId()))
+                .serviceType(healthService.serviceType())
                 .build())
         .path("https://path/to/service/goodness")
         .phoneNumbers(

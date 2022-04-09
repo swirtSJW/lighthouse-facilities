@@ -3,13 +3,13 @@ package gov.va.api.lighthouse.facilities;
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.lighthouse.facilities.ControllersV1.page;
 import static gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig.createMapper;
-import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.getServiceIdFromServiceName;
-import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.getServiceTypeForServiceId;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
@@ -70,6 +70,29 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
     String path = basePath.replaceAll("/$", "");
     path = path.isEmpty() ? path : path + "/";
     linkerUrl = url + path + "v1/";
+  }
+
+  /** Obtain service id for specified service name. */
+  private static String getServiceIdFromServiceName(@NonNull String serviceName) {
+    return Facility.HealthService.isRecognizedServiceName(serviceName)
+        ? Facility.HealthService.fromString(serviceName).serviceId()
+        : Facility.BenefitsService.isRecognizedServiceName(serviceName)
+            ? Facility.BenefitsService.fromString(serviceName).serviceId()
+            : Facility.OtherService.isRecognizedServiceName(serviceName)
+                ? Facility.OtherService.valueOf(serviceName).serviceId()
+                : TypedService.INVALID_SVC_ID;
+  }
+
+  /** Obtain typed service for specified service id. */
+  private static Optional<? extends TypedService> getTypedServiceForServiceId(
+      @NonNull String serviceId) {
+    return Facility.HealthService.isRecognizedServiceId(serviceId)
+        ? Facility.HealthService.fromServiceId(serviceId)
+        : Facility.BenefitsService.isRecognizedServiceId(serviceId)
+            ? Facility.BenefitsService.fromServiceId(serviceId)
+            : Facility.OtherService.isRecognizedServiceId(serviceId)
+                ? Facility.OtherService.fromServiceId(serviceId)
+                : Optional.empty();
   }
 
   @GetMapping(
@@ -171,8 +194,13 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
                           .serviceId(getServiceIdFromServiceName(ds.serviceInfo().name()));
                     }
                     if (ds.serviceInfo().serviceType() == null) {
+                      final Optional<? extends TypedService> typedService =
+                          getTypedServiceForServiceId(ds.serviceInfo().serviceId());
                       ds.serviceInfo()
-                          .serviceType(getServiceTypeForServiceId(ds.serviceInfo().serviceId()));
+                          .serviceType(
+                              typedService.isPresent()
+                                  ? typedService.get().serviceType()
+                                  : TypeOfService.Health);
                     }
                     return ds;
                   })

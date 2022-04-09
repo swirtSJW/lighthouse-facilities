@@ -54,7 +54,7 @@ public class DetailedServicesResponseEmptyFieldsTest {
                                 DetailedService.ServiceInfo.builder()
                                     .serviceId(Facility.HealthService.Cardiology.serviceId())
                                     .name("test")
-                                    .serviceType(DetailedService.ServiceType.Health)
+                                    .serviceType(Facility.HealthService.Cardiology.serviceType())
                                     .build())
                             .build()))
                 .build()

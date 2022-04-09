@@ -1,17 +1,20 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.getServiceTypeForServiceId;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.updateServiceUrlPaths;
 import static org.apache.commons.lang3.StringUtils.capitalize;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlay;
 import gov.va.api.lighthouse.facilities.api.v1.CmsOverlayResponse;
 import gov.va.api.lighthouse.facilities.api.v1.DetailedService;
@@ -20,6 +23,8 @@ import gov.va.api.lighthouse.facilities.api.v1.DetailedServicesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.PageLinks;
 import gov.va.api.lighthouse.facilities.api.v1.Pagination;
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +32,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -78,7 +84,7 @@ public class CmsOverlayControllerV1Test {
                     DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(getServiceTypeForServiceId(healthService.serviceId()))
+                .serviceType(healthService.serviceType())
                 .build())
         .active(isActive)
         .changed(null)
@@ -345,6 +351,176 @@ public class CmsOverlayControllerV1Test {
                 .build())
         .detailedServices(getDatamartDetailedServices(true))
         .build();
+  }
+
+  @Test
+  @SneakyThrows
+  void populateServiceInfoAndFilterOutInvalid() {
+    Method populateMethod =
+        CmsOverlayControllerV1.class.getDeclaredMethod(
+            "populateServiceInfoAndFilterOutInvalid", CmsOverlay.class);
+    populateMethod.setAccessible(true);
+    // Null ServiceInfo
+    CmsOverlay overlayWithNullServiceInfo =
+        CmsOverlay.builder().detailedServices(List.of(new DetailedService())).build();
+    assertThat(overlayWithNullServiceInfo.detailedServices().isEmpty()).isFalse();
+    populateMethod.invoke(controller(), overlayWithNullServiceInfo);
+    assertThat(overlayWithNullServiceInfo.detailedServices().isEmpty()).isTrue();
+    // ServiceInfo with name, but missing serviceId
+    CmsOverlay overlayWithoutServiceId =
+        CmsOverlay.builder()
+            .detailedServices(
+                List.of(
+                    DetailedService.builder()
+                        .serviceInfo(
+                            DetailedService.ServiceInfo.builder()
+                                .name(Facility.HealthService.Cardiology.name())
+                                .build())
+                        .build()))
+            .build();
+    overlayWithoutServiceId.detailedServices().parallelStream()
+        .forEach(
+            ds -> {
+              assertThat(isNotEmpty(ds.serviceInfo().serviceId())).isFalse();
+              assertThat(isNotEmpty(ds.serviceInfo().name())).isTrue();
+              assertThat(ObjectUtils.isNotEmpty(ds.serviceInfo().serviceType())).isFalse();
+            });
+    populateMethod.invoke(controller(), overlayWithoutServiceId);
+    overlayWithoutServiceId.detailedServices().parallelStream()
+        .forEach(
+            ds -> {
+              assertThat(isNotEmpty(ds.serviceInfo().serviceId())).isTrue();
+              assertThat(isNotEmpty(ds.serviceInfo().name())).isTrue();
+              assertThat(ObjectUtils.isNotEmpty(ds.serviceInfo().serviceType())).isTrue();
+            });
+  }
+
+  @Test
+  @SneakyThrows
+  void recognizedServiceIds() {
+    // Valid service ids
+    Arrays.stream(Facility.BenefitsService.values())
+        .parallel()
+        .forEach(
+            bs -> {
+              assertThat(controller().isRecognizedServiceId(bs.serviceId())).isTrue();
+            });
+    Arrays.stream(Facility.HealthService.values())
+        .parallel()
+        .forEach(
+            hs -> {
+              assertThat(controller().isRecognizedServiceId(hs.serviceId())).isTrue();
+            });
+    Arrays.stream(Facility.OtherService.values())
+        .parallel()
+        .forEach(
+            os -> {
+              assertThat(controller().isRecognizedServiceId(os.serviceId())).isTrue();
+            });
+    // Invalid service ids
+    assertThat(controller().isRecognizedServiceId("noSuchId")).isFalse();
+    assertThat(controller().isRecognizedServiceId("   ")).isFalse();
+    assertThat(controller().isRecognizedServiceId(null)).isFalse();
+  }
+
+  @Test
+  @SneakyThrows
+  void serviceIdFromServiceName() {
+    Method serviceIdFromServiceNameMethod =
+        CmsOverlayControllerV1.class.getDeclaredMethod("getServiceIdFromServiceName", String.class);
+    serviceIdFromServiceNameMethod.setAccessible(true);
+    // Valid service names
+    Arrays.stream(Facility.BenefitsService.values())
+        .parallel()
+        .forEach(
+            bs -> {
+              try {
+                assertThat(serviceIdFromServiceNameMethod.invoke(controller(), bs.name()))
+                    .isEqualTo(bs.serviceId());
+              } catch (final Throwable t) {
+                fail(t.getMessage(), t);
+              }
+            });
+    Arrays.stream(Facility.HealthService.values())
+        .parallel()
+        .forEach(
+            hs -> {
+              try {
+                assertThat(serviceIdFromServiceNameMethod.invoke(controller(), hs.name()))
+                    .isEqualTo(hs.serviceId());
+              } catch (final Throwable t) {
+                fail(t.getMessage(), t);
+              }
+            });
+    Arrays.stream(Facility.OtherService.values())
+        .parallel()
+        .forEach(
+            os -> {
+              try {
+                assertThat(serviceIdFromServiceNameMethod.invoke(controller(), os.name()))
+                    .isEqualTo(os.serviceId());
+              } catch (final Throwable t) {
+                fail(t.getMessage(), t);
+              }
+            });
+    // Invalid service names
+    assertThat(serviceIdFromServiceNameMethod.invoke(controller(), "NoSuchName"))
+        .isEqualTo(TypedService.INVALID_SVC_ID);
+    assertThat(serviceIdFromServiceNameMethod.invoke(controller(), "   "))
+        .isEqualTo(TypedService.INVALID_SVC_ID);
+    assertThatIllegalArgumentException()
+        .describedAs("serviceName is marked non-null but is null")
+        .isThrownBy(() -> serviceIdFromServiceNameMethod.invoke(controller(), null));
+  }
+
+  @Test
+  @SneakyThrows
+  void typedServiceForServiceId() {
+    Method typedServiceForServiceIdMethod =
+        CmsOverlayControllerV1.class.getDeclaredMethod("getTypedServiceForServiceId", String.class);
+    typedServiceForServiceIdMethod.setAccessible(true);
+    // Valid service ids
+    Arrays.stream(Facility.BenefitsService.values())
+        .parallel()
+        .forEach(
+            bs -> {
+              try {
+                assertThat(typedServiceForServiceIdMethod.invoke(controller(), bs.serviceId()))
+                    .isEqualTo(Optional.of(bs));
+              } catch (final Throwable t) {
+                fail(t.getMessage(), t);
+              }
+            });
+    Arrays.stream(Facility.HealthService.values())
+        .parallel()
+        .forEach(
+            hs -> {
+              try {
+                assertThat(typedServiceForServiceIdMethod.invoke(controller(), hs.serviceId()))
+                    .isEqualTo(Optional.of(hs));
+              } catch (final Throwable t) {
+                fail(t.getMessage(), t);
+              }
+            });
+    Arrays.stream(Facility.OtherService.values())
+        .parallel()
+        .forEach(
+            os -> {
+              try {
+                assertThat(typedServiceForServiceIdMethod.invoke(controller(), os.serviceId()))
+                    .isEqualTo(Optional.of(os));
+              } catch (final Throwable t) {
+                fail(t.getMessage(), t);
+              }
+            });
+    // Invalid service ids
+    assertThat(typedServiceForServiceIdMethod.invoke(controller(), "noSuchId"))
+        .isEqualTo(Optional.empty());
+    assertThat(typedServiceForServiceIdMethod.invoke(controller(), "   "))
+        .isEqualTo(Optional.empty());
+    assertThatIllegalArgumentException()
+        .describedAs("serviceId is marked non-null but is null")
+        .isThrownBy(() -> typedServiceForServiceIdMethod.invoke(controller(), null));
   }
 
   @Test

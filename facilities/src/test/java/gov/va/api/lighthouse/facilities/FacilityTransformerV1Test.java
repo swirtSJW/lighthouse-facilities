@@ -1,6 +1,5 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.getServiceTypeForServiceId;
 import static gov.va.api.lighthouse.facilities.collector.CovidServiceUpdater.CMS_OVERLAY_SERVICE_NAME_COVID_19;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -291,7 +290,7 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
                     DatamartFacility.HealthService.Covid19Vaccine.equals(healthService)
                         ? CMS_OVERLAY_SERVICE_NAME_COVID_19
                         : healthService.name())
-                .serviceType(getServiceTypeForServiceId(healthService.serviceId()))
+                .serviceType(healthService.serviceType())
                 .build())
         .phoneNumbers(
             List.of(
@@ -688,6 +687,41 @@ public class FacilityTransformerV1Test extends BaseFacilityTransformerTest {
         .usingRecursiveComparison()
         .ignoringFields("attributes.detailedServices")
         .isEqualTo(expected);
+  }
+
+  @Test
+  public void transformFacilityOperatingStatus() {
+    assertThat(
+            FacilityTransformerV1.toFacilityOperatingStatus(
+                DatamartFacility.OperatingStatus.builder()
+                    .code(DatamartFacility.OperatingStatusCode.NORMAL)
+                    .additionalInfo("additional info")
+                    .build(),
+                DatamartFacility.ActiveStatus.A))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            Facility.OperatingStatus.builder()
+                .code(Facility.OperatingStatusCode.NORMAL)
+                .additionalInfo("additional info")
+                .build());
+    assertThat(
+            FacilityTransformerV1.toFacilityOperatingStatus(
+                DatamartFacility.OperatingStatus.builder()
+                    .code(DatamartFacility.OperatingStatusCode.NORMAL)
+                    .additionalInfo("additional info")
+                    .build(),
+                null))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            Facility.OperatingStatus.builder()
+                .code(Facility.OperatingStatusCode.NORMAL)
+                .additionalInfo("additional info")
+                .build());
+    assertThat(
+            FacilityTransformerV1.toFacilityOperatingStatus(null, DatamartFacility.ActiveStatus.A))
+        .usingRecursiveComparison()
+        .isEqualTo(
+            Facility.OperatingStatus.builder().code(Facility.OperatingStatusCode.NORMAL).build());
   }
 
   @Test

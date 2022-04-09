@@ -1,12 +1,9 @@
 package gov.va.api.lighthouse.facilities.api.v1;
 
-import static gov.va.api.lighthouse.facilities.api.v1.DetailedService.ServiceInfo.INVALID_SVC_ID;
-import static org.apache.commons.lang3.StringUtils.capitalize;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,9 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.BenefitsService;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.HealthService;
-import gov.va.api.lighthouse.facilities.api.v1.Facility.OtherService;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAddressSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceAppointmentPhoneNumberSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.DetailedServiceEmailContactSerializer;
@@ -128,29 +123,6 @@ public class DetailedService implements CanBeEmpty {
   @JsonAlias("walk_ins_accepted")
   String walkInsAccepted;
 
-  /** Obtain service id for specified service name. */
-  public static String getServiceIdFromServiceName(@NonNull String serviceName) {
-    return HealthService.isRecognizedServiceName(serviceName)
-        ? HealthService.fromString(serviceName).serviceId()
-        : BenefitsService.isRecognizedServiceName(serviceName)
-            ? BenefitsService.fromString(serviceName).serviceId()
-            : OtherService.isRecognizedServiceName(serviceName)
-                ? OtherService.valueOf(serviceName).serviceId()
-                : INVALID_SVC_ID;
-  }
-
-  /** Obtain detailed service type for specified service id. */
-  public static DetailedService.ServiceType getServiceTypeForServiceId(String serviceId) {
-    return HealthService.isRecognizedServiceId(serviceId)
-        ? DetailedService.ServiceType.Health
-        : BenefitsService.isRecognizedServiceId(serviceId)
-            ? DetailedService.ServiceType.Benefits
-            : OtherService.isRecognizedServiceId(serviceId)
-                ? DetailedService.ServiceType.Other
-                : // Default to Health service type
-                DetailedService.ServiceType.Health;
-  }
-
   /** Empty elements will be omitted from JSON serialization. */
   @JsonIgnore
   public boolean isEmpty() {
@@ -166,21 +138,6 @@ public class DetailedService implements CanBeEmpty {
         && isBlank(walkInsAccepted());
   }
 
-  public enum ServiceType {
-    @JsonProperty("benefits")
-    Benefits,
-    @JsonProperty("health")
-    Health,
-    @JsonProperty("other")
-    Other;
-
-    /** Ensure that Jackson can create ServiceType enum regardless of capitalization. */
-    @JsonCreator
-    public static ServiceType fromString(String name) {
-      return valueOf(capitalize(name));
-    }
-  }
-
   @Data
   @Builder
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -188,8 +145,6 @@ public class DetailedService implements CanBeEmpty {
   @JsonPropertyOrder({"name", "serviceId", "serviceType"})
   @Schema(description = "Service information.")
   public static final class ServiceInfo implements CanBeEmpty {
-    @JsonIgnore public static final String INVALID_SVC_ID = "INVALID_ID";
-
     @Schema(description = "Service id.", example = "covid19Vaccine")
     @JsonAlias("{service_id, service_api_id}")
     String // @NonNull
@@ -200,7 +155,7 @@ public class DetailedService implements CanBeEmpty {
 
     @Schema(description = "Service type.", example = "Health")
     @JsonAlias("service_type")
-    ServiceType // @NonNull
+    TypeOfService // @NonNull
         serviceType;
 
     /** Empty elements will be omitted from JSON serialization. */

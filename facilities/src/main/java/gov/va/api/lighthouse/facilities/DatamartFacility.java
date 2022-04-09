@@ -7,11 +7,13 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,7 +40,7 @@ public class DatamartFacility {
     T
   }
 
-  public enum BenefitsService implements ServiceType {
+  public enum BenefitsService implements TypedService {
     ApplyingForBenefits("applyingForBenefits"),
     BurialClaimAssistance("burialClaimAssistance"),
     DisabilityClaimAssistance("disabilityClaimAssistance"),
@@ -65,6 +67,14 @@ public class DatamartFacility {
       this.serviceId = serviceId;
     }
 
+    /** Obtain service for unique service id. */
+    public static Optional<BenefitsService> fromServiceId(String serviceId) {
+      return Arrays.stream(values())
+          .parallel()
+          .filter(bs -> bs.serviceId().equals(serviceId))
+          .findFirst();
+    }
+
     /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
     @JsonCreator
     public static BenefitsService fromString(String name) {
@@ -83,8 +93,14 @@ public class DatamartFacility {
       return Arrays.stream(values()).parallel().anyMatch(bs -> bs.name().equals(serviceName));
     }
 
+    @Override
     public String serviceId() {
       return serviceId;
+    }
+
+    @Override
+    public TypeOfService serviceType() {
+      return TypeOfService.Benefits;
     }
   }
 
@@ -95,7 +111,7 @@ public class DatamartFacility {
     vet_center
   }
 
-  public enum HealthService implements ServiceType {
+  public enum HealthService implements TypedService {
     @JsonProperty("adaptiveSports")
     AdaptiveSports("adaptiveSports"),
     @JsonProperty("addiction")
@@ -305,6 +321,18 @@ public class DatamartFacility {
       this.serviceId = serviceId;
     }
 
+    /** Obtain service for unique service id. */
+    public static Optional<HealthService> fromServiceId(String serviceId) {
+      return "dentalServices".equals(serviceId)
+          ? Optional.of(Dental)
+          : "mentalHealthCare".equals(serviceId)
+              ? Optional.of(MentalHealth)
+              : Arrays.stream(values())
+                  .parallel()
+                  .filter(hs -> hs.serviceId().equals(serviceId))
+                  .findFirst();
+    }
+
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
@@ -323,7 +351,9 @@ public class DatamartFacility {
 
     /** Determine whether specified service id represents health service. */
     public static boolean isRecognizedServiceId(String serviceId) {
-      return Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
+      return "dentalServices".equals(serviceId)
+          || "mentalHealthCare".equals(serviceId)
+          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
     }
 
     /** Determine whether specified service name represents health service. */
@@ -336,18 +366,32 @@ public class DatamartFacility {
               .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
     }
 
+    @Override
     public String serviceId() {
       return serviceId;
     }
+
+    @Override
+    public TypeOfService serviceType() {
+      return TypeOfService.Health;
+    }
   }
 
-  public enum OtherService implements ServiceType {
+  public enum OtherService implements TypedService {
     OnlineScheduling("onlineScheduling");
 
     private final String serviceId;
 
     OtherService(@NotNull String serviceId) {
       this.serviceId = serviceId;
+    }
+
+    /** Obtain service for unique service id. */
+    public static Optional<OtherService> fromServiceId(String serviceId) {
+      return Arrays.stream(values())
+          .parallel()
+          .filter(os -> os.serviceId().equals(serviceId))
+          .findFirst();
     }
 
     /** Determine whether specified service id represents other service. */
@@ -360,8 +404,14 @@ public class DatamartFacility {
       return Arrays.stream(values()).parallel().anyMatch(os -> os.name().equals(serviceName));
     }
 
+    @Override
     public String serviceId() {
       return serviceId;
+    }
+
+    @Override
+    public TypeOfService serviceType() {
+      return TypeOfService.Other;
     }
   }
 

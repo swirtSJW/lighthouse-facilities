@@ -132,7 +132,7 @@ public class SerializerTest {
             .serviceInfo(
                 DetailedService.ServiceInfo.builder()
                     .serviceId(Facility.HealthService.Cardiology.serviceId())
-                    .serviceType(DetailedService.ServiceType.Health)
+                    .serviceType(Facility.HealthService.Cardiology.serviceType())
                     .build())
             .build();
     assertJson(
@@ -143,7 +143,7 @@ public class SerializerTest {
             .serviceInfo(
                 DetailedService.ServiceInfo.builder()
                     .serviceId(Facility.HealthService.Cardiology.serviceId())
-                    .serviceType(DetailedService.ServiceType.Health)
+                    .serviceType(Facility.HealthService.Cardiology.serviceType())
                     .build())
             .serviceLocations(emptyList())
             .build();
@@ -156,7 +156,7 @@ public class SerializerTest {
                 DetailedService.ServiceInfo.builder()
                     .serviceId(Facility.HealthService.Covid19Vaccine.serviceId())
                     .name("COVID-19 vaccines")
-                    .serviceType(DetailedService.ServiceType.Health)
+                    .serviceType(Facility.HealthService.Covid19Vaccine.serviceType())
                     .build())
             .build();
     assertJson(
@@ -259,7 +259,7 @@ public class SerializerTest {
                     .serviceInfo(
                         DetailedService.ServiceInfo.builder()
                             .serviceId(Facility.HealthService.Cardiology.serviceId())
-                            .serviceType(DetailedService.ServiceType.Health)
+                            .serviceType(Facility.HealthService.Cardiology.serviceType())
                             .build())
                     .build())
             .build();
@@ -274,7 +274,7 @@ public class SerializerTest {
                         DetailedService.ServiceInfo.builder()
                             .serviceId(Facility.HealthService.Covid19Vaccine.serviceId())
                             .name("COVID-19 vaccines")
-                            .serviceType(DetailedService.ServiceType.Health)
+                            .serviceType(Facility.HealthService.Covid19Vaccine.serviceType())
                             .build())
                     .build())
             .build();

@@ -47,7 +47,7 @@ public class CmsOverlayCollectorTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.Covid19Vaccine.serviceId())
                     .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Covid19Vaccine.serviceType())
                     .build())
             .active(true)
             .path("replace_this_path")
@@ -99,7 +99,7 @@ public class CmsOverlayCollectorTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId(DatamartFacility.HealthService.Covid19Vaccine.serviceId())
                     .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                    .serviceType(DatamartFacility.HealthService.Covid19Vaccine.serviceType())
                     .build())
             // .path("https://www.va.gov/durham-health-care/programs/covid-19-vaccines/")
             .path("replace_this_path")
@@ -157,7 +157,8 @@ public class CmsOverlayCollectorTest {
                                     .serviceId(
                                         DatamartFacility.HealthService.Covid19Vaccine.serviceId())
                                     .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                                    .serviceType(
+                                        DatamartFacility.HealthService.Covid19Vaccine.serviceType())
                                     .build())
                             .build(),
                         DatamartDetailedService.builder()
@@ -166,7 +167,8 @@ public class CmsOverlayCollectorTest {
                                     .serviceId(
                                         DatamartFacility.HealthService.Cardiology.serviceId())
                                     .name(DatamartFacility.HealthService.Cardiology.name())
-                                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                                    .serviceType(
+                                        DatamartFacility.HealthService.Cardiology.serviceType())
                                     .build())
                             .build(),
                         DatamartDetailedService.builder()
@@ -175,7 +177,8 @@ public class CmsOverlayCollectorTest {
                                     .serviceId(
                                         DatamartFacility.HealthService.Dermatology.serviceId())
                                     .name(DatamartFacility.HealthService.Dermatology.name())
-                                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                                    .serviceType(
+                                        DatamartFacility.HealthService.Dermatology.serviceType())
                                     .build())
                             .build())))
         .isTrue();
@@ -192,7 +195,8 @@ public class CmsOverlayCollectorTest {
                                 DatamartDetailedService.ServiceInfo.builder()
                                     .serviceId(DatamartFacility.HealthService.Optometry.serviceId())
                                     .name(DatamartFacility.HealthService.Optometry.name())
-                                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                                    .serviceType(
+                                        DatamartFacility.HealthService.Optometry.serviceType())
                                     .build())
                             .build(),
                         DatamartDetailedService.builder()
@@ -201,7 +205,8 @@ public class CmsOverlayCollectorTest {
                                     .serviceId(
                                         DatamartFacility.HealthService.Cardiology.serviceId())
                                     .name(DatamartFacility.HealthService.Cardiology.name())
-                                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                                    .serviceType(
+                                        DatamartFacility.HealthService.Cardiology.serviceType())
                                     .build())
                             .build(),
                         DatamartDetailedService.builder()
@@ -210,7 +215,8 @@ public class CmsOverlayCollectorTest {
                                     .serviceId(
                                         DatamartFacility.HealthService.Dermatology.serviceId())
                                     .name(DatamartFacility.HealthService.Dermatology.name())
-                                    .serviceType(DatamartDetailedService.ServiceType.Health)
+                                    .serviceType(
+                                        DatamartFacility.HealthService.Dermatology.serviceType())
                                     .build())
                             .build())))
         .isFalse();

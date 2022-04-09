@@ -87,7 +87,7 @@ public class FacilityOverlayV1Test {
             DetailedService.ServiceInfo.builder()
                 .serviceId(Facility.HealthService.Covid19Vaccine.serviceId())
                 .name(CMS_OVERLAY_SERVICE_NAME_COVID_19)
-                .serviceType(DetailedService.ServiceType.Health)
+                .serviceType(Facility.HealthService.Covid19Vaccine.serviceType())
                 .build())
         .active(cmsServiceActiveValue)
         .changed("2021-02-04T22:36:49+00:00")

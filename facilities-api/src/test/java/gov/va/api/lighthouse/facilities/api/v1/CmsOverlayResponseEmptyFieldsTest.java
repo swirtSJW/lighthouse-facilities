@@ -53,7 +53,8 @@ public class CmsOverlayResponseEmptyFieldsTest {
                                             .serviceId(
                                                 Facility.HealthService.Cardiology.serviceId())
                                             .name(Facility.HealthService.Cardiology.name())
-                                            .serviceType(DetailedService.ServiceType.Health)
+                                            .serviceType(
+                                                Facility.HealthService.Cardiology.serviceType())
                                             .build())
                                     .build()))
                         .build())

@@ -52,8 +52,7 @@ public class DetailedServiceTransformerV1 {
     return DetailedService.ServiceInfo.builder()
         .serviceId(datamartDetailedServiceInfo.serviceId())
         .name(toDetailedServiceName(datamartDetailedServiceInfo.name()))
-        .serviceType(
-            DetailedService.ServiceType.valueOf(datamartDetailedServiceInfo.serviceType().name()))
+        .serviceType(datamartDetailedServiceInfo.serviceType())
         .build();
   }
 
@@ -212,7 +211,7 @@ public class DetailedServiceTransformerV1 {
     return DatamartDetailedService.ServiceInfo.builder()
         .serviceId(serviceInfo.serviceId())
         .name(toVersionAgnosticDetailedServiceName(serviceInfo.name()))
-        .serviceType(DatamartDetailedService.ServiceType.valueOf(serviceInfo.serviceType().name()))
+        .serviceType(serviceInfo.serviceType())
         .build();
   }
 

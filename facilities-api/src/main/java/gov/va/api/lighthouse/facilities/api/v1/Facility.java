@@ -12,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import gov.va.api.lighthouse.facilities.api.ServiceType;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.AddressSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.AddressesSerializer;
 import gov.va.api.lighthouse.facilities.api.v1.serializers.FacilityAttributesSerializer;
@@ -30,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -65,7 +67,7 @@ public final class Facility implements CanBeEmpty {
     T
   }
 
-  public enum BenefitsService implements ServiceType {
+  public enum BenefitsService implements TypedService {
     ApplyingForBenefits("applyingForBenefits"),
     BurialClaimAssistance("burialClaimAssistance"),
     DisabilityClaimAssistance("disabilityClaimAssistance"),
@@ -92,6 +94,14 @@ public final class Facility implements CanBeEmpty {
       this.serviceId = serviceId;
     }
 
+    /** Obtain service for unique service id. */
+    public static Optional<BenefitsService> fromServiceId(String serviceId) {
+      return Arrays.stream(values())
+          .parallel()
+          .filter(bs -> bs.serviceId().equals(serviceId))
+          .findFirst();
+    }
+
     /** Ensure that Jackson can create BenefitsService enum regardless of capitalization. */
     @JsonCreator
     public static BenefitsService fromString(String name) {
@@ -110,8 +120,14 @@ public final class Facility implements CanBeEmpty {
       return Arrays.stream(values()).parallel().anyMatch(bs -> bs.name().equals(serviceName));
     }
 
+    @Override
     public String serviceId() {
       return serviceId;
+    }
+
+    @Override
+    public TypeOfService serviceType() {
+      return TypeOfService.Benefits;
     }
   }
 
@@ -122,7 +138,7 @@ public final class Facility implements CanBeEmpty {
     vet_center
   }
 
-  public enum HealthService implements ServiceType {
+  public enum HealthService implements TypedService {
     @JsonProperty("adaptiveSports")
     AdaptiveSports("adaptiveSports"),
     @JsonProperty("addiction")
@@ -332,6 +348,18 @@ public final class Facility implements CanBeEmpty {
       this.serviceId = serviceId;
     }
 
+    /** Obtain service for unique service id. */
+    public static Optional<HealthService> fromServiceId(String serviceId) {
+      return "dentalServices".equals(serviceId)
+          ? Optional.of(Dental)
+          : "mentalHealthCare".equals(serviceId)
+              ? Optional.of(MentalHealth)
+              : Arrays.stream(values())
+                  .parallel()
+                  .filter(hs -> hs.serviceId().equals(serviceId))
+                  .findFirst();
+    }
+
     /** Ensure that Jackson can create HealthService enum regardless of capitalization. */
     @JsonCreator
     public static HealthService fromString(String name) {
@@ -350,7 +378,9 @@ public final class Facility implements CanBeEmpty {
 
     /** Determine whether specified service id represents health service. */
     public static boolean isRecognizedServiceId(String serviceId) {
-      return Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
+      return "dentalServices".equals(serviceId)
+          || "mentalHealthCare".equals(serviceId)
+          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
     }
 
     /** Determine whether specified service name represents health service. */
@@ -363,18 +393,32 @@ public final class Facility implements CanBeEmpty {
               .anyMatch(hs -> hs.name().equalsIgnoreCase(serviceName));
     }
 
+    @Override
     public String serviceId() {
       return serviceId;
     }
+
+    @Override
+    public TypeOfService serviceType() {
+      return TypeOfService.Health;
+    }
   }
 
-  public enum OtherService implements ServiceType {
+  public enum OtherService implements TypedService {
     OnlineScheduling("onlineScheduling");
 
     private final String serviceId;
 
     OtherService(@NotNull String serviceId) {
       this.serviceId = serviceId;
+    }
+
+    /** Obtain service for unique service id. */
+    public static Optional<OtherService> fromServiceId(String serviceId) {
+      return Arrays.stream(values())
+          .parallel()
+          .filter(os -> os.serviceId().equals(serviceId))
+          .findFirst();
     }
 
     /** Determine whether specified service id represents other service. */
@@ -387,8 +431,14 @@ public final class Facility implements CanBeEmpty {
       return Arrays.stream(values()).parallel().anyMatch(os -> os.name().equals(serviceName));
     }
 
+    @Override
     public String serviceId() {
       return serviceId;
+    }
+
+    @Override
+    public TypeOfService serviceType() {
+      return TypeOfService.Other;
     }
   }
 

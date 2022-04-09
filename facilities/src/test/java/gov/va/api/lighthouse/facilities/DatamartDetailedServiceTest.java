@@ -1,15 +1,14 @@
 package gov.va.api.lighthouse.facilities;
 
-import static gov.va.api.lighthouse.facilities.DatamartDetailedService.getServiceTypeForServiceId;
 import static org.apache.commons.lang3.StringUtils.uncapitalize;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.fail;
 
-import gov.va.api.lighthouse.facilities.DatamartDetailedService.ServiceType;
 import gov.va.api.lighthouse.facilities.DatamartFacility.BenefitsService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.HealthService;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OtherService;
+import gov.va.api.lighthouse.facilities.api.TypeOfService;
+import gov.va.api.lighthouse.facilities.api.TypedService;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +34,7 @@ public class DatamartDetailedServiceTest {
                                 DatamartDetailedService.ServiceInfo.builder()
                                     .serviceId(bs.serviceId())
                                     .name(bs.name())
-                                    .serviceType(ServiceType.Benefits)
+                                    .serviceType(bs.serviceType())
                                     .build())
                             .build()));
   }
@@ -55,7 +54,7 @@ public class DatamartDetailedServiceTest {
                                 DatamartDetailedService.ServiceInfo.builder()
                                     .serviceId(hs.serviceId())
                                     .name(hs.name())
-                                    .serviceType(ServiceType.Health)
+                                    .serviceType(hs.serviceType())
                                     .build())
                             .build()));
   }
@@ -75,16 +74,15 @@ public class DatamartDetailedServiceTest {
                                 DatamartDetailedService.ServiceInfo.builder()
                                     .serviceId(os.serviceId())
                                     .name(os.name())
-                                    .serviceType(ServiceType.Other)
+                                    .serviceType(os.serviceType())
                                     .build())
                             .build()));
   }
 
   private int countOfServiceTypesWithMatchingServiceId(
-      @NonNull List<gov.va.api.lighthouse.facilities.api.ServiceType> serviceTypes,
-      @NonNull String serviceId) {
+      @NonNull List<TypedService> serviceTypes, @NonNull String serviceId) {
     int count = 0;
-    for (final gov.va.api.lighthouse.facilities.api.ServiceType st : serviceTypes) {
+    for (final TypedService st : serviceTypes) {
       if (st.serviceId().equals(serviceId)) {
         count++;
       }
@@ -105,7 +103,7 @@ public class DatamartDetailedServiceTest {
                 DatamartDetailedService.ServiceInfo.builder()
                     .serviceId("empty")
                     .name("empty")
-                    .serviceType(ServiceType.Health)
+                    .serviceType(TypeOfService.Health)
                     .build())
             .build();
     // Benefits Service
@@ -271,26 +269,13 @@ public class DatamartDetailedServiceTest {
   void serviceTypeForServiceId() {
     Arrays.stream(BenefitsService.values())
         .parallel()
-        .forEach(
-            bs ->
-                assertThat(getServiceTypeForServiceId(bs.serviceId()))
-                    .isEqualTo(ServiceType.Benefits));
+        .forEach(bs -> assertThat(bs.serviceType()).isEqualTo(TypeOfService.Benefits));
     Arrays.stream(HealthService.values())
         .parallel()
-        .forEach(
-            hs ->
-                assertThat(getServiceTypeForServiceId(hs.serviceId()))
-                    .isEqualTo(ServiceType.Health));
+        .forEach(hs -> assertThat(hs.serviceType()).isEqualTo(TypeOfService.Health));
     Arrays.stream(OtherService.values())
         .parallel()
-        .forEach(
-            os ->
-                assertThat(getServiceTypeForServiceId(os.serviceId()))
-                    .isEqualTo(ServiceType.Other));
-    assertThat(getServiceTypeForServiceId("Unknown")).isEqualTo(ServiceType.Health);
-    assertThatThrownBy(() -> getServiceTypeForServiceId(null))
-        .isInstanceOf(NullPointerException.class)
-        .hasMessage("serviceId is marked non-null but is null");
+        .forEach(os -> assertThat(os.serviceType()).isEqualTo(TypeOfService.Other));
   }
 
   @Test
