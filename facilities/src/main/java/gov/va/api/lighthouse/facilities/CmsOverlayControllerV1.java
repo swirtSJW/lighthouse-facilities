@@ -164,7 +164,10 @@ public class CmsOverlayControllerV1 extends BaseCmsOverlayController {
                             CmsOverlayHelper.getOperatingStatus(
                                 cmsOverlayEntity.cmsOperatingStatus()))
                         .detailedServices(
-                            CmsOverlayHelper.getDetailedServices(cmsOverlayEntity.cmsServices()))
+                            CmsOverlayHelper.getDetailedServices(cmsOverlayEntity.cmsServices())
+                                .parallelStream()
+                                .filter(ds -> isRecognizedServiceId(ds.serviceInfo().serviceId()))
+                                .collect(Collectors.toList()))
                         .build()))
             .build();
     return ResponseEntity.ok(response);

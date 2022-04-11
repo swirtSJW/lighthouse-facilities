@@ -5,6 +5,7 @@ import static gov.va.api.lighthouse.facilities.DatamartFacilitiesJacksonConfig.c
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.facilities.DatamartFacility.OperatingStatus;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
@@ -19,7 +20,10 @@ public final class CmsOverlayHelper {
   public static List<DatamartDetailedService> getDetailedServices(String detailedServices) {
     return (detailedServices == null)
         ? List.of()
-        : List.of(DATAMART_MAPPER.readValue(detailedServices, DatamartDetailedService[].class));
+        : List.of(DATAMART_MAPPER.readValue(detailedServices, DatamartDetailedService[].class))
+            .parallelStream()
+            .filter(ds -> ds.serviceInfo() != null)
+            .collect(Collectors.toList());
   }
 
   /** Obtain DatamartFacility operating status from JSON string. */
