@@ -156,7 +156,6 @@ public class FacilitiesControllerV1 {
             VulcanConfiguration.PagingConfiguration.builder()
                 .pageParameter("page")
                 .countParameter("count")
-                .defaultCount(30)
                 .maxCount(100)
                 .sortDefault(Sort.by("id").ascending())
                 .baseUrlStrategy(useUrl("http://localhost:8085/"))
@@ -164,12 +163,19 @@ public class FacilitiesControllerV1 {
         .mappings(
             Mappings.forEntity(FacilityEntity.class)
                 .string("state")
-                .string("ids")
-                .string("lat")
-                .string("long")
+                .string("zip")
+                .string("type")//type is not a string, need to convert to Type
+                .value("latitude", Double::parseDouble)
+                .value("longitude", Double::parseDouble)
+                .string("radius")
+                .string("facilityIds")
+                .string("mobile")
+                .string("visn")
+                // bbox[]
+                // services[]
                 .dateAsInstant("when", "date")
                 .get())
-            .defaultQuery(returnNothing())
+        .defaultQuery(returnNothing())
         .build();
   }
 
