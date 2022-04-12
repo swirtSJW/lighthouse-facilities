@@ -164,15 +164,13 @@ public class FacilitiesControllerV1 {
             Mappings.forEntity(FacilityEntity.class)
                 .string("state")
                 .string("zip")
-                .string("type")//type is not a string, need to convert to Type
-                .value("latitude", Double::parseDouble)
-                .value("longitude", Double::parseDouble)
-                .string("radius")
-                .string("facilityIds")
+                .string("type")
+                .value("lat", "latitude", this::toBigDecimal)
+                .value("long", "longitude", this::toBigDecimal)
+                .value("radius", this::toBigDecimal)
+                .string("ids")
                 .string("mobile")
                 .string("visn")
-                // bbox[]
-                // services[]
                 .dateAsInstant("when", "date")
                 .get())
         .defaultQuery(returnNothing())
@@ -246,8 +244,14 @@ public class FacilitiesControllerV1 {
   public ResponseEntity<List<Facility>> get(HttpServletRequest request) {
     // Invoke Vulcan to perform determine and perform the approriate query
     var result = Vulcan.forRepo(facilityRepository).config(configuration()).build().search(request);
-    // Process the entities anyway you want. Here we'll map them a 7.
-    var body = result.entities().map(FacilitiesControllerV1::facility).collect(toList());
+    // list of entities
+    List<FacilityEntity> entities = result.entities().collect(toList());
+    // filter by lat long
+    //    List<FacilitiesResponse.Distance> distances = null;
+    //    List<Mapping<FacilityEntity>> mappings =
+    // configuration().mappings().stream().collect(toList());
+    // filter by bbox
+    var body = entities.stream().map(FacilitiesControllerV1::facility).collect(toList());
     var response = ResponseEntity.ok(body);
     return response;
   }
@@ -339,6 +343,10 @@ public class FacilitiesControllerV1 {
   @GetMapping(value = "/facilities/{id}", produces = "application/json")
   FacilityReadResponse readJson(@PathVariable("id") String id) {
     return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
+  }
+
+  private BigDecimal toBigDecimal(String val) {
+    return new BigDecimal(val);
   }
 
   @Data
