@@ -16,6 +16,7 @@ import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
+import gov.va.api.lighthouse.vulcan.Mapping;
 import gov.va.api.lighthouse.vulcan.Vulcan;
 import gov.va.api.lighthouse.vulcan.VulcanConfiguration;
 import gov.va.api.lighthouse.vulcan.mappings.Mappings;
@@ -26,8 +27,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
+import javax.ws.rs.core.Request;
+
 import lombok.Builder;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -36,6 +40,7 @@ import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -165,16 +170,20 @@ public class FacilitiesControllerV1 {
                 .string("state")
                 .string("zip")
                 .string("type")
-                .value("lat", "latitude", this::toBigDecimal)
-                .value("long", "longitude", this::toBigDecimal)
+                .value("lat", "latitude", Double::parseDouble)
+                .value("long", "longitude", Double::parseDouble)
                 .value("radius", this::toBigDecimal)
                 .string("ids")
                 .string("mobile")
                 .string("visn")
                 .dateAsInstant("when", "date")
                 .get())
-        .defaultQuery(returnNothing())
+        .defaultQuery()
         .build();
+  }
+
+  Function<Request, Specification<FacilityEntity>> returnAll() {
+    return r -> Specification.;
   }
 
   private FacilityEntity entityById(String id) {
@@ -248,8 +257,8 @@ public class FacilitiesControllerV1 {
     List<FacilityEntity> entities = result.entities().collect(toList());
     // filter by lat long
     //    List<FacilitiesResponse.Distance> distances = null;
-    //    List<Mapping<FacilityEntity>> mappings =
-    // configuration().mappings().stream().collect(toList());
+        List<Mapping<FacilityEntity>> mappings =
+     configuration().mappings().stream().collect(toList());
     // filter by bbox
     var body = entities.stream().map(FacilitiesControllerV1::facility).collect(toList());
     var response = ResponseEntity.ok(body);
@@ -346,7 +355,9 @@ public class FacilitiesControllerV1 {
   }
 
   private BigDecimal toBigDecimal(String val) {
-    return new BigDecimal(val);
+    BigDecimal myBig = new BigDecimal(val);
+    System.out.println("we're here!");
+    return myBig;
   }
 
   @Data
