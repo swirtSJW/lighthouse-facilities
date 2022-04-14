@@ -7,7 +7,6 @@ import static gov.va.api.lighthouse.facilities.ControllersV1.validateLatLong;
 import static gov.va.api.lighthouse.facilities.ControllersV1.validateServices;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.distance;
 import static gov.va.api.lighthouse.facilities.FacilityUtils.haversine;
-import static gov.va.api.lighthouse.vulcan.Vulcan.returnNothing;
 import static gov.va.api.lighthouse.vulcan.Vulcan.useUrl;
 import static java.util.stream.Collectors.toList;
 
@@ -16,7 +15,6 @@ import gov.va.api.lighthouse.facilities.api.v1.FacilitiesIdsResponse;
 import gov.va.api.lighthouse.facilities.api.v1.FacilitiesResponse;
 import gov.va.api.lighthouse.facilities.api.v1.Facility;
 import gov.va.api.lighthouse.facilities.api.v1.FacilityReadResponse;
-import gov.va.api.lighthouse.vulcan.Mapping;
 import gov.va.api.lighthouse.vulcan.Vulcan;
 import gov.va.api.lighthouse.vulcan.VulcanConfiguration;
 import gov.va.api.lighthouse.vulcan.mappings.Mappings;
@@ -30,8 +28,6 @@ import java.util.Set;
 import java.util.function.Function;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
-import javax.ws.rs.core.Request;
-
 import lombok.Builder;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -178,12 +174,7 @@ public class FacilitiesControllerV1 {
                 .string("visn")
                 .dateAsInstant("when", "date")
                 .get())
-        .defaultQuery()
         .build();
-  }
-
-  Function<Request, Specification<FacilityEntity>> returnAll() {
-    return r -> Specification.;
   }
 
   private FacilityEntity entityById(String id) {
@@ -252,13 +243,14 @@ public class FacilitiesControllerV1 {
   @GetMapping(value = "/vulcan")
   public ResponseEntity<List<Facility>> get(HttpServletRequest request) {
     // Invoke Vulcan to perform determine and perform the approriate query
-    var result = Vulcan.forRepo(facilityRepository).config(configuration()).build().search(request);
+    VulcanConfiguration<FacilityEntity> vulConfig = configuration();
+    var result = Vulcan.forRepo(facilityRepository).config(vulConfig).build().search(request);
     // list of entities
     List<FacilityEntity> entities = result.entities().collect(toList());
     // filter by lat long
-    //    List<FacilitiesResponse.Distance> distances = null;
-        List<Mapping<FacilityEntity>> mappings =
-     configuration().mappings().stream().collect(toList());
+    // List<FacilitiesResponse.Distance> distances = null;
+    // List<Mapping<FacilityEntity>> mappings =
+    // configuration().mappings().stream().collect(toList());
     // filter by bbox
     var body = entities.stream().map(FacilitiesControllerV1::facility).collect(toList());
     var response = ResponseEntity.ok(body);
@@ -353,6 +345,24 @@ public class FacilitiesControllerV1 {
   FacilityReadResponse readJson(@PathVariable("id") String id) {
     return FacilityReadResponse.builder().facility(facility(entityById(id))).build();
   }
+
+   Function<HttpServletRequest, Specification<FacilityEntity>> returnAll() {
+     FacilityRepository.FacilitySpecificationHelper spec =
+             FacilityRepository.FacilitySpecificationHelper.builder()
+                     .boundingBox(getBoundingBoxSpec(null))
+                     .state(getStateSpec(null))
+                     .zip(getZipSpec(null))
+                     .facilityType(getFacilityTypeSpec(null))
+                     .ids(getIdsSpec(null))
+                     .services(getServicesSpec(null))
+                     .mobile(getMobileSpec(null))
+                     .visn(getVisnSpec(null))
+                     .build();
+   return r -> (Specification<FacilityEntity>) facilityRepository.findAll();
+   }
+//  Function<HttpServletRequest, Specification<FacilityEntity>> returnAll() {
+//    return r -> FacilityRepository.FacilitySpecificationHelper.builder().facilityType(null).visn(null).mobile(null).services(null).boundingBox(null).state(null).ids(null).zip(null).build();
+//  }
 
   private BigDecimal toBigDecimal(String val) {
     BigDecimal myBig = new BigDecimal(val);
