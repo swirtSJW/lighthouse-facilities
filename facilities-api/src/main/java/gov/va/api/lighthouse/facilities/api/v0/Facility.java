@@ -486,6 +486,12 @@ public final class Facility {
     @Schema(example = "202-555-1212", nullable = true)
     @JsonProperty("enrollment_coordinator")
     String enrollmentCoordinator;
+
+    @Schema(
+        description = "Phone number for health connection for given facility.",
+        example = "312-122-4516",
+        nullable = true)
+    String health;
   }
 
   @Data
