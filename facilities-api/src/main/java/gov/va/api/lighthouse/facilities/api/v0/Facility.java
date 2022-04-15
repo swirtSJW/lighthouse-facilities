@@ -143,9 +143,7 @@ public final class Facility {
 
     /** Determine whether specified service id represents health service. */
     public static boolean isRecognizedServiceId(String serviceId) {
-      return "dental".equals(serviceId)
-          || "mentalHealth".equals(serviceId)
-          || Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
+      return Arrays.stream(values()).parallel().anyMatch(hs -> hs.serviceId().equals(serviceId));
     }
 
     /** Determine whether specified service name represents health service. */
